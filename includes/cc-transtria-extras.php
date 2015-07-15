@@ -8,7 +8,7 @@
  * @copyright 2014 CommmunityCommons.org
  */
 
-class CC_AHA_Extras {
+class CC_Transtria_Extras {
 
 	/**
 	 * Plugin version, used for cache-busting of style and script file references.
@@ -32,7 +32,7 @@ class CC_AHA_Extras {
 	 *
 	 * @var      string
 	 */
-	protected $plugin_slug = 'cc-aha-extras';
+	protected $plugin_slug = 'cc-transtria-extras';
 
 	/**
 	 *
@@ -74,16 +74,10 @@ class CC_AHA_Extras {
 		
 		
 		/* Create a custom post types for aha priorities and action steps. */
-		add_action( 'init', array( $this, 'register_aha_priorities' ) ); 
-		add_action( 'init', array( $this, 'register_aha_community_planning_progress' ) );
-		add_action( 'init', array( $this, 'register_aha_action_steps' ) );
+		//add_action( 'init', array( $this, 'register_aha_priorities' ) ); 
 		
 		// Register taxonomies
-		add_action( 'init', array( $this,  'aha_board_taxonomy_register' ) );
-		add_action( 'init', array( $this,  'aha_affiliate_taxonomy_register' ) );
-		add_action( 'init', array( $this,  'aha_state_taxonomy_register' ) );  
-		add_action( 'init', array( $this,  'aha_criteria_taxonomy_register' ) ); 
-		add_action( 'init', array( $this,  'aha_benchmark_date_taxonomy_register' ) ); 
+		//add_action( 'init', array( $this,  'aha_board_taxonomy_register' ) );
 
 		// Load public-facing style sheet and JavaScript.
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles' ) );
@@ -121,42 +115,16 @@ class CC_AHA_Extras {
 		add_action( 'bp_init', array( $this, 'save_form_submission'), 75 );
 
 		// Checks existing metro ID cookie value and tries to gracefully set cookie value for Metro ID on page load.
-		add_action( 'bp_init', array( $this, 'set_metro_id_cookie_on_load'), 22 );
+		//add_action( 'bp_init', array( $this, 'set_metro_id_cookie_on_load'), 22 );
 		
 		// Checks requested analysis URL for specified metro_id. Sets cookie if not in agreement.
-		add_action( 'bp_init', array( $this, 'check_summary_metro_id_cookie_on_load'), 11 );
+		//add_action( 'bp_init', array( $this, 'check_summary_metro_id_cookie_on_load'), 11 );
 
+		//TODO: Transtria ajaxing goes here!
 		// Adds ajax function for board-approved checkbox on the Health Analysis Rreport page ("interim" piece)
-		add_action( 'wp_ajax_save_board_approved_priority' , array( $this, 'save_board_approved_priority' ) );
-		add_action( 'wp_ajax_remove_board_approved_priority' , array( $this, 'remove_board_approved_priority' ) );
-		add_action( 'wp_ajax_save_board_approved_staff' , array( $this, 'save_board_approved_staff' ) );
-		add_action( 'wp_ajax_save_board_potential_priority' , array( $this, 'save_board_potential_priority' ) );
-		
-		//autocomplete on analysis pages
-		
 		add_action( 'wp_ajax_get_autocomplete_members' , array( $this, 'get_autocomplete_members' ) );
 		
-		//action planning ajax
-		add_action( 'wp_ajax_get_priority_action_info' , array( $this, 'get_priority_action_info' ) );
 
-		add_action( 'wp_ajax_save_priority_national_plan' , array( $this, 'save_priority_national_plan' ) );
-		add_action( 'wp_ajax_get_action_steps' , array( $this, 'get_action_steps' ) );
-		add_action( 'wp_ajax_save_action_step' , array( $this, 'save_action_step' ) );
-		add_action( 'wp_ajax_delete_action_step' , array( $this, 'delete_action_step' ) );
-		add_action( 'wp_ajax_get_national_action_steps' , array( $this, 'get_national_action_steps' ) );
-		
-		//community planning progress reports 
-		add_action( 'wp_ajax_get_action_reports' , array( $this, 'get_action_reports' ) );
-		add_action( 'wp_ajax_get_current_action_progress' , array( $this, 'get_current_action_progress' ) );
-		add_action( 'wp_ajax_save_action_progress' , array( $this, 'save_action_progress' ) );
-		
-		//reports ajax
-		add_action( 'wp_ajax_get_priority_reports_info' , array( $this, 'get_priority_reports_info' ) );
-		add_action( 'wp_ajax_get_all_board_priorities' , array( $this, 'get_all_board_priorities' ) );
-		add_action( 'wp_ajax_get_assessment_scores' , array( $this, 'get_assessment_scores' ) );
-
-		//readonly action plan
-		add_action( 'wp_ajax_get_action_plan' , array( $this, 'get_action_plan' ) );
 	}
 
 	/**
@@ -322,315 +290,6 @@ class CC_AHA_Extras {
 		// @TODO: Define deactivation functionality here
 	}
 
-	/**
-	 * Generate AHA Priority custom post type
-	 *
-	 * @since    1.0.0
-	 */
-	public function register_aha_priorities() {
-
-	    $labels = array(
-	        'name' => _x( 'AHA Priorities', 'aha-priority' ),
-	        'singular_name' => _x( 'AHA Priority', 'aha-priority' ),
-	        'add_new' => _x( 'Add New', 'aha-priority' ),
-	        'add_new_item' => _x( 'Add New AHA Priority', 'aha-priority' ),
-	        'edit_item' => _x( 'Edit AHA Priority', 'aha-priority' ),
-	        'new_item' => _x( 'New AHA Priority', 'aha-priority' ),
-	        'view_item' => _x( 'View AHA Priority', 'aha-priority' ),
-	        'search_items' => _x( 'Search AHA Priorities', 'aha-priority' ),
-	        'not_found' => _x( 'No AHA priorities found', 'aha-priority' ),
-	        'not_found_in_trash' => _x( 'No aha priorities found in Trash', 'aha-priority' ),
-	        'parent_item_colon' => _x( 'Parent AHA Priority:', 'aha-priority' ),
-	        'menu_name' => _x( 'AHA Priorities', 'aha-priority' ),
-	    );
-
-		//TODO: Make this hidden in wp-admin, once sure it works!
-	    $args = array(
-	        'labels' => $labels,
-	        'hierarchical' => false,
-	        'description' => 'This post type is created when AHA boards select priorities ...on..?.',
-	        'supports' => array( 'title', 'editor', 'custom-fields', 'page-attributes', 'author', 'excerpt' ),
-	        'public' => true,
-	        'show_ui' => true,
-	        'show_in_menu' => true,
-	        //'menu_icon' => '',
-	        'show_in_nav_menus' => false,
-	        'publicly_queryable' => true,
-	        'exclude_from_search' => true,
-	        'has_archive' => false,
-	        'query_var' => true,
-	        'can_export' => true,
-	        'rewrite' => false,
-			'taxonomies' => array( 'aha-boards' ),
-	        'capability_type' => 'post'//,
-	        //'map_meta_cap'    => true
-	    );
-
-	    register_post_type( 'aha-priority', $args );
-	}
-	
-	/**
-	 * Generate AHA Action Steps custom post type
-	 *
-	 * @since    1.0.0
-	 */
-	public function register_aha_action_steps() {
-
-	    $labels = array(
-	        'name' => _x( 'AHA Action Steps', 'aha-action-step' ),
-	        'singular_name' => _x( 'AHA Action Step', 'aha-action-step' ),
-	        'add_new' => _x( 'Add New', 'aha-action-step' ),
-	        'add_new_item' => _x( 'Add New AHA Action Step', 'aha-action-step' ),
-	        'edit_item' => _x( 'Edit AHA Action Step', 'aha-action-step' ),
-	        'new_item' => _x( 'New AHA Action Step', 'aha-action-step' ),
-	        'view_item' => _x( 'View AHA Action Steps', 'aha-action-step' ),
-	        'search_items' => _x( 'Search AHA Action Steps', 'aha-action-step' ),
-	        'not_found' => _x( 'No AHA Action Steps found', 'aha-action-step' ),
-	        'not_found_in_trash' => _x( 'No AHA Action Steps found in Trash', 'aha-action-step' ),
-	        'parent_item_colon' => _x( 'Parent AHA Action Step:', 'aha-action-step' ),
-	        'menu_name' => _x( 'AHA Action Steps', 'aha-action-step' ),
-	    );
-
-		//TODO: Make this hidden in wp-admin, once sure it works!
-	    $args = array(
-	        'labels' => $labels,
-	        'hierarchical' => true,
-			'menu_order' => null,
-	        'description' => 'This post type is created when AHA boards select priorities ...on..?.',
-	        'supports' => array( 'title', 'editor', 'custom-fields', 'page-attributes', 'author', 'excerpt' ),
-	        'public' => true,
-	        'show_ui' => true,
-	        'show_in_menu' => true,
-	        //'menu_icon' => '',
-	        'show_in_nav_menus' => false,
-	        'publicly_queryable' => true,
-	        'exclude_from_search' => true,
-	        'has_archive' => false,
-	        'query_var' => true,
-	        'can_export' => true,
-	        'rewrite' => false,
-			'taxonomies' => array( 'aha-boards' ),
-	        'capability_type' => 'post'//,
-	        //'map_meta_cap'    => true
-	    );
-
-	    register_post_type( 'aha-action-step', $args );
-	}
-	
-		
-	/**
-	 * Generate AHA Community Planning Progress Report custom post type
-	 *
-	 * @since    1.0.0
-	 */
-	public function register_aha_community_planning_progress() {
-
-	    $labels = array(
-	        'name' => _x( 'AHA Community Planning Progress Reports', 'aha-community-planning-progress' ),
-	        'singular_name' => _x( 'AHA Community Planning Progress Report', 'aha-community-planning-progress' ),
-	        'add_new' => _x( 'Add New', 'aha-community-planning-progress' ),
-	        'add_new_item' => _x( 'Add New AHA Community Planning Progress Report', 'aha-community-planning-progress' ),
-	        'edit_item' => _x( 'Edit AHA Community Planning Progress Report', 'aha-community-planning-progress' ),
-	        'new_item' => _x( 'New AHA Community Planning Progress Report', 'aha-community-planning-progress' ),
-	        'view_item' => _x( 'View AHA Community Planning Progress Reports', 'aha-community-planning-progress' ),
-	        'search_items' => _x( 'Search AHA Community Planning Progress Reports', 'aha-community-planning-progress' ),
-	        'not_found' => _x( 'No AHA Community Planning Progress Reports found', 'aha-community-planning-progress' ),
-	        'not_found_in_trash' => _x( 'No AHA Community Planning Progress Reports found in Trash', 'aha-community-planning-progress' ),
-	        'parent_item_colon' => _x( 'Parent AHA Community Planning Progress Report:', 'aha-community-planning-progress' ),
-	        'menu_name' => _x( 'AHA Action Planning Progress', 'aha-community-planning-progress' ),
-	    );
-
-		//TODO: Make this hidden in wp-admin, once sure it works!
-	    $args = array(
-	        'labels' => $labels,
-	        'hierarchical' => true,
-			'menu_order' => null,
-	        'description' => 'Monthly evaluations by board on viability progress (in Action Progress and Planning). Child of AHA Priority.',
-	        'supports' => array( 'title', 'editor', 'custom-fields', 'page-attributes', 'author', 'excerpt' ),
-	        'public' => true,
-	        'show_ui' => true,
-	        'show_in_menu' => true,
-	        //'menu_icon' => '',
-	        'show_in_nav_menus' => true,
-	        'publicly_queryable' => true,
-	        'exclude_from_search' => true,
-	        'has_archive' => false,
-	        'query_var' => true,
-	        'can_export' => true,
-	        'rewrite' => false,
-			'taxonomies' => array( 'aha-boards' ),
-	        'capability_type' => 'post'//,
-	        //'map_meta_cap'    => true
-	    );
-
-	    register_post_type( 'aha-action-progress', $args );
-	}
-	
-		
-	/**
-	 * Generate AHA Boards, Affiliate, States, Criteria custom taxonomy
-	 *
-	 * @since    1.0.0
-	 */
-	public function aha_board_taxonomy_register() {
-		$labels = array(
-			'name'	=> _x( 'AHA Boards', 'taxonomy general name' ),
-			'singular_name'	=> _x( 'AHA Board', 'taxonomy singular name' ),
-			'search_items'	=> __( 'Search AHA Boards' ),
-			'popular_items'	=> __( 'Popular AHA Boards' ),
-			'all_items'	=> __( 'All AHA Boards' ),
-			'parent_item' => null,
-			'parent_item_colon'	=> null,
-			'edit_item' => __( 'Edit AHA Board' ), 
-			'update_item' => __( 'Update AHA Board' ),
-			'add_new_item' => __( 'Add AHA Board' ),
-			'new_item_name' => __( 'New AHA Board' ),
-			'separate_items_with_commas' => __( 'Separate AHA Boards with commas' ),
-			'add_or_remove_items' => __( 'Add or remove AHA Boards' ),
-			'choose_from_most_used' => __( 'Choose from the most used AHA Boards' ),
-			'not_found' => __( 'No AHA Boards found.' ),
-			'menu_name' => __( '-- Edit AHA Boards' )
-		);
-		
-		$args = array(
-			'hierarchical' => true,
-			'labels' => $labels,
-			'show_ui' => true,
-			'show_admin_column' => true,
-			'query_var' => true,
-			'rewrite' => array( 'slug' => 'aha-board-term' )
-		);
-		
-		register_taxonomy( 'aha-board-term', array( 'aha-action-step', 'aha-priority', 'aha-action-progress' ), $args );
-	}
-	
-	public function aha_affiliate_taxonomy_register() {
-		$labels = array(
-			'name'	=> _x( 'AHA Affiliates', 'taxonomy general name' ),
-			'singular_name'	=> _x( 'AHA Affiliate', 'taxonomy singular name' ),
-			'search_items'	=> __( 'Search AHA Affiliates' ),
-			'popular_items'	=> __( 'Popular AHA Affiliates' ),
-			'all_items'	=> __( 'All AHA Affiliates' ),
-			'parent_item' => null,
-			'parent_item_colon'	=> null,
-			'edit_item' => __( 'Edit AHA Affiliate' ), 
-			'update_item' => __( 'Update AHA Affiliate' ),
-			'add_new_item' => __( 'Add AHA Affiliate' ),
-			'new_item_name' => __( 'New AHA Affiliate' ),
-			'separate_items_with_commas' => __( 'Separate AHA Affiliates with commas' ),
-			'add_or_remove_items' => __( 'Add or remove AHA Affiliates' ),
-			'choose_from_most_used' => __( 'Choose from the most used AHA Affiliates' ),
-			'not_found' => __( 'No AHA Affiliates found.' ),
-			'menu_name' => __( '-- Edit AHA Affiliates' )
-		);
-		
-		$args = array(
-			'hierarchical' => true,
-			'labels' => $labels,
-			'show_ui' => true,
-			'show_admin_column' => true,
-			'query_var' => true,
-			'rewrite' => array( 'slug' => 'aha-affiliate-term' )
-		);
-		
-		register_taxonomy( 'aha-affiliate-term', array( 'aha-action-step', 'aha-priority', 'aha-action-progress' ), $args );
-	}
-	
-	public function aha_state_taxonomy_register() {
-		$labels = array(
-			'name'	=> _x( 'AHA States', 'taxonomy general name' ),
-			'singular_name'	=> _x( 'AHA State', 'taxonomy singular name' ),
-			'search_items'	=> __( 'Search AHA States' ),
-			'popular_items'	=> __( 'Popular AHA States' ),
-			'all_items'	=> __( 'All AHA States' ),
-			'parent_item' => null,
-			'parent_item_colon'	=> null,
-			'edit_item' => __( 'Edit AHA State' ), 
-			'update_item' => __( 'Update AHA State' ),
-			'add_new_item' => __( 'Add AHA State' ),
-			'new_item_name' => __( 'New AHA State' ),
-			'separate_items_with_commas' => __( 'Separate AHA States with commas' ),
-			'add_or_remove_items' => __( 'Add or remove AHA States' ),
-			'choose_from_most_used' => __( 'Choose from the most used AHA States' ),
-			'not_found' => __( 'No AHA States found.' ),
-			'menu_name' => __( '-- Edit AHA States' )
-		);
-		
-		$args = array(
-			'hierarchical' => true,
-			'labels' => $labels,
-			'show_ui' => true,
-			'show_admin_column' => true,
-			'query_var' => true,
-			'rewrite' => array( 'slug' => 'aha-state-term' )
-		);
-		
-		register_taxonomy( 'aha-state-term', array( 'aha-action-step', 'aha-priority', 'aha-action-progress' ), $args );
-	}
-	
-	public function aha_criteria_taxonomy_register() {
-		$labels = array(
-			'name'	=> _x( 'AHA Criteria', 'taxonomy general name' ),
-			'singular_name'	=> _x( 'AHA Criterion', 'taxonomy singular name' ),
-			'search_items'	=> __( 'Search AHA Criteria' ),
-			'popular_items'	=> __( 'Popular AHA Criteria' ),
-			'all_items'	=> __( 'All AHA Criteria' ),
-			'parent_item' => null,
-			'parent_item_colon'	=> null,
-			'edit_item' => __( 'Edit AHA Criterion' ), 
-			'update_item' => __( 'Update AHA Criterion' ),
-			'add_new_item' => __( 'Add AHA Criterion' ),
-			'new_item_name' => __( 'New AHA Criterion' ),
-			'separate_items_with_commas' => __( 'Separate AHA Criteria with commas' ),
-			'add_or_remove_items' => __( 'Add or remove AHA Criteria' ),
-			'choose_from_most_used' => __( 'Choose from the most used AHA Criteria' ),
-			'not_found' => __( 'No AHA Criteria found.' ),
-			'menu_name' => __( '-- Edit AHA Criteria' )
-		);
-		
-		$args = array(
-			'hierarchical' => true,
-			'labels' => $labels,
-			'show_ui' => true,
-			'show_admin_column' => true,
-			'query_var' => true,
-			'rewrite' => array( 'slug' => 'aha-criteria-term' )
-		);
-		
-		register_taxonomy( 'aha-criteria-term', array( 'aha-priority', 'aha-action-step', 'aha-action-progress' ), $args );
-	}
-	
-	public function aha_benchmark_date_taxonomy_register() {
-		$labels = array(
-			'name'	=> _x( 'AHA Benchmark Date', 'taxonomy general name' ),
-			'singular_name'	=> _x( 'AHA Benchmark Date', 'taxonomy singular name' ),
-			'search_items'	=> __( 'Search AHA Benchmark Dates' ),
-			'popular_items'	=> __( 'Popular Benchmark Dates' ),
-			'all_items'	=> __( 'All Benchmark Dates' ),
-			'parent_item' => null,
-			'parent_item_colon'	=> null,
-			'edit_item' => __( 'Edit Benchmark Date' ), 
-			'update_item' => __( 'Update Benchmark Date' ),
-			'add_new_item' => __( 'Add Benchmark Date' ),
-			'new_item_name' => __( 'New Benchmark Date' ),
-			'separate_items_with_commas' => __( 'Separate Benchmark Dates with commas' ),
-			'add_or_remove_items' => __( 'Add or remove Benchmark Dates' ),
-			'choose_from_most_used' => __( 'Choose from the most used Benchmark Dates' ),
-			'not_found' => __( 'No Benchmark Dates found.' ),
-			'menu_name' => __( '-- Edit Benchmark Dates' )
-		);
-		
-		$args = array(
-			'hierarchical' => true,
-			'labels' => $labels,
-			'show_ui' => true,
-			'show_admin_column' => true,
-			'query_var' => true,
-			'rewrite' => array( 'slug' => 'aha-benchmark-date-term' )
-		);
-		
-		register_taxonomy( 'aha-benchmark-date-term', array( 'aha-action-step', 'aha-priority' ), $args );
-	}
 	
 	
 	/**
@@ -658,14 +317,16 @@ class CC_AHA_Extras {
 			//wp_enqueue_style( $this->plugin_slug . '-plugin-styles', plugins_url( 'css/aha-extras-tab.css', __FILE__ ), array(), '1.38' );
 		}
 		
+		/*
 		if ( cc_aha_on_reports_screen() ){
 			wp_enqueue_style('jquery-multiselect-css', plugins_url( 'css/jquery.multiselect.css', __FILE__ ), array(), '1.0' );
 		}
+		*/
 	}
 
 	public function enqueue_registration_styles() {
-	    if( bp_is_register_page() && isset( $_GET['aha'] ) && $_GET['aha'] )
-	      wp_enqueue_style( 'aha-section-register-css', plugins_url( 'css/aha_registration_extras.css', __FILE__ ), array(), '0.1', 'screen' );
+	    if( bp_is_register_page() && isset( $_GET['transtria'] ) && $_GET['transtria'] )
+	      //wp_enqueue_style( 'aha-section-register-css', plugins_url( 'css/aha_registration_extras.css', __FILE__ ), array(), '0.1', 'screen' );
 	}
 
 	/**

@@ -68,6 +68,6 @@ class CC_AHA_Extras_Extension extends BP_Group_Extension {
     }
 
 }
-bp_register_group_extension( 'CC_AHA_Extras_Extension' );
+bp_register_group_extension( 'CC_Transtria_Extras_Extension' );
  
 endif;
