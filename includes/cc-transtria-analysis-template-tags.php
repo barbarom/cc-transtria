@@ -8,21 +8,18 @@
  * @copyright 2015 CommmunityCommons.org
  */
 
-//TODO: move to functions, if kept.
-/** 
- * What fiscal year is it?
- *
- * @return int 4-digit Year
- */
-
 /**
- * Output logic for the form. includes the wrapper pieces.
+ * Output logic for the analysis page. includes the wrapper pieces.
  * Question building is handled separately
  *
  * @since   1.0.0
  * @return 	outputs html
  */
 function cc_transtria_render_analysis_form(){
+
+	$studies_data = cc_transtria_get_endnote_ids( );
+	
+	var_dump( $studies_data );
 	?>
 		ANALYSIS PAGE
 	<?php
