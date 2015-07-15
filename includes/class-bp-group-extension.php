@@ -8,7 +8,7 @@ class CC_Transtria_Extras_Extension extends BP_Group_Extension {
             'slug' => cc_transtria_get_slug(),
             'name' => 'Community Planning Tool',
             'visibility' => 'private',
-            'enable_nav_item'   => $this->aha_tab_is_enabled(),
+            'enable_nav_item'   => $this->transtria_tab_is_enabled(),
             // 'access' => 'members',
             // 'show_tab' => 'members',
             'nav_item_position' => 15,
@@ -58,9 +58,9 @@ class CC_Transtria_Extras_Extension extends BP_Group_Extension {
         } 
     }
 
-    public function aha_tab_is_enabled(){
+    public function transtria_tab_is_enabled(){
 
-    	if ( cc_aha_is_aha_group() ) {
+    	if ( cc_transtria_is_transtria_group() ) {
             return TRUE;
         } else {
             return FALSE;

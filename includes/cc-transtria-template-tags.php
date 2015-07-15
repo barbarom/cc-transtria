@@ -32,7 +32,7 @@ function cc_transtria_render_tab_subnav(){
         ?>
         <div id="subnav" class="item-list-tabs no-ajax">
             <ul class="nav-tabs">
-              <!--  <li <?php if ( cc_aha_on_main_screen() ) { echo 'class="current"'; } ?>>
+              <!--  <li <?php if ( cc_transtria_on_main_screen() ) { echo 'class="current"'; } ?>>
                     <a href="<?php echo cc_aha_get_home_permalink(); ?>">Introduction</a>
                 </li>
 				<li <?php if ( cc_aha_on_survey_screen() ) { echo 'class="current"'; } ?>>
