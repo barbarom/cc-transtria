@@ -14,8 +14,8 @@
  * @since   1.0.0
  * @return  boolean
  */
-function cc_trantria_is_component() {
-    if ( bp_is_groups_component() && bp_is_current_action( cc_trantria_get_slug() ) )
+function cc_transtria_is_component() {
+    if ( bp_is_groups_component() && bp_is_current_action( cc_transtria_get_slug() ) )
         return true;
 
     return false;
@@ -65,7 +65,7 @@ function cc_transtria_get_group_id(){
  * @since   1.0.0
  * @return  string
  */
-function cc_aha_get_slug(){
+function cc_transtria_get_slug(){
     return 'assessment';
 }
 function cc_aha_get_survey_slug(){
@@ -86,7 +86,7 @@ function cc_aha_get_analysis_slug(){
  */
 function cc_aha_get_home_permalink( $group_id = false ) {
     $group_id = ( $group_id ) ? $group_id : bp_get_current_group_id() ;
-    $permalink = bp_get_group_permalink( groups_get_group( array( 'group_id' => $group_id ) ) ) .  cc_aha_get_slug() . '/';
+    $permalink = bp_get_group_permalink( groups_get_group( array( 'group_id' => $group_id ) ) ) .  cc_transtria_get_slug() . '/';
     return apply_filters( "cc_aha_home_permalink", $permalink, $group_id);
 }
 function cc_aha_get_survey_permalink( $page = 1, $group_id = false ) {
@@ -121,14 +121,14 @@ function cc_aha_get_analysis_permalink( $section = false, $metro_id = false ) {
  */
 function cc_aha_on_main_screen(){
     // There should be no action variables if on the main tab
-    if ( cc_aha_is_component() && ! ( bp_action_variables() )  ){
+    if ( cc_transtria_is_component() && ! ( bp_action_variables() )  ){
         return true;
     } else {
         return false;
     }
 }
 function cc_aha_on_survey_screen(){
-    if ( cc_aha_is_component() && bp_is_action_variable( cc_aha_get_survey_slug(), 0 ) ){
+    if ( cc_transtria_is_component() && bp_is_action_variable( cc_aha_get_survey_slug(), 0 ) ){
         return true;
     } else {
         return false;
@@ -138,7 +138,7 @@ function cc_aha_on_analysis_screen( $section = null ){
     // If we're checking for a specific subsection, check for it.
     if ( $section && in_array( $section, array(  cc_aha_get_analysis_health_slug(), cc_aha_get_analysis_revenue_slug() ) ) ) {
 
-        if ( cc_aha_is_component() && bp_is_action_variable( cc_aha_get_analysis_slug(), 0 ) && bp_is_action_variable( $section, 2 ) ){
+        if ( cc_transtria_is_component() && bp_is_action_variable( cc_aha_get_analysis_slug(), 0 ) && bp_is_action_variable( $section, 2 ) ){
             return true;
         } else {
             return false;
@@ -146,21 +146,21 @@ function cc_aha_on_analysis_screen( $section = null ){
 
     }
 
-   if ( cc_aha_is_component() && bp_is_action_variable( cc_aha_get_analysis_slug(), 0 ) ){
+   if ( cc_transtria_is_component() && bp_is_action_variable( cc_aha_get_analysis_slug(), 0 ) ){
         return true;
     } else {
         return false;
     }
 }
 function cc_aha_on_survey_quick_summary_screen(){
-    if ( cc_aha_is_component() && bp_is_action_variable( cc_aha_get_quick_survey_summary_slug(), 0 ) ){
+    if ( cc_transtria_is_component() && bp_is_action_variable( cc_aha_get_quick_survey_summary_slug(), 0 ) ){
         return true;
     } else {
         return false;
     }
 }
 function cc_aha_on_analysis_complete_report_screen(){
-   if ( cc_aha_is_component() && bp_is_action_variable( 'all', 3 ) ){
+   if ( cc_transtria_is_component() && bp_is_action_variable( 'all', 3 ) ){
         return true;
     } else {
         return false;

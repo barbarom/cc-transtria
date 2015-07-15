@@ -5,7 +5,7 @@ class CC_Transtria_Extras_Extension extends BP_Group_Extension {
 
     function __construct() {
         $args = array(
-            'slug' => cc_aha_get_slug(),
+            'slug' => cc_transtria_get_slug(),
             'name' => 'Community Planning Tool',
             'visibility' => 'private',
             'enable_nav_item'   => $this->aha_tab_is_enabled(),
