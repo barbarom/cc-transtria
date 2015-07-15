@@ -27,7 +27,7 @@ function cc_transtria_class_init(){
 	// Helper and utility functions
 	require_once( dirname( __FILE__ ) . '/includes/cc-transtria-functions.php' );
 	// Template-y functions
-	require_once( dirname( __FILE__ ) . '/includes/cc-trantria-template-tags.php' );
+	require_once( dirname( __FILE__ ) . '/includes/cc-transtria-template-tags.php' );
 
 	// Database helper functions
 	require_once( dirname( __FILE__ ) . '/includes/cc-transtria-database-bridge.php' );
@@ -56,7 +56,7 @@ function cc_transtria_class_init(){
 add_action( 'bp_include', 'cc_transtria_class_init' );
 
 /* Only load the component if BuddyPress is loaded and initialized. */
-function startup_aha_extras_group_extension_class() {
+function startup_transtria_extras_group_extension_class() {
 	require( dirname( __FILE__ ) . '/includes/class-bp-group-extension.php' );
 }
-add_action( 'bp_include', 'startup_aha_extras_group_extension_class', 24 );
+add_action( 'bp_include', 'startup_transtria_extras_group_extension_class', 24 );

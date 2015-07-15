@@ -35,7 +35,7 @@ class CC_Transtria_Extras_Extension extends BP_Group_Extension {
 
         cc_transtria_render_tab_subnav();
 
-        if ( cc_aha_on_main_screen() ) {
+        if ( cc_transtria_on_main_screen() ) {
 
             cc_transtria_print_introductory_text();
 

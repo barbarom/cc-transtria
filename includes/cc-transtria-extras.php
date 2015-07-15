@@ -325,7 +325,7 @@ class CC_Transtria_Extras {
 	}
 
 	public function enqueue_registration_styles() {
-	    if( bp_is_register_page() && isset( $_GET['transtria'] ) && $_GET['transtria'] )
+	    if( bp_is_register_page() && isset( $_GET['transtria'] ) && $_GET['transtria'] ) {}
 	      //wp_enqueue_style( 'aha-section-register-css', plugins_url( 'css/aha_registration_extras.css', __FILE__ ), array(), '0.1', 'screen' );
 	}
 
