@@ -2,7 +2,7 @@
 /**
  * CC Transtria Extras
  *
- * @package   CC American Heart Association Extras
+ * @package   CC Transtria Extras
  * @author    CARES staff
  * @license   GPL-2.0+
  * @copyright 2014 CommmunityCommons.org
