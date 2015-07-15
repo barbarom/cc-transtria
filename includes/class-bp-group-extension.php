@@ -6,7 +6,7 @@ class CC_Transtria_Extras_Extension extends BP_Group_Extension {
     function __construct() {
         $args = array(
             'slug' => cc_transtria_get_slug(),
-            'name' => 'Community Planning Tool',
+            'name' => 'The Study Editor',
             'visibility' => 'private',
             'enable_nav_item'   => $this->transtria_tab_is_enabled(),
             // 'access' => 'members',
@@ -36,25 +36,20 @@ class CC_Transtria_Extras_Extension extends BP_Group_Extension {
         cc_transtria_render_tab_subnav();
 
         if ( cc_transtria_on_main_screen() ) {
+			cc_transtria_render_form( bp_action_variable(1) );
+            //cc_transtria_print_study_form();
 
-            cc_transtria_print_introductory_text();
-
-        } else if ( cc_aha_on_survey_screen() ) {
+        } else if ( cc_transtria_on_assignments_screen() ) {
 
 			// Get the right page of the form to display. bp_action_variable(1) is the page number
-			cc_aha_render_form( bp_action_variable(1) );
+			cc_transtria_render_assignments_form( bp_action_variable(1) );
 			
 
-        } else if ( cc_aha_on_analysis_screen() ) {
+        } else if ( cc_transtria_on_analysis_screen() ) {
            
-			// We'll store the selected metro id in a cookie for persistence.
-			cc_aha_print_metro_select_container_markup();
-			// Get the right summary page to display.
-			cc_aha_render_summary_page();
+			cc_transtria_render_analysis_form( bp_action_variable(1) );
             
             
-        } else if ( cc_aha_on_survey_quick_summary_screen() ) {
-            cc_aha_render_all_questions_and_answers();
         } 
     }
 

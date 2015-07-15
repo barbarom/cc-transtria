@@ -13,10 +13,10 @@
  * @since   1.0.0
  * @return  HTML
  */
-function cc_transtria_print_introductory_text(){
+function cc_transtria_print_study_form(){
     ?>
     <p>
-        Welcome to Transtria's Study editor.
+        Study Form will go here.
     </p>
     <?php
 }
@@ -32,20 +32,18 @@ function cc_transtria_render_tab_subnav(){
         ?>
         <div id="subnav" class="item-list-tabs no-ajax">
             <ul class="nav-tabs">
-              <!--  <li <?php if ( cc_transtria_on_main_screen() ) { echo 'class="current"'; } ?>>
-                    <a href="<?php echo cc_aha_get_home_permalink(); ?>">Introduction</a>
+				<li <?php if ( cc_transtria_on_main_screen() ) { echo 'class="current"'; } ?>>
+                    <a href="<?php echo cc_transtria_get_home_permalink(); ?>">Study Form</a>
                 </li>
-				<li <?php if ( cc_aha_on_survey_screen() ) { echo 'class="current"'; } ?>>
-					<a href="<?php echo cc_aha_get_survey_permalink(); ?>">Assessment</a>
+				<li <?php if ( cc_transtria_on_assignments_screen() ) { echo 'class="current"'; } ?>>
+					<a href="<?php echo cc_transtria_get_assignments_permalink(); ?>">Assignments</a>
 				</li>
-                <li <?php if ( cc_aha_on_analysis_screen( 'health' ) ) { echo 'class="current"'; } ?>>
-                    <a href="<?php echo cc_aha_get_analysis_permalink(); ?>">Health Analysis Report</a>
+                <li <?php if ( cc_transtria_on_analysis_screen() ) { echo 'class="current"'; } ?>>
+                    <a href="<?php echo cc_transtria_get_analysis_permalink(); ?>">Analysis</a>
                 </li>
-				<li <?php if ( cc_aha_on_analysis_screen( 'revenue' ) ) { echo 'class="current"'; } ?>>
-					<a href="<?php echo cc_aha_get_analysis_permalink( 'revenue' ); ?>">Revenue Analysis Report</a>
-				</li>
-				-->
-				Testing nav tabs
+
+			
+
             </ul>
         </div>
         <?php

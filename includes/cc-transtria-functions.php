@@ -42,8 +42,8 @@ function cc_transtria_is_transtria_group( $group_id = 0 ){
  */
 function cc_transtria_get_group_id(){
     switch ( get_home_url() ) {
-        case 'http://commonsdev.local':
-            $group_id = 55;  //Mike's machine
+        case 'http://localhost/wordpress':
+            $group_id = 597;  //Mike's machine
             break;
 		case 'http://localhost/cc_local':
             $group_id = 690;  //Mel's compy
@@ -66,10 +66,10 @@ function cc_transtria_get_group_id(){
  * @return  string
  */
 function cc_transtria_get_slug(){
-    return 'assessment';
+    return 'study-form';
 }
-function cc_transtria_get_survey_slug(){
-    return 'survey';
+function cc_transtria_get_assignments_slug(){
+    return 'assignments';
 }
 function cc_transtria_get_quick_survey_summary_slug(){
     return 'quick-summary';
@@ -89,25 +89,20 @@ function cc_transtria_get_home_permalink( $group_id = false ) {
     $permalink = bp_get_group_permalink( groups_get_group( array( 'group_id' => $group_id ) ) ) .  cc_transtria_get_slug() . '/';
     return apply_filters( "cc_transtria_home_permalink", $permalink, $group_id);
 }
-function cc_transtria_get_survey_permalink( $page = 1, $group_id = false ) {
-    $permalink = cc_transtria_get_home_permalink( $group_id ) . cc_transtria_get_survey_slug() . '/' . $page . '/';
-    return apply_filters( "cc_transtria_survey_permalink", $permalink, $group_id);
+function cc_transtria_get_assignments_permalink( $page = 1, $group_id = false ) {
+    $permalink = cc_transtria_get_home_permalink( $group_id ) . cc_transtria_get_assignments_slug() . '/' . $page . '/';
+    return apply_filters( "cc_transtria_assignments_permalink", $permalink, $group_id);
 }
 function cc_transtria_get_analysis_permalink( $section = false, $metro_id = false ) {
-    // If none is specified, we need to insert a placeholder, so that the bp_action_variables stay in the correct position.
-    // if we pass a metro_id, it trumps all
-    if ( $metro_id ) {
-        $metro_id_string = $metro_id . '/';
-    } else {
-        $metro_id_string = ( $metro_id = $_COOKIE['transtria_summary_metro_id'] ) ? $metro_id . '/' : '00000/';
-    }
+    $permalink = cc_transtria_get_home_permalink( $group_id ) . cc_transtria_get_analysis_slug() . '/' . $page . '/';
+    return apply_filters( "cc_transtria_analysis_permalink", $permalink, $group_id);
 
     // If we've specified a section, build it, else assume health.
     // Expects 'revenue' or 'health'
-    $section_string = ( $section == 'revenue' ) ? cc_transtria_get_analysis_revenue_slug() . '/' : cc_transtria_get_analysis_health_slug() . '/';
+    //$section_string = ( $section == 'revenue' ) ? cc_transtria_get_analysis_revenue_slug() . '/' : cc_transtria_get_analysis_health_slug() . '/';
 
-    $permalink = cc_transtria_get_home_permalink() . cc_transtria_get_analysis_slug() . '/' . $metro_id_string . $section_string;
-    return apply_filters( "cc_transtria_analysis_permalink", $permalink, $section, $metro_id);
+    // $permalink = cc_transtria_get_home_permalink() . cc_transtria_get_analysis_slug() . '/' . $metro_id_string . $section_string;
+    // return apply_filters( "cc_transtria_analysis_permalink", $permalink, $section, $metro_id);
 }
 
 
@@ -127,8 +122,8 @@ function cc_transtria_on_main_screen(){
         return false;
     }
 }
-function cc_transtria_on_survey_screen(){
-    if ( cc_transtria_is_component() && bp_is_action_variable( cc_transtria_get_survey_slug(), 0 ) ){
+function cc_transtria_on_assignments_screen(){
+    if ( cc_transtria_is_component() && bp_is_action_variable( cc_transtria_get_assignments_slug(), 0 ) ){
         return true;
     } else {
         return false;
@@ -136,15 +131,15 @@ function cc_transtria_on_survey_screen(){
 }
 function cc_transtria_on_analysis_screen( $section = null ){
     // If we're checking for a specific subsection, check for it.
-    if ( $section && in_array( $section, array(  cc_transtria_get_analysis_health_slug(), cc_transtria_get_analysis_revenue_slug() ) ) ) {
+    // if ( $section && in_array( $section, array(  cc_transtria_get_analysis_slug(), cc_transtria_get_analysis_revenue_slug() ) ) ) {
 
-        if ( cc_transtria_is_component() && bp_is_action_variable( cc_transtria_get_analysis_slug(), 0 ) && bp_is_action_variable( $section, 2 ) ){
-            return true;
-        } else {
-            return false;
-        }
+        // if ( cc_transtria_is_component() && bp_is_action_variable( cc_transtria_get_analysis_slug(), 0 ) && bp_is_action_variable( $section, 2 ) ){
+            // return true;
+        // } else {
+            // return false;
+        // }
 
-    }
+    // }
 
    if ( cc_transtria_is_component() && bp_is_action_variable( cc_transtria_get_analysis_slug(), 0 ) ){
         return true;

@@ -31,6 +31,12 @@ function cc_transtria_class_init(){
 
 	// Database helper functions
 	require_once( dirname( __FILE__ ) . '/includes/cc-transtria-database-bridge.php' );
+	// Study Form template functions
+	require_once( dirname( __FILE__ ) . '/includes/cc-transtria-study-form-template-tags.php' );	
+	// Assignments template functions
+	require_once( dirname( __FILE__ ) . '/includes/cc-transtria-assignments-template-tags.php' );	
+	// Analysis template functions
+	require_once( dirname( __FILE__ ) . '/includes/cc-transtria-analysis-template-tags.php' );	
 	
 	// The main class
 	require_once( dirname( __FILE__ ) . '/includes/cc-transtria-extras.php' );
