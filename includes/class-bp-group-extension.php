@@ -1,7 +1,7 @@
 <?php 
 if ( class_exists( 'BP_Group_Extension' ) ) : // Recommended, to prevent problems during upgrade or when Groups are disabled
 
-class CC_AHA_Extras_Extension extends BP_Group_Extension {
+class CC_Transtria_Extras_Extension extends BP_Group_Extension {
 
     function __construct() {
         $args = array(
