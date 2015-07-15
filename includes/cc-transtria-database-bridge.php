@@ -89,8 +89,9 @@ function cc_transtria_get_endnote_ids( ){
 	
 	//cycle through the array and get the int values of study id
 	foreach ( $form_rows as $row ){ //intval("string")
-
-		array_push( $endnote_array, intval( $row[0] ) ); //we could do string here if need be...
+		if( intval($row[0]) !== 0 ){ //some of these are NULL in the transfer until Mel does it right.
+			array_push( $endnote_array, intval( $row[0] ) ); //we could do string here if need be...
+		}
 		
 	}
 	
