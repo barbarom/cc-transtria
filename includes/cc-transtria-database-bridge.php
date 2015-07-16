@@ -15,7 +15,7 @@
  * @since    1.0.0
  * @return 	array
  */
-function cc_transtria_get_studies( $study_id = 0 ){
+function cc_transtria_get_study_from_studies( $study_id = 0 ){
 	global $wpdb;
 	
 	//TODO, use wp->prepare
@@ -28,6 +28,29 @@ function cc_transtria_get_studies( $study_id = 0 ){
 		
 	$form_rows = $wpdb->get_results( $question_sql, OBJECT );
 	return $form_rows;
+
+}
+
+/**
+ * Returns array of string->values for single data in studies table
+ *
+ * @since    1.0.0
+ * @return 	array
+ */
+function cc_transtria_get_single_study_data( $study_id = 0 ){
+	
+	global $wpdb;
+	
+	//TODO, use wp->prepare
+	$question_sql = 
+		"
+		SELECT * 
+		FROM $wpdb->transtria_studies
+		WHERE `StudyID` = $study_id
+		";
+		
+	$form_rows = $wpdb->get_results( $question_sql, OBJECT );
+	return current($form_rows);
 
 }
 
@@ -71,7 +94,7 @@ function cc_transtria_get_study_ids( ){
  * @since    1.0.0
  * @return 	array
  */
-function cc_transtria_get_endnote_ids( ){
+function cc_transtria_get_endnote_id_title( ){
 	global $wpdb;
 	
 	//TODO, use wp->prepare
@@ -100,6 +123,21 @@ function cc_transtria_get_endnote_ids( ){
 
 }
 
+//TODO: functions for lookups for fields...
+
+
+/**
+ * 
+ *
+ *
+ *
+ */
+
+ 
+ 
+
+
+/***** EXAMPLES FROM AHA ******/
 
 
 

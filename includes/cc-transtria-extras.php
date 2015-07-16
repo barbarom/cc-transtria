@@ -314,7 +314,11 @@ class CC_Transtria_Extras {
 	 */
 	public function enqueue_styles() {
 		if ( cc_transtria_is_component() ) {
-			wp_enqueue_style( $this->plugin_slug . '-plugin-styles', plugins_url( 'css/transtria-extras-tab.css', __FILE__ ), array(), '1.38' );
+			wp_enqueue_style( $this->plugin_slug . '-plugin-styles', plugins_url( 'css/transtria-extras-tab.css', __FILE__ ), array(), '1.01' );
+			wp_enqueue_style( $this->plugin_slug . '-plugin-styles', plugins_url( 'css/components.css', __FILE__ ), array(), '1.01' );
+			wp_enqueue_style( $this->plugin_slug . '-plugin-styles', plugins_url( 'css/jquery.multiselect.css', __FILE__ ), array(), '1.01' );
+			//Mel asks: do we need this one?
+			wp_enqueue_style( $this->plugin_slug . '-plugin-styles', plugins_url( 'css/jquery.ptTimeSelect.css', __FILE__ ), array(), '1.01' );
 		}
 		
 		/*
@@ -338,6 +342,13 @@ class CC_Transtria_Extras {
 		if ( cc_transtria_is_component() ) {
 			//wp_enqueue_script( $this->plugin_slug . '-plugin-script', plugins_url( 'js/aha-group-pane-js.js', __FILE__ ), array( 'jquery' ), 1.7 );
 			//wp_enqueue_script( 'autocomplete', plugins_url( 'js/jquery-ui.min.js', __FILE__ ), array( 'jquery' ), self::VERSION );
+			
+			//wp_enqueue_script( 'custom_combobox', plugins_url( 'js/custom_combobox.js', __FILE__ ), array( 'jquery' ), '1.1' );
+			wp_enqueue_script( 'dynamic_page_components', plugins_url( 'js/dynamic_components.js', __FILE__ ), array( 'jquery' ), '1.1' );
+			//wp_enqueue_script( 'multiselect', plugins_url( 'js/jquery.multiselect.min.js', __FILE__ ), array( 'jquery' ), '1.1' );
+			//wp_enqueue_script( 'tablesorter', plugins_url( 'js/tablesorter/jquery.tablesorter.min.js', __FILE__ ), array( 'jquery' ), '1.1' );
+			//wp_enqueue_script( 'multiselect', plugins_url( 'js/datetimepicker-master/jquery.datetimepicker.js', __FILE__ ), array( 'jquery' ), '1.1' );
+			
 			wp_localize_script( 
 				$this->plugin_slug . '-plugin-script', 
 				'transtria_ajax',
