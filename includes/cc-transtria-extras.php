@@ -313,13 +313,13 @@ class CC_Transtria_Extras {
 	 * @since    1.0.0
 	 */
 	public function enqueue_styles() {
-<<<<<<< HEAD
+
 	
 		//if ( cc_transtria_is_component() ) {
 			wp_enqueue_style( $this->plugin_slug . '-plugin-styles', plugins_url( 'css/transtria-extras-tab.css', __FILE__ ), array(), '1.38' );
 			wp_enqueue_style( 'jquery-ui', plugins_url( 'css/jquery-ui.css', __FILE__ ), array(), '1.00' );
 		//}
-=======
+
 		if ( cc_transtria_is_component() ) {
 			wp_enqueue_style( $this->plugin_slug . '-plugin-styles', plugins_url( 'css/transtria-extras-tab.css', __FILE__ ), array(), '1.01' );
 			wp_enqueue_style( $this->plugin_slug . '-plugin-styles', plugins_url( 'css/components.css', __FILE__ ), array(), '1.01' );
@@ -327,7 +327,7 @@ class CC_Transtria_Extras {
 			//Mel asks: do we need this one?
 			wp_enqueue_style( $this->plugin_slug . '-plugin-styles', plugins_url( 'css/jquery.ptTimeSelect.css', __FILE__ ), array(), '1.01' );
 		}
->>>>>>> origin/master
+
 		
 		/*
 		if ( cc_aha_on_reports_screen() ){
