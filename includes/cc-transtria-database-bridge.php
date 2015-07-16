@@ -77,11 +77,11 @@ function cc_transtria_get_endnote_ids( ){
 	//TODO, use wp->prepare
 	$question_sql = 
 		"
-		SELECT `rec-number` 
+		SELECT `rec-number`, `titles_title`
 		FROM $wpdb->transtria_phase2
 		";
 		
-	$form_rows = $wpdb->get_results( $question_sql, ARRAY_N );
+	$form_rows = $wpdb->get_results( $question_sql, ARRAY_A );
 	
 	//TODO: can we just use get_results instead of this mess?  Probably..
 	//declare our array to hold study vals
@@ -89,8 +89,9 @@ function cc_transtria_get_endnote_ids( ){
 	
 	//cycle through the array and get the int values of study id
 	foreach ( $form_rows as $row ){ //intval("string")
-		if( intval($row[0]) !== 0 ){ //some of these are NULL in the transfer until Mel does it right.
-			array_push( $endnote_array, intval( $row[0] ) ); //we could do string here if need be...
+	
+		if( $row["rec-number"] !== NULL ){ //some of these are NULL in the transfer until Mel does it right.
+			$endnote_array[ intval( $row["rec-number"] ) ] = $row["titles_title"]; //we could do string here if need be...
 		}
 		
 	}
