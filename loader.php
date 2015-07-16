@@ -40,7 +40,7 @@ function cc_transtria_class_init(){
 	
 	// The main class
 	require_once( dirname( __FILE__ ) . '/includes/cc-transtria-extras.php' );
-	add_action( 'bp_include', array( 'CC_AHA_Extras', 'get_instance' ), 21 );  //TODO
+	add_action( 'bp_include', array( 'CC_Transtria_Extras', 'get_instance' ), 21 );  //TODO
 	
 	
 	//Mel...is this overkill
