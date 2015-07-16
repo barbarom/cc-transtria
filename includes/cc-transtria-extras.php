@@ -349,6 +349,8 @@ class CC_Transtria_Extras {
 	public function enqueue_scripts() {
 		if ( cc_transtria_is_component() ) {
 			wp_enqueue_script( 'jquery-ui', plugins_url( 'js/jquery-ui.js', __FILE__ ), array( 'jquery' ), 1.7 );
+			
+			//wp_dequeue_script();
 			//wp_enqueue_script( $this->plugin_slug . '-plugin-script', plugins_url( 'js/aha-group-pane-js.js', __FILE__ ), array( 'jquery' ), 1.7 );
 			//wp_enqueue_script( 'autocomplete', plugins_url( 'js/jquery-ui.min.js', __FILE__ ), array( 'jquery' ), self::VERSION );
 			
