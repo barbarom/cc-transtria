@@ -1,0 +1,37 @@
+.custom-combobox {
+  position: relative;
+  display: inline-block;
+  padding-right: 2em;
+}
+.custom-combobox-toggle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  margin-left: -1px;
+  padding: 0;
+  /* support: IE7 */
+  *height: 1.7em;
+  *top: 0.1em;
+}
+
+.custom-combobox-input {
+  margin: 0;
+  padding: 0.3em;
+}
+
+label {
+  padding-left: 10px;
+}
+
+.subtitle {
+  color: blue;
+  background: lightblue;
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  padding-left:6px;
+  border-bottom: 1px solid #a1c9d6
+}
+
+.subtitle2 {
+  color:blue;
+}
