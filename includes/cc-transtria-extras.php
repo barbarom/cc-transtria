@@ -314,7 +314,7 @@ class CC_Transtria_Extras {
 	 */
 	public function enqueue_styles() {
 		if ( cc_transtria_is_component() ) {
-			//wp_enqueue_style( $this->plugin_slug . '-plugin-styles', plugins_url( 'css/aha-extras-tab.css', __FILE__ ), array(), '1.38' );
+			wp_enqueue_style( $this->plugin_slug . '-plugin-styles', plugins_url( 'css/transtria-extras-tab.css', __FILE__ ), array(), '1.38' );
 		}
 		
 		/*
