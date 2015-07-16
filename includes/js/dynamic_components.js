@@ -17,7 +17,7 @@
 
   function selector(id) {
       id=id.replace('.', ' #')
-      var _obj=$("#" + id);
+      var _obj=jQuery("#" + id);
       if (_obj.length == 0) {
 		//console.log("Cannot find " + id)
 	}
@@ -25,7 +25,7 @@
   }
 
   function create_checkbox(comp) {
-     return $('<input/>', {
+     return jQuery('<input/>', {
                   type: 'checkbox',
                     id: comp.id,
                checked: comp.checked})
@@ -33,8 +33,8 @@
 
   
   function initialize_components(data) {
-     $('#msg_dialog').text("Loading")
-     $('#msg_dialog').show()
+     jQuery('#msg_dialog').text("Loading")
+     jQuery('#msg_dialog').show()
 
      //console.log(data.components.length)
      __CARES__.component_data=data.components;
@@ -105,7 +105,7 @@
                   var _s='<input name="' + comp.id + '" type="radio"'; 
                   _s+='value="' + comp.options[j].value+'">' + comp.options[j].text + '</input>';
 
-                  var _o=$(_s)
+                  var _o=jQuery(_s)
 
                   if (comp.options[j].selected==true) {
                      _o.prop('checked', true)
@@ -139,12 +139,12 @@
                if (comp.regex !== undefined) {
                   _it.attr('regex', comp.regex);
                   _it.focusout(function(e) {
-					 var _re=new RegExp($(e.target).attr('regex'));
+					 var _re=new RegExp(jQuery(e.target).attr('regex'));
 					 if (!_re.test(e.target.value)) {
 						//console.log(e.target.value);
-						$(e.target).css('background', 'red');
+						jQuery(e.target).css('background', 'red');
 					 } else {
-						$(e.target).css('background', 'white');
+						jQuery(e.target).css('background', 'white');
 					 }
 				  });
                }
@@ -183,7 +183,7 @@
      }
 
 
-     $('#msg_div').hide()
+     jQuery('#msg_div').hide()
      is_general_pop_listener();
 
      //multiselect_selected_display( "intervention_indicators", "intervention_indicators_display");
@@ -297,7 +297,7 @@
 				  var _s='<input name="' + comp.id + '" type="radio"'; 
 				  _s+='value="' + comp.options[j].value+'">' + comp.options[j].text + '</input>';
 
-				  var _o=$(_s)
+				  var _o=jQuery(_s)
 
 				  if (comp.options[j].selected==true) {
 					 _o.prop('checked', true)
@@ -325,12 +325,12 @@
 			   if (comp.regex !== undefined) {
 				  _it.attr('regex', comp.regex);
 				  _it.focusout(function(e) {
-					 var _re=new RegExp($(e.target).attr('regex'));
+					 var _re=new RegExp(jQuery(e.target).attr('regex'));
 					 if (!_re.test(e.target.value)) {
 						//console.log(e.target.value);
-						$(e.target).css('background', 'red');
+						jQuery(e.target).css('background', 'red');
 					 } else {
-						$(e.target).css('background', 'white');
+						jQuery(e.target).css('background', 'white');
 					 }
 				  });
 			   }
@@ -652,7 +652,7 @@
      cb.find('option').remove();
 
      for(var j=0; j < comp.options.length; j++) {
-        var _o=$("<option>")
+        var _o=jQuery("<option>")
         _o.val(comp.options[j].value)
         _o.text(comp.options[j].text)
 
@@ -671,22 +671,22 @@
      var combo_id=arguments[0][0];
      var other_id=arguments[0][1];
 
-     var el=$('#'+combo_id).next().find('input')
-     $('#'+other_id).prop('disabled', true)
+     var el=jQuery('#'+combo_id).next().find('input')
+     jQuery('#'+other_id).prop('disabled', true)
 
-     $(el).bind("autocompleteselect", 
+     jQuery(el).bind("autocompleteselect", 
                 {'combo_id':combo_id, 'other_id':other_id}, 
         function(e, ui) {
           var _text=ui.item.value
 
           var _disabled=false;
           if (_text.toUpperCase() != 'OTHER') {
-             $('#'+e.data.other_id).val('')
+             jQuery('#'+e.data.other_id).val('')
              _disabled=true
           }
 
-          $('#'+e.data.other_id).prop('disabled', _disabled)
-          if (!_disabled) $('#'+e.data.other_id).focus() 
+          jQuery('#'+e.data.other_id).prop('disabled', _disabled)
+          if (!_disabled) jQuery('#'+e.data.other_id).focus() 
      });
   }
 
@@ -697,7 +697,7 @@
      ms.attr('multiple', 'multiple') // add multiple attribute just in case it isn't there (or set incorrectly)
 
      for(var j=0; j < comp.options.length; j++) {
-        var _o=$("<option>")
+        var _o=jQuery("<option>")
         _o.val(comp.options[j].value)
         _o.text(comp.options[j].text)
 
@@ -755,17 +755,17 @@
   function upload_form_data_basic(e, upload_url) {
      //console.log('upload_form_data_basic')
      //number of tabs in ea section
-     __CARES__.ea_tabCount=$('#effect_association_tabs >ul >li').size()
+     __CARES__.ea_tabCount=jQuery('#effect_association_tabs >ul >li').size()
      __CARES__.visible_ea_tabs=[];
 
-     var $tabs = $('#effect_association_tabs').tabs();  
+     var tab_var = jQuery('#effect_association_tabs').tabs();  
 
      //tabs('length') no longer works in jQuery 1.10
      tabNumber = jQuery('#effect_association_tabs').size();
 
-     //for (var i = 0; i < $tabs.tabs('length'); i++) {  
+     //for (var i = 0; i < tab_var.tabs('length'); i++) {  
      //for (var i = 0; i < tabNumber; i++) {  
-     //    if ($tabs.tabs(i).is('visible')) __CARES__.visible_ea_tabs.push(i+1);
+     //    if (tab_var.tabs(i).is('visible')) __CARES__.visible_ea_tabs.push(i+1);
      //}
      __CARES__.visible_ea_tabs=get_active_tab_id_nums()
 
@@ -914,10 +914,10 @@
 	 //tack ese_tab_component_data on to component_data
 	 var all_components = __CARES__.component_data.concat( __CARES__.ese_tab_component_data );
 	 
-     $('#msg_div').text('Saving..')
-     $('#msg_div').show()
+     jQuery('#msg_div').text('Saving..')
+     jQuery('#msg_div').show()
      // upload data to server
-     $.ajax({
+     jQuery.ajax({
         url: upload_url,
         dataType: "json",
         type: 'POST',
@@ -931,8 +931,8 @@
      }).done(function (data) { 
         // data saved...
         if (data.epnpid !== undefined) __CARES__.StudyID=data.epnpid;
-        $('#msg_div').hide()
-        $('#StudyID').val(__CARES__.StudyID);  // put id in input text box
+        jQuery('#msg_div').hide()
+        jQuery('#StudyID').val(__CARES__.StudyID);  // put id in input text box
 
         //TODO: update the epnpid in the URL and the page itself.
         //if epnpid param doesn't exist, update
@@ -968,9 +968,9 @@
 
 
   function get_data_basic(e, url) {
-    __CARES__.StudyID=$('#StudyID').val() || '';
+    __CARES__.StudyID=jQuery('#StudyID').val() || '';
 
-    $.ajax({
+    jQuery.ajax({
        url: url,
        dataType: "json",
        data: {action: 'get', epnpid: __CARES__.StudyID},
@@ -1740,8 +1740,8 @@
 
 	function onReady(url, variables, events) {
 		console.log('on ready called');
-		$(function() {
-			$.ajax({
+		jQuery(function() {
+			jQuery.ajax({
 				url:  url,  //"/cgi-bin/Transtria/dataentry/studies.py",
 				dataType: "json",
 				data: {action: 'get', epnpid: variables['StudyID'] || ''}

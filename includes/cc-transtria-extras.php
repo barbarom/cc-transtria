@@ -344,15 +344,21 @@ class CC_Transtria_Extras {
 			//wp_enqueue_script( 'autocomplete', plugins_url( 'js/jquery-ui.min.js', __FILE__ ), array( 'jquery' ), self::VERSION );
 			
 			//wp_enqueue_script( 'custom_combobox', plugins_url( 'js/custom_combobox.js', __FILE__ ), array( 'jquery' ), '1.1' );
-			wp_enqueue_script( 'dynamic_page_components', plugins_url( 'js/dynamic_components.js', __FILE__ ), array( 'jquery' ), '1.1' );
 			
 			//requirements
 			wp_enqueue_script( 'jquery-ui-core' );
 			wp_enqueue_script( 'jquery-ui-widget' );
+			//wp_enqueue_script( 'jquery-ui-datepicker' );
 			
-			wp_enqueue_script( 'multiselect', plugins_url( 'js/jquery.multiselect.min.js', __FILE__ ), array( 'jquery' ), '1.1' );
-			wp_enqueue_script( 'tablesorter', plugins_url( 'js/tablesorter/jquery.tablesorter.min.js', __FILE__ ), array( 'jquery' ), '1.1' );
-			wp_enqueue_script( 'multiselect', plugins_url( 'js/datetimepicker-master/jquery.datetimepicker.js', __FILE__ ), array( 'jquery' ), '1.1' );
+			//our files
+			
+			wp_enqueue_script( $this->plugin_slug . 'multiselect', plugins_url( 'js/jquery.multiselect.min.js', __FILE__ ), array( 'jquery' ), '1.1' );
+			wp_enqueue_script( $this->plugin_slug . 'tablesorter', plugins_url( 'js/tablesorter/jquery.tablesorter.min.js', __FILE__ ), array( 'jquery' ), '1.1' );
+			wp_enqueue_script( $this->plugin_slug . 'datetimepicker', plugins_url( 'js/datetimepicker-master/jquery.datetimepicker.js', __FILE__ ), array( 'jquery' ), '1.1' );
+			
+			wp_enqueue_script( $this->plugin_slug . 'dynamic_page_components', plugins_url( 'js/dynamic_components.js', __FILE__ ), array( 'jquery' ), '1.1' );
+			wp_enqueue_script( $this->plugin_slug . 'transtria_basic_js', plugins_url( 'js/transtria_basic.js', __FILE__ ), array( 'jquery' ), '1.1' );
+			
 			
 			wp_localize_script( 
 				$this->plugin_slug . '-plugin-script', 
