@@ -77,6 +77,7 @@ function cc_transtria_render_form(){
 	
 	</form>
 	<script type='text/javascript'>
+	  /*
 	  jQuery( document ).ready(function($) {
 		$( "#tabs" ).tabs();
 
@@ -89,6 +90,7 @@ function cc_transtria_render_form(){
 		  
 		});
 	  });	
+	  */
 
 				
   

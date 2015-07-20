@@ -47,7 +47,7 @@
      
 
      jQuery("#header_tabs").tabs();
-     jQuery("#tabs").tabs();
+     //jQuery("#tabs").tabs();
      jQuery("#population_tabs").tabs();
      jQuery("#effect_association_tabs").tabs();
 
