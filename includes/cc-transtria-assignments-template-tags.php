@@ -8,12 +8,7 @@
  * @copyright 2015 CommmunityCommons.org
  */
 
-//TODO: move to functions, if kept.
-/** 
- * What fiscal year is it?
- *
- * @return int 4-digit Year
- */
+
 
 /**
  * Output logic for the form. includes the wrapper pieces.

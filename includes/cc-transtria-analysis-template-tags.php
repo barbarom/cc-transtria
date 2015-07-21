@@ -17,7 +17,7 @@
  */
 function cc_transtria_render_analysis_form(){
 
-	$studies_data = cc_transtria_get_singleton_dropdown_options( 0 );
+	$studies_data = cc_transtria_get_singleton_dropdown_options( );
 	
 	var_dump( $studies_data );
 	?>
