@@ -23,6 +23,12 @@
  * @return 	outputs html
  */
 function cc_transtria_render_form(){
+
+	//get data related to the form
+	$dd_singeton_options = cc_transtria_get_singleton_dropdown_options(); //all options for singleton dropdowns
+	
+	//TODO: think about whether we want to populate these in php or in js..
+	
 	?>
 
 	<form>
@@ -49,117 +55,122 @@ function cc_transtria_render_form(){
 	
 
 	
-<div class="tabs">
-    
-   <div class="tab">
-       <input type="radio" id="tab-1" name="tab-group-1" checked>
-       <label for="tab-1">Basic Info</label>
-       
-       <div class="content">
-			<table style="width:100%;">
-				<tr>
-					<td colspan="2" style="text-align:center;padding:20px;">
-						<button>SHOW ENDNOTE CITATION DATA</button>
-					</td>
-				</tr>
-				<tr>
-					<td colspan="2" class="inner_table_header">
-						GENERAL
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<table>
-							<tr>
-								<td>
-									Abstractor:
-								</td>
-								<td>
-									<select>
-										<option value="">---Select---</option>
-									</select>
-								</td>
-							</tr>
-							<tr>
-								<td>
-									Start Date/Time:
-								</td>
-								<td>
-									<input id="abstractorstarttime" type="text" >
-								</td>
-							</tr>
-							<tr>
-								<td>
-									Stop Date/Time:
-								</td>
-								<td>
-									<input id="abstractorstoptime" type="text" />
-								</td>
-							</tr>					
-						</table>
-					</td>
-					<td>
-						<table>
-							<tr>
-								<td>
-									Validator:
-								</td>
-								<td>
-									<select>
-										<option value="">---Select---</option>
-									</select>
-								</td>
-							</tr>
-							<tr>
-								<td>
-									Start Date/Time:
-								</td>
-								<td>
-									<input id="validatorstarttime" type="text" />
-								</td>
-							</tr>
-							<tr>
-								<td>
-									Stop Date/Time:
-								</td>
-								<td>
-									<input id="validatorstoptime" type="text" />
-								</td>
-							</tr>					
-						</table>			
-					</td>			
-				</tr>
-			</table>  
-       </div> 
-   </div>
-    
-   <div class="tab">
-       <input type="radio" id="tab-2" name="tab-group-1">
-       <label for="tab-2">Population</label>
-       
-       <div class="content">
-           stuff 2
-       </div> 
-   </div>
-    
-    <div class="tab">
-       <input type="radio" id="tab-3" name="tab-group-1">
-       <label for="tab-3">Intervention/Partnerships</label>
-     
-       <div class="content">
-           stuff 3
-       </div> 
-   </div>
+	<div class="tabs">
+		
+	   <div class="tab">
+		   <input type="radio" id="tab-1" name="tab-group-1" checked>
+		   <label for="tab-1">Basic Info</label>
+		   
+		   <div class="content">
+				<table style="width:100%;">
+					<tr>
+						<td colspan="2" style="text-align:center;padding:20px;">
+							<button>SHOW ENDNOTE CITATION DATA</button>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2" class="inner_table_header">
+							GENERAL
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<table>
+								<tr>
+									<td>
+										Abstractor:
+									</td>
+									<td>
+										<select>
+											<option value="">---Select---</option>
+											
+											<?php foreach( $dd_singeton_options['abstractor'] as $k => $v ){
+												echo '<option value="' . $k . '">' . $v->descr . '</option>';
+											
+											} ?>
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										Start Date/Time:
+									</td>
+									<td>
+										<input id="abstractorstarttime" type="text" >
+									</td>
+								</tr>
+								<tr>
+									<td>
+										Stop Date/Time:
+									</td>
+									<td>
+										<input id="abstractorstoptime" type="text" />
+									</td>
+								</tr>					
+							</table>
+						</td>
+						<td>
+							<table>
+								<tr>
+									<td>
+										Validator:
+									</td>
+									<td>
+										<select>
+											<option value="">---Select---</option>
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										Start Date/Time:
+									</td>
+									<td>
+										<input id="validatorstarttime" type="text" />
+									</td>
+								</tr>
+								<tr>
+									<td>
+										Stop Date/Time:
+									</td>
+									<td>
+										<input id="validatorstoptime" type="text" />
+									</td>
+								</tr>					
+							</table>			
+						</td>			
+					</tr>
+				</table>  
+		   </div> 
+	   </div>
+		
+	   <div class="tab">
+		   <input type="radio" id="tab-2" name="tab-group-1">
+		   <label for="tab-2">Population</label>
+		   
+		   <div class="content">
+			   stuff 2
+		   </div> 
+	   </div>
+		
+		<div class="tab">
+		   <input type="radio" id="tab-3" name="tab-group-1">
+		   <label for="tab-3">Intervention/Partnerships</label>
+		 
+		   <div class="content">
+			   stuff 3
+		   </div> 
+	   </div>
 
-    <div class="tab">
-       <input type="radio" id="tab-4" name="tab-group-1">
-       <label for="tab-4">Results</label>
-     
-       <div class="content">
-           stuff 4
-       </div> 
-   </div>   
-</div>	
+		<div class="tab">
+		   <input type="radio" id="tab-4" name="tab-group-1">
+		   <label for="tab-4">Results</label>
+		 
+		   <div class="content">
+			   stuff 4
+		   </div> 
+	   </div>   
+	</div>	
 	
 	
 

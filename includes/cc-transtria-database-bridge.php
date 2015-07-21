@@ -339,9 +339,11 @@ function cc_transtria_get_options_from_db( $code_name = NULL ){
 	//take that codetypeid and get all the options for it in the transtria_codetbl
 	$codetype_sql = $wpdb->prepare( 
 		"
-		SELECT      sequence, value, descr, inactive_flag
+		SELECT      value, descr, inactive_flag
 		FROM        $wpdb->transtria_codetbl
-		WHERE		codetypeID = %d 
+		WHERE		codetypeID = %d
+		AND			inactive_flag != 'Y'
+		ORDER BY	sequence
 		",
 		$codetype_id
 	); 
