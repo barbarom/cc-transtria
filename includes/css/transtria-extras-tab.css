@@ -1,4 +1,10 @@
-.mb {
-margin-bottom:20px;
-
+.bottom_margin {
+	margin-bottom:20px;
 }
+
+.inner_table_header {
+	background-color:#ebebeb;
+	font-weight:bold;
+	font-size:10pt;	
+}
+

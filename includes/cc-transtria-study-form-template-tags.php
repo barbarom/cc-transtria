@@ -26,7 +26,7 @@ function cc_transtria_render_form(){
 	?>
 
 	<form>
-		<div class="mb">			
+		<div class="bottom_margin">			
 			<label for="studyid"><strong>Study ID</strong></label>
 			<select id="studyid">
 			  <option>1</option>
@@ -55,7 +55,80 @@ function cc_transtria_render_form(){
 	<li><a href="#tabs-4" class="tabhead">Results</a></li>
   </ul>
   <div id="tabs-1">
-    <p>Proin elit arcu, rutrum commodo, vehicula tempus, commodo a, risus. Curabitur nec arcu. Donec sollicitudin mi sit amet mauris. Nam elementum quam ullamcorper ante. Etiam aliquet massa et lorem. Mauris dapibus lacus auctor risus. Aenean tempor ullamcorper leo. Vivamus sed magna quis ligula eleifend adipiscing. Duis orci. Aliquam sodales tortor vitae ipsum. Aliquam nulla. Duis aliquam molestie erat. Ut et mauris vel pede varius sollicitudin. Sed ut dolor nec orci tincidunt interdum. Phasellus ipsum. Nunc tristique tempus lectus.</p>
+	<table style="width:100%;">
+		<tr>
+			<td colspan="2" style="text-align:center;">
+				<button>SHOW ENDNOTE CITATION DATA</button>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" class="inner_table_header">
+				GENERAL
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<table>
+					<tr>
+						<td>
+							Abstractor:
+						</td>
+						<td>
+							<select>
+								<option value="">---Select---</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							Start Date/Time:
+						</td>
+						<td>
+							<input id="abstractorstarttime" type="text" />
+						</td>
+					</tr>
+					<tr>
+						<td>
+							Stop Date/Time:
+						</td>
+						<td>
+							<input id="abstractorstoptime" type="text" />
+						</td>
+					</tr>					
+				</table>
+			</td>
+			<td>
+				<table>
+					<tr>
+						<td>
+							Validator:
+						</td>
+						<td>
+							<select>
+								<option value="">---Select---</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							Start Date/Time:
+						</td>
+						<td>
+							<input id="validatorstarttime" type="text" />
+						</td>
+					</tr>
+					<tr>
+						<td>
+							Stop Date/Time:
+						</td>
+						<td>
+							<input id="validatorstoptime" type="text" />
+						</td>
+					</tr>					
+				</table>			
+			</td>			
+		</tr>
+	</table>   
   </div>
   <div id="tabs-2">
     <p>Morbi tincidunt, dui sit amet facilisis feugiat, odio metus gravida ante, ut pharetra massa metus id nunc. Duis scelerisque molestie turpis. Sed fringilla, massa eget luctus malesuada, metus eros molestie lectus, ut tempus eros massa ut dolor. Aenean aliquet fringilla sem. Suspendisse sed ligula in ligula suscipit aliquam. Praesent in eros vestibulum mi adipiscing adipiscing. Morbi facilisis. Curabitur ornare consequat nunc. Aenean vel metus. Ut posuere viverra nulla. Aliquam erat volutpat. Pellentesque convallis. Maecenas feugiat, tellus pellentesque pretium posuere, felis lorem euismod felis, eu ornare leo nisi vel felis. Mauris consectetur tortor et purus.</p>
@@ -77,25 +150,26 @@ function cc_transtria_render_form(){
 	
 	</form>
 	<script type='text/javascript'>
-	  /*
-	  jQuery( document ).ready(function($) {
-		$( "#tabs" ).tabs();
-
-	    $( '.tabhead' ).click(function() {
-			
-			return false;
-			
-		  
-		  
-		  
+		jQuery('#abstractorstarttime').datetimepicker();
+		jQuery('#abstractorstoptime').datetimepicker();
+		jQuery('#validatorstarttime').datetimepicker();
+		jQuery('#validatorstoptime').datetimepicker();
+		//Restores normal scroll function when clicking anywhere but tabs.
+		jQuery('html').click(function() {
+			jQuery('html, body').css({
+				'overflow': 'auto',
+				'height': 'auto'
+			});	
 		});
-	  });	
-	  */
-
-				
-  
-	  
-	  
+		//Prevents the page from scrolling when tabs are clicked.
+		jQuery( ".tabhead" ).click(function() {
+			jQuery('html, body').css({
+			'overflow': 'hidden',
+			'height': '100%'
+			});			
+		});  
+		
+		
 	</script>
 	<?php
 }

@@ -71,6 +71,9 @@
 	 jQuery(".remove_tab_button").on("click", remove_extra_ese_tab);
 	 //afterRender();
 
+ 
+	 
+	 
      
   });
 
