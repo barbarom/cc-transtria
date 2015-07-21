@@ -84,7 +84,8 @@ function cc_transtria_render_form(){
 										<select>
 											<option value="">---Select---</option>
 											
-											<?php foreach( $dd_singeton_options['abstractor'] as $k => $v ){
+											<?php //$dd_singleton_options are indexed by the div id - "abstractor", for example
+												foreach( $dd_singeton_options['abstractor'] as $k => $v ){
 												echo '<option value="' . $k . '">' . $v->descr . '</option>';
 											
 											} ?>
