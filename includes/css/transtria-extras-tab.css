@@ -8,10 +8,17 @@
 	font-size:10pt;	
 }
 
+input[readonly]
+{
+    background-color:#e6e6e6;
+}
+
+
+
 /* START TABS CSS */
 .tabs {
   position: relative;   
-  min-height: 800px; /* This part sucks */
+  min-height: 1800px; /* This part sucks */
   clear: both;
   margin: 25px 0;
 }
@@ -26,10 +33,7 @@
   position: relative;
   left: 1px; 
 }
-.tab input#tab-1[type=radio], 
-.tab input#tab-2[type=radio], 
-.tab input#tab-3[type=radio], 
-.tab input#tab-4[type=radio] {
+.noshow {
   display: none;   
 }
 .content {

@@ -324,8 +324,9 @@ class CC_Transtria_Extras {
 			wp_enqueue_style( $this->plugin_slug . '-plugin-styles', plugins_url( 'css/transtria-extras-tab.css', __FILE__ ), array(), '1.01' );
 			wp_enqueue_style( $this->plugin_slug . '-plugin-styles', plugins_url( 'css/components.css', __FILE__ ), array(), '1.01' );
 			wp_enqueue_style( $this->plugin_slug . '-plugin-styles', plugins_url( 'css/jquery.multiselect.css', __FILE__ ), array(), '1.01' );
+			wp_enqueue_style( $this->plugin_slug . '-plugin-styles', plugins_url( 'css/jquery.datetimepicker.css', __FILE__ ), array(), '1.01' );
 			//Mel asks: do we need this one?
-			wp_enqueue_style( $this->plugin_slug . '-plugin-styles', plugins_url( 'css/jquery.ptTimeSelect.css', __FILE__ ), array(), '1.01' );
+			//wp_enqueue_style( $this->plugin_slug . '-plugin-styles', plugins_url( 'css/jquery.ptTimeSelect.css', __FILE__ ), array(), '1.01' );
 		}
 
 		
