@@ -156,8 +156,20 @@ function cc_transtria_get_singleton_dropdown_options(){
 
 	$dd_ids = cc_transtria_get_singleton_dropdown_ids();
 	
+	//array to hold all the options, indexed by div_id name
+	$dd_options = [];
+	
 	//Now, perform lookup.
-
+	foreach( $dd_ids as $div_id => $lookup_name ){
+	
+		$dd_options[ $div_id ] = cc_transtria_get_options_from_db( $lookup_name );
+		
+	
+	}
+	
+	//var_dump( $dd_options );
+	
+	return $dd_options;
 
 }
 
@@ -204,6 +216,8 @@ function cc_transtria_get_multiple_dropdown_options_ea(){
 function cc_transtria_get_singleton_dropdown_ids(){
 
 	$dd_ids = array(
+		'abstractor' => 'abstractor',
+		'validator' => 'abstractor',
 		'searchtooltype' => 'SearchToolType',
 		'searchtoolname' => 'SearchToolName',
 		"fundingsource" => "FundingSource",
@@ -226,10 +240,10 @@ function cc_transtria_get_singleton_dropdown_ids(){
 		"evaluation_type" => "EvaluationType",
 		"evaluation_methods" => "EvaluationMethod"
 		
-
-
 	);
 
+	
+	return $dd_ids;
 
 
 }
@@ -292,6 +306,66 @@ function cc_transtria_get_multiple_dropdown_ids_ea(){
 	);
 
 }
+
+
+/**
+ * Function to actually get options from the 2 code tables, given a lookup name string
+ *
+ * @param string. Name of lookup
+ * @return array. 
+ */
+function cc_transtria_get_options_from_db( $code_name = NULL ){
+
+	
+	if( $code_name == NULL ){ //your cover has been blown.  Go to page 38.
+		
+		return 0; //?
+	
+	}
+
+	global $wpdb;
+	
+	$codetype_sql = $wpdb->prepare( 
+		"
+		SELECT      codetypeID
+		FROM        $wpdb->transtria_codetype
+		WHERE		codetype = %s 
+		",
+		$code_name
+	); 
+	
+	//single codetype id returned
+	$codetype_id = $wpdb->get_var( $codetype_sql ); //get_var returns single var
+
+	//take that codetypeid and get all the options for it in the transtria_codetbl
+	$codetype_sql = $wpdb->prepare( 
+		"
+		SELECT      sequence, value, descr, inactive_flag
+		FROM        $wpdb->transtria_codetbl
+		WHERE		codetypeID = %d 
+		",
+		$codetype_id
+	); 
+	
+	$codetype_array = $wpdb->get_results( $codetype_sql, OBJECT_K ); //OBJECT_K - result will be output as an associative array of row objects, using first column's values as keys (duplicates will be discarded). 
+	
+	return $codetype_array;
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /***** EXAMPLES FROM AHA ******/
