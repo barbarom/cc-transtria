@@ -18,7 +18,7 @@
 .tab {
   float: left;
 }
-.tab label {
+.tab label.primary_tab_label {
   background: #eee; 
   padding: 10px; 
   border: 1px solid #ccc; 

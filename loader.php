@@ -31,8 +31,9 @@ function cc_transtria_class_init(){
 
 	// Database helper functions
 	require_once( dirname( __FILE__ ) . '/includes/cc-transtria-database-bridge.php' );
-	// Study Form template functions
+	// Study Form template functions, pops tab
 	require_once( dirname( __FILE__ ) . '/includes/cc-transtria-study-form-template-tags.php' );	
+	require_once( dirname( __FILE__ ) . '/includes/cc-transtria-populations-template-tags.php' );	
 	// Assignments template functions
 	require_once( dirname( __FILE__ ) . '/includes/cc-transtria-assignments-template-tags.php' );	
 	// Analysis template functions
