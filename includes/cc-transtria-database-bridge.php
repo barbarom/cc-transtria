@@ -163,7 +163,6 @@ function cc_transtria_get_singleton_dropdown_options(){
 	foreach( $dd_ids as $div_id => $lookup_name ){
 	
 		$dd_options[ $div_id ] = cc_transtria_get_options_from_db( $lookup_name );
-		
 	
 	}
 	
