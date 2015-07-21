@@ -163,3 +163,13 @@ function cc_transtria_on_analysis_complete_report_screen(){
 }
 
 
+/**
+ * Which sub populations tabs are there?
+ *
+ * @return array.  Array of strings.
+ */
+function cc_transtria_get_basic_pops_types(){
+
+	return array( 'tp', 'ipe', 'ipu', 'ese', 'esu' );
+
+	}

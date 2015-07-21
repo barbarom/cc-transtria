@@ -182,8 +182,13 @@ function cc_transtria_get_multiple_dropdown_options_populations(){
 
 	$dd_ids = cc_transtria_get_multiple_dropdown_ids_populations();
 	
-	//Now, perform lookup.
-
+	//Now, perform lookup for all pops types
+	foreach( $dd_ids as $div_id => $lookup_name ){
+		//because of format
+		$this_div_id = 
+		$dd_options[ $div_id ] = cc_transtria_get_options_from_db( $lookup_name );
+	
+	}
 
 }
 
@@ -241,10 +246,8 @@ function cc_transtria_get_singleton_dropdown_ids(){
 		"evaluation_methods" => "EvaluationMethod"
 		
 	);
-
 	
 	return $dd_ids;
-
 
 }
 
@@ -254,28 +257,67 @@ function cc_transtria_get_singleton_dropdown_ids(){
  * @return array. String div id in form => String lookup name in db (code_tbl)
  *
  */
-function cc_transtria_get_multiple_dropdown_ids_populations(){
+function cc_transtria_get_multiple_dropdown_ids_populations( $which_pop = 'all'){
 
 	//get basic field and lookup names
-	$dd_ids = array(
+	$dd_base_ids = array(
 		"_geographic_scale" => "GeographicScale", //"%s_geographic_scale" % _prefix, "%s.GeographicScale"  %s is the pop prepend (ese0, tp, ipe...)
-		"_gender" => "GenderCode",
-		//"ipe_exposure_frequency" => "ipe.ExposureFrequency",  //TODO: special case...\
+		"_gender" => "Gender",
 		"_sub_populations" => "SubPopulations",
 		"_youth_populations" => "YouthPopulations",
-		"_professional_populations" => 'ProfessionalPopulations',
-		//TODO: figure this mess out.
-		//ESE and IPE only, but there are multiple ESE tabs, awesoooome
-		"_representative_subpopulations" => "RepresentativeSubpopulations",
-		//ESE and IPE only (all ESE tabs)
-		"_subpopulations" => "HighRiskSubpopulations"
-		
-		
-	
+		"_professional_populations" => 'ProfessionalPopulations'
 	);
 	
-	//
-
+	//Special cases for certain pops.
+	$dd_actual_ids = array(
+		//ESE and IPE only, but there are multiple ESE tabs, awesoooome
+		"ese_representative_subpopulations" => "RepresentativeSubpopulations",
+		"ipe_representative_subpopulations" => "RepresentativeSubpopulations",
+		//ESE and IPE only (all ESE tabs)
+		"ese_subpopulations" => "ese.HighRiskSubpopulations",
+		"ipe_subpopulations" => "ipe.HighRiskSubpopulations",
+		//special!
+		"ipe_exposure_frequency" => "ipe.ExposureFrequency"
+	);
+	
+	//which pops are we interested in? Usually all, but ese is going to be special
+	if( $which_pop == 'all' ){
+		$pops_types = cc_transtria_get_basic_pops_types();
+	
+		foreach( $dd_base_ids as $div_id => $lookup_name ){
+			
+			//Now, cycle through population types and build array for all pops
+			foreach( $pops_types as $pop_type ){
+				//build actual id
+				$actual_div_id = $pop_type . $div_id;
+				//build actual lookup name
+				if( $lookup_name != "Gender" ) { //because legacy db $hit
+					$actual_lookup_name = $pop_type . '.' . $lookup_name;
+				} else {
+					$actual_lookup_name = "Gender";
+				}
+				
+				//add to master array of lookup things
+				$dd_actual_ids[ $actual_div_id ] = $actual_lookup_name;			
+				
+			}
+		}
+	} else if ( $which_pop == 'ese' ) { //prepping for ese tab madness!
+		//cheating!
+		$dd_actual_ids = array(
+			"ese_representative_subpopulations" => "RepresentativeSubpopulations",
+			"ese_subpopulations" => "ese.HighRiskSubpopulations",
+			"ese_geographic_scale" => "ese.GeographicScale", //"%s_geographic_scale" % _prefix, "%s.GeographicScale"  %s is the pop prepend (ese0, tp, ipe...)
+			"ese_gender" => "Gender",
+			"ese_sub_populations" => "ese.SubPopulations",
+			"ese_youth_populations" => "ese.YouthPopulations",
+			"ese_professional_populations" => "ese.ProfessionalPopulations"
+		);
+	
+	}
+	
+	return $dd_actual_ids;	
+	
 }
 
 /**

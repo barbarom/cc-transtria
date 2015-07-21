@@ -27,10 +27,12 @@ function cc_transtria_render_form(){
 
 	//get data related to the form
 	$dd_singeton_options = cc_transtria_get_singleton_dropdown_options(); //all options for singleton dropdowns
+	$dd_multiple_options_pops = cc_transtria_get_multiple_dropdown_ids_populations(); //all options for pops sub tabs
 	
 	//bundle field options into single array (or whatever, really) to send to other render functions
 	$field_data = [];
 	$field_data['dd_singleton_options'] = $dd_singeton_options;
+	$field_data['dd_multiple_options_pops'] = $dd_multiple_options_pops;
 	
 	//TODO: think about whether we want to populate these in php or in js..
 	
