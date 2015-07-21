@@ -26,7 +26,10 @@
   position: relative;
   left: 1px; 
 }
-.tab [type=radio] {
+.tab input#tab-1[type=radio], 
+.tab input#tab-2[type=radio], 
+.tab input#tab-3[type=radio], 
+.tab input#tab-4[type=radio] {
   display: none;   
 }
 .content {

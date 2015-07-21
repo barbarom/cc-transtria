@@ -57,7 +57,7 @@ function cc_transtria_render_form(){
 	
 	<div class="tabs">
 		
-	   <div class="tab">
+	   <div class="tab primary_tab">
 		   <input type="radio" id="tab-1" name="tab-group-1" checked>
 		   <label for="tab-1" class="primary_tab_label">Basic Info</label>
 		   
@@ -145,7 +145,7 @@ function cc_transtria_render_form(){
 		   </div> 
 	   </div>
 		
-	   <div class="tab">
+	   <div class="tab primary_tab">
 		   <input type="radio" id="tab-2" name="tab-group-1">
 		   <label for="tab-2" class="primary_tab_label">Population</label>
 		   
@@ -156,7 +156,7 @@ function cc_transtria_render_form(){
 		   </div> 
 	   </div>
 		
-		<div class="tab">
+		<div class="tab primary_tab">
 		   <input type="radio" id="tab-3" name="tab-group-1">
 		   <label for="tab-3" class="primary_tab_label">Intervention/Partnerships</label>
 		 
@@ -165,7 +165,7 @@ function cc_transtria_render_form(){
 		   </div> 
 	   </div>
 
-		<div class="tab">
+		<div class="tab primary_tab">
 		   <input type="radio" id="tab-4" name="tab-group-1">
 		   <label for="tab-4" class="primary_tab_label">Results</label>
 		 
