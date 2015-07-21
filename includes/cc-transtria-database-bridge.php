@@ -224,6 +224,7 @@ function cc_transtria_get_singleton_dropdown_ids(){
 		"fundingpurpose" => "fundingpurpose",
 		'StudyDesign' => 'StudyDesignID',
 		"validity_threats"=> "ValidityThreats",
+		"unit_of_analysis" => "UnitOfAnalysis",
 		"ipe_exposure_frequency" => "ipe.ExposureFrequency",  //only on IPE tab.  TODO: confirm!
 		"state_setting" => 'US States',
 		"setting_type" => "SettingType",

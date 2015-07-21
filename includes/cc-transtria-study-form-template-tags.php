@@ -27,6 +27,10 @@ function cc_transtria_render_form(){
 	//get data related to the form
 	$dd_singeton_options = cc_transtria_get_singleton_dropdown_options(); //all options for singleton dropdowns
 	
+	//bundle field options into single array (or whatever, really) to send to other render functions
+	$field_data = [];
+	$field_data['dd_singleton_options'] = $dd_singeton_options;
+	
 	//TODO: think about whether we want to populate these in php or in js..
 	
 	?>
@@ -152,7 +156,7 @@ function cc_transtria_render_form(){
 		   <div class="content">
 			   <?php 
 				//render pops tab in all its glory
-				cc_transtria_render_populations_tab(); ?>
+				cc_transtria_render_populations_tab( $field_data ); ?>
 		   </div> 
 	   </div>
 		
