@@ -184,11 +184,12 @@ function cc_transtria_get_multiple_dropdown_options_populations(){
 	
 	//Now, perform lookup for all pops types
 	foreach( $dd_ids as $div_id => $lookup_name ){
-		//because of format
-		$this_div_id = 
+		
 		$dd_options[ $div_id ] = cc_transtria_get_options_from_db( $lookup_name );
 	
 	}
+	
+	return $dd_options;
 
 }
 
@@ -382,7 +383,7 @@ function cc_transtria_get_options_from_db( $code_name = NULL ){
 	//take that codetypeid and get all the options for it in the transtria_codetbl
 	$codetype_sql = $wpdb->prepare( 
 		"
-		SELECT      value, descr, inactive_flag
+		SELECT      value, descr
 		FROM        $wpdb->transtria_codetbl
 		WHERE		codetypeID = %d
 		AND			inactive_flag != 'Y'

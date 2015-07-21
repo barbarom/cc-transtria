@@ -34,7 +34,7 @@ function cc_transtria_render_populations_header( $field_data ){
 	$dd_singleton_options = $field_data['dd_singleton_options'];
 	$dd_multiple_options_pops = $field_data['dd_multiple_options_pops'];
 	
-	//var_dump( $dd_multiple_options_pops ); //ok!
+	var_dump( $dd_multiple_options_pops ); //ok!
 	//var_dump( cc_transtria_get_multiple_dropdown_ids_populations( ) ); //default all pops
 	
 
