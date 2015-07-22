@@ -99,7 +99,7 @@ function cc_transtria_render_populations_header( $field_data ){
 			?>
 			
 			<div id="<?php echo $pop; ?>-tab" class="subpops_tab">
-				<label class="subpops_tab_label" for="<?php echo $pop; ?>-tab" data-whichpop="<?php echo $pop; ?>"><?php echo $pop; ?></label>
+				<label class="subpops_tab_label<?php if( $pop == 'tp' ) { echo ' active'; } ?>" for="<?php echo $pop; ?>-tab" data-whichpop="<?php echo $pop; ?>"><?php echo $pop; ?></label>
 			</div>
 			
 			<?php
@@ -339,7 +339,7 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 				<td class="not-reported"><label>Gender not reported</label></td>
 				<td><input id="<?php echo $which_pop; ?>_gender_notreported" type="checkbox"></td>
 			</tr>
-
+			<br />
 
 			<tr class="<?php echo $which_pop; ?>_not_general">
 				<td><label>Minimum age:</label></td>

@@ -3,6 +3,7 @@
 
 function clickListen(){
 
+	//when clicking on the subpopulations tabs..
 	jQuery('#sub_pops_tabs label.subpops_tab_label').on("click", function(){
 		
 		//hide all subpops content
@@ -11,12 +12,11 @@ function clickListen(){
 		var which_pop = jQuery(this).data("whichpop");
 		var which_content = which_pop + '_content';
 		
-		//console.log(which_pop);
-		//show this subpops content
+		//add selected class
+		jQuery('label.subpops_tab_label').removeClass('active');
+		jQuery(this).addClass('active');
 	
 		jQuery('.subpops_content.' + which_content).show();
-	
-	
 	
 	});
 
