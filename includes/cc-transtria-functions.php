@@ -172,4 +172,4 @@ function cc_transtria_get_basic_pops_types(){
 
 	return array( 'tp', 'ipe', 'ipu', 'ese', 'esu' );
 
-	}
+}
