@@ -276,8 +276,8 @@ function cc_transtria_get_multiple_dropdown_ids_populations( $which_pop = 'all')
 		"ese_representative_subpopulations" => "RepresentativeSubpopulations",
 		"ipe_representative_subpopulations" => "RepresentativeSubpopulations",
 		//ESE and IPE only (all ESE tabs)
-		"ese_subpopulations" => "ese.HighRiskSubpopulations",
-		"ipe_subpopulations" => "ipe.HighRiskSubpopulations",
+		"ese_hr_subpopulations" => "ese.HighRiskSubpopulations",
+		"ipe_hr_subpopulations" => "ipe.HighRiskSubpopulations",
 		//special!
 		"ipe_exposure_frequency" => "ipe.ExposureFrequency"
 	);

@@ -33,7 +33,8 @@ select {
 	width:100%;
 }
 .tab label.primary_tab_label,
-#sub_pops_tabs label.subpops_tab_label {
+#sub_pops_tabs label.subpops_tab_label,
+#sub_pops_tabs label.ese_add_tab_label {
   background: #eee; 
   padding: 10px; 
   border: 1px solid #ccc; 
@@ -87,7 +88,9 @@ select {
 .ui-multiselect-menu {
     min-width: 420px;
 }
-
+select option{
+	padding-right:2px;
+}
 
 
 
