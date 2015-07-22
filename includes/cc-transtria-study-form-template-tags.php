@@ -34,8 +34,7 @@ function cc_transtria_render_form(){
 	$field_data['dd_singleton_options'] = $dd_singleton_options;
 	$field_data['dd_multiple_options_pops'] = $dd_multiple_options_pops;
 	
-	//TODO: think about whether we want to populate these in php or in js..
-	
+	//TODO: think about whether we want to populate these in php or in js..	
 	?>
 
 	<form>

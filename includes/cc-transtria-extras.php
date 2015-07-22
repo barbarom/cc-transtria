@@ -316,15 +316,15 @@ class CC_Transtria_Extras {
 
 	
 		//if ( cc_transtria_is_component() ) {
-			wp_enqueue_style( $this->plugin_slug . '-plugin-styles', plugins_url( 'css/transtria-extras-tab.css', __FILE__ ), array(), '1.38' );
-			wp_enqueue_style( 'jquery-ui', plugins_url( 'css/jquery-ui.css', __FILE__ ), array(), '1.00' );
+			//wp_enqueue_style( $this->plugin_slug . '-plugin-styles', plugins_url( 'css/transtria-extras-tab.css', __FILE__ ), array(), '1.38' );
+			//wp_enqueue_style( 'jquery-ui', plugins_url( 'css/jquery-ui.css', __FILE__ ), array(), '1.00' );
 		//}
 
 		if ( cc_transtria_is_component() ) {
-			wp_enqueue_style( $this->plugin_slug . '-plugin-styles', plugins_url( 'css/transtria-extras-tab.css', __FILE__ ), array(), '1.01' );
-			wp_enqueue_style( $this->plugin_slug . '-plugin-styles', plugins_url( 'css/components.css', __FILE__ ), array(), '1.01' );
-			wp_enqueue_style( $this->plugin_slug . '-plugin-styles', plugins_url( 'css/jquery.multiselect.css', __FILE__ ), array(), '1.01' );
-			wp_enqueue_style( $this->plugin_slug . '-plugin-styles', plugins_url( 'css/jquery.datetimepicker.css', __FILE__ ), array(), '1.01' );
+			wp_enqueue_style( 'transtria-extras-tab', plugins_url( 'css/transtria-extras-tab.css', __FILE__ ), array(), '1.01' );
+			wp_enqueue_style( 'components', plugins_url( 'css/components.css', __FILE__ ), array(), '1.01' );
+			wp_enqueue_style( 'multiselect', plugins_url( 'css/jquery.multiselect.css', __FILE__ ), array(), '1.01' );
+			wp_enqueue_style( 'datetimepicker', plugins_url( 'css/jquery.datetimepicker.css', __FILE__ ), array(), '1.01' );
 			//Mel asks: do we need this one?
 			//wp_enqueue_style( $this->plugin_slug . '-plugin-styles', plugins_url( 'css/jquery.ptTimeSelect.css', __FILE__ ), array(), '1.01' );
 		}
