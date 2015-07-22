@@ -264,6 +264,7 @@ function cc_transtria_get_multiple_dropdown_ids_populations( $which_pop = 'all')
 	$dd_base_ids = array(
 		"_geographic_scale" => "GeographicScale", //"%s_geographic_scale" % _prefix, "%s.GeographicScale"  %s is the pop prepend (ese0, tp, ipe...)
 		"_gender" => "Gender",
+		'_ability_status' => "AbilityStatus",
 		"_sub_populations" => "SubPopulations",
 		"_youth_populations" => "YouthPopulations",
 		"_professional_populations" => 'ProfessionalPopulations'

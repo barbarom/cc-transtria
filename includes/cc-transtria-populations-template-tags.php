@@ -112,7 +112,7 @@ function cc_transtria_render_populations_header( $field_data ){
 		//second foreach for content
 		foreach( $which_pops as $pop ){ 
 		
-				cc_transtria_render_subpopulations_tab( $pop );
+				cc_transtria_render_subpopulations_tab( $field_data, $pop );
 			
 			?>
 			
@@ -126,8 +126,12 @@ function cc_transtria_render_populations_header( $field_data ){
 
 }
 
-function cc_transtria_render_subpopulations_tab( $which_pop = 'tp'){
+function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp'){
 
+	//get dropdown options
+	$dd_multiple_options_pops = $field_data['dd_multiple_options_pops'];
+	//var_dump( $dd_multiple_options_pops );
+	
 	switch( $which_pop ){
 		case 'tp':
 			$subtitle = "Target Population";
@@ -160,7 +164,11 @@ function cc_transtria_render_subpopulations_tab( $which_pop = 'tp'){
 
 			<tr>
 				<td><label>Reported?</label></td>
-				<td><span id="<?php echo $which_pop; ?>_reported"></span></td>
+				<td>
+					<span id="<?php echo $which_pop; ?>_reported">
+						<input type="radio" value="Y" name="<?php echo $which_pop; ?>_reported">Yes
+						<input type="radio" value="N" name="<?php echo $which_pop; ?>_reported">No
+					</span></td>
 			</tr>
 
 			<tr>
@@ -175,7 +183,18 @@ function cc_transtria_render_subpopulations_tab( $which_pop = 'tp'){
 
 			<tr>
 				<td><label>Geographic scale:</label></td>
-				<td><span id="<?php echo $which_pop; ?>_geographic_scale"></span></td>
+				<td>
+					<span id="<?php echo $which_pop; ?>_geographic_scale">
+						<select class="multiselect" multiple="multiple">
+							<option value="">---Select---</option>
+							<?php 
+								$field_name = $which_pop . '_geographic_scale';
+								foreach( $dd_multiple_options_pops[ $field_name ] as $k => $v ){
+								echo '<option value="' . $k . '">' . $v->descr . '</option>';
+							
+							} ?>
+						</select>
+					</span></td>
 			</tr>
 			<tr class="not-reported">
 				<td class="not-reported"><label>Geographic scale not reported</label></td>
@@ -185,7 +204,10 @@ function cc_transtria_render_subpopulations_tab( $which_pop = 'tp'){
 
 			<tr>
 				<td><label>Eligibility criteria:</label></td>
-				<td><span id="<?php echo $which_pop; ?>_eligibility_criteria"></span></td>
+				<td><span id="<?php echo $which_pop; ?>_eligibility_criteria">
+					<input type="radio" value="Y" name="<?php echo $which_pop; ?>_eligibility_criteria">Yes
+					<input type="radio" value="N" name="<?php echo $which_pop; ?>_eligibility_criteria">No
+				</span></td>
 			</tr>
 			<tr class="not-reported">
 				<td class="not-reported"><label>Eligibility criteria not reported</label></td>
@@ -195,7 +217,10 @@ function cc_transtria_render_subpopulations_tab( $which_pop = 'tp'){
 
 			<tr>
 				<td><label><?php echo strtoupper( $which_pop ); ?> is general population?:</label></td>
-				<td><span id="<?php echo $which_pop; ?>_general_population"></span></td>
+				<td><span id="<?php echo $which_pop; ?>_general_population">
+					<input type="radio" value="Y" name="<?php echo $which_pop; ?>_general_population">Yes
+					<input type="radio" value="N" name="<?php echo $which_pop; ?>_general_population">No
+				</span></td>
 			</tr>
 			<tr class="not-reported">
 				<td class="not-reported"><label><?php echo strtoupper( $which_pop ); ?> is general population not reported</label></td>
@@ -206,59 +231,100 @@ function cc_transtria_render_subpopulations_tab( $which_pop = 'tp'){
 
 			<tr>
 				<td><label>Representativeness?</label></td>
-				<td colspan="4"><span id="<?php echo $which_pop; ?>_representativeness"></span></td>
+				<td colspan="4"><span id="ese_representativeness">
+					<input type="radio" value="Y" name="ese_representativeness">Yes (no statistical differences from target or intervention-exposed populations reported)
+					<input type="radio" value="N" name="ese_representativeness">No (statistical differences from target or intervention-exposed populations reported)
+				</span></td>
 			</tr>
 			<tr class="not-reported">
 				<td class="not-reported"><label>Representativenessis not reported</label></td>
-				<td><input id="<?php echo $which_pop; ?>_representativeness_notreported" type="checkbox"></td>
+				<td><input id="ese_representativeness_notreported" type="checkbox"></td>
 			</tr>
 
 
 			<tr>
 				<td><label>Oversampling?</label></td>
-				<td colspan="4"><span id="<?php echo $which_pop; ?>_oversampling"></span></td>
+				<td colspan="4"><span id="ese_oversampling">
+					<input type="radio" value="Y" name="ese_oversampling">Yes
+					<input type="radio" value="N" name="ese_oversampling">No
+				</span></td>
 			</tr>
 			<tr class="not-reported">
 				<td class="not-reported"><label>Oversampling not reported</label></td>
-				<td><input id="<?php echo $which_pop; ?>_oversampling_notreported" type="checkbox"></td>
+				<td><input id="ese_oversampling_notreported" type="checkbox"></td>
 			</tr>
 
 
 			<tr class="<?php echo $which_pop; ?>_hr_subpopulations">
 				<td><label>Identify the HR subpopulations</label></td>
-				<td><span id="<?php echo $which_pop; ?>_hr_subpopulations"></span></td>
+				<td><span id="ese_hr_subpopulations">
+					<select>
+						<option value="">---Select---</option>
+						<?php 
+							foreach( $dd_multiple_options_pops[ 'ese_hr_subpopulations' ] as $k => $v ){
+							echo '<option value="' . $k . '">' . $v->descr . '</option>';
+						
+						} ?>
+					</select>
+				</span></td>
 			</tr>
 
 		<?php } else if( $which_pop == 'ipe' ) { ?>
 
 			<tr>
 				<td><label>Representativeness?</label></td>
-				<td colspan="4"><span id="<?php echo $which_pop; ?>_representativeness"></span></td>
+				<td colspan="4"><span id="ipe_representativeness">
+					<input type="radio" value="Y" name="ipe_representativeness">Yes (no statistical differences from target population reported)
+					<input type="radio" value="N" name="ipe_representativeness">No (statistical differences from target population reported)
+				</span></td>
 			</tr>
 			<tr class="not-reported">
 				<td class="not-reported"><label>Representativeness not reported</label></td>
-				<td><input id="<?php echo $which_pop; ?>_representativeness_notreported" type="checkbox"></td>
+				<td><input id="ipe_representativeness_notreported" type="checkbox"></td>
 			</tr>
 			
 			<tr>
 				<td><label>Applicability to high-risk populations?</label></td>
-				<td colspan="4"><span id="<?php echo $which_pop; ?>_applicability_hr_pops"></span></td>
+				<td colspan="4"><span id="ipe_applicability_hr_pops">
+					<input type="radio" value="Y" name="ipe_applicability_hr_pops">Yes (intervention specific to high-risk population)
+					<input type="radio" value="N" name="ipe_applicability_hr_pops">No (intervention applies to general population)
+				</span></td>
 			</tr>
 			<tr class="not-reported">
 				<td class="not-reported"><label>Applicability to HR populations not reported</label></td>
-				<td><input id="<?php echo $which_pop; ?>_applicabilityhrpops_notreported" type="checkbox"></td>
+				<td><input id="ipe_applicabilityhrpops_notreported" type="checkbox"></td>
 			</tr>
 
-			<tr class="<?php echo $which_pop; ?>_hr_subpopulations">
+			<tr class="ipe_hr_subpopulations">
 				<td><label>Identify the HR subpopulations</label></td>
-				<td><span id="<?php echo $which_pop; ?>_hr_subpopulations"></span></td>
+				<td><span id="ipe_hr_subpopulations">
+					<select>
+						<option value="">---Select---</option>
+						<?php 
+							foreach( $dd_multiple_options_pops[ 'ipe_hr_subpopulations' ] as $k => $v ){
+							echo '<option value="' . $k . '">' . $v->descr . '</option>';
+						
+						} ?>
+					</select>
+				</span></td>
 			</tr>
 
 		<?php } ?>
 
 			<tr class="<?php echo $which_pop; ?>_not_general">
 				<td><label>Gender:</label></td>
-				<td><span id="<?php echo $which_pop; ?>_gender"></span></td>
+				<td><span id="<?php echo $which_pop; ?>_gender">
+					<select>
+						<option value="">---Select---</option>
+						<?php 
+							$field_name = $which_pop . '_gender';
+							foreach( $dd_multiple_options_pops[ $field_name ] as $k => $v ){
+							echo '<option value="' . $k . '">' . $v->descr . '</option>';
+						
+						} ?>
+					</select>
+				</span></td>
+				
 				<td><label>Pct Male:</label></td>
 				<td><input id="<?php echo $which_pop; ?>_gender_pctmale"></input>%</td>
 			</tr>
@@ -307,7 +373,16 @@ function cc_transtria_render_subpopulations_tab( $which_pop = 'tp'){
 
 			<tr class="<?php echo $which_pop; ?>_not_general">
 				<td><label>Frequency of Exposure:</label></td>
-				<td><input id="<?php echo $which_pop; ?>_exposure_frequency"></input></td>
+				<td><input id="<?php echo $which_pop; ?>_exposure_frequency">
+					<select>
+						<option value="">---Select---</option>
+						<?php 
+							foreach( $dd_multiple_options_pops[ 'ipe_exposure_frequency' ] as $k => $v ){
+							echo '<option value="' . $k . '">' . $v->descr . '</option>';
+						
+						} ?>
+					</select>
+				</input></td>
 			</tr>
 			<tr class="not-reported <?php echo $which_pop; ?>_not_general">
 				<td class="not-reported"><label>Frequency of Exposure not reported</label></td>
@@ -318,8 +393,20 @@ function cc_transtria_render_subpopulations_tab( $which_pop = 'tp'){
 
 			<tr class="<?php echo $which_pop; ?>_not_general">
 				<td><label>Ability status:</label></td>
-				<td><span id="<?php echo $which_pop; ?>_ability_status"></span></td>
+				<td><span id="<?php echo $which_pop; ?>_ability_status">
+					<select multiple="multiple" class="multiselect">
+						<option value="">---Select---</option>
+						<?php 
+							$field_name = $which_pop . '_ability_status';
+							foreach( $dd_multiple_options_pops[ $field_name ] as $k => $v ){
+							echo '<option value="' . $k . '">' . $v->descr . '</option>';
+						
+						} ?>
+					</select>
+				</span></td>
 			</tr>
+			
+			<?php ///TODO: this!  Conditionally shows depending on which abilities selected ?>
 			<tr class="<?php echo $which_pop; ?>-ability-percent <?php echo $which_pop; ?>_not_general" data-ability-value="1">
 				<td><label>Cognition disability percent</label></td>
 				<td><input id="<?php echo $which_pop; ?>_cognition_disability_pct"></input>%</td>
@@ -357,7 +444,17 @@ function cc_transtria_render_subpopulations_tab( $which_pop = 'tp'){
 
 			<tr class="<?php echo $which_pop; ?>_not_general">
 				<td><label>Subpopulations:</label></td>
-				<td><span id="<?php echo $which_pop; ?>_sub_populations"></span></td>
+				<td><span id="<?php echo $which_pop; ?>_sub_populations">
+					<select>
+						<option value="">---Select---</option>
+						<?php 
+							$field_name = $which_pop . '_sub_populations';
+							foreach( $dd_multiple_options_pops[ $field_name ] as $k => $v ){
+							echo '<option value="' . $k . '">' . $v->descr . '</option>';
+						
+						} ?>
+					</select>
+				</span></td>
 			</tr>
 			<tr class="not-reported <?php echo $which_pop; ?>_not_general">
 				<td class="not-reported"><label>Subpopulations not reported</label></td>
@@ -366,7 +463,16 @@ function cc_transtria_render_subpopulations_tab( $which_pop = 'tp'){
 
 			<tr class="<?php echo $which_pop; ?>_not_general">
 				<td><label>Youth populations:</label></td>
-				<td><span id="<?php echo $which_pop; ?>_youth_populations"></span></td>
+				<td><span id="<?php echo $which_pop; ?>_youth_populations">
+					<select multiple="multiple" class="multiselect">
+						<option value="">---Select---</option>
+						<?php 
+							$field_name = $which_pop . '_youth_populations';
+							foreach( $dd_multiple_options_pops[ $field_name ] as $k => $v ){
+							echo '<option value="' . $k . '">' . $v->descr . '</option>';
+						} ?>
+					</select>
+				</span></td>
 			</tr>
 			<tr class="not-reported <?php echo $which_pop; ?>_not_general">
 				<td class="not-reported"><label>Youth populations not reported</label></td>
@@ -375,7 +481,16 @@ function cc_transtria_render_subpopulations_tab( $which_pop = 'tp'){
 
 			<tr class="<?php echo $which_pop; ?>_not_general">
 				<td><label>Professional populations:</label></td>
-				<td><span id="<?php echo $which_pop; ?>_professional_populations"></span></td>
+				<td><span id="<?php echo $which_pop; ?>_professional_populations">
+					<select multiple="multiple" class="multiselect">
+						<option value="">---Select---</option>
+						<?php 
+							$field_name = $which_pop . '_professional_populations';
+							foreach( $dd_multiple_options_pops[ $field_name ] as $k => $v ){
+							echo '<option value="' . $k . '">' . $v->descr . '</option>';
+						} ?>
+					</select>
+				</span></td>
 			</tr>
 			<tr class="not-reported <?php echo $which_pop; ?>_not_general">
 				<td class="not-reported"><label>Professional populations not reported</label></td>

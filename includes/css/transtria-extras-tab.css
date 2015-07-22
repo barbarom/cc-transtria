@@ -73,3 +73,12 @@ select {
   z-index: 1;
 }
 /* END TABS CSS */
+
+
+
+/** BEGIN UI STYLINGS **/
+
+
+.ui-multiselect-menu {
+    min-width: 420px;
+}
