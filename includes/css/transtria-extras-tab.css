@@ -26,10 +26,14 @@ select {
   clear: both;
   margin: 25px 0;
 }
-.tab {
+.tab, .subpops_tab {
   float: left;
 }
-.tab label.primary_tab_label {
+#sub_pops_tabs  {
+	width:100%;
+}
+.tab label.primary_tab_label,
+#sub_pops_tabs label.subpops_tab_label {
   background: #eee; 
   padding: 10px; 
   border: 1px solid #ccc; 
@@ -49,6 +53,16 @@ select {
   bottom: 0;
   padding: 20px;
   border: 1px solid #ccc; 
+}
+.subpops_content{
+	margin-top:2em;
+}
+.ipe_content .subpops_content,
+.ipu_content .subpops_content,
+.ese_content .subpops_content,
+.esu_content .subpops_content,
+.ese-add_content .subpops_content{
+	display:none;
 }
 [type=radio]:checked ~ label {
   background: white;
