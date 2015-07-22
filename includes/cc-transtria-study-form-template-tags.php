@@ -87,7 +87,7 @@ function cc_transtria_render_form(){
 										Abstractor:
 									</td>
 									<td>
-										<select>
+										<select id="abstractor" name="abstractor">
 											<option value="">---Select---</option>
 											
 											<?php //$dd_singleton_options are indexed by the div id - "abstractor", for example
@@ -123,7 +123,7 @@ function cc_transtria_render_form(){
 										Validator:
 									</td>
 									<td>
-										<select>
+										<select id="validator" name="validator">
 											<option value="">---Select---</option>
 											<?php //$dd_singleton_options are indexed by the div id - "abstractor", for example
 												foreach( $dd_singleton_options['validator'] as $k => $v ){
@@ -221,7 +221,7 @@ function cc_transtria_render_form(){
 							Search tool type:
 						</td>
 						<td style="width:33%;">
-							<select>
+							<select id="searchtooltype" name="searchtooltype"> 
 								<option value="">---Select---</option>
 								<?php //$dd_singleton_options are indexed by the div id - "abstractor", for example
 									foreach( $dd_singleton_options['searchtooltype'] as $k => $v ){
@@ -250,7 +250,7 @@ function cc_transtria_render_form(){
 							Search tool name:
 						</td>
 						<td style="width:33%;">
-							<select>
+							<select id="searchtoolname" name="searchtoolname">
 								<option value="">---Select---</option>
 								<?php //$dd_singleton_options are indexed by the div id - "abstractor", for example
 									foreach( $dd_singleton_options['searchtoolname'] as $k => $v ){
@@ -319,7 +319,7 @@ function cc_transtria_render_form(){
 							Source of funding:
 						</td>
 						<td style="width:33%;">
-							<select>
+							<select id="fundingsource" name="fundingsource">
 								<option value="">---Select---</option>
 								<?php //$dd_singleton_options are indexed by the div id - "abstractor", for example
 									foreach( $dd_singleton_options['fundingsource'] as $k => $v ){
@@ -360,7 +360,7 @@ function cc_transtria_render_form(){
 							Domestic funding source type:
 						</td>
 						<td style="width:33%;">
-							<select>
+							<select id="domesticfundingsources" name="domesticfundingsources">
 								<option value="">---Select---</option>
 								<?php //$dd_singleton_options are indexed by the div id - "abstractor", for example
 									foreach( $dd_singleton_options['domesticfundingsources'] as $k => $v ){
@@ -389,7 +389,7 @@ function cc_transtria_render_form(){
 							Funding purpose:
 						</td>
 						<td style="width:33%;">
-							<select>
+							<select id="fundingpurpose" name="fundingpurpose">
 								<option value="">---Select---</option>
 								<?php //$dd_singleton_options are indexed by the div id - "abstractor", for example
 									foreach( $dd_singleton_options['fundingpurpose'] as $k => $v ){
@@ -425,7 +425,7 @@ function cc_transtria_render_form(){
 							Study Design:
 						</td>
 						<td>
-							<select>
+							<select id="StudyDesign" name="StudyDesign">
 								<option value="">---Select---</option>
 								<?php //$dd_singleton_options are indexed by the div id - "abstractor", for example
 									foreach( $dd_singleton_options['StudyDesign'] as $k => $v ){
@@ -479,7 +479,7 @@ function cc_transtria_render_form(){
 							Select type(s) of threats to internal validity:
 						</td>
 						<td style="width:33%;">
-							<select>
+							<select id="validity_threats" name="validity_threats">
 								<option value="">---Select---</option>
 								<?php //$dd_singleton_options are indexed by the div id - "abstractor", for example
 									foreach( $dd_singleton_options['validity_threats'] as $k => $v ){
