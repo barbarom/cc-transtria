@@ -13,6 +13,10 @@ input[readonly]
     background-color:#e6e6e6;
 }
 
+select {
+	max-width:200px;
+}
+
 
 
 /* START TABS CSS */
