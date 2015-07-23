@@ -142,7 +142,7 @@ function get_current_study_info(){
 			} else {
 			
 			}
-			var post_meat = data; // = JSON.parse(data);
+			//var post_meat = data; // = JSON.parse(data);
 				
 			//now.. populate fields!
 			jQuery.each( data, function(index, element) {
@@ -152,23 +152,43 @@ function get_current_study_info(){
 				selector_obj = jQuery("#" + index );
 				if( selector_obj.length > 0 ){
 					
+					console.log( jQuery( selector_obj ) ) ;
 					var current_val;
 					//what is our selector type?
 					if( selector_obj.is('select') ){
 						//see if there's a matching option
 						var children = selector_obj.children('option');
+						//iterate through option values
 						jQuery.each( children, function(){
+							//what is current option value
 							current_val = jQuery(this).val();
-							current_val = current_val.trim();
-							if ( current_val == element ){
-								jQuery(this).attr('selected','selected');
-								return;
+							current_val = current_val.trim(); //if whitespace because sometimes there is..*sigh*
+							
+							var int_trial = parseInt( current_val, 10 );
+							//is it string or int? Sometimes there are both ... would that matter? 
+							//	Mel doesn't think so since this is to test equality
+							if ( isNaN( int_trial ) ){
+								//we have strings
+								if ( current_val == element ){
+									jQuery(this).attr('selected','selected');
+									return;
+								}
+							} else {
+								
+								if ( int_trial == parseInt( element, 10 ) ){
+									jQuery(this).attr('selected','selected');
+									return;
+								}
 							}
 						
 						
 						});
-						console.log( index ); 
-						console.log( element ); 
+						//console.log( index ); 
+						//console.log( element ); 
+					} else if ( selector_obj.is('other') ){
+					
+					
+					
 					}
 				}
 				
