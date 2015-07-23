@@ -538,11 +538,29 @@ function cc_transtria_match_div_ids_to_studies_columns( $study_labels = null ){
 		'validation_complete' => 'validation_complete',
 		//results_verification //no longer a thing?
 		'otherevaluationmethods' => 'otherevaluationmethods',
-		'evaluationmethods_notreported' => 'evaluationmethods_notreported',
+		'evaluationmethods_notreported' => 'evaluationmethods_notreported'
 	
 	);
 	
-	
+	if( empty( $study_labels ) ){
+		$new_study_labels = [];
+		//we have an incoming array whose labels need to be changed
+		foreach( $study_labels as $label => $value ){
+			
+			if( in_array( $label, $db_to_div_array ) ) {
+				$new_label = $db_to_div_array[ $label ];
+				$new_study_labels[ $new_label ] = $value;
+			} else {
+				$new_study_labels[ $label ] = $value; //same ol
+			}
+		
+		}
+		
+		
+	} else {
+		//we're just returning the above array
+		return $db_to_div_array;
+	}
 	
 	
 
