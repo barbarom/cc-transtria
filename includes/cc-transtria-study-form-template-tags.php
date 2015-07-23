@@ -25,10 +25,13 @@
 function cc_transtria_render_form(){
 
 	//are we loading an existing study?
-	$study_id = $_GET["study_id"];
+	$this_study_id = $_GET["study_id"];
 	
-	$study_data = cc_transtria_get_pops_study_data_single( $study_id );
-	//var_dump( $study_data );
+	$study_data['single'] = cc_transtria_get_single_study_data( $this_study_id );
+	//var_dump( $study_data['single'] );
+	
+	//get all study ids in system
+	$all_study_ids = cc_transtria_get_study_ids();
 
 	//get data related to the form
 	$dd_singleton_options = cc_transtria_get_singleton_dropdown_options(); //all options for singleton dropdowns
@@ -46,11 +49,11 @@ function cc_transtria_render_form(){
 		<div class="bottom_margin">			
 			<label for="studyid"><strong>Study ID</strong></label>
 			<select id="studyid">
-			  <option>1</option>
-			  <option>2</option>
-			  <option>3</option>
-			  <option>4</option>
-			  <option>5</option>
+				<?php //cycle through existing study ids
+					foreach( $all_study_ids as $one_study_id ){
+					echo '<option value="' . $one_study_id . '">' . $one_study_id . '</option>';
+				
+				} ?>
 			</select>
 			<span>
 				<button type="button">Submit</button>

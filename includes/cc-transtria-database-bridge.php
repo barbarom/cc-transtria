@@ -144,6 +144,7 @@ function cc_transtria_get_study_ids( ){
 		"
 		SELECT StudyID 
 		FROM $wpdb->transtria_studies
+		order by StudyID
 		";
 		
 	$form_rows = $wpdb->get_results( $question_sql, ARRAY_N );
