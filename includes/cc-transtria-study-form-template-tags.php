@@ -180,67 +180,53 @@ function cc_transtria_render_form(){
 						</td>
 					</tr>	
 					<tr>
-						<td style="width:33%;">
+						<td >
 							EndNote ID:
 						</td>
-						<td style="width:33%;">
-							<select>
+						<td >
+							<select id="EndNoteID">
 								<option value="">---Select---</option>
 							</select>
 						</td>
-						<td style="width:33%;">
+						<td >
 							<input id="ed" type="text" readonly />					
 						</td>					
 					</tr>
 					<tr>
-						<td style="width:33%;">
+						<td>
 							Original PubMed ID (Accession Num):
 						</td>
-						<td style="width:33%;">
-							<input type="text" readonly />
+						<td>
+							<input id="endnotes_pubmed" type="text" readonly />
 						</td>
-						<td style="width:33%;">
+						<td>
 												
 						</td>					
 					</tr>
 					<tr>
-						<td style="width:33%;">
-							PubMed ID:
+						<td>PubMed ID:</td>
+						<td>
+							<input id="PubMedID" type="text" />
 						</td>
-						<td style="width:33%;">
-							<input type="text" />
-						</td>
-						<td style="width:33%;">
-										
-						</td>					
+						<td></td>					
 					</tr>				
 					<tr>
-						<td style="width:33%;">
-							<span style="margin-left:20px;font-style:italic;">PubMedID not reported:</span>
+						<td><span>PubMedID not reported:</span></td>
+						<td>
+							<input id="PubMedID_notreported" type="checkbox" />
 						</td>
-						<td style="width:33%;">
-							<input type="checkbox" />
-						</td>
-						<td style="width:33%;">
-											
-						</td>					
+						<td></td>					
 					</tr>
 					<tr>
-						<td style="width:33%;">
-							Original Search tool type:
-						</td>
-						<td style="width:33%;">
+						<td>Original Search tool type:</td>
+						<td >
 							<input type="text" readonly />
 						</td>
-						<td style="width:33%;">
-											
-						</td>					
+						<td ></td>					
 					</tr>
 					<tr>
-						<td style="width:33%;">
-							Search tool type:
-						</td>
-						<td style="width:33%;">
+						<td>Search tool type:</td>
+						<td>
 							<select id="searchtooltype" name="searchtooltype"> 
 								<option value="">---Select---</option>
 								<?php //$dd_singleton_options are indexed by the div id - "abstractor", for example
@@ -250,26 +236,18 @@ function cc_transtria_render_form(){
 								} ?>								
 							</select>
 						</td>
-						<td style="width:33%;">
-											
-						</td>					
+						<td></td>					
 					</tr>
 					<tr>
-						<td style="width:33%;">
-							Original Search tool name:
+						<td>Original Search tool name:</td>
+						<td>
+							<input class="endnotes_remotedatabasename" type="text" readonly />
 						</td>
-						<td style="width:33%;">
-							<input type="text" readonly />
-						</td>
-						<td style="width:33%;">
-											
-						</td>					
+						<td></td>					
 					</tr>
 					<tr>
-						<td style="width:33%;">
-							Search tool name:
-						</td>
-						<td style="width:33%;">
+						<td>Search tool name:</td>
+						<td>
 							<select id="searchtoolname" name="searchtoolname">
 								<option value="">---Select---</option>
 								<?php //$dd_singleton_options are indexed by the div id - "abstractor", for example
@@ -279,8 +257,8 @@ function cc_transtria_render_form(){
 								} ?>								
 							</select>
 						</td>
-						<td style="width:33%;">
-							Other search tool: <input id="ed" type="text" />					
+						<td >
+							Other search tool: <input id="othersearchtool" type="text" />					
 						</td>					
 					</tr>				
 				</table>
@@ -291,54 +269,37 @@ function cc_transtria_render_form(){
 						</td>
 					</tr>
 					<tr>
-						<td style="width:33%;">
-							Grant or Contract #:
+						<td>Grant or Contract #:
 						</td>
-						<td style="width:33%;">
-							<input type="text" />
+						<td>
+							<input id="grantcontractnumber" type="text" />
 						</td>
-						<td style="width:33%;">
-										
-						</td>					
+						<td></td>					
 					</tr>				
 					<tr>
-						<td style="width:33%;">
-							<span style="margin-left:20px;font-style:italic;">Grant or Contract # not reported:</span>
-						</td>
-						<td style="width:33%;">
+						<td><span>Grant or Contract # not reported:</span></td>
+						<td>
 							<input type="checkbox" />
 						</td>
-						<td style="width:33%;">
-											
-						</td>					
+						<td></td>					
 					</tr>
 					<tr>
-						<td style="width:33%;">
-							Amount of funding:
+						<td>Amount of funding:</td>
+						<td>
+							<input id="fundingamount" type="text" />
 						</td>
-						<td style="width:33%;">
-							<input type="text" />
-						</td>
-						<td style="width:33%;">
-										
-						</td>					
+						<td></td>					
 					</tr>				
 					<tr>
-						<td style="width:33%;">
-							<span style="margin-left:20px;font-style:italic;">Amount of funding not reported:</span>
+						<td><span>Amount of funding not reported:</span></td>
+						<td>
+							<input id="fundingamount_notreported" type="checkbox" />
 						</td>
-						<td style="width:33%;">
-							<input type="checkbox" />
-						</td>
-						<td style="width:33%;">
-											
-						</td>					
+						<td></td>					
 					</tr>
 					<tr>
-						<td style="width:33%;">
-							Source of funding:
-						</td>
-						<td style="width:33%;">
+						<td>Source of funding:</td>
+						<td>
 							<select id="fundingsource" name="fundingsource">
 								<option value="">---Select---</option>
 								<?php //$dd_singleton_options are indexed by the div id - "abstractor", for example
@@ -347,39 +308,28 @@ function cc_transtria_render_form(){
 								
 								} ?>								
 							</select>					
-							
 						</td>
-						<td style="width:33%;">
-							Other funding source: <input type="text" />			
+						<td>
+							Other funding source: <input id="otherfunding" type="text" />			
 						</td>					
 					</tr>				
 					<tr>
-						<td style="width:33%;">
-							<span style="margin-left:20px;font-style:italic;">Source of funding not reported:</span>
+						<td><span>Source of funding not reported:</span></td>
+						<td>
+							<input id="fundingsource_notreported" type="checkbox" />
 						</td>
-						<td style="width:33%;">
-							<input type="checkbox" />
-						</td>
-						<td style="width:33%;">
-											
-						</td>					
+						<td></td>					
 					</tr>
 					<tr>
-						<td style="width:33%;">
-							Domestic/International Funding Source:
+						<td>Domestic/International Funding Source:</td>
+						<td>
+							Domestic: <input id="DomesticFundingSourceType" type="checkbox" /> International: <input id="InternationalFundingSourceType" type="checkbox" />
 						</td>
-						<td style="width:33%;">
-							Domestic: <input type="checkbox" /> International: <input type="checkbox" />
-						</td>
-						<td style="width:33%;">
-										
-						</td>					
+						<td></td>					
 					</tr>				
 					<tr>
-						<td style="width:33%;">
-							Domestic funding source type:
-						</td>
-						<td style="width:33%;">
+						<td>Domestic funding source type:</td>
+						<td >
 							<select id="domesticfundingsources" name="domesticfundingsources">
 								<option value="">---Select---</option>
 								<?php //$dd_singleton_options are indexed by the div id - "abstractor", for example
@@ -389,26 +339,18 @@ function cc_transtria_render_form(){
 								} ?>								
 							</select>	
 						</td>
-						<td style="width:33%;">
-										
-						</td>					
+						<td></td>					
 					</tr>				
 					<tr>
-						<td style="width:33%;">
-							<span style="margin-left:20px;font-style:italic;">Domestic funding source type not reported:</span>
+						<td><span>Domestic funding source type not reported:</span></td>
+						<td>
+							<input id="domesticfundingsources_notreported" type="checkbox" />
 						</td>
-						<td style="width:33%;">
-							<input type="checkbox" />
-						</td>
-						<td style="width:33%;">
-											
-						</td>					
+						<td></td>					
 					</tr>
 					<tr>
-						<td style="width:33%;">
-							Funding purpose:
-						</td>
-						<td style="width:33%;">
+						<td>Funding purpose:</td>
+						<td>
 							<select id="fundingpurpose" name="fundingpurpose">
 								<option value="">---Select---</option>
 								<?php //$dd_singleton_options are indexed by the div id - "abstractor", for example
@@ -418,20 +360,14 @@ function cc_transtria_render_form(){
 								} ?>								
 							</select>							
 						</td>
-						<td style="width:33%;">
-										
-						</td>					
+						<td></td>					
 					</tr>				
 					<tr>
-						<td style="width:33%;">
-							<span style="margin-left:20px;font-style:italic;">Funding purpose not reported:</span>
+						<td><span>Funding purpose not reported:</span></td>
+						<td>
+							<input id="fundingpurpose_notreported" type="checkbox" />
 						</td>
-						<td style="width:33%;">
-							<input type="checkbox" />
-						</td>
-						<td style="width:33%;">
-											
-						</td>					
+						<td></td>					
 					</tr>				
 				</table>
 				<table>			
@@ -441,9 +377,7 @@ function cc_transtria_render_form(){
 						</td>
 					</tr>
 					<tr>
-						<td>
-							Study Design:
-						</td>
+						<td>Study Design:</td>
 						<td>
 							<select id="StudyDesign" name="StudyDesign">
 								<option value="">---Select---</option>
@@ -454,51 +388,44 @@ function cc_transtria_render_form(){
 								} ?>								
 							</select>
 						</td>
-						<td>
-							Other study design: <input type="text" readonly />
-						</td>
+						<td>Other study design: <input id="otherstudydesign" type="text" /></td>
 					</tr>				
 					<tr>
-						<td style="width:33%;">
-							Design Limitations:
-						</td>
+						<td>Design Limitations:</td>
 						<td colspan="2">
 							<textarea style="width:97%"></textarea>
 						</td>					
 					</tr>				
 					<tr>
-						<td style="width:33%;">
-							<span style="margin-left:20px;font-style:italic;">Design limitations not reported:</span>
+						<td>
+							<span>Design limitations not reported:</span>
 						</td>
-						<td style="width:33%;">
-							<input type="checkbox" />
+						<td>
+							<input id="designlimitations_notreported" type="checkbox" />
 						</td>
-						<td style="width:33%;">
-											
-						</td>					
+						<td></td>					
 					</tr>	
 					<tr>
-						<td style="width:33%;">
-							Data Collection:
-						</td>
+						<td>Data Collection:</td>
 						<td colspan="2">
-							<textarea style="width:97%"></textarea>	
+							<textarea id="data_collection" style="width:97%"></textarea>	
 						</td>
 					
 					</tr>	
 					<tr>
-						<td style="width:33%;">
-							Threat to internal validity?:
-						</td>
+						<td>Threat to internal validity?:</td>
 						<td colspan="2">
-							Yes <input class="radio" type="radio" name="threat" value="Yes" >  No <input class="radio" type="radio" name="threat" value="No" >
+							<span id="validitythreatflag">
+								<input type="radio" value="Y" name="validitythreatflag">Yes
+								<input type="radio" value="N" name="validitythreatflag">No
+							</span>
 						</td>					
 					</tr>
 					<tr>
-						<td style="width:33%;">
+						<td>
 							Select type(s) of threats to internal validity:
 						</td>
-						<td style="width:33%;">
+						<td>
 							<select id="validity_threats" name="validity_threats">
 								<option value="">---Select---</option>
 								<?php //$dd_singleton_options are indexed by the div id - "abstractor", for example
@@ -508,20 +435,14 @@ function cc_transtria_render_form(){
 								} ?>								
 							</select>
 						</td>
-						<td style="width:33%;">
-									
-						</td>					
+						<td></td>					
 					</tr>				
 					<tr>
-						<td style="width:33%;">
-							<span style="margin-left:20px;font-style:italic;">Threat to internal validity not reported:</span>
+						<td><span>Threat to internal validity not reported:</span></td>
+						<td>
+							<input id="validitythreat_notreported" type="checkbox" />
 						</td>
-						<td style="width:33%;">
-							<input type="checkbox" />
-						</td>
-						<td style="width:33%;">
-											
-						</td>					
+						<td></td>					
 					</tr>				
 				</table>
 		   </div> 

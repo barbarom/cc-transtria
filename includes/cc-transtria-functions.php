@@ -377,6 +377,25 @@ function cc_transtria_relate_div_ids_and_pop_columns( $which_pop ){
 
 }
 
+/**
+ * function to relate div ids and study id columns
+ *
+ * @param array
+ * @return array
+ */
+function cc_transtria_match_div_ids_to_studies_columns( $study_labels = null ){
+
+	//we can use array_flip if we need to!
+	
+	
+	
+	
+	
+	
+	
+	
+
+}
 
 /**
  * Which sub populations tabs are there?

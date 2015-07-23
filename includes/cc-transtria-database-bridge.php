@@ -69,7 +69,12 @@ function cc_transtria_get_single_study_data( $study_id = 0 ){
 		";
 		
 	$form_rows = $wpdb->get_results( $question_sql, ARRAY_A ); //TODO: is ARRAY the best type to use here?
+	
+	//go through each field and make sure it lines up with div ids
+	$reindexed_form_rows = cc_transtria_match_div_ids_to_studies_columns( $form_rows );
+	
 	return current($form_rows);
+//	return current($reindexed_form_rows);
 
 }
 

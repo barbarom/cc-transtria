@@ -185,11 +185,15 @@ function get_current_study_info(){
 						});
 						//console.log( index ); 
 						//console.log( element ); 
-					} else if ( selector_obj.is('other') ){
+					} else if ( selector_obj.is('input:text') || selector_obj.is('textarea') ){
+						//easy-peasy
+						selector_obj.val( element );
 					
-					
-					
-					}
+					} else if ( selector_obj.is('input:checkbox') ){
+						if( element == "Y" ){
+							selector_obj.attr("checked", "checked");
+						}
+					} 
 				}
 				
 				
