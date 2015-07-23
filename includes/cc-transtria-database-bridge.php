@@ -8,28 +8,47 @@
  * @copyright 2014 CommmunityCommons.org
  */
 
+/**
+ * Returns all study data given a single study id
+ *
+ * @param int. Study ID.
+ * @return array
+ */
+function cc_transtria_get_all_data_one_study( $study_id = 0 ){
+
+	$meta_data = cc_transtria_get_study_metadata( $study_id = 0 );
+	$single_data = cc_transtria_get_single_study_data( $study_id );
+
+	$pops_data_single = cc_transtria_get_pops_study_data_single( $study_id );
+	$pops_data_multiple = cc_transtria_get_pops_study_data_multiple( $study_id );
+
+}
 
 /**
- * Returns array of info from studies table based on study id
+ * Returns metadata given a study id (num ese tabs, num ea tabs)
  *
- * @since    1.0.0
- * @return 	array
+ * @param int. Study ID.
+ * @return array
  */
-function cc_transtria_get_study_from_studies( $study_id = 0 ){
+function cc_transtria_get_study_metadata( $study_id = 0 ){
+
 	global $wpdb;
 	
 	//TODO, use wp->prepare
 	$question_sql = 
 		"
-		SELECT * 
-		FROM $wpdb->transtria_studies
+		SELECT variablename, value
+		FROM $wpdb->transtria_metadata
 		WHERE `StudyID` = $study_id
+		AND 
+			( `variablename` = 'ea tabCount' OR `variablename` = 'ese tabCount')
 		";
 		
 	$form_rows = $wpdb->get_results( $question_sql, OBJECT );
 	return $form_rows;
 
 }
+
 
 /**
  * Returns array of string->values for single data in studies table
@@ -53,6 +72,62 @@ function cc_transtria_get_single_study_data( $study_id = 0 ){
 	return current($form_rows);
 
 }
+
+
+/**
+ * Returns array of string->values for population data in populations table
+ *
+ * @since    1.0.0
+ * @return 	array
+ */
+function cc_transtria_get_pops_study_data_single( $study_id = 0 ){
+
+	global $wpdb;
+	
+	//there are multiple rows in the pops table per study
+	$populations_sql = $wpdb->prepare( 
+		"
+		SELECT      *
+		FROM        $wpdb->transtria_population
+		WHERE		StudyID = %s 
+		",
+		$study_id
+	); 
+	
+	$form_rows = $wpdb->get_results( $populations_sql, OBJECT );
+	return $form_rows;
+
+
+}
+
+
+/**
+ * Returns array of string->values for population data in code_results table (drop downs)
+ *
+ * @since    1.0.0
+ * @return 	array
+ */
+function cc_transtria_get_pops_study_data_multiple( $study_id = 0 ){
+
+	//get text ids for pops stuff
+	$pops_ids = cc_transtria_get_multiple_dropdown_ids_populations();
+	
+	//get lookup codes
+	$lookup_codes = [];
+	foreach( $pops_id as $k => $v ){
+		
+		//$this_code = cc_transtria_get_code_by_name
+	
+	
+	}
+
+
+
+
+
+}
+
+
 
 
 /**
@@ -205,149 +280,6 @@ function cc_transtria_get_multiple_dropdown_options_ea(){
 	
 	//Now, perform lookup.
 
-
-}
-
-
-
-/******** LOOKUP TABLES ARE FUN *********/
-
-/**
- * Returns array of div ids -> code_tbl lookup names for singleton dropdown fields in form.
- *
- * @return array. String div id in form => String lookup name in db (code_tbl)
- *
- */
-function cc_transtria_get_singleton_dropdown_ids(){
-
-	$dd_ids = array(
-		'abstractor' => 'abstractor',
-		'validator' => 'abstractor',
-		'searchtooltype' => 'SearchToolType',
-		'searchtoolname' => 'SearchToolName',
-		"fundingsource" => "FundingSource",
-		"domesticfundingsources" => "domesticfundingsources",
-		"fundingpurpose" => "fundingpurpose",
-		'StudyDesign' => 'StudyDesignID',
-		"validity_threats"=> "ValidityThreats",
-		"unit_of_analysis" => "UnitOfAnalysis",
-		"ipe_exposure_frequency" => "ipe.ExposureFrequency",  //only on IPE tab.  TODO: confirm!
-		"state_setting" => 'US States',
-		"setting_type" => "SettingType",
-		"partner_discipline" => "Partner discipline",
-		"theory_framework_type" => "TheoryFramework",
-		"intervention_component" => "Intervention Components",
-		"strategies" => "Strategies",
-		"pse_components" => "PSEcomponents",
-		"complexity" => "Complexity",
-		"intervention_location" => "InterventionLocation",
-		"intervention_indicators" => "Indicator",
-		"intervention_outcomes_assessed" => "OutcomesAccessed",
-		"evaluation_type" => "EvaluationType",
-		"evaluation_methods" => "EvaluationMethod"
-		
-	);
-	
-	return $dd_ids;
-
-}
-
-/**
- * Returns array of div ids -> code_tbl lookup names for multiple dropdown fields in form for Populations tabs.
- *
- * @return array. String div id in form => String lookup name in db (code_tbl)
- *
- */
-function cc_transtria_get_multiple_dropdown_ids_populations( $which_pop = 'all'){
-
-	//get basic field and lookup names
-	$dd_base_ids = array(
-		"_geographic_scale" => "GeographicScale", //"%s_geographic_scale" % _prefix, "%s.GeographicScale"  %s is the pop prepend (ese0, tp, ipe...)
-		"_gender" => "Gender",
-		'_ability_status' => "AbilityStatus",
-		"_sub_populations" => "SubPopulations",
-		"_youth_populations" => "YouthPopulations",
-		"_professional_populations" => 'ProfessionalPopulations'
-	);
-	
-	//Special cases for certain pops.
-	$dd_actual_ids = array(
-		//ESE and IPE only, but there are multiple ESE tabs, awesoooome
-		"ese_representative_subpopulations" => "RepresentativeSubpopulations",
-		"ipe_representative_subpopulations" => "RepresentativeSubpopulations",
-		//ESE and IPE only (all ESE tabs)
-		"ese_hr_subpopulations" => "ese.HighRiskSubpopulations",
-		"ipe_hr_subpopulations" => "ipe.HighRiskSubpopulations",
-		//special!
-		"ipe_exposure_frequency" => "ipe.ExposureFrequency"
-	);
-	
-	//which pops are we interested in? Usually all, but ese is going to be special
-	if( $which_pop == 'all' ){
-		$pops_types = cc_transtria_get_basic_pops_types();
-	
-		foreach( $dd_base_ids as $div_id => $lookup_name ){
-			
-			//Now, cycle through population types and build array for all pops
-			foreach( $pops_types as $pop_type ){
-				//build actual id
-				$actual_div_id = $pop_type . $div_id;
-				//build actual lookup name
-				if( $lookup_name != "Gender" ) { //because legacy db $hit
-					$actual_lookup_name = $pop_type . '.' . $lookup_name;
-				} else {
-					$actual_lookup_name = "Gender";
-				}
-				
-				//add to master array of lookup things
-				$dd_actual_ids[ $actual_div_id ] = $actual_lookup_name;			
-				
-			}
-		}
-	} else if ( $which_pop == 'ese' ) { //prepping for ese tab madness!
-		//cheating!
-		$dd_actual_ids = array(
-			"ese_representative_subpopulations" => "RepresentativeSubpopulations",
-			"ese_subpopulations" => "ese.HighRiskSubpopulations",
-			"ese_geographic_scale" => "ese.GeographicScale", //"%s_geographic_scale" % _prefix, "%s.GeographicScale"  %s is the pop prepend (ese0, tp, ipe...)
-			"ese_gender" => "Gender",
-			"ese_sub_populations" => "ese.SubPopulations",
-			"ese_youth_populations" => "ese.YouthPopulations",
-			"ese_professional_populations" => "ese.ProfessionalPopulations"
-		);
-	
-	}
-	
-	return $dd_actual_ids;	
-	
-}
-
-/**
- * Returns array of div ids -> code_tbl lookup names for multiple dropdown fields in form for EA tabs.
- *
- * @return array. String div id in form => String lookup name in db (code_tbl)
- *
- */
-function cc_transtria_get_multiple_dropdown_ids_ea(){
-
-	$dd_ids = array(
-		"_duration" => "_duration", //"%s_duration" % _prefix, "%s_duration"
-		"_result_evaluation_population" => " Results Populations", //"%s_result_evaluation_population" % _prefix, "%s Results Populations"
-		"_result_subpopulations" => " Results SubPopulations", //"%s_result_subpopulations" % _prefix, "%s Results SubPopulations"
-		"_result_indicator_direction"=> "indicator_direction", //"%s_result_indicator_direction" % _prefix, "indicator_direction"
-		"_result_outcome_direction" => "outcome_direction", //"%s_result_outcome_direction" % _prefix, "outcome_direction"
-		"_result_strategy" => "result_strategy", //"%s_result_strategy" % _prefix, "result_strategy"
-		"_result_outcome_type" => '%s_result_outcome_type_other', //"%s_result_outcome_type" % _prefix, '%s_result_outcome_type_other'
-		//yes, this is a typo.  No we're not changing it now, it's in the db.
-		"_result_outcome_accessed" => " OutcomesAccessed", //"%s_result_outcome_accessed" % _prefix, "%s OutcomesAccessed" 
-		"_result_measures" => " Measures", //"%s_result_measures" % _prefix, "%s Measures"
-		"_result_indicator" => " Indicator", //"%s_result_indicator" % _prefix, "%s Indicator"
-		"_result_statistical_model" => "statistical_model", //"%s_result_statistical_model" % _prefix, "statistical_model"
-		"_result_statistical_measure" => "statistical_measure" //"%s_result_statistical_measure" % _prefix, "statistical_measure"
-		
-
-
-	);
 
 }
 

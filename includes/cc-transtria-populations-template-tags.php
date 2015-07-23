@@ -22,6 +22,8 @@ function cc_transtria_render_populations_tab( $field_data ){
 	//$dd_singleton_options = $field_data['dd_singleton_options'];
 	//var_dump ($dd_singleton_options);
 	cc_transtria_render_populations_header( $field_data );
+	
+	
 }
 
 
@@ -156,7 +158,7 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 			
 			
 ?>
-	<div class="subpops_content <?php echo $which_pop; ?>_content">
+	<div class="subpops_content <?php echo $which_pop; ?>_content <?php if( $which_pop != "tp" ){ echo 'noshow'; } ?>">
 		<table>
 			<tr>
 				<td colspan="4" class="subtitle"><strong><?php echo $subtitle; ?></strong></td>
@@ -494,12 +496,12 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 			</tr>
 
 			<tr class="<?php echo $which_pop; ?>_not_general">
-				<td class="not-reported"><label>Other populations</label></td>
-				<td><input id="<?php echo $which_pop; ?>_other_populations_revamp" type="checkbox"></td>
+				<td class=""><label>Other populations</label></td>
+				<td><input id="<?php echo $which_pop; ?>_other_populations" type="checkbox"></td>
 			</tr>
 
 			<tr class="<?php echo $which_pop; ?>_not_general">
-				<td class="not-reported"><label>Other population description</label></td>
+				<td class=""><label>Other population description</label></td>
 				<td colspan="2"><textarea id="<?php echo $which_pop; ?>_other_population_description" style="width:98%"></textarea></td>
 			</tr>
 
