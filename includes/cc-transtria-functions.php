@@ -318,7 +318,7 @@ function cc_transtria_relate_div_ids_and_pop_columns( $which_pop ){
 		$which_pop . '_reported' => 'reported',
 		$which_pop . '_population_size' => 'PopulationSize',
 		$which_pop . '_populationsize_notreported' => 'populationsize_notreported',
-		$which_pop . '_geographic_scale' =>  => $whichPop . '.GeographicScale', //multi
+		$which_pop . '_geographic_scale' => $whichPop . '.GeographicScale', //multi
 		$which_pop . '_geographicscale_notreported' => 'geographicscale_notreported', 
 		$which_pop . '_eligibility_criteria' => 'EligibilityCriteriaCode',
 		$which_pop . '_eligibilitycriteria_notreported' => 'eligibilitycriteria_notreported',
