@@ -68,7 +68,7 @@ function cc_transtria_get_single_study_data( $study_id = 0 ){
 		WHERE `StudyID` = $study_id
 		";
 		
-	$form_rows = $wpdb->get_results( $question_sql, OBJECT );
+	$form_rows = $wpdb->get_results( $question_sql, ARRAY_A ); //TODO: is ARRAY the best type to use here?
 	return current($form_rows);
 
 }

@@ -120,9 +120,9 @@ class CC_Transtria_Extras {
 		// Checks requested analysis URL for specified metro_id. Sets cookie if not in agreement.
 		//add_action( 'bp_init', array( $this, 'check_summary_metro_id_cookie_on_load'), 11 );
 
-		//TODO: Transtria ajaxing goes here!
-		// Adds ajax function for board-approved checkbox on the Health Analysis Rreport page ("interim" piece)
-		add_action( 'wp_ajax_get_autocomplete_members' , array( $this, 'get_autocomplete_members' ) );
+		//Transtria ajaxing goes here!
+		// gets study data via ajax...
+		add_action( 'wp_ajax_get_study_data' , array( $this, 'get_study_data' ) );
 		
 
 	}
@@ -375,13 +375,15 @@ class CC_Transtria_Extras {
 			
 			
 			wp_localize_script( 
-				$this->plugin_slug . '-plugin-script', 
+				$this->plugin_slug . 'transtria_revamp_js', 
 				'transtria_ajax',
 				array( 
 					'ajax_url' => admin_url( 'admin-ajax.php' ),
 					'ajax_nonce' => wp_create_nonce( 'cc_transtria_ajax_nonce' )
 				)
 			);
+			
+			wp_enqueue_script( $this->plugin_slug . '-js-vars' );
 		}
 
 		/*
@@ -848,17 +850,21 @@ class CC_Transtria_Extras {
 	 *
 	 *
 	*/
-	public function get_autocomplete_members(){
+	public function get_study_data(){
 	
 		// Is the nonce good?
-		if ( ! check_ajax_referer( 'cc_aha_ajax_nonce', 'aha_nonce' ) ) {
+		if ( ! check_ajax_referer( 'cc_transtria_ajax_nonce', 'transtria_nonce' ) ) {
 			return false;
 		}
 		
-		$group_members = cc_aha_get_member_array();
+		//TODO: build this out
 		
+		$this_study_id = $_POST["this_study_id"];
 
-		echo json_encode($group_members);
+		$study_data['single'] = cc_transtria_get_single_study_data( $this_study_id );
+		
+		echo json_encode( $study_data['single'] );
+		//echo json_encode( $this_study_id );
 		
 		die();
 	

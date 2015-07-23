@@ -100,16 +100,103 @@ function setup_multiselect() {
 */
 }
 
+//populate form with incoming values
+function populate_form_existing_study( ){
+	
+}
+
+//get current study info via ajax
+function get_current_study_info(){
+
+	//what's the study id in the url?
+	this_study_id = getURLParameter('study_id');
+
+	//ajax data
+	var ajax_action = 'get_study_data';
+	var ajax_data = {
+		'action': ajax_action,
+		'this_study_id' : this_study_id,
+		'transtria_nonce' : transtria_ajax.ajax_nonce
+	};
+	
+	if( this_study_id !== null ) {
+		//Get data associate with this study
+		jQuery.ajax({
+			url: transtria_ajax.ajax_url, 
+			data: ajax_data, 
+			type: "POST",
+			dataType: "json",
+			beforeSend: function() {
+				//show spinny
+				//spinny.fadeIn();
+				
+			}
+		}).success( function( data ) {
+			//console.log('success: ' + data);
+			//hmm
+			
+			//TODO: send message if empty (directing user to add priority page?)
+			if( data == "0" || data == 0 )  {
+				//console.log('what');=
+				return;
+			} else {
+			
+			}
+			var post_meat = data; // = JSON.parse(data);
+				
+			//now.. populate fields!
+			jQuery.each( data, function(index, element) {
+				
+				//do we have an element div id w this index?  
+				// TODO: edit study function in php to return indexes = div ids
+				selector_obj = jQuery("#" + index );
+				if( selector_obj.length > 0 ){
+					
+					var current_val;
+					//what is our selector type?
+					if( selector_obj.is('select') ){
+						//see if there's a matching option
+						var children = selector_obj.children('option');
+						jQuery.each( children, function(){
+							current_val = jQuery(this).val();
+							current_val = current_val.trim();
+							if ( current_val == element ){
+								jQuery(this).attr('selected','selected');
+								return;
+							}
+						
+						
+						});
+						console.log( index ); 
+						console.log( element ); 
+					}
+				}
+				
+				
+				
+			});
+			
+		}).complete( function(data){
+			//we're done!
+			//spinny.css("display", "none");
+
+			
+			
+		}).always(function() {
+			//regardless of outcome, hide spinny
+			//jQuery('.action-steps').removeClass("hidden");
+		});
+	}
+}
 
 
 
 
 
 
-
-
-
-
+function getURLParameter(name) {
+	return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null
+}
 
 
 
@@ -130,6 +217,9 @@ jQuery( document ).ready(function() {
 		
 		//set up our multipole checkboxes
 		setup_multiselect();
+		
+		//get current study info
+		get_current_study_info();
 	
 	
 });

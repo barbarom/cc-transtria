@@ -99,10 +99,16 @@ function cc_transtria_render_form(){
 											<option value="">---Select---</option>
 											
 											<?php //$dd_singleton_options are indexed by the div id - "abstractor", for example
+												if( !empty( $study_data['single'] ) ) {
+													$abstractor_val = $study_data['single']['abstractor'];
+													
+												}
 												foreach( $dd_singleton_options['abstractor'] as $k => $v ){
-												echo '<option value="' . $k . '">' . $v->descr . '</option>';
-											
-											} ?>
+													echo '<option value="' . $k . '"';
+													//if( intval( $abstractor_val ) == intval( $k ) ) echo 'selected';
+													echo '>' . $v->descr . '</option>';
+												
+												} ?>
 										</select>
 									</td>
 								</tr>
@@ -133,11 +139,17 @@ function cc_transtria_render_form(){
 									<td>
 										<select id="validator" name="validator">
 											<option value="">---Select---</option>
-											<?php //$dd_singleton_options are indexed by the div id - "abstractor", for example
+											<?php
+												if( !empty( $study_data['single'] ) ) {
+													$selected_val = $study_data['single']['validator'];
+													echo $selected_val;
+												}											
+												//$dd_singleton_options are indexed by the div id - "abstractor", for example
 												foreach( $dd_singleton_options['validator'] as $k => $v ){
-												echo '<option value="' . $k . '">' . $v->descr . '</option>';
-											
-											} ?>											
+													echo '<option value="' . $k . '"';
+													if( intval( $selected_val ) == intval( $k ) ) echo 'selected';
+													echo '>' . $v->descr . '</option>';
+												} ?>											
 										</select>
 									</td>
 								</tr>
