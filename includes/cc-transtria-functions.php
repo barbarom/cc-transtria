@@ -387,9 +387,160 @@ function cc_transtria_match_div_ids_to_studies_columns( $study_labels = null ){
 
 	//we can use array_flip if we need to!
 	
+	//TODO: determine if the commented-out ones are used...
+	$db_to_div_array = array(
+		'StudyID' => 'studyid',
+		'abstractor' => 'abstractor',
+		'abstractorstarttime' => 'abstractorstarttime',
+		'abstractorstoptime' => 'abstractorstoptime',
+		'validator' => 'validator',
+		'validatorstarttime' => 'validatorstarttime',
+		'validatorstoptime' => 'validatorstoptime',
+		//evidence_review_phase  //Is this used?
+		'PubMedID' => 'PubMedID',
+		'othersearchtool' => 'othersearchtool',
+		'grantcontractnumber' => 'grantcontractnumber',
+		'fundingamount' => 'fundingamount',
+		'fundingsource' => 'fundingsource',
+		'otherfunding' => 'otherfunding',
+		'DomesticFundingSourceType' => 'DomesticFundingSourceType',
+		'InternationalFundingSourceType' => 'InternationalFundingSourceType',
+		//domeesticintlsetting_notreport //used?
+		'domesticfundingsources' => 'domesticfundingsources',
+		'fundingpurpose' => 'fundingpurpose',
+		'StudyDesignID' => 'StudyDesign',
+		'otherStudyDesign' => 'otherstudydesign',
+		//StudyType //is this used in the form?
+		'design_limitations' => 'design_limitations',
+		'designlimitations_notreported' => 'designlimitations_notreported',
+		'data_collection' => 'data_collection',
+		'validitythreatflag' => 'validitythreatflag',
+		'validitythreat' => 'validity_threats',
+		'PubMedID_notreported' => 'PubMedID_notreported',
+		'grantcontractnumber_notreported' => 'grantcontractnumber_notreported',
+		'fundingamount_notreported' => 'fundingamount_notreported',
+		'validitythreat_notreported' => 'validitythreat_notreported',
+		'fundingsource_notreported' => 'fundingsource_notreported',
+		'domesticfundingsources_notreported' => 'domesticfundingsources_notreported',
+		'fundingpurpose_notreported' => 'fundingpurpose_notreported',
+		
+		//basic_info_verification //is this used?
+		'sample_size_available' => 'sample_size_available',
+		'sample_estimate' => 'sample_estimate',
+		//representativeness
+		'domestic_setting' => 'DomesticSetting',
+		'international_setting' => 'InternationalSetting',
+		//setting_types //is this used? Mel thinks this is multi, so no
+		'other_setting_type' => 'other_setting_type',
+		//partner_discipline //is this used? Mel thinks this is multi, so no
+		'other_partner_discipline' => 'other_partner_discipline',
+		'lead_agencies' => 'lead_agencies',
+		'lead_agency_role' => 'lead_agency_role',
+		'theory_framework_flag' => 'theory_framework_flag',
+		//theory_framework_type //is this used? Mel thinks this is multi, so no
+		'other_theory_framework' => 'other_theory_framework',
+		'intervention_purpose' => 'intervention_purpose',
+		'intervention_summary' => 'intervention_summary',
+		
+		'statesettings_notreported' => 'statesettings_notreported',
+		'settingtype_notreported' => 'settingtype_notreported',
+		'partnerdiscipline_notreported' => 'partnerdiscipline_notreported',
+		'leadagencies_notreported' => 'leadagencies_notreported',
+		'leadagencyrole_notreported' => 'leadagencyrole_notreported',
+		'theoryframework_notreported' => 'theoryframework_notreported',
+		'theoryframeworktype_notreported' => 'theoryframeworktype_notreported',
+		'interventionpurpose_notreported' => 'interventionpurpose_notreported',
+		'interventionsummary_notreported' => 'interventionsummary_notreported',
+		'interventioncomponents_notreported' => 'interventioncomponents_notreported',
+		'strategies_notreported' => 'strategies_notreported',
+		'psecomponents_notreported' => 'psecomponents_notreported',
+		'complexity_notreported' => 'complexity_notreported',
+		//duration_notreported //on ea tabs
+		'indicators_notreported' => 'indicators_notreported',
+		'other_intervention_location' => 'other_intervention_location',
+		'locationintervention_notreported' => 'locationintervention_notreported',
+		'alloutcomesassessed_notreported' => 'alloutcomesassessed_notreported',
+
+		
+		//intervention_component //is this used? Mel thinks this is multi, so no
+		//complexity //is this used? Mel thinks this is multi, so no
+		//duration //this is now part of the EA tabs
+		//intervention_location //is this used? Mel thinks this is multi, so no
+		//intervention_type //?
+		//other_intervention_type //?
+		//stage
+		//state
+		//quality
+		//inclusiveness
+		'replication_flag' => 'replication',
+		'replication_descr' => 'replication_descr',
+		'support' => 'support',
+		'opposition' => 'opposition',
+		'evidence_based' => 'evidence_based',
+		'fidelity' => 'fidelity_notreported',
+		'implementation_limitations' => 'implementation_limitations',
+		'lessons_learned' => 'lessons_learned',
+		'lessons_learned_descr' => 'lessons_learned_descr',
+		//intervention_verification  //used?
+		//evaluation_type //is this used? Mel thinks this is multi, so no
+		//evaluation_method //is this used? Mel thinks this is multi, so no
+		//outcome_type //nope, in EA tab
+		// outcome_type_other //nope, in EA tab
+		//statistic_methods  //nope, in EA tab
+		//'staff_volunteer_costs' => 'staff_volunteer_cost_value',  //using?
+		//'space_infrastructure_costs' => 'space_infrastructure_cost_value',  //using?
+		//'equipment_material_costs' => 'equipment_material_cost_value',  //using?
+		'staff_volunteer_cost_text' => 'staff_volunteer_cost_text',
+		'space_infrastructure_cost_text' => 'space_infrastructure_cost_text',
+		'equipment_material_cost_text' => 'equipment_material_cost_text',
+		'staff_volunteer_cost_value' => 'staff_volunteer_cost_value',
+		'space_infrastructure_cost_value' => 'space_infrastructure_cost_value',
+		'equipment_material_cost_value' => 'equipment_material_cost_value',
+		'outcome_maintained_flag' => 'outcome_maintained_flag',
+		'staffvolunteercosts_notreported' => 'staffvolunteercosts_notreported',
+		'spacecosts_notreported' => 'spacecosts_notreported',
+		'equipmentcosts_notreported' => 'equipmentcosts_notreported',
+		'sustainability_flag' => 'sustainability_plan_flag',
+		'outcomemaintained_notreported' => 'outcomemaintained_notreported',
+		'sustainabilityplan_notreported' => 'sustainabilityplan_notreported',
+		'explain_sustainability' => 'explain_sustainability',
+		'explain_maintenance' => 'explain_maintenance',
+		//outcome //using?
+		//accessibility
+		//general_applicability
+		//applicability_to_HR_populations
+		
+		
+		
+		'confounders' => 'confounders',
+		'confounders_textarea' => 'confounders_textarea',
+		'confounders_notreported' => 'confounders_notreported',
+		'analysis_limitations' => 'analysis_limitations',
+		'analysislimitations_notreporteded' => 'analysislimitations_notreported',
+		'stat_analysis_results_descr' => 'stat_analysis_results_descr',
+		'statisticalanalysis_notreported' => 'statisticalanalysis_notreported',
+
+		'replication_notreported' => 'replication_notreported',
+		'support_notreported' => 'support_notreported',
+		'opposition_notreported' => 'opposition_notreported',
+		'evidencebased_notreported' => 'evidencebased_notreported',
+		'implementationlimitations_notreported' => 'implementationlimitations_notreported',
+		'lessonslearned_notreported' => 'lessonslearned_notreported',
+		'fidelity_notreported' => 'fidelity_notreported',
+		'evaluationtype_notreported' => 'evaluationtype_notreported',
+		//unitanalysis_notreported  //using?
+		//representativeness_notreported //on pops tabs?
+		'EndNoteID' => 'EndNoteID',
+		'Phase' => 'Phase', //??
+		'StudyGroupingID' => 'StudyGroupingID',
+		
+		'abstraction_complete' => 'abstraction_complete',
+		'validation_complete' => 'validation_complete',
+		//results_verification //no longer a thing?
+		'otherevaluationmethods' => 'otherevaluationmethods',
+		'evaluationmethods_notreported' => 'evaluationmethods_notreported',
 	
-	
-	
+	);
 	
 	
 	
