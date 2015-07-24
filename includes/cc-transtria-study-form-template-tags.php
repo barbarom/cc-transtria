@@ -464,7 +464,9 @@ function cc_transtria_render_form(){
 		   <label for="tab-3" class="primary_tab_label">Intervention/Partnerships</label>
 		 
 		   <div class="content">
-			   stuff 3
+			   <?php 
+				
+				cc_transtria_render_intervention_partnerships_tab( $field_data ); ?>
 		   </div> 
 	   </div>
 
