@@ -161,7 +161,7 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 	<div class="subpops_content <?php echo $which_pop; ?>_content <?php if( $which_pop != "tp" ){ echo 'noshow'; } ?>">
 		<table>
 			<tr>
-				<td colspan="4" class="subtitle"><strong><?php echo $subtitle; ?></strong></td>
+				<td colspan="4" class="inner_table_header"><strong><?php echo $subtitle; ?></strong></td>
 				<?php if ($which_pop == 'ese' ){ ?>
 					<td><button id="" class="remove_tab_button alignright hidden" data-tabnumber="" onclick="remove_extra_ese_tab()">Clear this ES-E tab data</button>
 				<?php } ?>
