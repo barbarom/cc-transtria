@@ -475,7 +475,9 @@ function cc_transtria_render_form(){
 		   <label for="tab-4" class="primary_tab_label">Results</label>
 		 
 		   <div class="content">
-			   stuff 4
+			   <?php
+			   
+			   cc_transtria_render_results_tab( $field_data ); ?>
 		   </div> 
 	   </div>   
 	</div>	
