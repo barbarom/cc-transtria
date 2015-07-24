@@ -509,31 +509,27 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 			<tr class="<?php echo $which_pop; ?>_not_general">
 				<td colspan="4">
 					<table style="border:1px solid">
-						<tr><th colspan="3">Race Percentages</th></tr>
-						<tr><td>Black</td>
-						   <td>White</td>
-						   <td>Asian</td>
+						<tr><th colspan="6">Race Percentages</th></tr>
+						<tr>
+							<td>Black</td>
+							<td>White</td>
+							<td>Asian</td>
+							<td>Pacific<br>Islander</td>
+							<td>Native<br>American</td>
+							<td>Other</td>						   
 						</tr>
 						<tr>
-						  <td><input id="<?php echo $which_pop; ?>_african_american_pct"></input>%</td>
-						  <td><input id="<?php echo $which_pop; ?>_white_pct"></input>%</td>
-						  <td><input id="<?php echo $which_pop; ?>_asian_pct"></input>%</td>
-						</tr>
-						<tr>
-						   <td>Pacific<br>Islander</td>
-						   <td>Native<br>American</td>
-						   <td>Other</td>
-						</tr>
-						<tr>
-						
-						  <td><input id="<?php echo $which_pop; ?>_pacific_islander_pct"></input>%</td>
-						  <td><input id="<?php echo $which_pop; ?>_native_american_pct"></input>%</td>
-						  <td><input id="<?php echo $which_pop; ?>_other_race_pct"></input>%</td>
+						  <td><input id="<?php echo $which_pop; ?>_african_american_pct" class="percentage"></input>%</td>
+						  <td><input id="<?php echo $which_pop; ?>_white_pct" class="percentage"></input>%</td>
+						  <td><input id="<?php echo $which_pop; ?>_asian_pct" class="percentage"></input>%</td>						
+						  <td><input id="<?php echo $which_pop; ?>_pacific_islander_pct" class="percentage"></input>%</td>
+						  <td><input id="<?php echo $which_pop; ?>_native_american_pct" class="percentage"></input>%</td>
+						  <td><input id="<?php echo $which_pop; ?>_other_race_pct" class="percentage"></input>%</td>
 						</tr>
 						<tr class="not-reported <?php echo $which_pop; ?>_not_general">
-							<td></td>
-							<td class="not-reported" colspan="3"><label>Race Percentages not reported</label></td>
-							<td><input id="<?php echo $which_pop; ?>_racepercentages_notreported" type="checkbox"></td>
+							
+							<td class="not-reported" colspan="6"><label>Race Percentages not reported</label>
+							<input id="<?php echo $which_pop; ?>_racepercentages_notreported" type="checkbox"></td>
 						</tr>
 
 
