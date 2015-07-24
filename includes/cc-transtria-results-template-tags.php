@@ -199,7 +199,7 @@ function cc_transtria_render_results_tab( $field_data ){
 			 <td></td>
 			 <td></td>
 			 <td align="right">Abstraction Complete?:
-			   <input id="abstraction_complete"></input>
+			   <input id="abstraction_complete" type="checkbox"></input>
 			 </td>
 		   </tr>
 
@@ -208,7 +208,7 @@ function cc_transtria_render_results_tab( $field_data ){
 			 <td></td>
 			 <td></td>
 			 <td align="right">Validation Complete?:
-			   <input id="validation_complete"></input>
+			   <input id="validation_complete" type="checkbox"></input>
 			 </td>
 		   </tr>
 
