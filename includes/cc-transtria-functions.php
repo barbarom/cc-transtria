@@ -378,7 +378,7 @@ function cc_transtria_relate_div_ids_and_pop_columns( $which_pop ){
 }
 
 /**
- * function to relate div ids and study id columns
+ * function to relate div ids and study id columns for single studies table data (all singleton fields/dropdowns in form, excluding Populations and EA tabs)
  *
  * @param array
  * @return array
@@ -388,6 +388,7 @@ function cc_transtria_match_div_ids_to_studies_columns( $study_labels = null ){
 	//we can use array_flip if we need to!
 	
 	//TODO: determine if the commented-out ones are used...
+	//db => field name
 	$db_to_div_array = array(
 		'StudyID' => 'studyid',
 		'abstractor' => 'abstractor',
@@ -542,11 +543,14 @@ function cc_transtria_match_div_ids_to_studies_columns( $study_labels = null ){
 	
 	);
 	
+	//because in_array is looking at values and we need to get db values
+	$flipped_array = array_flip( $db_to_div_array );
+	
 	if( !empty( $study_labels ) ){
 		$new_study_labels = [];
 		//we have an incoming array whose labels need to be changed
 		foreach( $study_labels as $label => $value ){
-			if( in_array( $label, $db_to_div_array ) ) {
+			if( in_array( $label, $flipped_array ) ) {
 			//var_dump( $label );
 				$new_label = $db_to_div_array[ $label ];
 				$new_study_labels[ $new_label ] = $value;
@@ -566,6 +570,115 @@ function cc_transtria_match_div_ids_to_studies_columns( $study_labels = null ){
 	
 
 }
+
+/**
+ * function to relate div ids and study id columns
+ *
+ * @param array
+ * @return array
+ */
+function cc_transtria_match_div_ids_to_pops_columns_single( $which_pop, $study_labels = null ){
+
+	//we can use array_flip if we need to!
+	
+	//TODO: determine if the commented-out ones are used...
+	//db => field ids
+	$db_to_div_array = array(
+		'StudyID' => 'studyid',
+		'PopulationType' => 'population_type',
+		'reported' => $which_pop . '_reported',
+		'PopulationSize' => $which_pop . '_population_size',
+		'populationsize_notreported' => $which_pop . '_populationsize_notreported',
+		'GeographicScaleCode' => $which_pop . '_geographic_scale',
+		'geographicscale_notreported' => $which_pop . '_geographicscale_notreported',
+		'EligibilityCriteriaCode' => $which_pop . '_eligibility_criteria',
+		'eligibilitycriteria_notreported' => $which_pop . '_eligibilitycriteria_notreported',
+		'isGeneralPopulation' => $which_pop . '_general_population',
+		'Representativeness' => $which_pop . '_representativeness',
+		'representativeness_notreported' => $which_pop . '_representativeness_notreported',
+		'Oversampling' => $which_pop . '_oversampling',
+		'oversampling_notreported' => $which_pop . '_oversampling_notreported',
+		'ApplicabilityHRPopulations' => $which_pop . '_applicability_hr_pops',
+		
+		//TODO: is this even IN the db?
+		'applicabilityhrpops_notreported' => $which_pop . '_applicabilityhrpops_notreported',
+		
+		'generalpopulation_notreported' => $which_pop . '_generalpopulation_notreported',
+		'GenderCode' => $which_pop . '_gender',
+		'PctGenderMale' => $which_pop . '_gender_pctmale',
+		'PctGenderFemale' => $which_pop . '_gender_pctfemale',
+		'gender_notreported' => $which_pop . '_gender_notreported',
+		'MinimumAge' => $which_pop . '_min_age',
+		'minimumage_notreported' => $which_pop . '_minimumage_notreported',
+		'MaximumAge' => $which_pop . '_max_age',
+		'maximumage_notreported' => $which_pop . '_maximumage_notreported',
+		'ParticipationRate' => $which_pop . '_participation_rate',
+		'rateofparticipation_notreported' => $which_pop . '_rateofparticipation_notreported',
+		'ExposureFrequency' => $which_pop . '_exposure_frequency',
+		'freqofexposure_notreported' => $which_pop . '_freqofexposure_notreported',
+		'AbilityStatusCode' => $which_pop . '_ability_status', //hmm, pretty sure this is multi and not actually in this table
+		//'PctAbilityStatus' => 'PctAbilityStatus', //TODO: is this even a thing?
+		'PctCognitionDisability' => $which_pop . '_cognition_disability_pct',
+		'PctGettingAlongDisability' => $which_pop . '_getting_along_disability_pct',
+		'PctLifeActivitiesDisability' => $which_pop . '_life_activities_disability_pct',
+		'PctMobilityDisability' => $which_pop . '_mobility_disability_pct',
+		'PctSelfCareDisability' => $which_pop . '_self_care_disability_pct',
+		'PctParticipationDisability' => $which_pop . '_participation_disability_pct',
+		'abilitystatus_notreported' => $which_pop . '_abilitystatus_notreported',
+		'subpopulations_notreported' => $which_pop . '_subpopulations_notreported',
+		'youthpopulations_notreported' => $which_pop . '_youthpopulations_notreported',
+		'professionalpopulations_notreported' => $which_pop . '_professionalpopulations_notreported',
+		'other_populations' => $which_pop . '_other_populations',
+		//other_population // ?
+		'other_population_description' => $which_pop . '_other_population_description',
+		'PctBlack' => $which_pop . '_african_american_pct',
+		'PctWhite' => $which_pop . '_white_pct',
+		'PctAsian' => $which_pop . '_asian_pct',
+		'PctPacificIslander' => $which_pop . '_pacific_islander_pct',
+		'PctNativeAmerican' => $which_pop . '_native_american_pct',
+		'PctOtherRace' => $which_pop . '_other_race_pct',
+		'racepercentages_notreported' => $which_pop . '_racepercentages_notreported',
+		'PctHispanic' => $which_pop . '_hispanic_pct',
+		'percenthispanic_notreported' => $which_pop . '_percenthispanic_notreported',
+		'PctLowerIncome' => $which_pop . '_lower_income_pct',
+		'percentlowerincome_notreported' => $which_pop . '_percentlowerincome_notreported',
+		'PctNoEnglish' => $which_pop . '_non_english_speakers_pct',
+		//population_verification //deprecated: used to be a checkbox at the end of the pops tabs
+		'percentnonenglish_notreported' => $which_pop . '_percentnonenglish_notreported'
+
+	);
+	
+	$flipped_array = array_flip( $db_to_div_array );
+	
+	if( !empty( $study_labels ) ){
+		$new_study_labels = [];
+		//we have an incoming array whose labels need to be changed
+		foreach( $study_labels as $label => $value ){
+
+			if( in_array( $label, $flipped_array ) ) {
+				//var_dump( $label );
+				$new_label = $db_to_div_array[ $label ];
+				$new_study_labels[ $new_label ] = $value;
+			} else {
+				$new_study_labels[ $label ] = $value; //same ol
+			}
+		
+		}
+		return $new_study_labels;
+		
+		
+	} else {
+		//we're just returning the above array
+		return $db_to_div_array;
+	}
+	
+	
+
+}
+
+
+
+
 
 /**
  * Which sub populations tabs are there?

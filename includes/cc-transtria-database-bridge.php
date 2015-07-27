@@ -89,18 +89,63 @@ function cc_transtria_get_pops_study_data_single( $study_id = 0 ){
 
 	global $wpdb;
 	
-	//there are multiple rows in the pops table per study
-	$populations_sql = $wpdb->prepare( 
+	//how many ese tabs do we have?
+	$meta_sql = $wpdb->prepare( 
 		"
-		SELECT      *
-		FROM        $wpdb->transtria_population
+		SELECT      value
+		FROM        $wpdb->transtria_metadata
 		WHERE		StudyID = %s 
+		AND 		variablename = 'ese tabCount'
 		",
 		$study_id
 	); 
 	
-	$form_rows = $wpdb->get_results( $populations_sql, OBJECT );
-	return $form_rows;
+	$ese_tab_count = $wpdb->get_results( $meta_sql, ARRAY_A );
+	$ese_tab_count = intval( $ese_tab_count[0]['value'] ); //e.g., if = 2, look for ese0, ese1
+	
+	//var_dump( $ese_tab_count );
+	$which_pops = cc_transtria_get_basic_pops_types();
+	
+	//because ese tabs are zero-indexed (meaning: just one addtnl ese tab = ese0):
+	for( $i=0; $i < $ese_tab_count; $i++){
+		//append ese tab name to $which_pops
+		$current_ese_tab = 'ese' . $i;
+		array_push( $which_pops, $current_ese_tab );
+	}
+	
+	$all_pops_tabs = []; //instantiate empty array to hold all the pops data
+	
+	foreach( $which_pops as $which_pop ){
+		//there are multiple rows in the pops table per study
+		$populations_sql = $wpdb->prepare( 
+			"
+			SELECT      *
+			FROM        $wpdb->transtria_population
+			WHERE		StudyID = %s 
+			AND 		PopulationType = %s
+			",
+			$study_id,
+			$which_pop
+		); 
+		
+		//run query
+		$form_rows = $wpdb->get_results( $populations_sql, ARRAY_A );
+		
+		//var_dump( $form_rows );
+		
+		//put label of form rows in div id form
+		$new_form_rows = cc_transtria_match_div_ids_to_pops_columns_single( $which_pop, current( $form_rows) );
+		
+		//add to master array
+		$all_pops_tabs[ $which_pop ] = $new_form_rows;
+		//$all_pops_tabs[ $which_pop ] = 't';
+		
+	}
+	
+	//go through each field and make sure it lines up with div ids
+	//$reindexed_form_rows = cc_transtria_match_div_ids_to_pops_columns_single( current( $form_rows ) );
+	
+	return $all_pops_tabs;
 
 
 }

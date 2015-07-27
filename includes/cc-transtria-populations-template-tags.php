@@ -159,6 +159,7 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 			
 ?>
 	<div class="subpops_content <?php echo $which_pop; ?>_content <?php if( $which_pop != "tp" ){ echo 'noshow'; } ?>">
+		<input id="population_type" value="<?php echo $which_pop; ?>" hidden>
 		<table>
 			<tr>
 				<td colspan="4" class="inner_table_header"><strong><?php echo $subtitle; ?></strong></td>

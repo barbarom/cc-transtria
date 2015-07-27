@@ -27,8 +27,10 @@ function cc_transtria_render_form(){
 	//are we loading an existing study?
 	$this_study_id = $_GET["study_id"];
 	
-	$study_data['single'] = cc_transtria_get_single_study_data( $this_study_id );
+	//$study_data['single'] = cc_transtria_get_single_study_data( $this_study_id );
 	//var_dump( $study_data['single'] );
+	//$study_data['pops_single'] = cc_transtria_get_pops_study_data_single( $this_study_id );
+	//var_dump( $study_data['pops_single'] );
 	
 	//get all study ids in system
 	$all_study_ids = cc_transtria_get_study_ids();
@@ -99,10 +101,7 @@ function cc_transtria_render_form(){
 											<option value="">---Select---</option>
 											
 											<?php //$dd_singleton_options are indexed by the div id - "abstractor", for example
-												if( !empty( $study_data['single'] ) ) {
-													$abstractor_val = $study_data['single']['abstractor'];
-													
-												}
+												
 												foreach( $dd_singleton_options['abstractor'] as $k => $v ){
 													echo '<option value="' . $k . '"';
 													//if( intval( $abstractor_val ) == intval( $k ) ) echo 'selected';
@@ -139,11 +138,7 @@ function cc_transtria_render_form(){
 									<td>
 										<select id="validator" name="validator">
 											<option value="">---Select---</option>
-											<?php
-												if( !empty( $study_data['single'] ) ) {
-													$selected_val = $study_data['single']['validator'];
-													echo $selected_val;
-												}											
+											<?php										
 												//$dd_singleton_options are indexed by the div id - "abstractor", for example
 												foreach( $dd_singleton_options['validator'] as $k => $v ){
 													echo '<option value="' . $k . '"';

@@ -862,9 +862,20 @@ class CC_Transtria_Extras {
 		$this_study_id = $_POST["this_study_id"];
 
 		$study_data['single'] = cc_transtria_get_single_study_data( $this_study_id );
+		$study_data['population_single'] = cc_transtria_get_pops_study_data_single( $this_study_id );
 		
-		echo json_encode( $study_data['single'] );
-		//echo json_encode( $this_study_id );
+		//can we put these all into a flat array?
+		$study_data_flat = $study_data['single'];
+		
+		/*foreach( $study_data['population_single'] as $pop => $val_array ){
+		
+		
+			//array_push( $study_data_flat, $val_array );
+		
+		}*/
+		
+		//echo json_encode( $study_data['single'] );
+		echo json_encode( $study_data );
 		
 		die();
 	
