@@ -211,10 +211,11 @@ function cc_transtria_get_singleton_dropdown_ids(){
 /**
  * Returns array of div ids -> code_tbl lookup names for multiple dropdown fields in form for Populations tabs.
  *
+ * @param string, int. Population string (if !'all'), Study ID.
  * @return array. String div id in form => String lookup name in db (code_tbl)
  *
  */
-function cc_transtria_get_multiple_dropdown_ids_populations( $which_pop = 'all'){
+function cc_transtria_get_multiple_dropdown_ids_populations( $which_pop = 'all', $study_id = null ){
 
 	//get basic field and lookup names
 	$dd_base_ids = array(
@@ -240,7 +241,14 @@ function cc_transtria_get_multiple_dropdown_ids_populations( $which_pop = 'all')
 	
 	//which pops are we interested in? Usually all, but ese is going to be special
 	if( $which_pop == 'all' ){
-		$pops_types = cc_transtria_get_basic_pops_types();
+	
+		//var_dump( $study_id);
+		//if there's an incoming study id, get the extra ese pops.
+		if( !empty( $study_id ) ){
+			$pops_types = cc_transtria_get_all_pops_type_for_study( $study_id );
+		} else {
+			$pops_types = cc_transtria_get_basic_pops_types();
+		}
 	
 		foreach( $dd_base_ids as $div_id => $lookup_name ){
 			

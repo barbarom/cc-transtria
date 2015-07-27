@@ -209,7 +209,8 @@ function get_current_study_info(){
 				jQuery.each( pop_data, function( index, element ){
 					//do we have an element div id w this index?  
 					selector_obj = jQuery("#" + index );
-					console.log( selector_obj );
+					//console.log( index );
+					//console.log( selector_obj );
 					
 					if( selector_obj.length > 0 ){
 						
@@ -219,6 +220,8 @@ function get_current_study_info(){
 						if( selector_obj.is('select') ){
 							//see if there's a matching option
 							var children = selector_obj.children('option');
+							//console.log( children );
+							
 							//iterate through option values
 							jQuery.each( children, function(){
 								//what is current option value
@@ -226,6 +229,7 @@ function get_current_study_info(){
 								current_val = current_val.trim(); //if whitespace because sometimes there is..*sigh*
 								
 								var int_trial = parseInt( current_val, 10 );
+								
 								//is it string or int? Sometimes there are both ... would that matter? 
 								//	Mel doesn't think so since this is to test equality
 								if ( isNaN( int_trial ) ){

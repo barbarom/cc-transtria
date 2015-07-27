@@ -37,7 +37,7 @@ function cc_transtria_render_form(){
 
 	//get data related to the form
 	$dd_singleton_options = cc_transtria_get_singleton_dropdown_options(); //all options for singleton dropdowns
-	$dd_multiple_options_pops = cc_transtria_get_multiple_dropdown_options_populations(); //all options for pops sub tabs
+	$dd_multiple_options_pops = cc_transtria_get_multiple_dropdown_options_populations( $this_study_id ); //all options for pops sub tabs
 	
 	//bundle field options into single array (or whatever, really) to send to other render functions
 	$field_data = [];

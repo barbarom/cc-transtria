@@ -304,9 +304,9 @@ function cc_transtria_get_singleton_dropdown_options(){
  * @return Array.  Array of arrays of options for all multiple POPULATION dropwdown fields (dropdowns that exist in Populations tabs in form).
  *
  */
-function cc_transtria_get_multiple_dropdown_options_populations(){
+function cc_transtria_get_multiple_dropdown_options_populations( $study_id = null ){
 
-	$dd_ids = cc_transtria_get_multiple_dropdown_ids_populations();
+	$dd_ids = cc_transtria_get_multiple_dropdown_ids_populations( 'all', $study_id );
 	
 	//Now, perform lookup for all pops types
 	foreach( $dd_ids as $div_id => $lookup_name ){

@@ -33,12 +33,13 @@ function cc_transtria_render_populations_tab( $field_data ){
  */
 function cc_transtria_render_populations_header( $field_data ){
 
-	$dd_singleton_options = $field_data['dd_singleton_options'];
-	$dd_multiple_options_pops = $field_data['dd_multiple_options_pops'];
-	
 	//are we loading in a study?
 	$this_study_id = $_GET["study_id"];
 	
+	$dd_singleton_options = $field_data['dd_singleton_options'];
+	$dd_multiple_options_pops = $field_data['dd_multiple_options_pops'];
+	
+	//which populations do we have?
 	$which_pops = cc_transtria_get_all_pops_type_for_study( $this_study_id );
 	//TODO: incorporate Meta (what ese tabs have been added in this study?)
 	
@@ -319,8 +320,8 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 
 			<tr class="<?php echo $which_pop; ?>_not_general">
 				<td><label>Gender:</label></td>
-				<td><span id="<?php echo $which_pop; ?>_gender">
-					<select>
+				<td><span>
+					<select id="<?php echo $which_pop; ?>_gender">
 						<option value="">---Select---</option>
 						<?php 
 							$field_name = $which_pop . '_gender';
