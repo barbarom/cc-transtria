@@ -19,6 +19,10 @@ function clickListen(){
 		jQuery('.subpops_content.' + which_content).show();
 	
 	});
+	
+	//TODO: ability status listener
+	
+	//TODO: restrict options in EA tabs based on intervention tabs. 
 
 
 } 

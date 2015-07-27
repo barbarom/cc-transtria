@@ -222,8 +222,7 @@ function cc_transtria_render_form(){
 					<tr>
 						<td>Search tool type:</td>
 						<td>
-							<select id="searchtooltype" name="searchtooltype"> 
-								<option value="">---Select---</option>
+							<select id="searchtooltype" name="searchtooltype" class="multiselect"> 
 								<?php //$dd_singleton_options are indexed by the div id - "abstractor", for example
 									foreach( $dd_singleton_options['searchtooltype'] as $k => $v ){
 									echo '<option value="' . $k . '">' . $v->descr . '</option>';
@@ -243,8 +242,7 @@ function cc_transtria_render_form(){
 					<tr>
 						<td>Search tool name:</td>
 						<td>
-							<select id="searchtoolname" name="searchtoolname">
-								<option value="">---Select---</option>
+							<select id="searchtoolname" name="searchtoolname" class="multiselect">
 								<?php //$dd_singleton_options are indexed by the div id - "abstractor", for example
 									foreach( $dd_singleton_options['searchtoolname'] as $k => $v ){
 									echo '<option value="' . $k . '">' . $v->descr . '</option>';
@@ -295,8 +293,7 @@ function cc_transtria_render_form(){
 					<tr>
 						<td>Source of funding:</td>
 						<td>
-							<select id="fundingsource" name="fundingsource">
-								<option value="">---Select---</option>
+							<select id="fundingsource" name="fundingsource" class="multiselect">
 								<?php //$dd_singleton_options are indexed by the div id - "abstractor", for example
 									foreach( $dd_singleton_options['fundingsource'] as $k => $v ){
 									echo '<option value="' . $k . '">' . $v->descr . '</option>';
@@ -421,8 +418,7 @@ function cc_transtria_render_form(){
 							Select type(s) of threats to internal validity:
 						</td>
 						<td>
-							<select id="validity_threats" name="validity_threats">
-								<option value="">---Select---</option>
+							<select id="validity_threats" name="validity_threats" class="multiselect">
 								<?php //$dd_singleton_options are indexed by the div id - "abstractor", for example
 									foreach( $dd_singleton_options['validity_threats'] as $k => $v ){
 									echo '<option value="' . $k . '">' . $v->descr . '</option>';
