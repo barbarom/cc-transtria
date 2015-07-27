@@ -382,7 +382,52 @@ function cc_transtria_get_options_from_db( $code_name = NULL ){
 
 }
 
+/**
+ * Gets all population types given a study id
+ *
+ * @param int. Study ID
+ * @return array. String list of populations types
+ */
+function cc_transtria_get_all_pops_type_for_study( $study_id ){
 
+	global $wpdb;
+	
+	$which_pops = cc_transtria_get_basic_pops_types();
+	
+	if ( empty( $study_id ) ){
+		return $which_pops;
+	
+	} else {
+
+		//how many ese tabs do we have?
+		$meta_sql = $wpdb->prepare( 
+			"
+			SELECT      value
+			FROM        $wpdb->transtria_metadata
+			WHERE		StudyID = %s 
+			AND 		variablename = 'ese tabCount'
+			",
+			$study_id
+		); 
+		
+		$ese_tab_count = $wpdb->get_results( $meta_sql, ARRAY_A );
+		$ese_tab_count = intval( $ese_tab_count[0]['value'] ); //e.g., if = 2, look for ese0, ese1
+		
+		//var_dump( $ese_tab_count );
+		
+		//because ese tabs are zero-indexed (meaning: just one addtnl ese tab = ese0):
+		for( $i=0; $i < $ese_tab_count; $i++){
+			//append ese tab name to $which_pops
+			$current_ese_tab = 'ese' . $i;
+			//push to allpops array?
+			array_push( $which_pops, $current_ese_tab );
+		}
+
+		return $which_pops;
+
+	}
+
+}
 
 
 

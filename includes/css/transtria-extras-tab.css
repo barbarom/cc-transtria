@@ -31,6 +31,14 @@ select {
 .tab, .subpops_tab {
   float: left;
 }
+
+#population_tabs .general_pops_label{
+    color: #757575;
+    font-size: 1rem;
+    line-height: 2;
+    margin: 0 0 1.71429rem;
+    width: 100%;
+}
 #sub_pops_tabs  {
 	width:100%;
 }

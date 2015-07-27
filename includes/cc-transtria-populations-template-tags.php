@@ -36,7 +36,10 @@ function cc_transtria_render_populations_header( $field_data ){
 	$dd_singleton_options = $field_data['dd_singleton_options'];
 	$dd_multiple_options_pops = $field_data['dd_multiple_options_pops'];
 	
-	$which_pops = cc_transtria_get_basic_pops_types();
+	//are we loading in a study?
+	$this_study_id = $_GET["study_id"];
+	
+	$which_pops = cc_transtria_get_all_pops_type_for_study( $this_study_id );
 	//TODO: incorporate Meta (what ese tabs have been added in this study?)
 	
 	
@@ -46,19 +49,19 @@ function cc_transtria_render_populations_header( $field_data ){
 
 	?>
 	<div id="population_tabs">
-		<label>Sample size available?:</label>
+		<label class="general_pops_label">Sample size available?:</label>
 		<span id="sample_size_available">
 			<input type="radio" value="Y" name="sample_size_available">	Yes
 			<input type="radio" value="N" name="sample_size_available">	No
 		</span>
 		<br>
-		<label>Is Sample size an estimate?:</label>
+		<label class="general_pops_label">Is Sample size an estimate?:</label>
 		<span id="sample_estimate">
 			<input type="radio" value="Y" name="sample_estimate">Yes
 			<input type="radio" value="N" name="sample_estimate">No
 		</span>
 		<br />
-		<label>Unit of Analysis</label>
+		<label class="general_pops_label">Unit of Analysis</label>
 		<select id="unit_of_analysis" class="multiselect" multiple="multiple">				
 			<?php //$dd_singleton_options are indexed by the div id - "abstractor", for example
 				foreach( $dd_singleton_options['unit_of_analysis'] as $k => $v ){
@@ -68,7 +71,7 @@ function cc_transtria_render_populations_header( $field_data ){
 		</select>
 		<br />
 		<div class="not-reported">
-			<label>Unit of Analysis Not Reported</label>
+			<label class="general_pops_label">Unit of Analysis Not Reported</label>
 			<input id="unitanalysis_notreported" type="checkbox">
 		</div>
 		<br>

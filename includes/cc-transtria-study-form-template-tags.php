@@ -47,7 +47,7 @@ function cc_transtria_render_form(){
 	//TODO: think about whether we want to populate these in php or in js..	
 	?>
 
-	<form>
+	<form id="study_form">
 		<div class="bottom_margin">			
 			<label for="studyid"><strong>Study ID</strong></label>
 			<select id="studyid">
