@@ -542,12 +542,12 @@ function cc_transtria_match_div_ids_to_studies_columns( $study_labels = null ){
 	
 	);
 	
-	if( empty( $study_labels ) ){
+	if( !empty( $study_labels ) ){
 		$new_study_labels = [];
 		//we have an incoming array whose labels need to be changed
 		foreach( $study_labels as $label => $value ){
-			
 			if( in_array( $label, $db_to_div_array ) ) {
+			//var_dump( $label );
 				$new_label = $db_to_div_array[ $label ];
 				$new_study_labels[ $new_label ] = $value;
 			} else {
@@ -555,6 +555,7 @@ function cc_transtria_match_div_ids_to_studies_columns( $study_labels = null ){
 			}
 		
 		}
+		return $new_study_labels;
 		
 		
 	} else {
