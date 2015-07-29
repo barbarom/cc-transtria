@@ -56,7 +56,7 @@ function cc_transtria_get_study_metadata( $study_id = null ){
  * @since    1.0.0
  * @return 	array
  */
-function cc_transtria_get_single_study_data( $study_id = 0 ){
+function cc_transtria_get_single_study_data( $study_id = null ){
 	
 	global $wpdb;
 	
@@ -78,6 +78,25 @@ function cc_transtria_get_single_study_data( $study_id = 0 ){
 
 }
 
+/**
+ * Returns array of all multiple data for a study
+ *
+ * @param int. Study ID.
+ * @return array of arrays. Codetype div names => selected values
+ *
+ */
+function cc_transtria_get_study_data_multiple( $study_id = null ){
+
+
+	//get the selected values (results) for this study from code_results (then translate to human language from code_tbl!)
+	$results = cc_transtria_get_all_code_results_by_study_id( $study_id );
+	
+	//cycle through array keys are replace with lookup table keys.
+	$results = cc_transtria_match_div_ids_to_multiple_columns( $results );
+ 
+ var_dump( $results );
+	return $results;
+}
 
 /**
  * Returns array of string->values for population data in populations table
@@ -103,7 +122,6 @@ function cc_transtria_get_pops_study_data_single( $study_id = null ){
 	$ese_tab_count = $wpdb->get_results( $meta_sql, ARRAY_A );
 	$ese_tab_count = intval( $ese_tab_count[0]['value'] ); //e.g., if = 2, look for ese0, ese1
 	
-	//var_dump( $ese_tab_count );
 	$which_pops = cc_transtria_get_basic_pops_types();
 	
 	//because ese tabs are zero-indexed (meaning: just one addtnl ese tab = ese0):
@@ -151,6 +169,7 @@ function cc_transtria_get_pops_study_data_single( $study_id = null ){
 }
 
 
+//TODO: are we using this one at all??
 /**
  * Returns array of string->values for population data in code_results table (drop downs)
  *
@@ -545,7 +564,7 @@ function cc_transtria_get_all_code_results_by_study_id( $study_id = null ){
 	//order the array by codetype id key (for sanity and checking things)
 	ksort( $out );
 	
-	var_dump( $out ); //works!
+	//var_dump( $out ); //works!
 	return $out;
 	
 }

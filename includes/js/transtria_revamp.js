@@ -165,6 +165,8 @@ function get_current_study_info(){
 				//do we have an element div id w this index?  
 				// TODO: edit study function in php to return indexes = div ids
 				selector_obj = jQuery("#" + index );
+				selector_obj_by_name = jQuery("input[name='" + index + "']");
+				
 				if( selector_obj.length > 0 ){
 					
 					//console.log( jQuery( selector_obj ) ) ;
@@ -211,6 +213,17 @@ function get_current_study_info(){
 					} 
 				}
 				
+				//if we have inputs with name instead (radios), update those
+				if( selector_obj_by_name.length ){
+					var current_val;
+					if ( selector_obj_by_name.is('input:radio') ){
+						//mark as checked whichever radio == element
+						jQuery("input[name='" + index + "'][value='" + element + "']").prop('checked',true);
+					} 
+				
+				
+				
+				}
 				
 				
 			});

@@ -585,6 +585,134 @@ function cc_transtria_match_div_ids_to_studies_columns( $study_labels = null ){
  * @param array
  * @return array
  */
+function cc_transtria_match_div_ids_to_multiple_columns( $study_labels = null ){
+
+	//we can use array_flip if we need to!
+	$all_pops_strings = array(
+		'tp', 'ipe', 'ipu', 'ese0', 'ese1', 
+		'ese2', 'ese3', 'ese4', 'ese5', 'ese6', 
+		'ese7', 'ese8', 'ese9', 'ese', 'esu'
+	);
+	
+	//TODO: determine if the commented-out ones are used...
+	//db => field ids
+	$db_to_div_array = array(
+		'SearchToolType' => 'searchtooltype',
+		'SearchToolName' => 'searchtoolname',
+		'FundingSource' => 'fundingsource', 
+		'UnitOfAnalysis' => 'unit_of_analysis',
+		'US States' => 'state_setting', 
+		'SettingType' => 'setting_type', 
+		'Partner discipline' => 'partner_discipline', 
+		'TheoryFramework' => 'theory_framework_type', 
+		'Intervention Components' => 'intervention_component', 
+		'Strategies' => 'strategies', 
+		'PSEcomponents' => 'pse_components', 
+		'Complexity' => 'complexity', 
+		'InterventionLocation' => 'intervention_location', 
+		'Indicator' => 'intervention_indicators', 
+		'OutcomesAccessed' => 'intervention_outcomes_assessed', 
+		'EvaluationType' => 'evaluation_type', 
+		'EvaluationMethod' => 'evaluation_methods'
+		
+	);
+	
+	
+	//array to hold pops columns
+	$all_pops_columns = [];
+	
+	foreach( $all_pops_strings as $pop ){
+	
+		$tmp_array = array(
+			$pop. '.GeographicScale' => $pop . '_geographic_scale',
+			$pop . '.AbilityStatus' => $pop . '_ability_status',
+			$pop . '.SubPopulations' => $pop . '_sub_populations',
+			$pop . '.YouthPopulations' => $pop . '_youth_populations',
+			$pop . '.ProfessionalPopulations' => $pop . '_professional_populations'
+		);
+		
+		$all_pops_columns = array_merge ( $all_pops_columns, $tmp_array );
+	
+	}
+	
+	//array to hold special pops columns
+	
+	$special_pops_columns = array(
+		//'ese.RepresentativeSubpopulations' => 'ese_representative_subpopulations',  //TODO: check w Transtria - is this a thing anymore??
+		'ese.RepresentativeSubpopulations' => 'ese_representative_subpopulations',
+		'ipe.RepresentativeSubpopulations' => 'ipe_representative_subpopulations',
+
+		'ese.HighRiskSubpopulations' => 'ese_hr_subpopulations',
+		'ese0.HighRiskSubpopulations' => 'ese0_hr_subpopulations',
+		'ese1.HighRiskSubpopulations' => 'ese1_hr_subpopulations',
+		'ese2.HighRiskSubpopulations' => 'ese2_hr_subpopulations',
+		'ese3.HighRiskSubpopulations' => 'ese3_hr_subpopulations',
+		'ese4.HighRiskSubpopulations' => 'ese4_hr_subpopulations',
+		'ese5.HighRiskSubpopulations' => 'ese5_hr_subpopulations',
+		'ese6.HighRiskSubpopulations' => 'ese6_hr_subpopulations',
+		'ese7.HighRiskSubpopulations' => 'ese7_hr_subpopulations',
+		'ese8.HighRiskSubpopulations' => 'ese8_hr_subpopulations',
+		'ese9.HighRiskSubpopulations' => 'ese9_hr_subpopulations'
+	);
+	
+	
+	$all_ea_columns = [];
+	
+	for( $i = 1; $i <= 100; $i++ ){
+		
+		$which_ea = 'ea_' . $i;
+		
+		$tmp_array = array(
+			$which_ea . ' Results Populations' => $which_ea . '_result_evaluation_population',
+			$which_ea . ' Results SubPopulations' => $which_ea . '_result_subpopulations',
+			$which_ea . ' OutcomesAccessed' => $which_ea . '_result_outcome_accessed',
+			$which_ea . ' Measures' => $which_ea . '_result_measures',
+			$which_ea . ' Indicator' => $which_ea . '_result_indicator'
+			
+		);
+		
+		$all_ea_columns = array_merge ( $all_ea_columns, $tmp_array );
+	
+	}
+	
+	//merge all arrays into master list
+	$db_to_div_array = array_merge( $db_to_div_array, $all_pops_columns);
+	$db_to_div_array = array_merge( $db_to_div_array, $special_pops_columns);
+	$db_to_div_array = array_merge( $db_to_div_array, $all_ea_columns);
+	
+	
+	
+	
+	$flipped_array = array_flip( $db_to_div_array );
+	
+	if( !empty( $study_labels ) ){
+		$new_study_labels = [];
+		//we have an incoming array whose labels need to be changed
+		foreach( $study_labels as $label => $value ){
+
+			if( in_array( $label, $flipped_array ) ) {
+				//var_dump( $label );
+				$new_label = $db_to_div_array[ $label ];
+				$new_study_labels[ $new_label ] = $value;
+			} else {
+				$new_study_labels[ $label ] = $value; //same ol
+			}
+		
+		}
+		return $new_study_labels;	
+		
+	} else {
+		//we're just returning the above array
+		return $db_to_div_array;
+	}
+	
+}
+/**
+ * function to relate div ids and study id columns
+ *
+ * @param array
+ * @return array
+ */
 function cc_transtria_match_div_ids_to_pops_columns_single( $which_pop, $study_labels = null ){
 
 	//we can use array_flip if we need to!
@@ -672,16 +800,13 @@ function cc_transtria_match_div_ids_to_pops_columns_single( $which_pop, $study_l
 			}
 		
 		}
-		return $new_study_labels;
-		
+		return $new_study_labels;	
 		
 	} else {
 		//we're just returning the above array
 		return $db_to_div_array;
 	}
 	
-	
-
 }
 
 
