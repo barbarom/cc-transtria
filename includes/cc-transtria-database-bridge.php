@@ -171,7 +171,7 @@ function cc_transtria_get_pops_study_data_multiple( $study_id = null ){
 	//get the selected values (results) for this study from code_results (then translate to human language from code_tbl!)
 	$results = cc_transtria_get_all_code_results_by_study_id( $study_id );
 	
-	//for each code, 
+	//for each result, tie to div id..
 	foreach( $results as $k => $v ){
 		
 		//$results[ $k ] = 
@@ -485,14 +485,27 @@ function cc_transtria_get_all_code_results_by_study_id( $study_id = null ){
 
 	global $wpdb;
 	
-	$results_sql = $wpdb->prepare( 
+	//ok, this works, but can we join w/codetype table to get names?
+	/*$results_sql = $wpdb->prepare( 
 		"
-		SELECT      *
-		FROM        $wpdb->transtria_code_results
+		SELECT      t1.codetypeID, t1.result
+		FROM        $wpdb->transtria_code_results t1
 		WHERE		ID = %s 
 		",
 		$study_id
-	); 
+	); */
+	
+	$results_sql = $wpdb->prepare(
+		"
+		SELECT t2.codetype, t1.result 
+		FROM $wpdb->transtria_code_results t1,
+			$wpdb->transtria_codetype t2
+		WHERE t1.codetypeID = t2.codetypeID
+		AND t1.ID = %s
+		order by t2.codetype
+		",
+		$study_id
+	);
 	
 	$results = $wpdb->get_results( $results_sql, ARRAY_A );
 	
@@ -502,10 +515,12 @@ function cc_transtria_get_all_code_results_by_study_id( $study_id = null ){
 	foreach ( $results as $result ) {
 		
 		//result['codetypeid'] will be the key 
-		$key = $result['codetypeID'];
+		//$key = $result['codetypeID'];
+		$key = $result['codetype'];
 		$r = & $out;
 		
-		foreach ( explode( ".", $key ) as $key ) {
+		//foreach ( explode( ".", $key ) as $key ) {
+		foreach ( explode( ",", $key ) as $key ) {
 			//var_dump( $key );
 			if ( isset( $r[$key] ) ) {
 				//test for array already
@@ -530,7 +545,7 @@ function cc_transtria_get_all_code_results_by_study_id( $study_id = null ){
 	//order the array by codetype id key (for sanity and checking things)
 	ksort( $out );
 	
-	//var_dump( $out ); //works!
+	var_dump( $out ); //works!
 	return $out;
 	
 }
