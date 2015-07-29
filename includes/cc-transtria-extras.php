@@ -863,6 +863,7 @@ class CC_Transtria_Extras {
 
 		$study_data['single'] = cc_transtria_get_single_study_data( $this_study_id );
 		$study_data['population_single'] = cc_transtria_get_pops_study_data_single( $this_study_id );
+		$study_data['multiple'] = cc_transtria_get_study_data_multiple( $this_study_id );
 		
 		//can we put these all into a flat array?
 		$study_data_flat = $study_data['single'];

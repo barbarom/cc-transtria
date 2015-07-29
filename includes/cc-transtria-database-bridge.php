@@ -94,7 +94,7 @@ function cc_transtria_get_study_data_multiple( $study_id = null ){
 	//cycle through array keys are replace with lookup table keys.
 	$results = cc_transtria_match_div_ids_to_multiple_columns( $results );
  
- var_dump( $results );
+ //var_dump( $results );
 	return $results;
 }
 

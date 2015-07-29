@@ -35,6 +35,7 @@ function setup_multiselect() {
 			header: 'Choose option(s)',
 			position: {my: 'left bottom', at: 'left top'},
 			selectedText: '# of # checked',
+			//selectedList: 4, 
 			close: function( event, ui ){
 				//multiselect_listener( jQuery(this) );
 			}
@@ -156,6 +157,7 @@ function get_current_study_info(){
 			}
 			var post_meat = data['single']; // = JSON.parse(data);
 			var pops_meat = data['population_single'];
+			var multi_meat = data['multiple'];
 			//console.log( post_meat);	
 					
 			//now.. populate fields!
@@ -293,11 +295,32 @@ function get_current_study_info(){
 				
 			});
 			
+			//now handle the incoming multiple data
+			jQuery.each( multi_meat, function(index, element) {
+				
+				//do we have an element div id w this index?  
+				// TODO: edit study function in php to return indexes = div ids
+				selector_obj = jQuery("#" + index );
+				selector_obj_by_name = jQuery("input[name='" + index + "']");
+				
+				if( selector_obj.length > 0 ){
+				
+					//mark child options of that value as 'selected'
+					selector_obj.val( element ).prop("checked", true);
+				
+					//selector_obj.multiselect("refresh");
+					//console.log( selector_obj);
+					//console.log( index );
+					//console.log( element );
+				}
+			});
+			
 		}).complete( function(data){
 			//we're done!
 			//spinny.css("display", "none");
 
-			
+			//refresh all our multiselects
+			jQuery(".multiselect").multiselect("refresh");
 			
 		}).always(function() {
 			//regardless of outcome, hide spinny
@@ -332,7 +355,7 @@ jQuery( document ).ready(function() {
 		//enable clicklisteners
 		clickListen();
 		
-		//set up our multipole checkboxes
+		//set up our multiple checkboxes
 		setup_multiselect();
 		
 		//get current study info
