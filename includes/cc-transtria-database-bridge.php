@@ -85,7 +85,7 @@ function cc_transtria_get_single_study_data( $study_id = 0 ){
  * @since    1.0.0
  * @return 	array
  */
-function cc_transtria_get_pops_study_data_single( $study_id = 0 ){
+function cc_transtria_get_pops_study_data_single( $study_id = null ){
 
 	global $wpdb;
 	
@@ -157,16 +157,21 @@ function cc_transtria_get_pops_study_data_single( $study_id = 0 ){
  * @since    1.0.0
  * @return 	array
  */
-function cc_transtria_get_pops_study_data_multiple( $study_id = 0 ){
+function cc_transtria_get_pops_study_data_multiple( $study_id = null ){
 
+	$what_pops = cc_transtria_get_all_pops_type_for_study( $study_id );
+	
 	//get text ids for pops stuff
-	$pops_ids = cc_transtria_get_multiple_dropdown_ids_populations();
+	$pops_ids = array_flip( cc_transtria_get_multiple_dropdown_ids_populations() ); //db => div_ids
+	$pops_keys_only = array_keys( $pops_ids ); //we only need the db number right now?
 	
 	//get lookup codes
-	$lookup_codes = [];
+	$lookup_codes = cc_transtria_get_codes_by_names( $pops_keys_only );; 
+	
+
 	foreach( $pops_id as $k => $v ){
 		
-		//$this_code = cc_transtria_get_code_by_name
+		//$this_code = cc_transtria_get_codes_by_names( $pops_ids );
 	
 	
 	}
@@ -429,8 +434,27 @@ function cc_transtria_get_all_pops_type_for_study( $study_id ){
 
 }
 
+/**
+ * Returns codes of lookups, given array of string names
+ *
+ * @param array?
+ * @return Array?
+*/
+
+function cc_transtria_get_codes_by_names( $incoming_names ){
+
+	//can we do this in one db call?
+	
+	
 
 
+
+
+
+
+
+
+}
 
 
 

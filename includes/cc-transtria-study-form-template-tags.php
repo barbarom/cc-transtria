@@ -32,11 +32,16 @@ function cc_transtria_render_form(){
 	//$study_data['pops_single'] = cc_transtria_get_pops_study_data_single( $this_study_id );
 	//var_dump( $study_data['pops_single'] );
 	
+	//$pops_ids = array_flip( cc_transtria_get_multiple_dropdown_ids_populations() );
+	//var_dump( $pops_ids );
+	
 	//get all study ids in system
 	$all_study_ids = cc_transtria_get_study_ids();
 
 	//get data related to the form
 	$dd_singleton_options = cc_transtria_get_singleton_dropdown_options(); //all options for singleton dropdowns
+	//var_dump( $dd_singleton_options );
+	
 	$dd_multiple_options_pops = cc_transtria_get_multiple_dropdown_options_populations( $this_study_id ); //all options for pops sub tabs
 	
 	//bundle field options into single array (or whatever, really) to send to other render functions
@@ -142,7 +147,7 @@ function cc_transtria_render_form(){
 												//$dd_singleton_options are indexed by the div id - "abstractor", for example
 												foreach( $dd_singleton_options['validator'] as $k => $v ){
 													echo '<option value="' . $k . '"';
-													if( intval( $selected_val ) == intval( $k ) ) echo 'selected';
+													//if( intval( $selected_val ) == intval( $k ) ) echo 'selected';
 													echo '>' . $v->descr . '</option>';
 												} ?>											
 										</select>
@@ -222,10 +227,10 @@ function cc_transtria_render_form(){
 					<tr>
 						<td>Search tool type:</td>
 						<td>
-							<select id="searchtooltype" name="searchtooltype" class="multiselect"> 
+							<select id="searchtooltype" class="multiselect"> 
 								<?php //$dd_singleton_options are indexed by the div id - "abstractor", for example
 									foreach( $dd_singleton_options['searchtooltype'] as $k => $v ){
-									echo '<option value="' . $k . '">' . $v->descr . '</option>';
+									echo '<option value="' . $k . '" selected="selected">' . $v->descr . '</option>';
 								
 								} ?>								
 							</select>

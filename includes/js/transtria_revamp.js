@@ -31,15 +31,23 @@ function clickListen(){
 function setup_multiselect() {
 
 	jQuery( function(){
-		jQuery("select.multiselect").multiselect(
-			{header: 'Choose option(s)',
+		jQuery(".multiselect").multiselect({
+			header: 'Choose option(s)',
 			position: {my: 'left bottom', at: 'left top'},
 			selectedText: '# of # checked',
 			close: function( event, ui ){
-				multiselect_listener( jQuery(this) );
+				//multiselect_listener( jQuery(this) );
 			}
 		}); 
+		
+		//TODO: what is happening above?  There's always something checked...not cool
+		jQuery.each( jQuery('.multiselect'), function(){
+		
+			jQuery(this).multiselect("uncheckAll");
+		
+		});
 	});
+	
 
 /*
 	var ms=selector(comp.id);
