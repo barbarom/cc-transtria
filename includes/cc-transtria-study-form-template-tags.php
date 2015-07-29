@@ -35,6 +35,10 @@ function cc_transtria_render_form(){
 	//$pops_ids = array_flip( cc_transtria_get_multiple_dropdown_ids_populations() );
 	//var_dump( $pops_ids );
 	
+	$pops_data_multiple = cc_transtria_get_pops_study_data_multiple( $this_study_id );
+	//var_dump( $pops_data_multiple );
+	
+	
 	//get all study ids in system
 	$all_study_ids = cc_transtria_get_study_ids();
 

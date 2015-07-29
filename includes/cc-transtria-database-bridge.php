@@ -14,9 +14,9 @@
  * @param int. Study ID.
  * @return array
  */
-function cc_transtria_get_all_data_one_study( $study_id = 0 ){
+function cc_transtria_get_all_data_one_study( $study_id = null ){
 
-	$meta_data = cc_transtria_get_study_metadata( $study_id = 0 );
+	$meta_data = cc_transtria_get_study_metadata( $study_id );
 	$single_data = cc_transtria_get_single_study_data( $study_id );
 
 	$pops_data_single = cc_transtria_get_pops_study_data_single( $study_id );
@@ -30,7 +30,7 @@ function cc_transtria_get_all_data_one_study( $study_id = 0 ){
  * @param int. Study ID.
  * @return array
  */
-function cc_transtria_get_study_metadata( $study_id = 0 ){
+function cc_transtria_get_study_metadata( $study_id = null ){
 
 	global $wpdb;
 	
@@ -166,17 +166,22 @@ function cc_transtria_get_pops_study_data_multiple( $study_id = null ){
 	$pops_keys_only = array_keys( $pops_ids ); //we only need the db number right now?
 	
 	//get lookup codes
-	$lookup_codes = cc_transtria_get_codes_by_names( $pops_keys_only );; 
+	$lookup_codes = cc_transtria_get_codes_by_names( $pops_keys_only );
 	
-
-	foreach( $pops_id as $k => $v ){
+	//get the selected values (results) for this study from code_results (then translate to human language from code_tbl!)
+	$results = cc_transtria_get_all_code_results_by_study_id( $study_id );
+	
+	//for each code, 
+	foreach( $results as $k => $v ){
 		
+		//$results[ $k ] = 
 		//$this_code = cc_transtria_get_codes_by_names( $pops_ids );
 	
 	
 	}
 
 
+	return $results;
 
 
 
@@ -435,7 +440,7 @@ function cc_transtria_get_all_pops_type_for_study( $study_id ){
 }
 
 /**
- * Returns codes of lookups, given array of string names
+ * Returns codetypeID of lookups, given array of string names
  *
  * @param array?
  * @return Array?
@@ -443,20 +448,92 @@ function cc_transtria_get_all_pops_type_for_study( $study_id ){
 
 function cc_transtria_get_codes_by_names( $incoming_names ){
 
-	//can we do this in one db call?
+	global $wpdb;
 	
+	//turn array into comma-delimited string
 	
-
-
-
-
-
-
-
+	$incoming_string_list = implode("','", $incoming_names );
+	
+	//remove " from beginning and end and replace w '
+	//$incoming_string_list = substr( $incoming_string_list, 0, -1 );
+	$incoming_string_list = "'" . $incoming_string_list . "'";
+	trim($incoming_string_list, '\"'); 
+	
+	//can we do this in one db call (instead of one db call per name)?
+	$codeid_sql = 
+			"
+			SELECT      codetype, codetypeID
+			FROM        $wpdb->transtria_codetype
+			WHERE		codetype IN ( $incoming_string_list )
+			"
+	;
+	
+	$code_ids = $wpdb->get_results( $codeid_sql, ARRAY_A );
+	
+	return $code_ids;
 
 }
 
+/**
+ * Get all code_results values (2-char string) given a study id
+ *
+ * @param int. Study ID
+ * @return array
+ *
+ */
+function cc_transtria_get_all_code_results_by_study_id( $study_id = null ){
 
+	global $wpdb;
+	
+	$results_sql = $wpdb->prepare( 
+		"
+		SELECT      *
+		FROM        $wpdb->transtria_code_results
+		WHERE		ID = %s 
+		",
+		$study_id
+	); 
+	
+	$results = $wpdb->get_results( $results_sql, ARRAY_A );
+	
+	//now, we need to put these in a coherent format. All items with the same codetypeid should be in their own sub-array. 
+	$out = array();
+	
+	foreach ( $results as $result ) {
+		
+		//result['codetypeid'] will be the key 
+		$key = $result['codetypeID'];
+		$r = & $out;
+		
+		foreach ( explode( ".", $key ) as $key ) {
+			//var_dump( $key );
+			if ( isset( $r[$key] ) ) {
+				//test for array already
+				if( is_array( $r[$key] ) ){
+					//push the new value
+					array_push( $r[$key], $result['result'] );
+				} else {
+					//make an array w the new value added
+					$old_r_key = $r[$key];
+					$r[$key] = array( $old_r_key, $result['result'] );
+				}
+				
+			} else {
+				//there is no key existing, make new one
+				$r[$key] = $result['result']; 
+			}
+			$r = & $r[$key];
+		}
+				
+	}
+	
+	//order the array by codetype id key (for sanity and checking things)
+	ksort( $out );
+	
+	//var_dump( $out ); //works!
+	return $out;
+	
+}
 
 
 
