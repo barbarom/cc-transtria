@@ -349,7 +349,7 @@ function get_current_study_info(){
 			//spinny.css("display", "none");
 
 			//refresh all our multiselects
-			jQuery(".multiselect").multiselect("refresh");
+			jQuery(".general-multiselect").multiselect("refresh");
 			
 		}).always(function() {
 			//regardless of outcome, hide spinny
