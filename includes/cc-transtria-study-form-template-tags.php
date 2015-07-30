@@ -36,7 +36,7 @@ function cc_transtria_render_form(){
 	//var_dump( $pops_ids );
 	
 	$pops_data_multiple = cc_transtria_get_study_data_multiple( $this_study_id );
-	var_dump( $pops_data_multiple );
+	//var_dump( $pops_data_multiple );
 	
 	
 	//get all study ids in system

@@ -29,7 +29,7 @@ function cc_transtria_render_results_tab( $field_data ){
 
 		<tr>
 			<td><label>Evaluation Type:</label></td> 
-			<td><span>
+			<td colspan="3"><span>
 				<select id="evaluation_type" multiple="multiple" class="multiselect general-multiselect">
 				<?php 
 					foreach( $results_singletons['evaluation_type'] as $k => $v ){
@@ -42,7 +42,7 @@ function cc_transtria_render_results_tab( $field_data ){
 		</tr>
 		<tr class="not-reported">
 			<td class="not-reported"><label>Evaluation Type not reported</label></td>
-			<td><input id="evaluationtype_notreported" type="checkbox"></td>
+			<td colspan="3"><input id="evaluationtype_notreported" type="checkbox"></td>
 		</tr>
 
 		<tr>
@@ -62,7 +62,7 @@ function cc_transtria_render_results_tab( $field_data ){
 		</tr>
 		<tr class="not-reported">
 			<td class="not-reported"><label>Evaluation Methods not reported</label></td>
-			<td><input id="evaluationmethods_notreported" type="checkbox"></td>
+			<td colspan="3"><input id="evaluationmethods_notreported" type="checkbox"></td>
 		</tr>
 
 		<tr>
@@ -72,35 +72,37 @@ function cc_transtria_render_results_tab( $field_data ){
 
 		<tr class="not-reported">
 			<td class="not-reported"><label>Statistical Analysis/Results Desc. not reported</label></td>
-			<td><input id="statisticalanalysis_notreported" type="checkbox"></td>
+			<td colspan="3"><input id="statisticalanalysis_notreported" type="checkbox"></td>
 		</tr>
 
 
-		 <tr>
-		  <td><label>Confounders/Mediators/Moderators:</label></td>
-		  <td><span id="confounders"></span></td>
-		 </tr>
+		<tr>
+			<td><label>Confounders/Mediators/Moderators:</label></td>
+			<td><span id="confounders">
+				<input type="radio" value="Y" name="confounders">Yes
+				<input type="radio" value="N" name="confounders">No
+			</span></td>
+		</tr>
 
-		 <tr class="not-reported">
-		  <td class="not-reported"><label>Confounders/Mediators/Moderators not reported</label></td>
-		  <td><input id="confounders_notreported" type="checkbox"></td>
-		 </tr>
+		<tr class="not-reported">
+			<td class="not-reported"><label>Confounders/Mediators/Moderators not reported</label></td>
+			<td colspan="3"><input id="confounders_notreported" type="checkbox"></td>
+		</tr>
 
+		<tr id="confounders_type">
+			<td><label>Type</label></td>
+			<td colspan="3"><textarea id="confounders_textarea" style="width:98%;"></textarea></td>
+		</tr>
 
-		 <tr id="confounders_type">
-		  <td><label>Type</label></td>
-		  <td colspan="3"><textarea id="confounders_textarea" style="width:98%;"></textarea></td>
-		 </tr>
-		 
-		 <tr>
-		  <td><label>Analysis Limitations:</label></td>
-		  <td colspan="3"><textarea id="analysis_limitations" style="width:98%;"></textarea></td>
-		 </tr> 
+		<tr>
+		<td><label>Analysis Limitations:</label></td>
+		<td colspan="3"><textarea id="analysis_limitations" style="width:98%;"></textarea></td>
+			</tr> 
 
-		 <tr class="not-reported">
-		  <td class="not-reported"><label>Analysis Limitations not reported</label></td>
-		  <td><input id="analysislimitations_notreported" type="checkbox"></td>
-		 </tr>
+		<tr class="not-reported">
+			<td class="not-reported"><label>Analysis Limitations not reported</label></td>
+			<td colspan="3"><input id="analysislimitations_notreported" type="checkbox"></td>
+		</tr>
 
 
 
@@ -119,91 +121,97 @@ function cc_transtria_render_results_tab( $field_data ){
 
 		-->
 
-		 <tr>
-		   <td colspan="4" align="right">
+		<tr>
+			<td colspan="4" align="right">
 			  <button id="add_effect_association_row" 
 					  onclick="addEffectAssociationTab()">Add Effect/Association</button>
-		   </td>
-		 </tr>
-		 <tr>
-		   <td colspan="4">
+			</td>
+		</tr>
+		<tr>
+			<td colspan="4">
 			   <div id="effect_association_tabs">
 				  <ul></ul>
 			   </div>
-		   </td>
-		 </tr>
+			</td>
+		</tr>
 
-		 <tr>
-		   <td colspan="4" class="inner_table_header"><strong>Cost</strong></td>
-		 </tr>
+		<tr>
+			<td colspan="4" class="inner_table_header"><strong>Cost</strong></td>
+		</tr>
 
-		 <tr>
-		  <td><label>Staff and volunteer costs:</label></td>
-		  <td><input id="staff_volunteer_cost_text"></input></td>
-		  <td><label>Staff and volunteer costs value:</label></td>
-		  <td><input id="staff_volunteer_cost_value"></input></td>
-		 </tr>
+		<tr>
+			<td><label>Staff and volunteer costs:</label></td>
+			<td><input id="staff_volunteer_cost_text"></input></td>
+			<td><label>Staff and volunteer costs value:</label></td>
+			<td><input id="staff_volunteer_cost_value"></input></td>
+		</tr>
 
-		 <tr class="not-reported">
-		  <td class="not-reported"><label>Staff and Volunteer Costs not reported</label></td>
-		  <td><input id="staffvolunteercosts_notreported" type="checkbox"></td>
-		 </tr>
-
-
-		 <tr>
-		  <td><label>Space and Infrastructure costs:</label></td>
-		  <td><input id="space_infrastructure_cost_text"></input></td>
-		  <td><label>Space and Infrastructure costs value:</label></td>
-		  <td><input id="space_infrastructure_cost_value"></input></td>
-		 </tr>
-
-		 <tr class="not-reported">
-		  <td class="not-reported"><label>Space and Infrastructure Costs not reported</label></td>
-		  <td><input id="spacecosts_notreported" type="checkbox"></td>
-		 </tr>
+		<tr class="not-reported">
+			<td class="not-reported"><label>Staff and Volunteer Costs not reported</label></td>
+			<td colspan="3"><input id="staffvolunteercosts_notreported" type="checkbox"></td>
+		</tr>
 
 
-		 <tr>
-		  <td><label>Equipment and material costs:</label></td>
-		  <td><input id="equipment_material_cost_text"></input></td>
-		  <td><label>Equipment and material costs value:</label></td>
-		  <td><input id="equipment_material_cost_value"></input></td>
-		 </tr>
+		<tr>
+			<td><label>Space and Infrastructure costs:</label></td>
+			<td><input id="space_infrastructure_cost_text"></input></td>
+			<td><label>Space and Infrastructure costs value:</label></td>
+			<td><input id="space_infrastructure_cost_value"></input></td>
+		</tr>
 
-		 <tr class="not-reported">
-		  <td class="not-reported"><label>Equipment and material costs not reported</label></td>
-		  <td><input id="equipmentcosts_notreported" type="checkbox"></td>
-		 </tr>
+		<tr class="not-reported">
+			<td class="not-reported"><label>Space and Infrastructure Costs not reported</label></td>
+			<td colspan="3"><input id="spacecosts_notreported" type="checkbox"></td>
+		</tr>
 
 
-		 <tr>
+		<tr>
+			<td><label>Equipment and material costs:</label></td>
+			<td><input id="equipment_material_cost_text"></input></td>
+			<td><label>Equipment and material costs value:</label></td>
+			<td><input id="equipment_material_cost_value"></input></td>
+		</tr>
+
+		<tr class="not-reported">
+			<td class="not-reported"><label>Equipment and material costs not reported</label></td>
+			<td colspan="3"><input id="equipmentcosts_notreported" type="checkbox"></td>
+		</tr>
+
+
+		<tr>
 		   <td colspan="4" class="inner_table_header"><strong>Maintenance/Sustainability</strong></td>
-		 </tr>
+		</tr>
 
-		 <tr>
-		  <td><label>Was the outcome maintained?:</label></td>
-		  <td><span id="outcome_maintained_flag"></span></td>
-		  <td><label>If yes, explain:</label></td>
-		  <td><input type="text" id="explain_maintenance"></input></td>
-		 </tr>
+		<tr>
+			<td><label>Was the outcome maintained?:</label></td>
+			<td><span id="outcome_maintained_flag">
+				<input type="radio" value="Y" name="outcome_maintained_flag">Yes
+				<input type="radio" value="N" name="outcome_maintained_flag">No
+			</span></td>
+			<td><label>If yes, explain:</label></td>
+			<td><input type="text" id="explain_maintenance"></input></td>
+		</tr>
 
-		 <tr class="not-reported">
-		  <td class="not-reported"><label>Outcome Maintained not reported</label></td>
-		  <td><input id="outcomemaintained_notreported" type="checkbox"></td>
-		 </tr>
+		<tr class="not-reported">
+			<td class="not-reported"><label>Outcome Maintained not reported</label></td>
+			<td colspan="3"><input id="outcomemaintained_notreported" type="checkbox"></td>
+		</tr>
 
 
-		 <tr>
-		  <td><label>was there a plan for sustainability?:</label></td>
-		  <td><span id="sustainability_plan_flag"></span></td>
-		  <td><label>If yes, explain:</label></td>
-		  <td><input type="text" id="explain_sustainability"></input></td>
-		 </tr>
+		<tr>
+			<td><label>was there a plan for sustainability?:</label></td>
+			<td><span id="sustainability_plan_flag">
+				<input type="radio" value="Y" name="sustainability_plan_flag">Yes
+				<input type="radio" value="N" name="sustainability_plan_flag">No
+			</span></td>
+			<td><label>If yes, explain:</label></td>
+			<td><input type="text" id="explain_sustainability"></input></td>
+		</tr>
 
-		 <tr class="not-reported">
-		  <td class="not-reported"><label>Sustainability plan not reported</label></td>
-		  <td><input id="sustainabilityplan_notreported" type="checkbox"></td>
-		 </tr>
+		<tr class="not-reported">
+			<td class="not-reported"><label>Sustainability plan not reported</label></td>
+			<td colspan="3"><input id="sustainabilityplan_notreported" type="checkbox"></td>
+		</tr>
 
 
 
