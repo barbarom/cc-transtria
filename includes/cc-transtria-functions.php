@@ -184,7 +184,7 @@ function cc_transtria_get_singleton_dropdown_ids(){
 		"fundingsource" => "FundingSource",
 		"domesticfundingsources" => "domesticfundingsources",
 		"fundingpurpose" => "fundingpurpose",
-		'StudyDesign' => 'StudyDesignID',
+		'StudyDesign' => 'StudyDesign',
 		"validity_threats"=> "ValidityThreats",
 		"unit_of_analysis" => "UnitOfAnalysis",
 		"ipe_exposure_frequency" => "ipe.ExposureFrequency",  //only on IPE tab.  TODO: confirm!
@@ -417,7 +417,7 @@ function cc_transtria_match_div_ids_to_studies_columns( $study_labels = null ){
 		//domeesticintlsetting_notreport //used?
 		'domesticfundingsources' => 'domesticfundingsources',
 		'fundingpurpose' => 'fundingpurpose',
-		'StudyDesignID' => 'StudyDesign',
+		'StudyDesign' => 'StudyDesign',
 		'otherStudyDesign' => 'otherstudydesign',
 		//StudyType //is this used in the form?
 		'design_limitations' => 'design_limitations',

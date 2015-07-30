@@ -231,10 +231,10 @@ function cc_transtria_render_form(){
 					<tr>
 						<td>Search tool type:</td>
 						<td>
-							<select id="searchtooltype" class="multiselect"> 
+							<select id="searchtooltype" multiple="multiple" class="multiselect"> 
 								<?php //$dd_singleton_options are indexed by the div id - "abstractor", for example
 									foreach( $dd_singleton_options['searchtooltype'] as $k => $v ){
-									echo '<option value="' . $k . '" selected="selected">' . $v->descr . '</option>';
+									echo '<option value="' . $k . '">' . $v->descr . '</option>';
 								
 								} ?>								
 							</select>
@@ -251,7 +251,7 @@ function cc_transtria_render_form(){
 					<tr>
 						<td>Search tool name:</td>
 						<td>
-							<select id="searchtoolname" name="searchtoolname" class="multiselect">
+							<select id="searchtoolname" multiple="multiple" name="searchtoolname" class="multiselect">
 								<?php //$dd_singleton_options are indexed by the div id - "abstractor", for example
 									foreach( $dd_singleton_options['searchtoolname'] as $k => $v ){
 									echo '<option value="' . $k . '">' . $v->descr . '</option>';
@@ -302,7 +302,7 @@ function cc_transtria_render_form(){
 					<tr>
 						<td>Source of funding:</td>
 						<td>
-							<select id="fundingsource" name="fundingsource" class="multiselect general-multiselect">
+							<select id="fundingsource" multiple="multiple" name="fundingsource" class="multiselect general-multiselect">
 								<?php //$dd_singleton_options are indexed by the div id - "abstractor", for example
 									foreach( $dd_singleton_options['fundingsource'] as $k => $v ){
 									echo '<option value="' . $k . '">' . $v->descr . '</option>';
@@ -331,8 +331,7 @@ function cc_transtria_render_form(){
 					<tr>
 						<td>Domestic funding source type:</td>
 						<td >
-							<select id="domesticfundingsources" name="domesticfundingsources">
-								<option value="">---Select---</option>
+							<select id="domesticfundingsources">
 								<?php //$dd_singleton_options are indexed by the div id - "abstractor", for example
 									foreach( $dd_singleton_options['domesticfundingsources'] as $k => $v ){
 									echo '<option value="' . $k . '">' . $v->descr . '</option>';
@@ -352,8 +351,7 @@ function cc_transtria_render_form(){
 					<tr>
 						<td>Funding purpose:</td>
 						<td>
-							<select id="fundingpurpose" name="fundingpurpose">
-								<option value="">---Select---</option>
+							<select id="fundingpurpose">
 								<?php //$dd_singleton_options are indexed by the div id - "abstractor", for example
 									foreach( $dd_singleton_options['fundingpurpose'] as $k => $v ){
 									echo '<option value="' . $k . '">' . $v->descr . '</option>';
@@ -381,8 +379,9 @@ function cc_transtria_render_form(){
 						<td>Study Design:</td>
 						<td>
 							<select id="StudyDesign" name="StudyDesign">
-								<option value="">---Select---</option>
+								<option value="-1">-- Select --</option>
 								<?php //$dd_singleton_options are indexed by the div id - "abstractor", for example
+									
 									foreach( $dd_singleton_options['StudyDesign'] as $k => $v ){
 									echo '<option value="' . $k . '">' . $v->descr . '</option>';
 								

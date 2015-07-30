@@ -18,44 +18,62 @@
  * @return 	outputs html
  */
 function cc_transtria_render_results_tab( $field_data ){
+
+	$results_singletons = $field_data['dd_singleton_options']; //just making it easier for dev, although a waste of memory.  TODO: don't waste memory
 ?>
 
 		  <table>
-		 <tr>
-		   <td colspan="4" class="inner_table_header"><strong>Results</strong></td>
-		 </tr>
+		<tr>
+			<td colspan="4" class="inner_table_header"><strong>Results</strong></td>
+		</tr>
 
-		 <tr>
-		  <td><label>Evaluation Type:</label></td> 
-		  <td><input id="evaluation_type"></input></td>
-		 </tr>
-		 <tr class="not-reported">
-		  <td class="not-reported"><label>Evaluation Type not reported</label></td>
-		  <td><input id="evaluationtype_notreported" type="checkbox"></td>
-		 </tr>
+		<tr>
+			<td><label>Evaluation Type:</label></td> 
+			<td><span>
+				<select id="evaluation_type" class="multiselect general-multiselect" multiple="multiple">
+				<?php 
+					foreach( $results_singletons['evaluation_type'] as $k => $v ){
+						echo '<option value="' . $k . '"';
+						echo '>' . $v->descr . '</option>';
+					
+					} ?>
+				</select>
+			</input></td>
+		</tr>
+		<tr class="not-reported">
+			<td class="not-reported"><label>Evaluation Type not reported</label></td>
+			<td><input id="evaluationtype_notreported" type="checkbox"></td>
+		</tr>
 
+		<tr>
+			<td><label>Evaluation Methods:</label></td>
+			<td><span>
+				<select id="evaluation_methods" multiple="multiple" class="multiselect general-multiselect">
+				<?php 
+					foreach( $results_singletons['evaluation_methods'] as $k => $v ){
+						echo '<option value="' . $k . '"';
+						echo '>' . $v->descr . '</option>';
+					
+					} ?>
+				</select>
+			</span></td>
+			<td><label>Other evaluation methods:</label></td>
+			<td><input type="text" id="otherevaluationmethods"></input></td>
+		</tr>
+		<tr class="not-reported">
+			<td class="not-reported"><label>Evaluation Methods not reported</label></td>
+			<td><input id="evaluationmethods_notreported" type="checkbox"></td>
+		</tr>
 
-		 <tr>
-		  <td><label>Evaluation Methods:</label></td>
-		  <td><input id="evaluation_methods"></input></td>
-		  <td><label>Other evaluation methods:</label></td>
-		  <td><input type="text" id="otherevaluationmethods"></input></td>
-		 </tr>
-		 <tr class="not-reported">
-		  <td class="not-reported"><label>Evaluation Methods not reported</label></td>
-		  <td><input id="evaluationmethods_notreported" type="checkbox"></td>
-		 </tr>
+		<tr>
+			<td><label>Statistical Analysis and Results Description</label></td>
+			<td colspan="3"><textarea id="stat_analysis_results_descr" style="width:98%"></textarea></td>
+		</tr>
 
-
-		 <tr>
-		  <td><label>Statistical Analysis and Results Description</label></td>
-		  <td colspan="3"><textarea id="stat_analysis_results_descr" style="width:98%"></textarea></td>
-		 </tr>
-
-		 <tr class="not-reported">
-		  <td class="not-reported"><label>Statistical Analysis/Results Desc. not reported</label></td>
-		  <td><input id="statisticalanalysis_notreported" type="checkbox"></td>
-		 </tr>
+		<tr class="not-reported">
+			<td class="not-reported"><label>Statistical Analysis/Results Desc. not reported</label></td>
+			<td><input id="statisticalanalysis_notreported" type="checkbox"></td>
+		</tr>
 
 
 		 <tr>

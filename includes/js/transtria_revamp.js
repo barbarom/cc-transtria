@@ -42,13 +42,43 @@ function clickListen(){
 
 } 
 
+function get_multiselect_ids(){
+
+	var ms_array = [
+		'fundingpurpose',
+		'domesticfundingsources',
+		'searchtoolname'
+		]
+
+	return ms_array;
+
+
+}
+
 //function setup_multiselect(comp) {
 function setup_multiselect() {
 
+	var ms_id_array = get_multiselect_ids();
+	//console.log( ms_id_array );
 	jQuery( function(){
+	
+		//
+		jQuery.each( ms_id_array, function(){
+			var ms = jQuery( "#" + this + "" );
+			console.log( ms );
+			ms.multiselect({
+				header: 'Choose option(s)',
+				position: {my: 'left bottom', at: 'left top'},
+				selectedText: '# of # checked',
+				close: function( event, ui ){
+					//multiselect_listener( jQuery(this) );
+				}
+			});
+        });
+		
 		
 		jQuery(".general-multiselect").multiselect({
-			header: 'Choose option(s)',
+			header: true,
 			position: {my: 'left bottom', at: 'left top'},
 			selectedText: '# of # checked',
 			//selectedList: 4, 
@@ -347,7 +377,7 @@ function get_current_study_info(){
 				if( selector_obj.length > 0 ){
 				
 					//uncheck all?
-					
+					selector_obj.multiselect("uncheckAll");
 					
 					//mark child options of that value as 'selected'
 					selector_obj.val( element ).prop("checked", true);
