@@ -190,16 +190,6 @@ function cc_transtria_get_pops_study_data_multiple( $study_id = null ){
 	//get the selected values (results) for this study from code_results (then translate to human language from code_tbl!)
 	$results = cc_transtria_get_all_code_results_by_study_id( $study_id );
 	
-	//for each result, tie to div id..
-	foreach( $results as $k => $v ){
-		
-		//$results[ $k ] = 
-		//$this_code = cc_transtria_get_codes_by_names( $pops_ids );
-	
-	
-	}
-
-
 	return $results;
 
 
@@ -347,6 +337,7 @@ function cc_transtria_get_multiple_dropdown_options_populations( $study_id = nul
 	return $dd_options;
 
 }
+
 
 /**
  * Gets an array of SINGLETON lookups and does those lookups

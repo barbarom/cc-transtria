@@ -63,7 +63,7 @@ function cc_transtria_render_populations_header( $field_data ){
 		</span>
 		<br />
 		<label class="general_pops_label">Unit of Analysis</label>
-		<select id="unit_of_analysis" class="multiselect" multiple="multiple">				
+		<select id="unit_of_analysis" class="general-multiselect multiselect" multiple="multiple">				
 			<?php //$dd_singleton_options are indexed by the div id - "abstractor", for example
 				foreach( $dd_singleton_options['unit_of_analysis'] as $k => $v ){
 				echo '<option value="' . $k . '">' . $v->descr . '</option>';
@@ -194,8 +194,8 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 			<tr>
 				<td><label>Geographic scale:</label></td>
 				<td>
-					<span id="<?php echo $which_pop; ?>_geographic_scale">
-						<select class="multiselect" multiple="multiple">
+					<span>
+						<select id="<?php echo $which_pop; ?>_geographic_scale" class="general-multiselect multiselect" multiple="multiple">
 							<?php 
 								$field_name = $which_pop . '_geographic_scale';
 								foreach( $dd_multiple_options_pops[ $field_name ] as $k => $v ){
@@ -266,8 +266,8 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 
 			<tr class="<?php echo $which_pop; ?>_hr_subpopulations">
 				<td><label>Identify the HR subpopulations</label></td>
-				<td><span id="ese_hr_subpopulations">
-					<select class="multiselect" multiple="multiple">
+				<td><span>
+					<select id="ese_hr_subpopulations" class="general-multiselect multiselect" multiple="multiple">
 						<?php 
 							foreach( $dd_multiple_options_pops[ 'ese_hr_subpopulations' ] as $k => $v ){
 							echo '<option value="' . $k . '">' . $v->descr . '</option>';
@@ -305,8 +305,8 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 
 			<tr class="ipe_hr_subpopulations">
 				<td><label>Identify the HR subpopulations</label></td>
-				<td><span id="ipe_hr_subpopulations">
-					<select class="multiselect" multiple="multiple">
+				<td><span>
+					<select id="ipe_hr_subpopulations" class="general-multiselect multiselect" multiple="multiple">
 						<?php 
 							foreach( $dd_multiple_options_pops[ 'ipe_hr_subpopulations' ] as $k => $v ){
 							echo '<option value="' . $k . '">' . $v->descr . '</option>';
@@ -400,8 +400,8 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 
 			<tr class="<?php echo $which_pop; ?>_not_general">
 				<td><label>Ability status:</label></td>
-				<td><span id="<?php echo $which_pop; ?>_ability_status">
-					<select multiple="multiple" class="multiselect">
+				<td><span>
+					<select id="<?php echo $which_pop; ?>_ability_status" multiple="multiple" class="general-multiselect multiselect">
 						<?php 
 							$field_name = $which_pop . '_ability_status';
 							foreach( $dd_multiple_options_pops[ $field_name ] as $k => $v ){
@@ -450,8 +450,8 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 
 			<tr class="<?php echo $which_pop; ?>_not_general">
 				<td><label>Subpopulations:</label></td>
-				<td><span id="<?php echo $which_pop; ?>_sub_populations">
-					<select class="multiselect" multiple="multiple">
+				<td><span>
+					<select id="<?php echo $which_pop; ?>_sub_populations" class="general-multiselect multiselect" multiple="multiple">
 						<?php 
 							$field_name = $which_pop . '_sub_populations';
 							foreach( $dd_multiple_options_pops[ $field_name ] as $k => $v ){
@@ -468,8 +468,8 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 
 			<tr class="<?php echo $which_pop; ?>_not_general">
 				<td><label>Youth populations:</label></td>
-				<td><span id="<?php echo $which_pop; ?>_youth_populations">
-					<select multiple="multiple" class="multiselect">
+				<td><span>
+					<select id="<?php echo $which_pop; ?>_youth_populations" multiple="multiple" class="general-multiselect multiselect">
 						<?php 
 							$field_name = $which_pop . '_youth_populations';
 							foreach( $dd_multiple_options_pops[ $field_name ] as $k => $v ){
@@ -485,8 +485,8 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 
 			<tr class="<?php echo $which_pop; ?>_not_general">
 				<td><label>Professional populations:</label></td>
-				<td><span id="<?php echo $which_pop; ?>_professional_populations">
-					<select multiple="multiple" class="multiselect">
+				<td><span>
+					<select id="<?php echo $which_pop; ?>_professional_populations" multiple="multiple" class="general-multiselect multiselect">
 						<?php 
 							$field_name = $which_pop . '_professional_populations';
 							foreach( $dd_multiple_options_pops[ $field_name ] as $k => $v ){

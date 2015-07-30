@@ -31,7 +31,8 @@ function clickListen(){
 function setup_multiselect() {
 
 	jQuery( function(){
-		jQuery(".multiselect").multiselect({
+		
+		jQuery(".general-multiselect").multiselect({
 			header: 'Choose option(s)',
 			position: {my: 'left bottom', at: 'left top'},
 			selectedText: '# of # checked',
@@ -41,6 +42,29 @@ function setup_multiselect() {
 			}
 		}); 
 		
+		jQuery("#state_setting").multiselect({
+			header: true,
+			position: {my: 'left bottom', at: 'left top'},
+			selectedText: '# of # checked',
+			checkAllText: 'Select all states',
+			uncheckAllText: 'Deselect all states',
+			close: function( event, ui){
+
+			}
+		});
+		
+		jQuery("#searchtooltype").multiselect({
+			header: true,
+			position: {my: 'left bottom', at: 'left top'},
+			selectedText: '# of # checked',
+			checkAllText: 'Select all states',
+			uncheckAllText: 'Deselect all states',
+			close: function( event, ui){
+
+			}
+		});
+		//searchtooltype
+
 		//TODO: what is happening above?  There's always something checked...not cool
 		jQuery.each( jQuery('.multiselect'), function(){
 		
@@ -295,16 +319,21 @@ function get_current_study_info(){
 				
 			});
 			
+			jQuery(".multiselect").multiselect("uncheckAll");
+			
 			//now handle the incoming multiple data
 			jQuery.each( multi_meat, function(index, element) {
 				
 				//do we have an element div id w this index?  
 				// TODO: edit study function in php to return indexes = div ids
 				selector_obj = jQuery("#" + index );
-				selector_obj_by_name = jQuery("input[name='" + index + "']");
+				//selector_obj_by_name = jQuery("input[name='" + index + "']");
 				
 				if( selector_obj.length > 0 ){
 				
+					//uncheck all?
+					
+					
 					//mark child options of that value as 'selected'
 					selector_obj.val( element ).prop("checked", true);
 				

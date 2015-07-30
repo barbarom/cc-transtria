@@ -36,7 +36,7 @@ function cc_transtria_render_form(){
 	//var_dump( $pops_ids );
 	
 	$pops_data_multiple = cc_transtria_get_study_data_multiple( $this_study_id );
-	//var_dump( $pops_data_multiple );
+	var_dump( $pops_data_multiple );
 	
 	
 	//get all study ids in system
@@ -302,7 +302,7 @@ function cc_transtria_render_form(){
 					<tr>
 						<td>Source of funding:</td>
 						<td>
-							<select id="fundingsource" name="fundingsource" class="multiselect">
+							<select id="fundingsource" name="fundingsource" class="multiselect general-multiselect">
 								<?php //$dd_singleton_options are indexed by the div id - "abstractor", for example
 									foreach( $dd_singleton_options['fundingsource'] as $k => $v ){
 									echo '<option value="' . $k . '">' . $v->descr . '</option>';
@@ -427,7 +427,7 @@ function cc_transtria_render_form(){
 							Select type(s) of threats to internal validity:
 						</td>
 						<td>
-							<select id="validity_threats" name="validity_threats" class="multiselect">
+							<select id="validity_threats" name="validity_threats" class="multiselect general-multiselect">
 								<?php //$dd_singleton_options are indexed by the div id - "abstractor", for example
 									foreach( $dd_singleton_options['validity_threats'] as $k => $v ){
 									echo '<option value="' . $k . '">' . $v->descr . '</option>';
