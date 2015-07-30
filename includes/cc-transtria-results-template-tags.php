@@ -30,7 +30,7 @@ function cc_transtria_render_results_tab( $field_data ){
 		<tr>
 			<td><label>Evaluation Type:</label></td> 
 			<td><span>
-				<select id="evaluation_type" class="multiselect general-multiselect" multiple="multiple">
+				<select id="evaluation_type" multiple="multiple" class="multiselect general-multiselect">
 				<?php 
 					foreach( $results_singletons['evaluation_type'] as $k => $v ){
 						echo '<option value="' . $k . '"';
