@@ -24,6 +24,21 @@ function clickListen(){
 	
 	//TODO: restrict options in EA tabs based on intervention tabs. 
 
+	
+	
+	//Add new ESE tabs
+	jQuery('#add-ese-tab').on("click", function(){
+		var new_tab_id = 0;
+		var last_tab = jQuery('.subpops_tab').last().attr('id');
+		var last_tab_arr = last_tab.split('-');
+		var lastChar = last_tab_arr[0].substr(last_tab_arr[0].length - 1);
+		if (!isNaN(lastChar)) 
+		{
+			new_tab_id = Number(lastChar) + 1;
+		}		
+		
+		jQuery('#sub_pops_tabs').append("<div id='ese" + new_tab_id + "-tab' class='subpops_tab'><label class='subpops_tab_label' for='" + new_tab_id + "-tab' data-whichpop='" + new_tab_id + "'>ese" + new_tab_id + "</label></div>");
+	});
 
 } 
 
