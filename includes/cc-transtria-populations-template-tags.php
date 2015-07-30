@@ -174,7 +174,7 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 
 			<tr>
 				<td><label>Reported?</label></td>
-				<td>
+				<td colspan="3">
 					<span id="<?php echo $which_pop; ?>_reported">
 						<input type="radio" value="Y" name="<?php echo $which_pop; ?>_reported">Yes
 						<input type="radio" value="N" name="<?php echo $which_pop; ?>_reported">No
@@ -183,17 +183,17 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 
 			<tr>
 				<td><label>Population Size:</label></td> 
-				<td><input type="text" id="<?php echo $which_pop; ?>_population_size"></input></td>
+				<td colspan="3"><input type="text" id="<?php echo $which_pop; ?>_population_size"></input></td>
 			</tr>
 			<tr class="not-reported">
 				<td class="not-reported"><label>Population size not reported</label></td>
-				<td><input id="<?php echo $which_pop; ?>_populationsize_notreported" type="checkbox"></td>
+				<td colspan="3"><input id="<?php echo $which_pop; ?>_populationsize_notreported" type="checkbox"></td>
 			</tr>
 
 
 			<tr>
 				<td><label>Geographic scale:</label></td>
-				<td>
+				<td colspan="3">
 					<span>
 						<select id="<?php echo $which_pop; ?>_geographic_scale" class="general-multiselect multiselect" multiple="multiple">
 							<?php 
@@ -207,33 +207,33 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 			</tr>
 			<tr class="not-reported">
 				<td class="not-reported"><label>Geographic scale not reported</label></td>
-				<td><input id="<?php echo $which_pop; ?>_geographicscale_notreported" type="checkbox"></td>
+				<td colspan="3"><input id="<?php echo $which_pop; ?>_geographicscale_notreported" type="checkbox"></td>
 			</tr>
 
 
 			<tr>
 				<td><label>Eligibility criteria:</label></td>
-				<td><span id="<?php echo $which_pop; ?>_eligibility_criteria">
+				<td colspan="3"><span id="<?php echo $which_pop; ?>_eligibility_criteria">
 					<input type="radio" value="Y" name="<?php echo $which_pop; ?>_eligibility_criteria">Yes
 					<input type="radio" value="N" name="<?php echo $which_pop; ?>_eligibility_criteria">No
 				</span></td>
 			</tr>
 			<tr class="not-reported">
 				<td class="not-reported"><label>Eligibility criteria not reported</label></td>
-				<td><input id="<?php echo $which_pop; ?>_eligibilitycriteria_notreported" type="checkbox"></td>
+				<td colspan="3"><input id="<?php echo $which_pop; ?>_eligibilitycriteria_notreported" type="checkbox"></td>
 			</tr>
 
 
 			<tr>
 				<td><label><?php echo strtoupper( $which_pop ); ?> is general population?:</label></td>
-				<td><span id="<?php echo $which_pop; ?>_general_population">
+				<td colspan="3"><span id="<?php echo $which_pop; ?>_general_population">
 					<input type="radio" value="Y" name="<?php echo $which_pop; ?>_general_population">Yes
 					<input type="radio" value="N" name="<?php echo $which_pop; ?>_general_population">No
 				</span></td>
 			</tr>
 			<tr class="not-reported">
 				<td class="not-reported"><label><?php echo strtoupper( $which_pop ); ?> is general population not reported</label></td>
-				<td><input id="<?php echo $which_pop; ?>_generalpopulation_notreported" type="checkbox"></td>
+				<td colspan="3"><input id="<?php echo $which_pop; ?>_generalpopulation_notreported" type="checkbox"></td>
 			</tr>
 
 		<?php if( $which_pop == 'ese' ){ ?>
@@ -247,7 +247,7 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 			</tr>
 			<tr class="not-reported">
 				<td class="not-reported"><label>Representativeness not reported</label></td>
-				<td><input id="ese_representativeness_notreported" type="checkbox"></td>
+				<td colspan="3"><input id="ese_representativeness_notreported" type="checkbox"></td>
 			</tr>
 
 
@@ -260,13 +260,13 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 			</tr>
 			<tr class="not-reported">
 				<td class="not-reported"><label>Oversampling not reported</label></td>
-				<td><input id="ese_oversampling_notreported" type="checkbox"></td>
+				<td colspan="3"><input id="ese_oversampling_notreported" type="checkbox"></td>
 			</tr>
 
 
 			<tr class="<?php echo $which_pop; ?>_hr_subpopulations">
 				<td><label>Identify the HR subpopulations</label></td>
-				<td><span>
+				<td colspan="3"><span>
 					<select id="ese_hr_subpopulations" class="general-multiselect multiselect" multiple="multiple">
 						<?php 
 							foreach( $dd_multiple_options_pops[ 'ese_hr_subpopulations' ] as $k => $v ){
@@ -288,7 +288,7 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 			</tr>
 			<tr class="not-reported">
 				<td class="not-reported"><label>Representativeness not reported</label></td>
-				<td><input id="ipe_representativeness_notreported" type="checkbox"></td>
+				<td colspan="3"><input id="ipe_representativeness_notreported" type="checkbox"></td>
 			</tr>
 			
 			<tr>
@@ -300,12 +300,12 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 			</tr>
 			<tr class="not-reported">
 				<td class="not-reported"><label>Applicability to HR populations not reported</label></td>
-				<td><input id="ipe_applicabilityhrpops_notreported" type="checkbox"></td>
+				<td colspan="3"><input id="ipe_applicabilityhrpops_notreported" type="checkbox"></td>
 			</tr>
 
 			<tr class="ipe_hr_subpopulations">
 				<td><label>Identify the HR subpopulations</label></td>
-				<td><span>
+				<td colspan="3"><span>
 					<select id="ipe_hr_subpopulations" class="general-multiselect multiselect" multiple="multiple">
 						<?php 
 							foreach( $dd_multiple_options_pops[ 'ipe_hr_subpopulations' ] as $k => $v ){
@@ -344,43 +344,43 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 
 			<tr class="not-reported <?php echo $which_pop; ?>_not_general">
 				<td class="not-reported"><label>Gender not reported</label></td>
-				<td><input id="<?php echo $which_pop; ?>_gender_notreported" type="checkbox"></td>
+				<td colspan="3"><input id="<?php echo $which_pop; ?>_gender_notreported" type="checkbox"></td>
 			</tr>
 			<br />
 
 			<tr class="<?php echo $which_pop; ?>_not_general">
 				<td><label>Minimum age:</label></td>
-				<td><input id="<?php echo $which_pop; ?>_min_age"></input></td>
+				<td colspan="3"><input id="<?php echo $which_pop; ?>_min_age"></input></td>
 			</tr>
 			<tr class="not-reported <?php echo $which_pop; ?>_not_general">
 				<td class="not-reported"><label>Minimum age not reported</label></td>
-				<td><input id="<?php echo $which_pop; ?>_minimumage_notreported" type="checkbox"></td>
+				<td colspan="3"><input id="<?php echo $which_pop; ?>_minimumage_notreported" type="checkbox"></td>
 			</tr>
 
 			<tr class="<?php echo $which_pop; ?>_not_general">
 				<td><label>Maximum age:</label></td>
-				<td><input id="<?php echo $which_pop; ?>_max_age"></input></td>
+				<td colspan="3"><input id="<?php echo $which_pop; ?>_max_age"></input></td>
 			</tr>
 			<tr class="not-reported <?php echo $which_pop; ?>_not_general">
 				<td class="not-reported"><label>Maximum age not reported</label></td>
-				<td><input id="<?php echo $which_pop; ?>_maximumage_notreported" type="checkbox"></td>
+				<td colspan="3"><input id="<?php echo $which_pop; ?>_maximumage_notreported" type="checkbox"></td>
 			</tr>
 
 		<?php if( $which_pop == 'ipe' ) { ?>
 		
 			<tr class="<?php echo $which_pop; ?>_not_general">
 				<td><label>Rate of Participation:</label></td>
-				<td><input id="<?php echo $which_pop; ?>_participation_rate"></input></td>
+				<td colspan="3"><input id="<?php echo $which_pop; ?>_participation_rate"></input></td>
 			</tr>
 			<tr class="not-reported <?php echo $which_pop; ?>_not_general">
 				<td class="not-reported"><label>Rate of Participation not reported</label></td>
-				<td><input id="<?php echo $which_pop; ?>_rateofparticipation_notreported" type="checkbox"></td>
+				<td colspan="3"><input id="<?php echo $which_pop; ?>_rateofparticipation_notreported" type="checkbox"></td>
 			</tr>
 
 
 			<tr class="<?php echo $which_pop; ?>_not_general">
 				<td><label>Frequency of Exposure:</label></td>
-				<td><input id="<?php echo $which_pop; ?>_exposure_frequency">
+				<td colspan="3"><input id="<?php echo $which_pop; ?>_exposure_frequency">
 					<select>
 						<option value="">---Select---</option>
 						<?php 
@@ -393,14 +393,14 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 			</tr>
 			<tr class="not-reported <?php echo $which_pop; ?>_not_general">
 				<td class="not-reported"><label>Frequency of Exposure not reported</label></td>
-				<td><input id="<?php echo $which_pop; ?>_freqofexposure_notreported" type="checkbox"></td>
+				<td colspan="3"><input id="<?php echo $which_pop; ?>_freqofexposure_notreported" type="checkbox"></td>
 			</tr>
 
 		<?php } ?>
 
 			<tr class="<?php echo $which_pop; ?>_not_general">
 				<td><label>Ability status:</label></td>
-				<td><span>
+				<td colspan="3"><span>
 					<select id="<?php echo $which_pop; ?>_ability_status" multiple="multiple" class="general-multiselect multiselect">
 						<?php 
 							$field_name = $which_pop . '_ability_status';
@@ -415,42 +415,42 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 			<?php ///TODO: this!  Conditionally shows depending on which abilities selected ?>
 			<tr class="<?php echo $which_pop; ?>-ability-percent <?php echo $which_pop; ?>_not_general" data-ability-value="1">
 				<td><label>Cognition disability percent</label></td>
-				<td><input id="<?php echo $which_pop; ?>_cognition_disability_pct"></input>%</td>
+				<td colspan="3"><input id="<?php echo $which_pop; ?>_cognition_disability_pct"></input>%</td>
 			</tr>
 
 			<tr class="<?php echo $which_pop; ?>-ability-percent <?php echo $which_pop; ?>_not_general" data-ability-value="2">
 				<td><label>Getting along disability percent</label></td>
-				<td><input id="<?php echo $which_pop; ?>_getting_along_disability_pct"></input>%</td>
+				<td colspan="3"><input id="<?php echo $which_pop; ?>_getting_along_disability_pct"></input>%</td>
 			</tr>
 
 			<tr class="<?php echo $which_pop; ?>-ability-percent <?php echo $which_pop; ?>_not_general" data-ability-value="3">
 				<td><label>Life activities disability percent</label></td>
-				<td><input id="<?php echo $which_pop; ?>_life_activities_disability_pct"></input>%</td>
+				<td colspan="3"><input id="<?php echo $which_pop; ?>_life_activities_disability_pct"></input>%</td>
 			</tr>
 
 			<tr class="<?php echo $which_pop; ?>-ability-percent <?php echo $which_pop; ?>_not_general" data-ability-value="4">
 				<td><label>Mobility disability percent</label></td>
-				<td><input id="<?php echo $which_pop; ?>_mobility_disability_pct"></input>%</td>
+				<td colspan="3"><input id="<?php echo $which_pop; ?>_mobility_disability_pct"></input>%</td>
 			</tr>
 
 			<tr class="<?php echo $which_pop; ?>-ability-percent <?php echo $which_pop; ?>_not_general" data-ability-value="5">
 				<td><label>Self-care disability percent</label></td>
-				<td><input id="<?php echo $which_pop; ?>_self_care_disability_pct"></input>%</td>
+				<td colspan="3"><input id="<?php echo $which_pop; ?>_self_care_disability_pct"></input>%</td>
 			</tr>
 
 			<tr class="<?php echo $which_pop; ?>-ability-percent <?php echo $which_pop; ?>_not_general" data-ability-value="6">
 				<td><label>Participation disability percent</label></td>
-				<td><input id="<?php echo $which_pop; ?>_participation_disability_pct"></input>%</td>
+				<td colspan="3"><input id="<?php echo $which_pop; ?>_participation_disability_pct"></input>%</td>
 			</tr>
 
 			<tr class="not-reported <?php echo $which_pop; ?>_not_general">
 				<td class="not-reported"><label>Ability status not reported</label></td>
-				<td><input id="<?php echo $which_pop; ?>_abilitystatus_notreported" type="checkbox"></td>
+				<td colspan="3"><input id="<?php echo $which_pop; ?>_abilitystatus_notreported" type="checkbox"></td>
 			</tr>
 
 			<tr class="<?php echo $which_pop; ?>_not_general">
 				<td><label>Subpopulations:</label></td>
-				<td><span>
+				<td colspan="3"><span>
 					<select id="<?php echo $which_pop; ?>_sub_populations" class="general-multiselect multiselect" multiple="multiple">
 						<?php 
 							$field_name = $which_pop . '_sub_populations';
@@ -463,12 +463,12 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 			</tr>
 			<tr class="not-reported <?php echo $which_pop; ?>_not_general">
 				<td class="not-reported"><label>Subpopulations not reported</label></td>
-				<td><input id="<?php echo $which_pop; ?>_subpopulations_notreported" type="checkbox"></td>
+				<td colspan="3"><input id="<?php echo $which_pop; ?>_subpopulations_notreported" type="checkbox"></td>
 			</tr>
 
 			<tr class="<?php echo $which_pop; ?>_not_general">
 				<td><label>Youth populations:</label></td>
-				<td><span>
+				<td colspan="3"><span>
 					<select id="<?php echo $which_pop; ?>_youth_populations" multiple="multiple" class="general-multiselect multiselect">
 						<?php 
 							$field_name = $which_pop . '_youth_populations';
@@ -480,12 +480,12 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 			</tr>
 			<tr class="not-reported <?php echo $which_pop; ?>_not_general">
 				<td class="not-reported"><label>Youth populations not reported</label></td>
-				<td><input id="<?php echo $which_pop; ?>_youthpopulations_notreported" type="checkbox"></td>
+				<td colspan="3"><input id="<?php echo $which_pop; ?>_youthpopulations_notreported" type="checkbox"></td>
 			</tr>
 
 			<tr class="<?php echo $which_pop; ?>_not_general">
 				<td><label>Professional populations:</label></td>
-				<td><span>
+				<td colspan="3"><span>
 					<select id="<?php echo $which_pop; ?>_professional_populations" multiple="multiple" class="general-multiselect multiselect">
 						<?php 
 							$field_name = $which_pop . '_professional_populations';
@@ -497,17 +497,17 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 			</tr>
 			<tr class="not-reported <?php echo $which_pop; ?>_not_general">
 				<td class="not-reported"><label>Professional populations not reported</label></td>
-				<td><input id="<?php echo $which_pop; ?>_professionalpopulations_notreported" type="checkbox"></td>
+				<td colspan="3"><input id="<?php echo $which_pop; ?>_professionalpopulations_notreported" type="checkbox"></td>
 			</tr>
 
 			<tr class="<?php echo $which_pop; ?>_not_general">
 				<td class=""><label>Other populations</label></td>
-				<td><input id="<?php echo $which_pop; ?>_other_populations" type="checkbox"></td>
+				<td colspan="3"><input id="<?php echo $which_pop; ?>_other_populations" type="checkbox"></td>
 			</tr>
 
 			<tr class="<?php echo $which_pop; ?>_not_general">
 				<td class=""><label>Other population description</label></td>
-				<td colspan="2"><textarea id="<?php echo $which_pop; ?>_other_population_description" style="width:98%"></textarea></td>
+				<td colspan="3"><textarea id="<?php echo $which_pop; ?>_other_population_description" style="width:98%"></textarea></td>
 			</tr>
 
 
@@ -544,7 +544,7 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 
 			<tr class="<?php echo $which_pop; ?>_not_general">
 				<td><label>Percent Hispanic:</label></td>
-				<td><input id="<?php echo $which_pop; ?>_hispanic_pct"></input>%</td>
+				<td colspan="3"><input id="<?php echo $which_pop; ?>_hispanic_pct"></input>%</td>
 			</tr>
 			<tr class="not-reported <?php echo $which_pop; ?>_not_general">
 				<td class="not-reported"><label>Percent Hispanic not reported</label></td>
@@ -553,20 +553,20 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 
 			<tr class="<?php echo $which_pop; ?>_not_general">
 				<td><label>Percent lower income:</label></td>
-				<td><input id="<?php echo $which_pop; ?>_lower_income_pct"></input>%</td>
+				<td colspan="3"><input id="<?php echo $which_pop; ?>_lower_income_pct"></input>%</td>
 			</tr>
 			<tr class="not-reported <?php echo $which_pop; ?>_not_general">
 				<td class="not-reported"><label>Percent lower income not reported</label></td>
-				<td><input id="<?php echo $which_pop; ?>_percentlowerincome_notreported" type="checkbox"></td>
+				<td colspan="3"><input id="<?php echo $which_pop; ?>_percentlowerincome_notreported" type="checkbox"></td>
 			</tr>
 
 			<tr class="<?php echo $which_pop; ?>_not_general">
 				<td><label>Percent non-English speakers:</label></td>
-				<td><input id="<?php echo $which_pop; ?>_non_english_speakers_pct"></input>%</td>
+				<td colspan="3"><input id="<?php echo $which_pop; ?>_non_english_speakers_pct"></input>%</td>
 			</tr>
 			<tr class="not-reported <?php echo $which_pop; ?>_not_general">
 				<td class="not-reported"><label>Percent non-English speakers not reported</label></td>
-				<td><input id="<?php echo $which_pop; ?>_percentnonenglish_notreported" type="checkbox"></td>
+				<td colspan="3"><input id="<?php echo $which_pop; ?>_percentnonenglish_notreported" type="checkbox"></td>
 			</tr>
 		</table>
 	

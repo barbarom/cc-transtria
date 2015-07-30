@@ -29,7 +29,7 @@ function cc_transtria_render_intervention_partnerships_tab( $field_data ){
 		</tr>
 		<tr>
 			<td><label>Domestic/International Setting:</label></td> 
-			<td>
+			<td colspan="3">
 				<input type="checkbox" id="DomesticSetting">Domestic</input>
 				<input type="checkbox" id="InternationalSetting">International</input>
 			</td>
@@ -37,13 +37,13 @@ function cc_transtria_render_intervention_partnerships_tab( $field_data ){
 
 		<tr class="not-reported">
 			<td class="not-reported"><label>Domestic/Intl Setting Not Reported</label></td>
-			<td><input id="domeesticintlsetting_notreported" type="checkbox"></td>
+			<td colspan="3"><input id="domeesticintlsetting_notreported" type="checkbox"></td>
 		</tr>
 
 
 		<tr>
 			<td><label>State Settings:</label></td>
-			<td><span>
+			<td colspan="3"><span>
 				<select id="state_setting" multiple="multiple" class="multiselect">
 					<?php 
 					foreach( $intervention_singletons['state_setting'] as $k => $v ){
@@ -57,7 +57,7 @@ function cc_transtria_render_intervention_partnerships_tab( $field_data ){
 
 		<tr class="not-reported">
 			<td class="not-reported"><label>State Settings not reported</label></td>
-			<td><input id="statesettings_notreported" type="checkbox"></input></td>
+			<td colspan="3"><input id="statesettings_notreported" type="checkbox"></input></td>
 		</tr>
 
 		<tr>
@@ -77,7 +77,7 @@ function cc_transtria_render_intervention_partnerships_tab( $field_data ){
 
 		<tr class="not-reported">
 			<td class="not-reported"><label>Setting Type not reported</label></td>
-			<td><input id="settingtype_notreported" type="checkbox"></td>
+			<td colspan="3"><input id="settingtype_notreported" type="checkbox"></td>
 		</tr>
 
 
@@ -102,29 +102,29 @@ function cc_transtria_render_intervention_partnerships_tab( $field_data ){
 		 
 		<tr class="not-reported">
 			<td class="not-reported"><label>Partner discipline not reported</label></td>
-			<td><input id="partnerdiscipline_notreported" type="checkbox"></td>
+			<td colspan="3"><input id="partnerdiscipline_notreported" type="checkbox"></td>
 		 </tr>
 
 		 
 		 <tr>
 			<td><label>Name of lead agencies:</label></td>
-			<td colspan="2"><input type="text" id="lead_agencies"></input></td>
+			<td colspan="3"><input type="text" id="lead_agencies"></input></td>
 		 </tr>
 
 		 <tr class="not-reported">
 			<td class="not-reported"><label>Name of lead agencies not reported</label></td>
-			<td><input id="leadagencies_notreported" type="checkbox"></td>
+			<td colspan="3"><input id="leadagencies_notreported" type="checkbox"></td>
 		 </tr>
 
 
 		 <tr>
 			<td><label>Lead agency role:</label></td>
-			<td colspan="2"><input type="text" id="lead_agency_role"></input></td>
+			<td colspan="3"><input type="text" id="lead_agency_role"></input></td>
 		 </tr>
 
 		 <tr class="not-reported">
 			<td class="not-reported"><label>Lead agency role not reported</label></td>
-			<td><input id="leadagencyrole_notreported" type="checkbox"></td>
+			<td colspan="3"><input id="leadagencyrole_notreported" type="checkbox"></td>
 		 </tr>
 
 
@@ -147,7 +147,7 @@ function cc_transtria_render_intervention_partnerships_tab( $field_data ){
 
 		 <tr>
 			<td><label>Theory/Framework type:</label></td>
-			<td><span>
+			<td colspan="3"><span>
 				<select id="theory_framework_type" multiple="multiple" class="multiselect general-multiselect">
 					<?php //populate the dropdown
 					foreach( $intervention_singletons['theory_framework_type'] as $k => $v ){
@@ -162,7 +162,7 @@ function cc_transtria_render_intervention_partnerships_tab( $field_data ){
 
 		 <tr class="not-reported">
 			<td class="not-reported"><label>Theory/Framework Type not reported</label></td>
-			<td><input id="theoryframeworktype_notreported" type="checkbox"></td>
+			<td colspan="3"><input id="theoryframeworktype_notreported" type="checkbox"></td>
 		 </tr>
 
 
@@ -177,7 +177,7 @@ function cc_transtria_render_intervention_partnerships_tab( $field_data ){
 		  
 		 <tr class="not-reported">
 			<td class="not-reported"><label>Intervention Purpose not reported</label></td>
-			<td><input id="interventionpurpose_notreported" type="checkbox"></td>
+			<td colspan="3"><input id="interventionpurpose_notreported" type="checkbox"></td>
 		 </tr>
 
 		 <tr>
@@ -187,12 +187,12 @@ function cc_transtria_render_intervention_partnerships_tab( $field_data ){
 
 		 <tr class="not-reported">
 			<td class="not-reported"><label>Intervention Summary not reported</label></td>
-			<td><input id="interventionsummary_notreported" type="checkbox"></td>
+			<td colspan="3"><input id="interventionsummary_notreported" type="checkbox"></td>
 		 </tr>
 
 		 <tr>
 			<td><label>Intervention Components:</label></td>
-			<td><span>
+			<td colspan="3"><span>
 				<select id="intervention_component" multiple="multiple" class="multiselect general-multiselect">
 					<?php //populate the dropdown
 					foreach( $intervention_singletons['intervention_component'] as $k => $v ){
@@ -206,12 +206,12 @@ function cc_transtria_render_intervention_partnerships_tab( $field_data ){
 
 		 <tr class="not-reported">
 			<td class="not-reported"><label>Intervention Components not reported</label></td>
-			<td><input id="interventioncomponents_notreported" type="checkbox"></td>
+			<td colspan="3"><input id="interventioncomponents_notreported" type="checkbox"></td>
 		 </tr>
 
 		 <tr>
 			<td><label>Select strategies:</label></td>
-			<td><span>
+			<td colspan="3"><span>
 				<select id="strategies" multiple="multiple" class="multiselect general-multiselect">
 					<?php //populate the dropdown
 					foreach( $intervention_singletons['strategies'] as $k => $v ){
@@ -224,12 +224,12 @@ function cc_transtria_render_intervention_partnerships_tab( $field_data ){
 
 		 <tr class="not-reported">
 			<td class="not-reported"><label>Strategies not reported</label></td>
-			<td><input id="strategies_notreported" type="checkbox"></td>
+			<td colspan="3"><input id="strategies_notreported" type="checkbox"></td>
 		 </tr>
 
 		 <tr>
 			<td><label>PSE components:</label></td>
-			<td><span>
+			<td colspan="3"><span>
 				<select id="pse_components" multiple="multiple" class="multiselect general-multiselect">
 					<?php //populate the dropdown
 					foreach( $intervention_singletons['pse_components'] as $k => $v ){
@@ -242,13 +242,13 @@ function cc_transtria_render_intervention_partnerships_tab( $field_data ){
 
 		 <tr class="not-reported">
 			<td class="not-reported"><label>PSE components not reported</label></td>
-			<td><input id="psecomponents_notreported" type="checkbox"></td>
+			<td colspan="3"><input id="psecomponents_notreported" type="checkbox"></td>
 		 </tr>
 
 
 		 <tr>
 			<td><label>Complexity:</label></td>
-			<td><span>
+			<td colspan="3"><span>
 				<select id="complexity" multiple="multiple" class="multiselect general-multiselect">
 					<?php //populate the dropdown
 					foreach( $intervention_singletons['complexity'] as $k => $v ){
@@ -261,7 +261,7 @@ function cc_transtria_render_intervention_partnerships_tab( $field_data ){
 
 		 <tr class="not-reported">
 			<td class="not-reported"><label>Complexity not reported</label></td>
-			<td><input id="complexity_notreported" type="checkbox"></td>
+			<td colspan="3"><input id="complexity_notreported" type="checkbox"></td>
 		 </tr>
 
 
@@ -283,7 +283,7 @@ function cc_transtria_render_intervention_partnerships_tab( $field_data ){
 
 		<tr class="not-reported">
 			<td class="not-reported"><label>Location of intervention not reported</label></td>
-			<td><input id="locationintervention_notreported" type="checkbox"></td>
+			<td colspan="3"><input id="locationintervention_notreported" type="checkbox"></td>
 		</tr>
 
 		<tr>
@@ -303,7 +303,7 @@ function cc_transtria_render_intervention_partnerships_tab( $field_data ){
 
 		<tr class="not-reported">
 		<td class="not-reported"><label>Indicators not reported</label></td>
-		<td><input id="indicators_notreported" type="checkbox"></td>
+		<td colspan="3"><input id="indicators_notreported" type="checkbox"></td>
 		</tr>
 
 		<tr class="intervention_indicators_display">
@@ -327,20 +327,23 @@ function cc_transtria_render_intervention_partnerships_tab( $field_data ){
 
 		<tr class="not-reported">
 			<td class="not-reported"><label>All outcomes assessed not reported</label></td>
-			<td><input id="alloutcomesassessed_notreported" type="checkbox"></td>
+			<td colspan="3"><input id="alloutcomesassessed_notreported" type="checkbox"></td>
 		</tr>
 
 
 		<tr>
 			<td><label>Replication:</label></td>
-			<td><span id="replication"></span></td>
+			<td><span id="replication">
+				<input type="radio" value="Y" name="replication">Yes
+				<input type="radio" value="N" name="replication">No
+			</span></td>
 			<td><label>Description:</label></td>
 			<td><input type="text" id="replication_descr"></input></td>
 		</tr>
 
 		<tr class="not-reported">
 			<td class="not-reported"><label>Replication not reported</label></td>
-			<td><input id="replication_notreported" type="checkbox"></td>
+			<td colspan="3"><input id="replication_notreported" type="checkbox"></td>
 		</tr>
 
 
@@ -351,7 +354,7 @@ function cc_transtria_render_intervention_partnerships_tab( $field_data ){
 
 		<tr class="not-reported">
 			<td class="not-reported"><label>Support not reported</label></td>
-			<td><input id="support_notreported" type="checkbox"></td>
+			<td colspan="3"><input id="support_notreported" type="checkbox"></td>
 		</tr>
 
 
@@ -362,29 +365,35 @@ function cc_transtria_render_intervention_partnerships_tab( $field_data ){
 
 		<tr class="not-reported">
 			<td class="not-reported"><label>Opposition not reported</label></td>
-			<td><input id="opposition_notreported" type="checkbox"></td>
+			<td colspan="3"><input id="opposition_notreported" type="checkbox"></td>
 		</tr>
 
 
 		<tr>
 			<td><label>Evidence-based:</label></td>
-			<td><span id="evidence_based"></span></td>
+			<td><span id="evidence_based">
+				<input type="radio" value="Y" name="evidence_based">Yes
+				<input type="radio" value="N" name="evidence_based">No
+			</span></td>
 		</tr>
 
 		<tr class="not-reported">
 			<td class="not-reported"><label>Evidence-based not reported</label></td>
-			<td><input id="evidencebased_notreported" type="checkbox"></td>
+			<td colspan="3"><input id="evidencebased_notreported" type="checkbox"></td>
 		</tr>
 
 
 		<tr>
 			<td><label>Fidelity:</label></td>
-			<td><span id="fidelity"></span></td>
+			<td><span id="fidelity">
+				<input type="radio" value="Y" name="fidelity">Yes
+				<input type="radio" value="N" name="fidelity">No
+			</span></td>
 		</tr>
 
 		<tr class="not-reported">
 			<td class="not-reported"><label>Fidelity not reported</label></td>
-			<td><input id="fidelity_notreported" type="checkbox"></td>
+			<td colspan="3"><input id="fidelity_notreported" type="checkbox"></td>
 		</tr>
 
 
@@ -395,18 +404,21 @@ function cc_transtria_render_intervention_partnerships_tab( $field_data ){
 
 		<tr class="not-reported">
 			<td class="not-reported"><label>Implementation Limitations not reported</label></td>
-			<td><input id="implementationlimitations_notreported" type="checkbox"></td>
+			<td colspan="3"><input id="implementationlimitations_notreported" type="checkbox"></td>
 		</tr>
 
 
 		<tr>
 			<td><label>Lessons Learned:</label></td>
-			<td><span id="lessons_learned"></span></td>
+			<td><span id="lessons_learned">
+				<input type="radio" value="Y" name="lessons_learned">Yes
+				<input type="radio" value="N" name="lessons_learned">No
+			</span></td>
 		</tr>
 
 		<tr class="not-reported">
 			<td class="not-reported"><label>Lessons Learned not reported</label></td>
-			<td><input id="lessonslearned_notreported" type="checkbox"></td>
+			<td colspan="3"><input id="lessonslearned_notreported" type="checkbox"></td>
 		</tr>
 
 

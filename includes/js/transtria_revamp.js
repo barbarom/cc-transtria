@@ -350,7 +350,7 @@ function get_current_study_info(){
 				if( selector_obj.length > 0 ){
 				
 					//uncheck all?
-					selector_obj.multiselect("uncheckAll");
+					//selector_obj.multiselect("uncheckAll");
 					
 					//mark child options of that value as 'selected'
 					selector_obj.val( element ).prop("checked", true);
