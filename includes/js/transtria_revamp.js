@@ -66,7 +66,7 @@ function setup_multiselect() {
 		//searchtooltype
 
 		//TODO: what is happening above?  There's always something checked...not cool
-		jQuery.each( jQuery('.multiselect'), function(){
+		jQuery.each( jQuery('.general-multiselect'), function(){
 		
 			jQuery(this).multiselect("uncheckAll");
 		
@@ -319,7 +319,7 @@ function get_current_study_info(){
 				
 			});
 			
-			jQuery(".multiselect").multiselect("uncheckAll");
+			jQuery(".general-multiselect").multiselect("uncheckAll");
 			
 			//now handle the incoming multiple data
 			jQuery.each( multi_meat, function(index, element) {
