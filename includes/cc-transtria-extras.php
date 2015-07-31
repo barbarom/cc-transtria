@@ -123,7 +123,7 @@ class CC_Transtria_Extras {
 		//Transtria ajaxing goes here!
 		// gets study data via ajax...
 		add_action( 'wp_ajax_get_study_data' , array( $this, 'get_study_data' ) );
-		
+		add_action( 'wp_ajax_create_evaluation_sample_div' , array( $this, 'create_evaluation_sample_div' ) );		
 
 	}
 
@@ -882,6 +882,19 @@ class CC_Transtria_Extras {
 	
 	}
 	
+	public function create_evaluation_sample_div(){
+	
+		// Is the nonce good?
+		if ( ! check_ajax_referer( 'cc_transtria_ajax_nonce', 'transtria_nonce' ) ) {
+			return false;
+		}
+		$mmm = $_POST["new_tab_id"];
+		//echo "Mikes Test " + $_POST["new_tab_id"];
+		echo json_encode( $mmm );
+		
+		die();
+	
+	}		
 	
 	
 } // End class

@@ -37,7 +37,35 @@ function clickListen(){
 			new_tab_id = Number(lastChar) + 1;
 		}		
 		
-		jQuery('#sub_pops_tabs').append("<div id='ese" + new_tab_id + "-tab' class='subpops_tab'><label class='subpops_tab_label' for='" + new_tab_id + "-tab' data-whichpop='" + new_tab_id + "'>ese" + new_tab_id + "</label></div>");
+		jQuery('#sub_pops_tabs').append("<div id='ese" + new_tab_id + "-tab' class='subpops_tab'><label class='subpops_tab_label' for='ese" + new_tab_id + "-tab' data-whichpop='ese" + new_tab_id + "'>ese" + new_tab_id + "</label></div>");
+		
+		//ajax data
+		var ajax_action = 'create_evaluation_sample_div';
+		var ajax_data = {
+			'action': ajax_action,
+			'new_tab_id' : new_tab_id,
+			'transtria_nonce' : transtria_ajax.ajax_nonce
+		};		
+		jQuery.ajax({
+			url: transtria_ajax.ajax_url, 
+			data: ajax_data, 
+			type: "POST",
+			dataType: "json",
+
+		}).success( function( data ) {
+			console.log(data.d);
+		}).complete( function( data ){
+					//we're done!
+					//spinny.css("display", "none");
+
+					//refresh all our multiselects
+					//jQuery(".multiselect").multiselect("refresh");
+					
+		}).always(function() {
+			//regardless of outcome, hide spinny
+			//jQuery('.action-steps').removeClass("hidden");
+		});
+	
 	});
 
 } 
