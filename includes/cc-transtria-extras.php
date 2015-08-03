@@ -123,6 +123,10 @@ class CC_Transtria_Extras {
 		//Transtria ajaxing goes here!
 		// gets study data via ajax...
 		add_action( 'wp_ajax_get_study_data' , array( $this, 'get_study_data' ) );
+		
+		//get endnote citation info 
+		add_action( 'wp_ajax_get_citation_info' , array( $this, 'get_citation_info' ) );
+		
 		add_action( 'wp_ajax_create_evaluation_sample_div' , array( $this, 'create_evaluation_sample_div' ) );		
 
 	}
@@ -379,7 +383,8 @@ class CC_Transtria_Extras {
 				'transtria_ajax',
 				array( 
 					'ajax_url' => admin_url( 'admin-ajax.php' ),
-					'ajax_nonce' => wp_create_nonce( 'cc_transtria_ajax_nonce' )
+					'ajax_nonce' => wp_create_nonce( 'cc_transtria_ajax_nonce' ),
+					'study_home' => cc_transtria_get_home_permalink()
 				)
 			);
 			
@@ -844,9 +849,7 @@ class CC_Transtria_Extras {
 
 	
 	/**
-	 * Returns list of group members
-	 *
-	 *
+	 * Returns arrays of Study Data fora  given study ID
 	 *
 	 *
 	*/
@@ -877,6 +880,28 @@ class CC_Transtria_Extras {
 		
 		//echo json_encode( $study_data['single'] );
 		echo json_encode( $study_data );
+		
+		die();
+	
+	}
+	
+	/**
+	 * Returns citation info for a given endnote id
+	 *
+	 *
+	*/
+	public function get_citation_info(){
+	
+		// Is the nonce good?
+		if ( ! check_ajax_referer( 'cc_transtria_ajax_nonce', 'transtria_nonce' ) ) {
+			return false;
+		}
+		
+		$endnote_id = $_POST["endnote_id"];
+
+		$citation_info = cc_transtria_get_endnote_citation_info( $endnote_id );
+		
+		echo json_encode( $citation_info );
 		
 		die();
 	

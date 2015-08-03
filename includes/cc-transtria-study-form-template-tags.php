@@ -41,6 +41,10 @@ function cc_transtria_render_form(){
 	
 	//get all study ids in system
 	$all_study_ids = cc_transtria_get_study_ids();
+	
+	//get all endnote ids and titles in system
+	$all_endnote_ids = cc_transtria_get_endnote_id_title();
+	//var_dump( $all_endnote_ids );
 
 	//get data related to the form
 	$dd_singleton_options = cc_transtria_get_singleton_dropdown_options(); //all options for singleton dropdowns
@@ -56,6 +60,11 @@ function cc_transtria_render_form(){
 	//TODO: think about whether we want to populate these in php or in js..	
 	?>
 
+	<div class="basic_info_messages">
+		<span class="usr-msg"></span>
+		<span class="spinny"></span>
+	</div>
+	
 	<form id="study_form">
 		<div class="bottom_margin">			
 			<label for="studyid"><strong>Study ID</strong></label>
@@ -67,15 +76,14 @@ function cc_transtria_render_form(){
 				} ?>
 			</select>
 			<span>
-				<button type="button">Submit</button>
+				<a id="load_this_study" class="button">Load this study!</a>
 			</span>		
 		</div>
+		
+		
 		<div id="study_basic_info">
 			<p><strong>Study Grouping ID:</strong></p>
 		
-			<p>Title: Are physical education-related state policies and schools' physical education requirement related to children's physical activity and obesity?<br />
-			Author: Kim, J.<br />
-			Dates: Jun 2012</p>
 		</div>
 	
 
@@ -87,12 +95,17 @@ function cc_transtria_render_form(){
 		   <label for="tab-1" class="primary_tab_label">Basic Info</label>
        
 		   <div class="content">
-				<table style="width:100%;">
+				<table id="citation_table">
 					<tr>
-						<td colspan="2" style="text-align:center;padding:20px;">
-							<button>SHOW ENDNOTE CITATION DATA</button>
+						<td class="citation_button" colspan="2">
+							<!--<button>SHOW ENDNOTE CITATION DATA</button>-->
+							<span><a class="button show_citation_data">SHOW ENDNOTE CITATION DATA</a></span>
+							<span class="spinny"></span>
 						</td>
 					</tr>
+					
+					<?php cc_render_citation_data(); ?>
+							
 					<tr>
 						<td colspan="2" class="inner_table_header">
 							GENERAL
@@ -188,12 +201,19 @@ function cc_transtria_render_form(){
 							EndNote ID:
 						</td>
 						<td >
-							<select id="EndNoteID">
+							<select id="EndNoteID"> 
 								<option value="">---Select---</option>
+								<?php										
+								//$all_endnote_ids are indexed by the div id - "abstractor", for example
+								foreach( $all_endnote_ids as $k => $v ){
+									echo '<option value="' . $k . '"';
+									echo '>' . $k . ': ' . $v . '</option>';
+								} ?>
 							</select>
 						</td>
 						<td >
-							<input id="ed" type="text" readonly />					
+							<em>Phase: </em>
+							<strong><span id="endnote_phase"></span></strong>				
 						</td>					
 					</tr>
 					<tr>
@@ -201,7 +221,7 @@ function cc_transtria_render_form(){
 							Original PubMed ID (Accession Num):
 						</td>
 						<td>
-							<input id="endnotes_pubmed" type="text" readonly />
+							<input id="accession-num" type="text" readonly />
 						</td>
 						<td>
 												
@@ -224,7 +244,7 @@ function cc_transtria_render_form(){
 					<tr>
 						<td>Original Search tool type:</td>
 						<td >
-							<input type="text" readonly />
+							<input id="remote-database-provider" type="text" readonly />
 						</td>
 						<td ></td>					
 					</tr>
@@ -244,7 +264,7 @@ function cc_transtria_render_form(){
 					<tr>
 						<td>Original Search tool name:</td>
 						<td>
-							<input class="endnotes_remotedatabasename" type="text" readonly />
+							<input id="remote-database-name" type="text" readonly />
 						</td>
 						<td></td>					
 					</tr>
@@ -487,4 +507,287 @@ function cc_transtria_render_form(){
 	</form>
 
 	<?php
+
+	
+}
+	
+/**
+ * Renders citation data/info
+ *
+ */
+function cc_render_citation_data(){
+
+?>
+	<tr class="endnote_citation_data">
+		<td colspan="5"> 
+
+			<div id="citation_tabs">
+				<ul>
+					<li class="active"><a data-whichtab="basic_citation_tab">CITATION INFO</a></li>
+					<li><a data-whichtab="otherdates_tab">OTHER DATE INFO</a></li>
+					<li><a data-whichtab="otherids_tab">OTHER ID INFO</a></li>
+					<li><a data-whichtab="otherpubinfo_tab">OTHER PUBLICATION INFO</a></li>
+				</ul>
+				<div id="basic_citation_tab" class="one_citation_tab">
+				
+					<table class="showolddata-table">
+						<tr>
+							<td colspan="5" class="citation-info"><h4>CITATION INFO</h4></td>
+						</tr>
+						<tr>
+							<td><label>Author</label></td>
+							<td><span id="endnotes_contributors_authors_author" readonly></span></td>
+						</tr>
+						<tr>
+							<td><label>Journal/Secondary Title</label></td>
+							<td><span id="endnotes_titles_secondary-title" readonly></span></td>
+							<td><label>Date</label></td>
+							<td><span id="endnotes_dates_pub-dates_date" readonly></span></td>
+						</tr>
+
+						<tr>
+							<td><label>Volume</label></td>
+							<td><span id="endnotes_volume"></span></td>
+							<td><label>Number</label></td>
+							<td><span id="endnotes_number"></span></td>
+						</tr>
+
+						<tr class="">
+							<td><label>Pages</label></td>
+							<td><span id="endnotes_pages"></span></td>
+						</tr>
+
+						<tr class="hr-bottom">
+							<td colspan="4"></td>
+						</tr>
+
+						<tr>
+							<td><label>PubMed ID</label></td>
+							<td><span id="endnotes_accession-num"></span></td>
+						</tr>
+
+						<tr>
+							<td><label>Name of Database</label></td>
+							<td><span id="endnotes_remote-database-name" class="endnotes_remotedatabasename"></span></td>
+							<td><label>Database Provider</label></td>
+							<td><span id="endnotes_remote-database-provider" class="endnotes_remotedatabaseprovider"></span></td>
+						</tr>
+						<tr>
+							<td><label>Type of article/work</label></td>
+							<td><span id="endnotes_work-type"></span></td>
+						</tr>
+
+						<tr class="hr-bottom">
+							<td colspan="4"></td>
+						</tr>
+
+						<tr class="">
+							<td><label>Key words</label></td>
+							<td><span id="endnotes_keywords_keyword"></span></td>
+						</tr>
+
+						<tr class="hr-bottom">
+							<td colspan="4"></td>
+						</tr>
+
+						<tr class="">
+							<td class="maxwidth200"><label>Abstract</label></td>
+							<td colspan="3"><span id="endnotes_abstract"></span></td>
+						</tr>
+						
+						<tr class="">
+							<td class="maxwidth200"><label>URLS</label></td>
+						<td colspan="3"><span id="endnotes_urls_related-urls_url"></span></td>
+
+						</tr>
+
+						<tr>
+							<td class="showolddata-button" colspan="5">
+								<a class="button show_citation_data">HIDE ENDNOTE CITATION DATA</a>
+							</td>
+						</tr>
+
+					</table>
+				</div>
+			
+				<div id="otherdates_tab" class="one_citation_tab">
+					<table class="showolddata-table">
+						<tr>
+							<td colspan="4" class="otherdate-info"><h4>OTHER DATE INFO</h4></td>
+						</tr>
+						<tr>
+							<td><label>Epub date</label></td>
+							<td><span id="endnotes_epub"></span></td>
+							<td><label>Access date</label></td>
+							<td><span id="endnotes_accessdate"></span></td>
+						</tr>
+						<tr>
+							<td><label>Added to library</label></td>
+							<td><span id="endnotes_addedlibrary"></span></td>
+							<td><label>Last updated</label></td>
+							<td><span id="endnotes_lastupdated"></span></td>
+						</tr>
+
+						<tr>
+							<td class="showolddata-button" colspan="5">
+								<a class="button show_citation_data">HIDE ENDNOTE CITATION DATA</a>
+							</td>
+						</tr>
+
+					</table>
+				</div>
+
+				<div id="otherids_tab" class="one_citation_tab">
+					<table class="showolddata-table">
+						<tr>
+							<td colspan="4" class="otherdate-info"><h4>OTHER ID INFO</h4></td>
+						</tr>
+						<tr>
+							<td><label>ISBN</label></td>
+							<td><span id="endnotes_isbn"></span></td>
+							<td><label>DOI</label></td>
+							<td><span id="endnotes_doi"></span></td>
+						</tr>
+						<tr>
+							<td><label>PMCID</label></td>
+							<td><span id="endnotes_pmcid"></span></td>
+							<td><label>NIHMSID</label></td>
+							<td><span id="endnotes_nihmsid"></span></td>
+						</tr>
+						<tr>
+							<td><label>Call Number</label></td>
+							<td><span id="endnotes_call-num"></span></td>
+						</tr>
+
+						<tr>
+							<td class="showolddata-button" colspan="5">
+								<a class="button show_citation_data">HIDE ENDNOTE CITATION DATA</a>
+							</td>
+						</tr>
+
+					</table>
+				</div>
+
+				<div id="otherpubinfo_tab" class="one_citation_tab">
+					<table class="showolddata-table">
+						<tr>
+							<td colspan="4" class="otherdate-info"><h4>OTHER PUBLICATION INFO</h4></td>
+						</tr>
+						<tr>
+							<td><label>Language</label></td>
+							<td><span id="endnotes_language"></span></td>
+							<td><label>Label</label></td>
+							<td><span id="endnotes_label"></span></td>
+						</tr>
+
+						<tr class="hr-bottom">
+							<td colspan="4"></td>
+						</tr>
+
+						<tr>
+							<td><label>Notes</label></td>
+							<td><span id="endnotes_notes"></span></td>
+							<td><label>Research Notes</label></td>
+							<td><span id="endnotes_researchnotes"></span></td>
+						</tr>
+						<tr>
+							<td><label>Legal Notes</label></td>
+							<td><span id="endnotes_legalnotes"></span></td>
+						</tr>
+
+						<tr class="hr-bottom">
+							<td colspan="4"></td>
+						</tr>
+
+						<tr>
+							<td><label>Author Address</label></td>
+							<td><span id="endnotes_auth-address"></span></td>
+							<td><label>Place Published</label></td>
+							<td><span id="endnotes_pub-location"></span></td>
+						</tr>
+						<tr>
+							<td><label>Subsidiary Author</label></td>
+							<td><span id="endnotes_contributors_authors_author"></span></td>
+							<td><label>Translated Author</label></td>
+							<td><span id="endnotes_translatedauthor"></span></td>
+						</tr>
+						<tr>
+							<td><label>Secondary Author</label></td>
+							<td><span id="endnotes_secondaryauthor"></span></td>
+							<td><label>Tertiary Author</label></td>
+							<td><span id="endnotes_tertiaryauthor"></span></td>
+						</tr>
+						<tr>
+							<td><label>Tertiary title</label></td>
+							<td><span id="endnotes_titles_secondary-title"></span></td>
+						</tr>
+
+						<tr class="hr-bottom">
+							<td colspan="4"></td>
+						</tr>
+
+						<tr>
+							<td><label>Original Publication</label></td>
+							<td><span id="endnotes_orig-pub"></span></td>
+							<td><label>Section</label></td>
+							<td><span id="endnotes_section"></span></td>
+						</tr>
+						<tr>
+							<td><label>Edition</label></td>
+							<td><span id="endnotes_edition"></span></td>
+							<td><label>Reprint Edition</label></td>
+							<td><span id="endnotes_reprintedition"></span></td>
+						</tr>
+						<tr>
+							<td><label>Reviewed Item</label></td>
+							<td><span id="endnotes_revieweditem"></span></td>
+							<td><label>Short Title</label></td>
+							<td><span id="endnotes_titles_short-title"></span></td>
+						</tr>
+						<tr>
+							<td><label>Alternate Journal/Title</label></td>
+							<td><span id="endnotes_titles_alt-title"></span></td>
+							<td><label>Start Page</label></td>
+							<td><span id="endnotes_startpage"></span></td>
+						</tr>
+						<tr>
+							<td><label>Rating</label></td>
+							<td><span id="endnotes_rating"></span></td>
+						</tr>
+
+						<tr class="hr-bottom">
+							<td colspan="4"></td>
+						</tr>
+
+						<tr>
+							<td><label>Custom Field 1</label></td>
+							<td><span id="endnotes_custom1"></span></td>
+						</tr>
+						
+						<tr>
+							<td><label>Custom Field 2</label></td>
+							<td><span id="endnotes_custom2"></span></td>
+						</tr>
+						
+						<tr>
+							<td><label>Custom Field 6</label></td>
+							<td><span id="endnotes_custom6"></span></td>
+						</tr>
+
+						<tr>
+							<td class="showolddata-button" colspan="5">
+								<a class="button show_citation_data">HIDE ENDNOTE CITATION DATA</a>
+							</td>
+						</tr>
+
+					</table>
+				</div>
+		
+			</div>
+		</td>
+	</tr>   
+
+
+								
+<?php			
 }

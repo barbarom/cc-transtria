@@ -20,6 +20,17 @@ function clickListen(){
 	
 	});
 	
+	//when clicking on the citation info tabs
+	jQuery('#citation_tabs li').on( "click", citation_tab_toggle );
+	
+	//get citation info
+	jQuery("select#EndNoteID").on("change", get_citation_data);
+	//show citation info
+	jQuery("a.show_citation_data").on("click", show_citation_data);
+	
+	//load in selected study
+	jQuery("a#load_this_study").on("click", load_selected_study );
+	
 	//TODO: ability status listener
 	
 	//TODO: restrict options in EA tabs based on intervention tabs. 
@@ -27,46 +38,8 @@ function clickListen(){
 	
 	
 	//Add new ESE tabs
-	jQuery('#add-ese-tab').on("click", function(){
-		var new_tab_id = 0;
-		var last_tab = jQuery('.subpops_tab').last().attr('id');
-		var last_tab_arr = last_tab.split('-');
-		var lastChar = last_tab_arr[0].substr(last_tab_arr[0].length - 1);
-		if (!isNaN(lastChar)) 
-		{
-			new_tab_id = Number(lastChar) + 1;
-		}		
-		
-		jQuery('#sub_pops_tabs').append("<div id='ese" + new_tab_id + "-tab' class='subpops_tab'><label class='subpops_tab_label' for='ese" + new_tab_id + "-tab' data-whichpop='ese" + new_tab_id + "'>ese" + new_tab_id + "</label></div>");
-		
-		//ajax data
-		var ajax_action = 'create_evaluation_sample_div';
-		var ajax_data = {
-			'action': ajax_action,
-			'new_tab_id' : new_tab_id,
-			'transtria_nonce' : transtria_ajax.ajax_nonce
-		};		
-		jQuery.ajax({
-			url: transtria_ajax.ajax_url, 
-			data: ajax_data, 
-			type: "POST",
-			dataType: "json",
-
-		}).success( function( data ) {
-			console.log(data.d);
-		}).complete( function( data ){
-					//we're done!
-					//spinny.css("display", "none");
-
-					//refresh all our multiselects
-					//jQuery(".multiselect").multiselect("refresh");
-					
-		}).always(function() {
-			//regardless of outcome, hide spinny
-			//jQuery('.action-steps').removeClass("hidden");
-		});
+	jQuery('#add-ese-tab').on("click", copy_ese_tab );
 	
-	});
 
 } 
 
@@ -183,16 +156,162 @@ function setup_multiselect() {
 */
 }
 
-//populate form with incoming values
-function populate_form_existing_study( ){
+
+//tabs toggle for citation info (inner tabs)
+function citation_tab_toggle(){
+
+	var whichtab = jQuery(this).find('a').data("whichtab");
 	
+	//fade out all, remove active class from all l
+	jQuery("tr.endnote_citation_data #citation_tabs .one_citation_tab").fadeOut();
+	jQuery("tr.endnote_citation_data #citation_tabs ul li").removeClass("active");
+	
+	jQuery("tr.endnote_citation_data #citation_tabs #" + whichtab).fadeIn();
+	jQuery(this).addClass("active");
+	//console.log(whichtab);
+	
+
+
+
+
 }
+
+//get endnote id citation info, for selected endnote id
+function get_citation_data(){
+
+	//what's the study id in the url?
+	endnote_id = jQuery('#EndNoteID').val();
+	
+	//user messages
+	var spinny = jQuery('.citation_button .spinny');
+	//var usrmsg = jQuery('.citation_info_messages .usr-msg');
+	//var usrmsgshell = jQuery('.citation_info_messages');
+
+	//ajax data
+	var ajax_action = 'get_citation_info';
+	var ajax_data = {
+		'action': ajax_action,
+		'endnote_id' : endnote_id,
+		'transtria_nonce' : transtria_ajax.ajax_nonce
+	};
+	
+	if( endnote_id !== null ) {
+		//Get data associate with this study
+		jQuery.ajax({
+			url: transtria_ajax.ajax_url, 
+			data: ajax_data, 
+			type: "POST",
+			dataType: "json",
+			beforeSend: function() {
+				//show user message and spinny
+				//usrmsg.html("Loading Study ID: " + endnote_id );
+				//usrmsgshell.fadeIn();
+				spinny.fadeIn();
+				
+			}
+		}).success( function( data ) {
+			//console.log('success: ' + data);
+			
+			
+			//TODO: send message if empty (directing user to add priority page?)
+			if( data == "0" || data == 0 )  {
+				//console.log('what');=
+				return;
+			} else {
+			
+			}
+			var post_meat = data; // = JSON.parse(data);
+			var processed_meat = {};
+			var new_index_name = "";
+			
+			jQuery.each( post_meat, function( index, value ){
+				//to make sure the indeces don't conflict w others on the form, add endnotes_ to each 
+				new_index_name = "endnotes_" + index;
+				processed_meat[ new_index_name ] = value;
+				
+				//console.log(new_index_name);
+				
+			});
+			
+			//now.. populate fields!
+			jQuery.each( processed_meat, function( index, value ){
+			
+				// TODO: edit study function in php to return indexes = div ids
+				selector_obj = jQuery("#" + index );
+				
+				if( selector_obj.length > 0 ){
+					//update the (readonly) value
+					selector_obj.html( value );
+				
+				}
+				
+				if( index == "endnotes_accession-num" ){
+					jQuery( "#accession-num" ).val( value );
+				} else if ( index == "endnotes_remote-database-name" ){
+					jQuery( "#remote-database-name" ).val( value );
+				} else if( index == "endnotes_remote-database-provider" ){
+					jQuery( "#remote-database-provider" ).val( value );
+				}
+			
+			});
+			
+		}).complete( function(data){
+			//we're done!  Tell the user
+			spinny.css("display", "none");
+			//usrmsg.html("Study ID " + this_study_id + " loaded successfully!" );
+			//usrmsgshell.fadeOut(6000);
+			
+			//refresh which phase this is
+			var phase = get_phase_by_endnoteid( endnote_id );
+			jQuery("#endnote_phase").html( phase );
+			
+		}).always(function() {
+			//regardless of outcome, hide spinny
+			//jQuery('.action-steps').removeClass("hidden");
+		});
+	}
+}
+
+//show/hide citation data
+function show_citation_data(){
+
+	var citation_div = jQuery('.endnote_citation_data');
+	var citation_button_div = jQuery('a.show_citation_data');
+	
+	
+	//are we showing or hiding
+	if( citation_div.is(":hidden") ){
+		citation_div.slideDown();
+		citation_button_div.html("HIDE ENDNOTE CITATION DATA");
+	} else {
+		citation_div.slideUp();
+		citation_button_div.html("SHOW ENDNOTE CITATION DATA");
+	}
+	
+
+}
+
+//returns phase by endnote id
+function get_phase_by_endnoteid( which_endnoteid ){
+
+	if( ( which_endnoteid > 501 ) && ( which_endnoteid < 1103 ) ){
+		return "1";
+	} else {
+		return "2";
+	}
+}
+
 
 //get current study info via ajax
 function get_current_study_info(){
 
 	//what's the study id in the url?
 	this_study_id = getURLParameter('study_id');
+	
+	//user messages
+	var spinny = jQuery('.basic_info_messages .spinny');
+	var usrmsg = jQuery('.basic_info_messages .usr-msg');
+	var usrmsgshell = jQuery('.basic_info_messages');
 
 	//ajax data
 	var ajax_action = 'get_study_data';
@@ -210,13 +329,15 @@ function get_current_study_info(){
 			type: "POST",
 			dataType: "json",
 			beforeSend: function() {
-				//show spinny
-				//spinny.fadeIn();
+				//show user message and spinny
+				usrmsg.html("Loading Study ID: " + this_study_id );
+				usrmsgshell.fadeIn();
+				spinny.fadeIn();
 				
 			}
 		}).success( function( data ) {
 			//console.log('success: ' + data);
-			//hmm
+			
 			
 			//TODO: send message if empty (directing user to add priority page?)
 			if( data == "0" || data == 0 )  {
@@ -231,7 +352,7 @@ function get_current_study_info(){
 			//console.log( post_meat);	
 					
 			//now.. populate fields!
-			//jQuery.each( data, function(index, element) {
+			//single data (from studies db table)
 			jQuery.each( post_meat, function(index, element) {
 				
 				//do we have an element div id w this index?  
@@ -292,8 +413,7 @@ function get_current_study_info(){
 						jQuery("input[name='" + index + "'][value='" + element + "']").prop('checked',true);
 					} 
 				}
-				
-				
+								
 			});
 			
 			//now handle incoming single popualation data
@@ -391,11 +511,16 @@ function get_current_study_info(){
 			});
 			
 		}).complete( function(data){
-			//we're done!
-			//spinny.css("display", "none");
-
+			//we're done!  Tell the user
+			spinny.css("display", "none");
+			usrmsg.html("Study ID " + this_study_id + " loaded successfully!" );
+			usrmsgshell.fadeOut(6000);
+			
 			//refresh all our multiselects
 			jQuery(".general-multiselect").multiselect("refresh");
+			
+			//refresh the endnote info
+			get_citation_data();
 			
 		}).always(function() {
 			//regardless of outcome, hide spinny
@@ -404,8 +529,59 @@ function get_current_study_info(){
 	}
 }
 
+//refresh page with appropriate data in url (for now)
+function load_selected_study(){
+
+	//construct url
+	var redirectTo = transtria_ajax.study_home + "?study_id=" + jQuery( "#studyid" ).val();
+	
+	//aaand, redirect
+	window.location.replace( redirectTo );
+}
 
 
+//when 'add ese' is clicked, copy original ESE tab 
+function copy_ese_tab(){
+
+	var new_tab_id = 0;
+	var last_tab = jQuery('.subpops_tab').last().attr('id');
+	var last_tab_arr = last_tab.split('-');
+	var lastChar = last_tab_arr[0].substr(last_tab_arr[0].length - 1);
+	if (!isNaN(lastChar)) 
+	{
+		new_tab_id = Number(lastChar) + 1;
+	}		
+	
+	jQuery('#sub_pops_tabs').append("<div id='ese" + new_tab_id + "-tab' class='subpops_tab'><label class='subpops_tab_label' for='ese" + new_tab_id + "-tab' data-whichpop='ese" + new_tab_id + "'>ese" + new_tab_id + "</label></div>");
+	
+	//ajax data
+	var ajax_action = 'create_evaluation_sample_div';
+	var ajax_data = {
+		'action': ajax_action,
+		'new_tab_id' : new_tab_id,
+		'transtria_nonce' : transtria_ajax.ajax_nonce
+	};		
+	jQuery.ajax({
+		url: transtria_ajax.ajax_url, 
+		data: ajax_data, 
+		type: "POST",
+		dataType: "json",
+
+	}).success( function( data ) {
+		console.log(data.d);
+	}).complete( function( data ){
+				//we're done!
+				//spinny.css("display", "none");
+
+				//refresh all our multiselects
+				//jQuery(".multiselect").multiselect("refresh");
+				
+	}).always(function() {
+		//regardless of outcome, hide spinny
+		//jQuery('.action-steps').removeClass("hidden");
+	});
+
+}
 
 
 

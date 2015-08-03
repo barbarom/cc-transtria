@@ -20,6 +20,11 @@ select {
 .percentage {
 	width:50px;
 }
+button, a.button{
+	cursor: pointer;
+}
+
+
 
 /* START TABS CSS */
 .tabs {
@@ -28,9 +33,18 @@ select {
   clear: both;
   margin: 25px 0;
 }
-.tab, .subpops_tab {
+.tab, .subpops_tab, #citation_tabs ul li {
   float: left;
 }
+
+
+
+#citation_tabs #otherdates_tab,
+#citation_tabs #otherids_tab,
+#citation_tabs #otherpubinfo_tab{
+	display:none;
+}
+
 
 #population_tabs .general_pops_label{
     color: #757575;
@@ -39,12 +53,14 @@ select {
     margin: 0 0 1.71429rem;
     width: 100%;
 }
-#sub_pops_tabs  {
+#sub_pops_tabs,
+#citation_tabs ul {
 	width:100%;
 }
 .tab label.primary_tab_label,
 #sub_pops_tabs label.subpops_tab_label,
-#sub_pops_tabs label.ese_add_tab_label {
+#sub_pops_tabs label.ese_add_tab_label,
+#citation_tabs ul li{
   background: #eee; 
   padding: 10px; 
   border: 1px solid #ccc; 
@@ -52,14 +68,26 @@ select {
   position: relative;
   left: 1px; 
 }
-#sub_pops_tabs label.subpops_tab_label.active{
+#citation_tabs ul li {
+	list-style: none;
+	border: 4px solid #eee;
+	cursor:pointer;
+}
+#citation_tabs ul li a{
+	cursor:pointer;
+}
+#sub_pops_tabs label.subpops_tab_label.active,
+#citation_tabs ul li.active {
 	background: #eee; 
 	padding: 6px; 
 	border: 8px solid #888; 
 }
-.noshow {
-  display: none;   
-}
+
+
+
+
+
+
 .content {
   position: absolute;
   top: 28px;
@@ -70,9 +98,12 @@ select {
   padding: 20px;
   border: 1px solid #ccc; 
 }
+
 .subpops_content{
 	margin-top:2em;
 }
+
+
 .ipe_content .subpops_content,
 .ipu_content .subpops_content,
 .ese_content .subpops_content,
@@ -80,6 +111,70 @@ select {
 .ese-add_content .subpops_content{
 	display:none;
 }
+
+
+.basic_info_messages{
+	width:100%;
+	margin-bottom:1em;
+	background-color:#ccffcc;
+    padding: 1em;
+	display:none;
+}
+
+.basic_info_messages .usr-msg{
+	font-weight: bold;
+}
+.basic_info_messages  .spinny,
+.citation_button .spinny {
+	background-image: url('images/ajax-loader.gif');
+	background-repeat:no-repeat;
+	background-position:center center;
+	display: none;
+    height: 16px;
+    padding-left: 3em;
+    vertical-align: middle;
+    width: 16px;
+	padding-top:8px;
+}
+
+tr.endnote_citation_data{
+	display:none;
+}
+#citation_tabs table {
+	clear:both;
+}
+table#citation_table {
+	width:100%;
+}
+table#citation_table td.citation_button,
+table.showolddata-table td.showolddata-button {
+	text-align:center;
+	padding:2em;
+}
+table#citation_table td.citation_button a.show_citation_data,
+table.showolddata-table td.showolddata-button a.show_citation_data {
+	font-size: 1.25em;
+	font-weight: bold
+}
+table.showolddata-table td{
+	min-width:200px;
+	border-top:none;
+}
+table.showolddata-table label{
+	font-weight:bold;
+}
+table.showolddata-table tr.hr-bottom{
+	border-bottom: 1px solid #ededed;
+}
+table.showolddata-table h4{
+	text-align:center;
+}
+
+
+
+
+
+
 [type=radio]:checked ~ label {
   background: white;
   border-bottom: 1px solid white;
@@ -106,6 +201,12 @@ select option{
 
 
 
+
+
+
+.noshow {
+  display: none;   
+}
 
 
 

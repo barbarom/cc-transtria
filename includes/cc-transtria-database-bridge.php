@@ -242,11 +242,11 @@ function cc_transtria_get_study_ids( ){
 function cc_transtria_get_endnote_id_title( ){
 	global $wpdb;
 	
-	//TODO, use wp->prepare
 	$question_sql = 
 		"
 		SELECT `rec-number`, `titles_title`
 		FROM $wpdb->transtria_phase2
+		order by `titles_title`
 		";
 		
 	$form_rows = $wpdb->get_results( $question_sql, ARRAY_A );
@@ -268,7 +268,39 @@ function cc_transtria_get_endnote_id_title( ){
 
 }
 
-//TODO: functions for lookups for fields...
+/**
+ * Returns citation info for a given endnote id
+ *
+ * @param int. Endnote ID
+ * @return array.
+ */
+function cc_transtria_get_endnote_citation_info( $endnoteid ){
+
+	global $wpdb;
+	
+	$endnote_sql = $wpdb->prepare( 
+		"
+		SELECT      *
+		FROM        $wpdb->transtria_phase2
+		WHERE		`rec-number` = %d 
+		",
+		intval($endnoteid)
+	); 
+		
+	$form_rows = $wpdb->get_row( $endnote_sql, OBJECT );
+	
+	//TODO: can we just use get_results instead of this mess?  Probably..
+	//declare our array to hold study vals
+	//$endnote_array = [];
+
+	
+	return $form_rows;
+
+
+
+
+
+}
 
 /**
  * Function to get form drop down options.  First pass takes input array as lookup and foreachs..
