@@ -4,21 +4,7 @@
 function clickListen(){
 
 	//when clicking on the subpopulations tabs..
-	jQuery('#sub_pops_tabs label.subpops_tab_label').on("click", function(){
-		
-		//hide all subpops content
-		jQuery('.subpops_content').hide();
-		
-		var which_pop = jQuery(this).data("whichpop");
-		var which_content = which_pop + '_content';
-		
-		//add selected class
-		jQuery('label.subpops_tab_label').removeClass('active');
-		jQuery(this).addClass('active');
-	
-		jQuery('.subpops_content.' + which_content).show();
-	
-	});
+	jQuery('#sub_pops_tabs label.subpops_tab_label').on("click", sub_pops_tabber ); 
 	
 	//when clicking on the citation info tabs
 	jQuery('#citation_tabs li').on( "click", citation_tab_toggle );
@@ -32,6 +18,8 @@ function clickListen(){
 	jQuery("a#load_this_study").on("click", load_selected_study );
 	
 	//TODO: ability status listener
+	//jQuery("").on("click", ability_status_limiter );
+	
 	
 	//TODO: restrict options in EA tabs based on intervention tabs. 
 
@@ -84,7 +72,15 @@ function setup_multiselect() {
 		});
 		//searchtooltype
 
-		//TODO: what is happening above?  There's always something checked...not cool
+		
+		jQuery("[id$=_ability_status]").multiselect({
+			header: true,
+			position: {my: 'left bottom', at: 'left top'},
+			selectedText: '# of # checked',
+			checkAllText: 'Select stati',
+			close: ability_status_limiter
+		});
+		
 		jQuery.each( jQuery('.general-multiselect'), function(){
 		
 			jQuery(this).multiselect("uncheckAll");
@@ -155,6 +151,28 @@ function setup_multiselect() {
 		
 */
 }
+
+//sets up tabs for subpops 
+function sub_pops_tabber( ){
+	
+	//console.log( jQuery(this) ); //looks at label
+	var incoming = jQuery(this);
+	
+	//hide all subpops content
+	jQuery('.subpops_content').hide();
+	
+	var which_pop = incoming.data("whichpop");
+	var which_content = which_pop + '_content';
+	
+	//add selected class
+	jQuery('label.subpops_tab_label').removeClass('active');
+	incoming.addClass('active');
+
+	jQuery('.subpops_content.' + which_content).show();
+
+};
+
+
 
 
 //tabs toggle for citation info (inner tabs)
@@ -413,7 +431,7 @@ function get_current_study_info(){
 						jQuery("input[name='" + index + "'][value='" + element + "']").prop('checked',true);
 					} 
 				}
-								
+												
 			});
 			
 			//now handle incoming single popualation data
@@ -480,7 +498,17 @@ function get_current_study_info(){
 							jQuery("input[name='" + index + "'][value='" + element + "']").prop('checked',true);
 						} 
 					}
-				
+					
+					
+					//population_type is a class...this is NOT working (it just populates ALL of this class w/last pop type, duh
+					/*if( index == 'population_type' ){
+						selector_obj = jQuery("." + index );
+						if( selector_obj.length > 0 ){
+							selector_obj.val( element );
+						}
+					}*/
+					
+					
 				});
 				
 			});
@@ -539,6 +567,34 @@ function load_selected_study(){
 	window.location.replace( redirectTo );
 }
 
+//listen to ability status multiselect and show/hide corresponding percentage inputs
+
+//TODO - this on form instantiation
+function ability_status_limiter( all_pops ){
+
+
+	//console.log( jQuery(this).val() );
+	var which_selected = jQuery(this).val();
+	var which_pop = jQuery(this).parents(".subpops_content").children("input.population_type").val();
+	
+	//hide all ability percents in this pop type
+	jQuery( "tr." + which_pop + "-ability-percent").hide();
+	
+	//show only those ability percents chosen
+	jQuery.each( which_selected, function() {
+	
+		var this_selection = parseInt(this);
+		jQuery( "tr." + which_pop + "-ability-percent[data-ability-value='" + this_selection + "']" ).show();
+	
+	});
+
+}
+
+
+
+
+
+
 
 //when 'add ese' is clicked, copy original ESE tab 
 function copy_ese_tab(){
@@ -552,8 +608,91 @@ function copy_ese_tab(){
 		new_tab_id = Number(lastChar) + 1;
 	}		
 	
+	//add a new tab to the pops section
 	jQuery('#sub_pops_tabs').append("<div id='ese" + new_tab_id + "-tab' class='subpops_tab'><label class='subpops_tab_label' for='ese" + new_tab_id + "-tab' data-whichpop='ese" + new_tab_id + "'>ese" + new_tab_id + "</label></div>");
 	
+	//we will need to copy the main ese tab
+	var new_ese_copy = jQuery('.ese_content').clone(true,true);
+	
+	//vars
+	var new_pop_type = "";
+	var old_id = "";
+	var new_id = "";
+	var old_name = "";
+	var new_name = "";
+	
+	//what prepend do we need?  get current population type
+	new_pop_type = "ese" + new_tab_id;
+	
+	//change current pop type
+	new_ese_copy.find(".population_type").val( new_pop_type );
+	
+	//change subtab class
+	new_ese_copy.removeClass("ese_content");
+	new_ese_copy.addClass( new_pop_type + "_content");
+	
+	//change all the div ids that beginw ese
+	var all_ese_ids = new_ese_copy.find("[id^=ese]");
+	var all_ese_names = new_ese_copy.find("[name^=ese]");
+	
+	//go through each div in the clone and update the id
+	jQuery.each( all_ese_ids, function() {
+		//get old id
+		old_id = jQuery(this).attr("id");
+		//get first 3 digits (hint: it'll be 'ese' every time.  Why are we substringing, Mel?)
+		old_id = old_id.substring(3); 
+		
+		//get ourselves a new id!
+		new_id = new_pop_type + old_id;
+		
+		jQuery(this).attr("id", new_id);
+	});
+	
+	//go through each name in the clone and update the name
+	jQuery.each( all_ese_names, function() {
+		//get old id
+		old_name = jQuery(this).attr("name");
+		//get first 3 digits (hint: it'll be 'ese' every time.  Why are we substringing, Mel?)
+		old_name = old_name.substring(3); 
+		
+		//get ourselves a new id!
+		new_name = new_pop_type + old_name;
+		
+		jQuery(this).attr("name", new_name);
+	});
+		
+	//append to population div id="populations_Tabs
+	new_ese_copy.appendTo( jQuery("#population_tabs") );
+	
+	//reattach click listeners to pops tabs
+	var which_content = new_pop_type + '_content';
+	
+	jQuery('#sub_pops_tabs label.subpops_tab_label[data-whichpop="' + new_pop_type + '"]').on("click", function() {
+	
+		//hide all subpops content
+		jQuery('.subpops_content').hide();
+		
+		//add selected active class after removing it from all
+		jQuery('label.subpops_tab_label').removeClass('active');
+		jQuery(this).addClass('active');
+
+		jQuery('.subpops_content.' + which_content).show();
+		
+	});
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	//Mel doesn't think we need to get data from the server at all but rather from the page itself, so she's commenting this out for now..
+	/*
 	//ajax data
 	var ajax_action = 'create_evaluation_sample_div';
 	var ajax_data = {
@@ -580,6 +719,7 @@ function copy_ese_tab(){
 		//regardless of outcome, hide spinny
 		//jQuery('.action-steps').removeClass("hidden");
 	});
+	*/
 
 }
 

@@ -163,7 +163,7 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 			
 ?>
 	<div class="subpops_content <?php echo $which_pop; ?>_content <?php if( $which_pop != "tp" ){ echo 'noshow'; } ?>">
-		<input id="population_type" value="<?php echo $which_pop; ?>" hidden>
+		<input class="population_type" value="<?php echo $which_pop; ?>" hidden>
 		<table>
 			<tr>
 				<td colspan="4" class="inner_table_header"><strong><?php echo $subtitle; ?></strong></td>
@@ -401,7 +401,7 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 			<tr class="<?php echo $which_pop; ?>_not_general">
 				<td><label>Ability status:</label></td>
 				<td colspan="3"><span>
-					<select id="<?php echo $which_pop; ?>_ability_status" multiple="multiple" class="general-multiselect multiselect">
+					<select id="<?php echo $which_pop; ?>_ability_status" multiple="multiple" class="multiselect">
 						<?php 
 							$field_name = $which_pop . '_ability_status';
 							foreach( $dd_multiple_options_pops[ $field_name ] as $k => $v ){
