@@ -100,7 +100,7 @@ function cc_transtria_render_form(){
 						<td class="citation_button" colspan="2">
 							<!--<button>SHOW ENDNOTE CITATION DATA</button>-->
 							<span><a class="button show_citation_data">SHOW ENDNOTE CITATION DATA</a></span>
-							<span class="spinny"></span>
+							<span class="citation_spinny spinny"></span>
 						</td>
 					</tr>
 					
@@ -200,8 +200,8 @@ function cc_transtria_render_form(){
 						<td >
 							EndNote ID:
 						</td>
-						<td >
-							<select id="EndNoteID"> 
+						<td>
+							<span><select id="EndNoteID"> 
 								<option value="">---Select---</option>
 								<?php										
 								//$all_endnote_ids are indexed by the div id - "abstractor", for example
@@ -209,9 +209,11 @@ function cc_transtria_render_form(){
 									echo '<option value="' . $k . '"';
 									echo '>' . $k . ': ' . $v . '</option>';
 								} ?>
-							</select>
+							</select></span>
+							<span class="citation_spinny spinny"></span>
+							
 						</td>
-						<td >
+						<td>
 							<em>Phase: </em>
 							<strong><span id="endnote_phase"></span></strong>				
 						</td>					

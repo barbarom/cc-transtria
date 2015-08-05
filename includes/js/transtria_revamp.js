@@ -201,7 +201,7 @@ function get_citation_data(){
 	endnote_id = jQuery('#EndNoteID').val();
 	
 	//user messages
-	var spinny = jQuery('.citation_button .spinny');
+	var spinny = jQuery('.citation_spinny.spinny');
 	//var usrmsg = jQuery('.citation_info_messages .usr-msg');
 	//var usrmsgshell = jQuery('.citation_info_messages');
 
@@ -627,6 +627,9 @@ function copy_ese_tab(){
 	//change current pop type
 	new_ese_copy.find(".population_type").val( new_pop_type );
 	
+	//change subtitle
+	new_ese_copy.find("td.inner_table_header").html("<strong>Evaluation Sample - EXPOSED: " + new_tab_id + "</strong>");
+	
 	//change subtab class
 	new_ese_copy.removeClass("ese_content");
 	new_ese_copy.addClass( new_pop_type + "_content");
@@ -679,18 +682,7 @@ function copy_ese_tab(){
 		jQuery('.subpops_content.' + which_content).show();
 		
 	});
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+		
 	//Mel doesn't think we need to get data from the server at all but rather from the page itself, so she's commenting this out for now..
 	/*
 	//ajax data
@@ -724,7 +716,7 @@ function copy_ese_tab(){
 }
 
 
-
+//helper function to get URL param
 function getURLParameter(name) {
 	return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null
 }
@@ -737,20 +729,20 @@ function getURLParameter(name) {
 
 jQuery( document ).ready(function() {
 
-	 
-		jQuery('#abstractorstarttime').datetimepicker();
-		jQuery('#abstractorstoptime').datetimepicker();
-		jQuery('#validatorstarttime').datetimepicker();
-		jQuery('#validatorstoptime').datetimepicker();
-		
-		//enable clicklisteners
-		clickListen();
-		
-		//set up our multiple checkboxes
-		setup_multiselect();
-		
-		//get current study info
-		get_current_study_info();
+	//load datetimepickers
+	jQuery('#abstractorstarttime').datetimepicker();
+	jQuery('#abstractorstoptime').datetimepicker();
+	jQuery('#validatorstarttime').datetimepicker();
+	jQuery('#validatorstoptime').datetimepicker();
+	
+	//enable clicklisteners
+	clickListen();
+	
+	//set up our multiple checkboxes
+	setup_multiselect();
+	
+	//get current study info
+	get_current_study_info();
 	
 	
 });

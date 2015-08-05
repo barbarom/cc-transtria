@@ -155,9 +155,39 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 			$subtitle = "Evaluation Sample - UNEXPOSED";
 			break;
 		case 'ese':
-		default: //because the rest of the tabs will be ese1, ese2...
 			$subtitle = "Evaluation Sample - EXPOSED";
 			break;
+		case 'ese0':
+			$subtitle = "Evaluation Sample - EXPOSED: 0";
+			break;
+		case 'ese1':
+			$subtitle = "Evaluation Sample - EXPOSED: 1";
+			break;
+		case 'ese2':
+			$subtitle = "Evaluation Sample - EXPOSED: 2";
+			break;
+		case 'ese3':
+			$subtitle = "Evaluation Sample - EXPOSED: 3";
+			break;
+		case 'ese4':
+			$subtitle = "Evaluation Sample - EXPOSED: 4";
+			break;
+		case 'ese5':
+			$subtitle = "Evaluation Sample - EXPOSED: 5";
+			break;
+		case 'ese6':
+			$subtitle = "Evaluation Sample - EXPOSED: 6";
+			break;
+		case 'ese7':
+			$subtitle = "Evaluation Sample - EXPOSED: 7";
+			break;
+		case 'ese8':
+			$subtitle = "Evaluation Sample - EXPOSED: 8";
+			break;
+		case 'ese9':
+			$subtitle = "Evaluation Sample - EXPOSED: 9";
+			break;
+		default: //because the rest of the tabs will be ese1, ese2...
 	}
 			
 			
@@ -173,7 +203,7 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 			</tr>
 
 			<tr>
-				<td><label>Reported?</label></td>
+				<td class="minwidth200"><label>Reported?</label></td>
 				<td colspan="3">
 					<span id="<?php echo $which_pop; ?>_reported">
 						<input type="radio" value="Y" name="<?php echo $which_pop; ?>_reported">Yes

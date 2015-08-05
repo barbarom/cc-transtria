@@ -125,7 +125,7 @@ button, a.button{
 	font-weight: bold;
 }
 .basic_info_messages  .spinny,
-.citation_button .spinny {
+.citation_spinny.spinny {
 	background-image: url('images/ajax-loader.gif');
 	background-repeat:no-repeat;
 	background-position:center center;
@@ -207,7 +207,9 @@ select option{
 .noshow {
   display: none;   
 }
-
+.minwidth200{
+	min-width:200px !important;
+}
 
 
 
