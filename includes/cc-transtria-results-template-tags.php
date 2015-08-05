@@ -20,9 +20,17 @@
 function cc_transtria_render_results_tab( $field_data ){
 
 	$results_singletons = $field_data['dd_singleton_options']; //just making it easier for dev, although a waste of memory.  TODO: don't waste memory
+	$num_ea_tabs = $field_data['num_ea_tabs'];
+	
+	//options for dropdowns
+	$dd_multiple_options_ea = $field_data['dd_multiple_options_ea'];
+	//data for ea tabs
+	//$ea_tab_data = $field_data['ea_tab_data'];
+	//var_dump( $num_ea_tabs );
+	
 ?>
 
-		  <table>
+	<table id="results_table">
 		<tr>
 			<td colspan="4" class="inner_table_header"><strong>Results</strong></td>
 		</tr>
@@ -38,8 +46,9 @@ function cc_transtria_render_results_tab( $field_data ){
 					
 					} ?>
 				</select>
-			</input></td>
+			</td>
 		</tr>
+		
 		<tr class="not-reported">
 			<td class="not-reported"><label>Evaluation Type not reported</label></td>
 			<td colspan="3"><input id="evaluationtype_notreported" type="checkbox"></td>
@@ -105,33 +114,36 @@ function cc_transtria_render_results_tab( $field_data ){
 		</tr>
 
 
-
-		<!--
-		 <tr>
-		  <td><label>Outcome type:</label></td>
-		  <td><span id="outcome_type"></span></td>
-		  <td><label>Other:</label></td>
-		  <td><input id="other_outcome_type"></input></td>
-		 </tr>
-
-		 <tr>
-		  <td><label>Statistical method:</label></td>
-		  <td><span id="statistical_method"></span></td>
-		 </tr>
-
-		-->
-
 		<tr>
 			<td colspan="4" align="right">
-			  <button id="add_effect_association_row" 
-					  onclick="addEffectAssociationTab()">Add Effect/Association</button>
+			  <a id="add_effect_association_row" class="button add_ea_button alignright">Add Effect/Association</a>
 			</td>
 		</tr>
 		<tr>
 			<td colspan="4">
-			   <div id="effect_association_tabs">
-				  <ul></ul>
-			   </div>
+				<div id="effect_association_tabs">
+					<ul>
+					<?php 				
+					//if we have ea tabs in db already, render lis
+						for( $i=1; $i <= $num_ea_tabs; $i++ ){ ?>
+							<li id="ea-tab-<?php echo $i; ?>" class="ea_tab">
+								<label class="ea_tab_label <?php if( $i == 1 ){ echo 'active'; }?>" data-whichea="<?php echo $i; ?>" for="ea-tab-<?php echo $i; ?>">EA TAB <?php echo $i; ?></label>
+							</li>
+						<?php } ?>
+					
+					</ul>
+				  
+					<?php 
+					//should we render one in the background as the copy-from tab? (it won't ever be shown, just be there for js copying-ness)?  Is this the best way?
+					cc_transtria_render_ea_tabs( 'template', $dd_multiple_options_ea ); //dummy tab!
+					
+					//if we have ea tabs in db already, render them now
+					for( $i=1; $i <= $num_ea_tabs; $i++ ){ 
+						cc_transtria_render_ea_tabs( $i, $dd_multiple_options_ea );
+						
+					} ?>
+				  
+				</div>
 			</td>
 		</tr>
 
@@ -177,7 +189,6 @@ function cc_transtria_render_results_tab( $field_data ){
 			<td colspan="3"><input id="equipmentcosts_notreported" type="checkbox"></td>
 		</tr>
 
-
 		<tr>
 		   <td colspan="4" class="inner_table_header"><strong>Maintenance/Sustainability</strong></td>
 		</tr>
@@ -197,9 +208,8 @@ function cc_transtria_render_results_tab( $field_data ){
 			<td colspan="3"><input id="outcomemaintained_notreported" type="checkbox"></td>
 		</tr>
 
-
 		<tr>
-			<td><label>was there a plan for sustainability?:</label></td>
+			<td><label>Was there a plan for sustainability?:</label></td>
 			<td><span id="sustainability_plan_flag">
 				<input type="radio" value="Y" name="sustainability_plan_flag">Yes
 				<input type="radio" value="N" name="sustainability_plan_flag">No
@@ -213,42 +223,279 @@ function cc_transtria_render_results_tab( $field_data ){
 			<td colspan="3"><input id="sustainabilityplan_notreported" type="checkbox"></td>
 		</tr>
 
+		<tr>
+			<td colspan="3"></td>
+			<td align="right">Abstraction Complete?:
+				<input id="abstraction_complete" type="checkbox"></input>
+			</td>
+		</tr>
 
+		<tr>
+			<td colspan="3"></td>
+			<td align="right">Validation Complete?:
+				<input id="validation_complete" type="checkbox"></input>
+			</td>
+		</tr>
 
+		<tr class="result-user-message">
+			<td class="abstractor-stop-time-reminder">Please remember to enter the Abstractor stop time on the Basic Info page!</td>
+		</tr>
+		<tr class="result-user-message">     
+			<td class="validator-stop-time-reminder">Please remember to enter the Validator stop time on the Basic Info page!</td>
+		</tr>
 
-
-
-
-
-		   <tr>
-			 <td></td>
-			 <td></td>
-			 <td></td>
-			 <td align="right">Abstraction Complete?:
-			   <input id="abstraction_complete" type="checkbox"></input>
-			 </td>
-		   </tr>
-
-		   <tr>
-			 <td></td>
-			 <td></td>
-			 <td></td>
-			 <td align="right">Validation Complete?:
-			   <input id="validation_complete" type="checkbox"></input>
-			 </td>
-		   </tr>
-
-		  <tr class="result-user-message">
-			 <td class="abstractor-stop-time-reminder">Please remember to enter the Abstractor stop time on the Basic Info page!</td>
-		  </tr>
-		  <tr class="result-user-message">     
-			 <td class="validator-stop-time-reminder">Please remember to enter the Validator stop time on the Basic Info page!</td>
-		  </tr>
-
-
-		</table>
-
-
+	</table>
 
 <?php
+
+}
+
+/**
+ * Function to render EA tabs
+ * NOTE: seq in effect_association table goes from 1-99.
+ *
+ * @param array, array. Number and names of EA tabs, data for ea tabs
+ * 
+ */
+function cc_transtria_render_ea_tabs( $num_ea_tab, $dd_multiple_options_ea ){
+
+?>
+	<div id="effect_association_tab_<?php echo $num_ea_tab; ?>" class="one_ea_tab <?php if( $num_ea_tab != "1" ){ echo 'noshow'; } ?>">
+		<table>
+			<tbody>
+				<tr>
+					<td colspan="3"></td>
+					<td>
+						 <select id="ea_<?php echo $num_ea_tab; ?>_copy_tab" onclick="generate_copy_tab_select_options(event)"></select>
+						 <button onclick="copy_tab(event)">Copy Tab</button>
+					</td>
+				</tr>
+
+				<tr>
+					<td class="minwidth200"><label>Results (numeric)</label></td>
+					<td><input id="ea_<?php echo $num_ea_tab; ?>_result_numeric" regex="^-?\d{1,6}(\.\d{1,4})?$"></input></td>
+				</tr>
+
+				<tr>
+					<td><label>Duration</label></td>
+					<td><select id="ea_<?php echo $num_ea_tab; ?>_duration" >
+						<option value="">---Select---</option>
+						<?php //$dd_multiple_options_ea are indexed by the general id
+						foreach( $dd_multiple_options_ea['ea_duration'] as $k => $v ){
+							echo '<option value="' . $k . '">' . $v->descr . '</option>';
+						
+						} ?>
+					</select></td>
+				</tr>
+
+				<tr class="not-reported">
+					<td class="not-reported"><label>Duration not reported</label></td>
+					<td><input id="ea_<?php echo $num_ea_tab; ?>_duration_notreported" type="checkbox"></input></td>
+				</tr>
+
+				<tr>
+					<td><label>Result Type</label></td>
+					<td><span id="ea_<?php echo $num_ea_tab; ?>_result_type" data-ea-count="<?php echo $num_ea_tab; ?>">
+						<input type="radio" value="C" name="ea_<?php echo $num_ea_tab; ?>_result_type">Crude
+						<input type="radio" value="A" name="ea_<?php echo $num_ea_tab; ?>_result_type">Adjusted
+					</span></td>
+				</tr>
+
+				<tr class="ea_<?php echo $num_ea_tab; ?>_results_variables" style="display:none;">
+					<td><label>Variables</label></td>
+					<td colspan="3"><textarea id="ea_<?php echo $num_ea_tab; ?>_results_variables" style="width:98%"></textarea></td>
+				</tr>
+
+				<tr>
+					<td><label>Statistical analysis model:</label></td>
+					<td>
+						<select id="ea_<?php echo $num_ea_tab; ?>_result_statistical_model">
+							<option value="">---Select---</option>
+							<?php //$dd_multiple_options_ea are indexed by the general id
+							foreach( $dd_multiple_options_ea['ea_result_statistical_model'] as $k => $v ){
+								echo '<option value="' . $k . '">' . $v->descr . '</option>';
+							
+							} ?>
+						
+						</select></td>
+				</tr>
+
+				<tr>
+					<td><label>Result evaluation population:</label></td>
+					<td><select id="ea_<?php echo $num_ea_tab; ?>_result_evaluation_population" class="ea_multiselect" multiple="multiple">
+						<option value="">---Select---</option>
+						<?php //$dd_multiple_options_ea are indexed by the general id
+						foreach( $dd_multiple_options_ea['ea_result_evaluation_population'] as $k => $v ){
+							echo '<option value="' . $k . '">' . $v->descr . '</option>';
+						
+						} ?>
+					</select></td>
+				</tr>
+
+				<tr>
+					<td><label>Result Subpopulation:</label>
+					</td>
+					<td><span id="ea_<?php echo $num_ea_tab; ?>_result_subpopulationYN">
+						<input type="radio" value="Y" name="ea_<?php echo $num_ea_tab; ?>_result_subpopulationYN">Yes
+						<input type="radio" value="N" name="ea_<?php echo $num_ea_tab; ?>_result_subpopulationYN">No
+					</span>
+
+					</td>
+					<td><label>Result Subpopulation:</label>
+					<td>
+						<select id="ea_<?php echo $num_ea_tab; ?>_result_subpopulations" class="ea_multiselect" multiple="multiple">
+							<?php //$dd_multiple_options_ea are indexed by the general id
+							foreach( $dd_multiple_options_ea['ea_result_subpopulations'] as $k => $v ){
+								echo '<option value="' . $k . '">' . $v->descr . '</option>';
+							
+							} ?>
+						</select>
+					</td>
+				</tr>
+
+				<tr>
+					<td><label>Indicator Direction:</label></td>
+					<td><select id="ea_<?php echo $num_ea_tab; ?>_result_indicator_direction">
+						<option value="">---Select---</option>
+						<?php //$dd_multiple_options_ea are indexed by the general id
+						foreach( $dd_multiple_options_ea['ea_result_indicator_direction'] as $k => $v ){
+							echo '<option value="' . $k . '">' . $v->descr . '</option>';
+						
+						} ?>
+					
+					</select></td>
+				</tr>
+
+				<tr>
+					<td><label>Outcome Direction:</label></td>
+					<td><select id="ea_<?php echo $num_ea_tab; ?>_result_outcome_direction">
+						<option value="">---Select---</option>
+						<?php //$dd_multiple_options_ea are indexed by the general id
+						foreach( $dd_multiple_options_ea['ea_result_outcome_direction'] as $k => $v ){
+							echo '<option value="' . $k . '">' . $v->descr . '</option>';
+						
+						} ?>
+						
+					</select></td>
+				</tr>
+
+				<tr>
+					<td><label>Effect/Association direction:</label></td>
+					<td><input id="ea_<?php echo $num_ea_tab; ?>_result_effect_association_direction" readonly></input></td>
+				</tr>
+
+				<tr>
+					<td><label>Result Strategy:</label></td>
+					<td><select id="ea_<?php echo $num_ea_tab; ?>_result_strategy">
+						<option value="">---Select---</option>
+						<?php //$dd_multiple_options_ea are indexed by the general id
+						foreach( $dd_multiple_options_ea['ea_result_strategy'] as $k => $v ){
+							echo '<option value="' . $k . '">' . $v->descr . '</option>';
+						
+						} ?>
+					
+					</select>
+					</td>
+				</tr>
+
+				<tr>
+					<td><label>Outcome type:</label></td>
+					<td><select id="ea_<?php echo $num_ea_tab; ?>_result_outcome_type">
+						<option value="">---Select---</option>
+						<?php //$dd_multiple_options_ea are indexed by the general id
+						foreach( $dd_multiple_options_ea['ea_result_outcome_type'] as $k => $v ){
+							echo '<option value="' . $k . '">' . $v->descr . '</option>';
+						
+						} ?>
+					</select></td>
+					<td><label>Other:</label>
+					</td>
+					<td>
+						<input id="ea_<?php echo $num_ea_tab; ?>_result_outcome_type_other" type="text"></input>
+					</td>
+				</tr>
+
+				<tr>
+					<td><label>Outcome Assessed:</label></td>
+					<td>
+						<select id="ea_<?php echo $num_ea_tab; ?>_result_outcome_accessed" class="ea_multiselect" multiple="multiple">
+						<?php //$dd_multiple_options_ea are indexed by the general id
+						foreach( $dd_multiple_options_ea['ea_result_outcome_accessed'] as $k => $v ){
+							echo '<option value="' . $k . '">' . $v->descr . '</option>';
+						
+						} ?>
+						</select></td>
+					<td><label>Other:</label>
+					</td>
+					<td>
+						<input id="ea_<?php echo $num_ea_tab; ?>_result_outcome_accessed_other" type="text"></input>
+					</td>
+				</tr>
+
+				<tr>
+					<td><label>Measures:</label></td>
+					<td><select id="ea_<?php echo $num_ea_tab; ?>_result_measures" class="ea_multiselect" multiple="multiple">
+						<?php //$dd_multiple_options_ea are indexed by the general id
+						foreach( $dd_multiple_options_ea['ea_result_measures'] as $k => $v ){
+							echo '<option value="' . $k . '">' . $v->descr . '</option>';
+						
+						} ?>
+					</select></td>
+					<td><label>Other:</label>
+					</td>
+					<td>
+						<input id="ea_<?php echo $num_ea_tab; ?>_result_measures_other" type="text"></input>
+					</td>
+				</tr>
+
+				<tr>
+					<td><label>Indicator</label></td>
+					<td><select id="ea_<?php echo $num_ea_tab; ?>_result_indicator" class="ea_multiselect" multiple="multiple">
+						<?php //$dd_multiple_options_ea are indexed by the general id
+						foreach( $dd_multiple_options_ea['ea_result_indicator'] as $k => $v ){
+							echo '<option value="' . $k . '">' . $v->descr . '</option>';
+						
+						} ?>					
+					
+					</select></td>
+				</tr>
+
+				<tr>
+					<td><label>Method of Accessing Significance:</label></td>
+					<td><select id="ea_<?php echo $num_ea_tab; ?>_result_statistical_measure">
+						<option value="">---Select---</option>
+						<?php //$dd_multiple_options_ea are indexed by the general id
+						foreach( $dd_multiple_options_ea['ea_result_statistical_measure'] as $k => $v ){
+							echo '<option value="' . $k . '">' . $v->descr . '</option>';
+						
+						} ?>
+					
+					</select></td>
+
+					<td>
+						<label id="ea_<?php echo $num_ea_tab; ?>_ci_label">CI Range:</label>
+					</td>
+					<td>
+						<input type="text" id="ea_<?php echo $num_ea_tab; ?>_statistical_measure_p_value" style="display:none"></input>
+						<div id="statistical_measure_p_value">
+							<input id="ea_<?php echo $num_ea_tab; ?>_statistical_measure_ci_value1" size="7" maxlength="7" ></input> to
+							<input id="ea_<?php echo $num_ea_tab; ?>_statistical_measure_ci_value2" size="7" maxlength="7" ></input>
+						</div>
+					</td>
+				</tr>
+
+				<tr>
+					<td><label>Significant?:</label></td>
+					<td><span id="ea_<?php echo $num_ea_tab; ?>_result_significant">
+						<input type="radio" value="Y" name="ea_1_result_significant">Yes
+						<input type="radio" value="N" name="ea_1_result_significant">No
+					</span></td>
+				</tr>
+				
+			</tbody>
+		</table>
+	</div>
+ 
+	<?php
+
 }

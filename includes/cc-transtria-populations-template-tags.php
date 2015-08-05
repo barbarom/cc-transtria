@@ -81,27 +81,7 @@ function cc_transtria_render_populations_header( $field_data ){
 		<?php //onto the subtabs!
 		//TODO: load in correct number of ese tabs for THIS study
 		foreach( $which_pops as $pop ){ 
-			
-			//set up tab name based on which population
-			switch( $which_pop ){
-				case 'tp':
-					$subtitle = "Target Pop";
-					break;
-				case 'ipe':
-					$subtitle = "Intervention Pop - EXPOSED";
-					break;
-				case 'ipu':
-					$subtitle = "Intervention Pop - UNEXPOSED";
-					break;
-				case 'esu':
-					$subtitle = "Evaluation Sample - UNEXPOSED";
-					break;
-				case 'ese':
-				default: //because the rest of the tabs will be ese1, ese2...
-					$subtitle = "Evaluation Sample - EXPOSED";
-					break;
-			}
-			?>
+		?>
 			
 			<div id="<?php echo $pop; ?>-tab" class="subpops_tab">
 				<label class="subpops_tab_label<?php if( $pop == 'tp' ) { echo ' active'; } ?>" for="<?php echo $pop; ?>-tab" data-whichpop="<?php echo $pop; ?>"><?php echo $pop; ?></label>

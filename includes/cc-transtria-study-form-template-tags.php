@@ -38,7 +38,6 @@ function cc_transtria_render_form(){
 	$pops_data_multiple = cc_transtria_get_study_data_multiple( $this_study_id );
 	//var_dump( $pops_data_multiple );
 	
-	
 	//get all study ids in system
 	$all_study_ids = cc_transtria_get_study_ids();
 	
@@ -52,10 +51,19 @@ function cc_transtria_render_form(){
 	
 	$dd_multiple_options_pops = cc_transtria_get_multiple_dropdown_options_populations( $this_study_id ); //all options for pops sub tabs
 	
+	$dd_multiple_options_ea = cc_transtria_get_multiple_dropdown_options_ea( ); //all options for pops sub tabs
+
 	//bundle field options into single array (or whatever, really) to send to other render functions
 	$field_data = [];
 	$field_data['dd_singleton_options'] = $dd_singleton_options;
 	$field_data['dd_multiple_options_pops'] = $dd_multiple_options_pops;
+	$field_data['dd_multiple_options_ea'] = $dd_multiple_options_ea;
+	
+	//these are separate because of legacy code automatically saving 100 ea tabs even if there AREN't 100. #stupidstupidstupid
+	$field_data['num_ea_tabs'] = cc_transtria_get_num_ea_tabs_for_study( $this_study_id );
+	//$field_data['ea_tab_data'] = cc_transtria_get_ea_tab_data_for_study( $this_study_id, $field_data['num_ea_tabs'] );
+	$ea_data = cc_transtria_get_ea_tab_data_for_study( $this_study_id );
+	//var_dump( $ea_data );
 	
 	//TODO: think about whether we want to populate these in php or in js..	
 	?>
@@ -82,8 +90,9 @@ function cc_transtria_render_form(){
 		
 		
 		<div id="study_basic_info">
-			<p><strong>Study Grouping ID:</strong></p>
-		
+			<p><strong>Study Grouping ID:</strong>
+				<input id="StudyGroupingID" class="no-edit" readonly="">
+			</p>
 		</div>
 	
 
@@ -94,7 +103,7 @@ function cc_transtria_render_form(){
 		   <input type="radio" id="tab-1" name="tab-group-1" class="noshow" checked>
 		   <label for="tab-1" class="primary_tab_label">Basic Info</label>
        
-		   <div class="content">
+		   <div id="basic_form_content" class="content">
 				<table id="citation_table">
 					<tr>
 						<td class="citation_button" colspan="2">
@@ -473,7 +482,7 @@ function cc_transtria_render_form(){
 		   <input type="radio" id="tab-2" name="tab-group-1" class="noshow">
 		   <label for="tab-2" class="primary_tab_label">Population</label>
 		   
-		   <div class="content">
+		   <div id="population_content" class="content">
 			   <?php 
 				//render pops tab in all its glory
 				cc_transtria_render_populations_tab( $field_data ); ?>
@@ -484,7 +493,7 @@ function cc_transtria_render_form(){
 		   <input type="radio" id="tab-3" name="tab-group-1" class="noshow">
 		   <label for="tab-3" class="primary_tab_label">Intervention/Partnerships</label>
 		 
-		   <div class="content">
+		   <div id="intervention_content" class="content">
 			   <?php 
 				
 				cc_transtria_render_intervention_partnerships_tab( $field_data ); ?>
@@ -495,7 +504,7 @@ function cc_transtria_render_form(){
 		   <input type="radio" id="tab-4" name="tab-group-1" class="noshow">
 		   <label for="tab-4" class="primary_tab_label">Results</label>
 		 
-		   <div class="content">
+		   <div id="results_content" class="content">
 			   <?php
 			   
 			   cc_transtria_render_results_tab( $field_data ); ?>

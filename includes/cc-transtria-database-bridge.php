@@ -21,6 +21,8 @@ function cc_transtria_get_all_data_one_study( $study_id = null ){
 
 	$pops_data_single = cc_transtria_get_pops_study_data_single( $study_id );
 	$pops_data_multiple = cc_transtria_get_pops_study_data_multiple( $study_id );
+	
+	$ea_data = cc_transtria_get_ea_tab_data_for_study( $study_id );
 
 }
 
@@ -196,6 +198,69 @@ function cc_transtria_get_pops_study_data_multiple( $study_id = null ){
 
 }
 
+/**
+ * Gets all EA tab data given a study id
+ *
+ * @param int, int. Study ID, number of ea tabs (from meta table if not provided)
+ * @return array. String list of EA tab names
+ */
+function cc_transtria_get_ea_tab_data_for_study( $study_id, $num_ea_tabs = null ){
+
+	global $wpdb;
+	
+	if( is_null( $num_ea_tabs ) ){
+	
+		//how many ea tabs do we have?
+		$meta_sql = $wpdb->prepare( 
+			"
+			SELECT      value
+			FROM        $wpdb->transtria_metadata
+			WHERE		StudyID = %s 
+			AND 		variablename = 'ea tabCount'
+			",
+			$study_id
+		); 
+		
+		$ea_tab_count = $wpdb->get_results( $meta_sql, ARRAY_A );
+		
+		$num_ea_tabs = intval( $ea_tab_count[0]['value'] ); 
+	
+	} 
+	
+	$which_ea_tabs = [];
+	
+	//how many ea tabs do we have?
+	$ea_sql = $wpdb->prepare( 
+		"
+		SELECT      *
+		FROM        $wpdb->transtria_effect_association
+		WHERE		StudyID = %d 
+		AND 		seq <= %d
+		",
+		$study_id,
+		$num_ea_tabs
+	); 
+	
+	$form_rows = $wpdb->get_results( $ea_sql, ARRAY_A );
+	
+	$all_ea_tabs = []; //instantiate empty array to hold all the pops data
+	
+	//cycle through all ea #s and do some stuff (Mel's brain is tired right now)
+	for( $i = 1; $i <= $num_ea_tabs; $i++ ){
+		//put label of form rows in div id form
+		$label = 'ea_' . $i;
+		$new_form_rows = cc_transtria_match_div_ids_to_ea_columns_single( $label, $form_rows[$i - 1] ); //0-indexed form_rows..
+	
+		//add to master array
+		$all_ea_tabs[ $i ] = $new_form_rows;
+		
+	}
+	
+	//var_dump( $all_ea_tabs );
+	
+	return $all_ea_tabs;
+
+}
 
 
 
@@ -302,6 +367,7 @@ function cc_transtria_get_endnote_citation_info( $endnoteid ){
 
 }
 
+//TODO: are we using this?
 /**
  * Function to get form drop down options.  First pass takes input array as lookup and foreachs..
  *
@@ -381,8 +447,14 @@ function cc_transtria_get_multiple_dropdown_options_ea(){
 
 	$dd_ids = cc_transtria_get_multiple_dropdown_ids_ea();
 	
-	//Now, perform lookup.
-
+	//Now, perform lookup.  Just once, since all ea tabs will have same data in their dropdowns.  #efficiency
+	foreach( $dd_ids as $div_id => $lookup_name ){
+		
+		$dd_options[ $div_id ] = cc_transtria_get_options_from_db( $lookup_name );
+	
+	}
+	
+	return $dd_options;
 
 }
 
@@ -478,6 +550,36 @@ function cc_transtria_get_all_pops_type_for_study( $study_id ){
 		return $which_pops;
 
 	}
+
+}
+
+/**
+ * Gets all EA tabs given a study id
+ *
+ * @param int. Study ID
+ * @return array. String list of EA tab names
+ */
+function cc_transtria_get_num_ea_tabs_for_study( $study_id ){
+
+	global $wpdb;
+	
+	$which_ea_tabs = [];
+	
+	//how many ea tabs do we have?
+	$meta_sql = $wpdb->prepare( 
+		"
+		SELECT      value
+		FROM        $wpdb->transtria_metadata
+		WHERE		StudyID = %s 
+		AND 		variablename = 'ea tabCount'
+		",
+		$study_id
+	); 
+	
+	$ea_tab_count = $wpdb->get_results( $meta_sql, ARRAY_A );
+	$ea_tab_count = intval( $ea_tab_count[0]['value'] ); 
+
+	return $ea_tab_count;
 
 }
 

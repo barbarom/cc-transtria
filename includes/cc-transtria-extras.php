@@ -415,14 +415,6 @@ class CC_Transtria_Extras {
 			wp_enqueue_script( 'actionplanning-js', plugins_url( 'js/actionplanning.js', __FILE__ ), array( 'jquery' ), '1.6' );
 		}
 		
-		if ( cc_aha_on_reports_screen() ){
-			wp_enqueue_script( 'reports-js', plugins_url( 'js/reports.js', __FILE__ ), array( 'jquery' ), '1.5' );
-			wp_enqueue_script( 'multiselect-js', plugins_url( 'js/jquery.multiselect.min.js', __FILE__ ), array( 'jquery' ), '1.0' );
-		}
-		
-		if (cc_aha_on_action_plan_screen()) {
-			wp_enqueue_script( 'actionplan-js', plugins_url( 'js/actionplan-readonly.js', __FILE__ ), array( 'jquery' ), '1.0' );
-		}
 		*/
 	}
 
@@ -866,6 +858,7 @@ class CC_Transtria_Extras {
 
 		$study_data['single'] = cc_transtria_get_single_study_data( $this_study_id );
 		$study_data['population_single'] = cc_transtria_get_pops_study_data_single( $this_study_id );
+		$study_data['ea'] = cc_transtria_get_ea_tab_data_for_study( $this_study_id );
 		$study_data['multiple'] = cc_transtria_get_study_data_multiple( $this_study_id );
 		
 		//can we put these all into a flat array?

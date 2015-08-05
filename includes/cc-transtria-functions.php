@@ -295,21 +295,23 @@ function cc_transtria_get_multiple_dropdown_ids_populations( $which_pop = 'all',
 function cc_transtria_get_multiple_dropdown_ids_ea(){
 
 	$dd_ids = array(
-		"_duration" => "_duration", //"%s_duration" % _prefix, "%s_duration"
-		"_result_evaluation_population" => " Results Populations", //"%s_result_evaluation_population" % _prefix, "%s Results Populations"
-		"_result_subpopulations" => " Results SubPopulations", //"%s_result_subpopulations" % _prefix, "%s Results SubPopulations"
-		"_result_indicator_direction"=> "indicator_direction", //"%s_result_indicator_direction" % _prefix, "indicator_direction"
-		"_result_outcome_direction" => "outcome_direction", //"%s_result_outcome_direction" % _prefix, "outcome_direction"
-		"_result_strategy" => "result_strategy", //"%s_result_strategy" % _prefix, "result_strategy"
-		"_result_outcome_type" => '%s_result_outcome_type_other', //"%s_result_outcome_type" % _prefix, '%s_result_outcome_type_other'
+		"ea_duration" => "Duration", //"%s_duration" % _prefix, "%s_duration"
+		"ea_result_statistical_model" => "StatisticalModel", //"%s_result_statistical_model" % _prefix, "statistical_model"
+		"ea_result_evaluation_population" => "Results Populations", //"%s_result_evaluation_population" % _prefix, "%s Results Populations"
+		"ea_result_subpopulations" => "Results SubPopulations", //"%s_result_subpopulations" % _prefix, "%s Results SubPopulations"
+		"ea_result_indicator_direction"=> "Results Indicator Direction", //"%s_result_indicator_direction" % _prefix, "indicator_direction"
+		"ea_result_outcome_direction" => "Results Outcome Direction", //"%s_result_outcome_direction" % _prefix, "outcome_direction"
+		"ea_result_strategy" => "Strategies", //"%s_result_strategy" % _prefix, "result_strategy"
+		"ea_result_outcome_type" => "OutcomeType", //"%s_result_outcome_type" % _prefix, '%s_result_outcome_type_other'
 		//yes, this is a typo.  No we're not changing it now, it's in the db.
-		"_result_outcome_accessed" => " OutcomesAccessed", //"%s_result_outcome_accessed" % _prefix, "%s OutcomesAccessed" 
-		"_result_measures" => " Measures", //"%s_result_measures" % _prefix, "%s Measures"
-		"_result_indicator" => " Indicator", //"%s_result_indicator" % _prefix, "%s Indicator"
-		"_result_statistical_model" => "statistical_model", //"%s_result_statistical_model" % _prefix, "statistical_model"
-		"_result_statistical_measure" => "statistical_measure" //"%s_result_statistical_measure" % _prefix, "statistical_measure"
+		"ea_result_outcome_accessed" => "OutcomesAccessed", //yeah, this is a legacy typo #stupid
+		"ea_result_measures" => "Measures", //"%s_result_measures" % _prefix, "%s Measures"
+		"ea_result_indicator" => "Indicator", //"%s_result_indicator" % _prefix, "%s Indicator"
+		"ea_result_statistical_measure" => "StatisticalMeasure" //"%s_result_statistical_measure" % _prefix, "statistical_measure"
 		
 	);
+	
+	return $dd_ids;
 
 }
 
@@ -707,6 +709,7 @@ function cc_transtria_match_div_ids_to_multiple_columns( $study_labels = null ){
 	}
 	
 }
+
 /**
  * function to relate div ids and study id columns
  *
@@ -809,6 +812,81 @@ function cc_transtria_match_div_ids_to_pops_columns_single( $which_pop, $study_l
 	
 }
 
+/**
+ * function to relate div ids and study id columns
+ *
+ * @param array
+ * @return array
+ */
+function cc_transtria_match_div_ids_to_ea_columns_single( $which_ea, $study_labels = null ){
+
+	//we can use array_flip if we need to!
+	
+	//NOTE: $which ea should be in 'ea_#' format
+	//db => field ids
+	$db_to_div_array = array(
+		//'StudyID' => 'studyid',
+		'seq' => 'seq',
+		'results' => $which_ea . '_results', //not used
+		'result_numeric' => $which_ea . '_result_numeric',
+		'duration' => $which_ea . '_duration',
+		'duration_notreported' => $which_ea . '_duration_notreported',
+		'result_type' => $which_ea . '_result_type',
+		'results_variables' => $which_ea . '_results_variables',
+		'statistical_model' => $which_ea . '_result_statistical_model',
+		'result_subpopulation' => $which_ea . ' _result_subpopulationYN',
+		'result_subpopulation_text' => 'result_subpopulation_text', //?
+		'indicator_direction' => $which_ea . '_result_indicator_direction',
+		'outcome_direction' => $which_ea . '_result_outcome_direction',
+		'effect_or_association_direction' => $which_ea . '_result_effect_association_direction',
+		'result_strategy' => $which_ea . '_result_strategy',
+		'outcome_type' => $which_ea . '_result_outcome_type',
+		'outcome_type_other' => $which_ea . '_result_outcome_type_other',
+		//outcome_accessed //is multi
+		'outcome_accessed_other' => $which_ea . '_result_outcome_accessed_other',
+		'measures_other' => $which_ea . '_result_measures_other',
+		//indicator //multi
+		'statistical_measure' => $which_ea . '_result_statistical_measure',
+		//statistical_measure_p_value
+		'statistical_measure_CI1' => $which_ea . '_statistical_measure_ci_value1',
+		'statistical_measure_CI2' => $which_ea . '_statistical_measure_ci_value2',
+		'significant' => $which_ea . '_result_significant',
+		'effect_association_type1' => $which_ea . '_effect_association_type1',
+		'effect_association_type2' => $which_ea . 'effect_association_type2',
+		'effect_association_value' => $which_ea . 'effect_association_value',
+		'final_effect_association_value' => $which_ea . 'final_effect_association_value',
+		'indicator' => $which_ea . 'indicator',
+		'outcome_accessed' => $which_ea . 'outcome_accessed',
+		'result_population' => $which_ea . 'result_population',
+		'result_subpopulation_text' => $which_ea . 'result_subpopulation_text',
+		'statistical_measure_p_value' => $which_ea . 'statistical_measure_p_value'
+
+	);
+	
+	$flipped_array = array_flip( $db_to_div_array );
+	
+	if( !empty( $study_labels ) ){
+		$new_study_labels = [];
+		//we have an incoming array whose labels need to be changed
+		foreach( $study_labels as $label => $value ){
+
+			if( in_array( $label, $flipped_array ) ) {
+				//var_dump( $label );
+				$new_label = $db_to_div_array[ $label ];
+				$new_study_labels[ $new_label ] = $value;
+			} else {
+				$new_study_labels[ $label ] = $value; //same ol
+			}
+		
+		}
+		return $new_study_labels;	
+		
+	} else {
+		//we're just returning the above array
+		return $db_to_div_array;
+	}
+	
+}
 
 
 

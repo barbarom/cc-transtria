@@ -9,8 +9,12 @@ function clickListen(){
 	//when clicking on the citation info tabs
 	jQuery('#citation_tabs li').on( "click", citation_tab_toggle );
 	
+	//when clicking on the ea tabs
+	jQuery('#effect_association_tabs li').on( "click", ea_tab_toggle );
+	
 	//get citation info
 	jQuery("select#EndNoteID").on("change", get_citation_data);
+	
 	//show citation info
 	jQuery("a.show_citation_data").on("click", show_citation_data);
 	
@@ -23,6 +27,9 @@ function clickListen(){
 	
 	//TODO: restrict options in EA tabs based on intervention tabs. 
 
+	//TODO: variables in ea tab on 'adjusted'
+	
+	//TODO: ea direction!
 	
 	
 	//Add new ESE tabs
@@ -40,6 +47,17 @@ function setup_multiselect() {
 
 		
 		jQuery(".general-multiselect").multiselect({
+			header: true,
+			position: {my: 'left bottom', at: 'left top'},
+			selectedText: '# of # checked',
+			//selectedList: 4, 
+			close: function( event, ui ){
+				//multiselect_listener( jQuery(this) );
+			}
+		}); 
+		
+		//ea multiselects
+		jQuery(".ea_multiselect").multiselect({
 			header: true,
 			position: {my: 'left bottom', at: 'left top'},
 			selectedText: '# of # checked',
@@ -188,11 +206,23 @@ function citation_tab_toggle(){
 	jQuery(this).addClass("active");
 	//console.log(whichtab);
 	
-
-
-
-
 }
+
+//tabs toggle for effect associations
+function ea_tab_toggle(){
+
+	var whichtab = jQuery(this).find('label').data("whichea");
+	
+	//fade out all, remove active class from all l
+	jQuery("#effect_association_tabs .one_ea_tab").fadeOut();
+	jQuery("#effect_association_tabs ul li label").removeClass("active");
+	
+	jQuery("#effect_association_tabs #effect_association_tab_" + whichtab).fadeIn();
+	jQuery(this).find('label').addClass("active");
+	//console.log(whichtab);
+	
+}
+
 
 //get endnote id citation info, for selected endnote id
 function get_citation_data(){
@@ -366,8 +396,9 @@ function get_current_study_info(){
 			}
 			var post_meat = data['single']; // = JSON.parse(data);
 			var pops_meat = data['population_single'];
+			var ea_meat = data['ea'];
 			var multi_meat = data['multiple'];
-			//console.log( post_meat);	
+			//console.log( ea_meat);	
 					
 			//now.. populate fields!
 			//single data (from studies db table)
@@ -498,22 +529,81 @@ function get_current_study_info(){
 							jQuery("input[name='" + index + "'][value='" + element + "']").prop('checked',true);
 						} 
 					}
+										
+				});
+				
+			});
+			
+			//now handle incoming single popualation data
+			jQuery.each( ea_meat, function( ea_num, ea_data) {
+				
+				jQuery.each( ea_data, function( index, element ){
+					//do we have an element div id w this index?  
+					selector_obj = jQuery("#" + index );
+					selector_obj_by_name = jQuery("input[name='" + index + "']");
 					
-					
-					//population_type is a class...this is NOT working (it just populates ALL of this class w/last pop type, duh
-					/*if( index == 'population_type' ){
-						selector_obj = jQuery("." + index );
-						if( selector_obj.length > 0 ){
+					if( selector_obj.length > 0 ){
+						
+						//console.log( jQuery( selector_obj ) ) ;
+						var current_val;
+						//what is our selector type?
+						if( selector_obj.is('select') ){
+							//see if there's a matching option
+							var children = selector_obj.children('option');
+							//console.log( children );
+							
+							//iterate through option values
+							jQuery.each( children, function(){
+								//what is current option value
+								current_val = jQuery(this).val();
+								current_val = current_val.trim(); //if whitespace because sometimes there is..*sigh*
+								
+								var int_trial = parseInt( current_val, 10 );
+								
+								//is it string or int? Sometimes there are both ... would that matter? 
+								//	Mel doesn't think so since this is to test equality
+								if ( isNaN( int_trial ) ){
+									//we have strings
+									if ( current_val == element ){
+										jQuery(this).attr('selected','selected');
+										return;
+									}
+								} else {
+									
+									if ( int_trial == parseInt( element, 10 ) ){
+										jQuery(this).attr('selected','selected');
+										return;
+									}
+								}
+							
+							
+							});
+							//console.log( index ); 
+							//console.log( element ); 
+						} else if ( selector_obj.is('input:text') || selector_obj.is('textarea') ){
+							//easy-peasy
 							selector_obj.val( element );
-						}
-					}*/
+						
+						} else if ( selector_obj.is('input:checkbox') ){
+							if( element == "Y" ){
+								selector_obj.attr("checked", "checked");
+							}
+						} 
+					}
 					
+					//if we have inputs with name instead (radios), update those
+					if( selector_obj_by_name.length ){
+						if ( selector_obj_by_name.is('input:radio') ){
+							//mark as checked whichever radio == element
+							jQuery("input[name='" + index + "'][value='" + element + "']").prop('checked',true);
+						} 
+					}
 					
 				});
 				
 			});
 			
-			jQuery(".general-multiselect").multiselect("uncheckAll");
+			//jQuery(".general-multiselect").multiselect("uncheckAll");
 			
 			//now handle the incoming multiple data
 			jQuery.each( multi_meat, function(index, element) {
@@ -546,6 +636,7 @@ function get_current_study_info(){
 			
 			//refresh all our multiselects
 			jQuery(".general-multiselect").multiselect("refresh");
+			jQuery(".ea_multiselect").multiselect("refresh");
 			
 			//refresh the endnote info
 			get_citation_data();
