@@ -266,8 +266,8 @@ function cc_transtria_render_ea_tabs( $num_ea_tab, $dd_multiple_options_ea ){
 				<tr>
 					<td colspan="3"></td>
 					<td>
-						 <select id="ea_<?php echo $num_ea_tab; ?>_copy_tab" onclick="generate_copy_tab_select_options(event)"></select>
-						 <button onclick="copy_tab(event)">Copy Tab</button>
+						 <select class="ea_copy_tab"></select>
+						 <a class="button ea_copy_tab_button">Copy Tab</a>
 					</td>
 				</tr>
 
@@ -301,7 +301,7 @@ function cc_transtria_render_ea_tabs( $num_ea_tab, $dd_multiple_options_ea ){
 					</span></td>
 				</tr>
 
-				<tr class="ea_<?php echo $num_ea_tab; ?>_results_variables" style="display:none;">
+				<tr id="ea_<?php echo $num_ea_tab; ?>_results_variables_tr" class="noshow">
 					<td><label>Variables</label></td>
 					<td colspan="3"><textarea id="ea_<?php echo $num_ea_tab; ?>_results_variables" style="width:98%"></textarea></td>
 				</tr>

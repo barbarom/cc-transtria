@@ -834,7 +834,7 @@ function cc_transtria_match_div_ids_to_ea_columns_single( $which_ea, $study_labe
 		'result_type' => $which_ea . '_result_type',
 		'results_variables' => $which_ea . '_results_variables',
 		'statistical_model' => $which_ea . '_result_statistical_model',
-		'result_subpopulation' => $which_ea . ' _result_subpopulationYN',
+		'result_subpopulation' => $which_ea . '_result_subpopulationYN',
 		'result_subpopulation_text' => 'result_subpopulation_text', //?
 		'indicator_direction' => $which_ea . '_result_indicator_direction',
 		'outcome_direction' => $which_ea . '_result_outcome_direction',
@@ -851,6 +851,7 @@ function cc_transtria_match_div_ids_to_ea_columns_single( $which_ea, $study_labe
 		'statistical_measure_CI1' => $which_ea . '_statistical_measure_ci_value1',
 		'statistical_measure_CI2' => $which_ea . '_statistical_measure_ci_value2',
 		'significant' => $which_ea . '_result_significant',
+		//these aren't used, but don't want them to trip up the rest of the form, so prepending w/ current ea#
 		'effect_association_type1' => $which_ea . '_effect_association_type1',
 		'effect_association_type2' => $which_ea . 'effect_association_type2',
 		'effect_association_value' => $which_ea . 'effect_association_value',
