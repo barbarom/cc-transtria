@@ -393,7 +393,7 @@ function cc_transtria_relate_div_ids_and_pop_columns( $which_pop ){
  * @param array
  * @return array
  */
-function cc_transtria_match_div_ids_to_studies_columns( $study_labels = null ){
+function cc_transtria_match_div_ids_to_studies_columns( $study_labels = null, $to_db = false ){
 
 	//we can use array_flip if we need to!
 	
@@ -419,7 +419,7 @@ function cc_transtria_match_div_ids_to_studies_columns( $study_labels = null ){
 		//domeesticintlsetting_notreport //used?
 		'domesticfundingsources' => 'domesticfundingsources',
 		'fundingpurpose' => 'fundingpurpose',
-		'StudyDesign' => 'StudyDesign',
+		'StudyDesignID' => 'StudyDesign',
 		'otherStudyDesign' => 'otherstudydesign',
 		//StudyType //is this used in the form?
 		'design_limitations' => 'design_limitations',
@@ -553,27 +553,47 @@ function cc_transtria_match_div_ids_to_studies_columns( $study_labels = null ){
 	
 	);
 	
-	//because in_array is looking at values and we need to get db values
-	$flipped_array = array_flip( $db_to_div_array );
 	
 	if( !empty( $study_labels ) ){
-		$new_study_labels = [];
-		//we have an incoming array whose labels need to be changed
-		foreach( $study_labels as $label => $value ){
-			if( in_array( $label, $flipped_array ) ) {
-			//var_dump( $label );
-				$new_label = $db_to_div_array[ $label ];
-				$new_study_labels[ $new_label ] = $value;
-			} else {
-				$new_study_labels[ $label ] = $value; //same ol
+		if( $to_db == false ) {
+		
+			//because in_array is looking at values and we need to get db values
+			$flipped_array = array_flip( $db_to_div_array );
+			$new_study_labels = [];
+			//we have an incoming array whose labels need to be changed
+			foreach( $study_labels as $label => $value ){
+				if( in_array( $label, $flipped_array ) ) {
+				//var_dump( $label );
+					$new_label = $db_to_div_array[ $label ];
+					$new_study_labels[ $new_label ] = $value;
+				} else {
+					$new_study_labels[ $label ] = $value; //same ol
+				}
+			
 			}
-		
+			return $new_study_labels;
+		} else {
+			//array_search - Searches the array for a given value and returns the corresponding key if successful
+			//$flipped_array = $db_to_div_array;
+			$new_study_labels = [];
+			//we have an incoming array whose labels need to be changed
+			foreach( $study_labels as $label => $value ){
+			
+				$db_key = array_search( $label, $db_to_div_array );
+				
+				if( $db_key !== false ){
+					$new_study_labels[ $db_key ] = $value;
+				} else {
+					$new_study_labels[ $label ] = 0; //same ol
+				}
+			
+			}
+			return $new_study_labels;
+			
 		}
-		return $new_study_labels;
-		
 		
 	} else {
-		//we're just returning the above array
+		//we're just returning the above lookup table
 		return $db_to_div_array;
 	}
 	

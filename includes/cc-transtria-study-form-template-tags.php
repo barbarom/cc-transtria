@@ -77,6 +77,7 @@ function cc_transtria_render_form(){
 		<div class="bottom_margin">			
 			<label for="studyid"><strong>Study ID</strong></label>
 			<select id="studyid">
+				<option value="-1">-- Select --</option>
 				<?php //cycle through existing study ids
 					foreach( $all_study_ids as $one_study_id ){
 					echo '<option value="' . $one_study_id . '">' . $one_study_id . '</option>';
@@ -128,7 +129,7 @@ function cc_transtria_render_form(){
 										Abstractor:
 									</td>
 									<td>
-										<select id="abstractor" name="abstractor">
+										<select id="abstractor" name="abstractor" class="studies_table">
 											<option value="">---Select---</option>
 											
 											<?php //$dd_singleton_options are indexed by the div id - "abstractor", for example
@@ -147,7 +148,7 @@ function cc_transtria_render_form(){
 										Start Date/Time:
 									</td>
 									<td>
-										<input id="abstractorstarttime" type="text" />
+										<input id="abstractorstarttime" class="studies_table" type="text" />
 									</td>
 								</tr>
 								<tr>
@@ -155,7 +156,7 @@ function cc_transtria_render_form(){
 										Stop Date/Time:
 									</td>
 									<td>
-										<input id="abstractorstoptime" type="text" />
+										<input id="abstractorstoptime" class="studies_table" type="text" />
 									</td>
 								</tr>					
 							</table>
@@ -167,7 +168,7 @@ function cc_transtria_render_form(){
 										Validator:
 									</td>
 									<td>
-										<select id="validator" name="validator">
+										<select id="validator" name="validator" class="studies_table">
 											<option value="">---Select---</option>
 											<?php										
 												//$dd_singleton_options are indexed by the div id - "abstractor", for example
@@ -184,7 +185,7 @@ function cc_transtria_render_form(){
 										Start Date/Time:
 									</td>
 									<td>
-										<input id="validatorstarttime" type="text" />
+										<input id="validatorstarttime" class="studies_table" type="text" />
 									</td>
 								</tr>
 								<tr>
@@ -192,7 +193,7 @@ function cc_transtria_render_form(){
 										Stop Date/Time:
 									</td>
 									<td>
-										<input id="validatorstoptime" type="text" />
+										<input id="validatorstoptime" class="studies_table" type="text" />
 									</td>
 								</tr>					
 							</table>			
@@ -241,7 +242,7 @@ function cc_transtria_render_form(){
 					<tr>
 						<td>PubMed ID:</td>
 						<td>
-							<input id="PubMedID" type="text" />
+							<input id="PubMedID" class="studies_table" type="text" />
 						</td>
 						<td></td>					
 					</tr>				
@@ -262,7 +263,7 @@ function cc_transtria_render_form(){
 					<tr>
 						<td>Search tool type:</td>
 						<td>
-							<select id="searchtooltype" multiple="multiple" class="multiselect"> 
+							<select id="searchtooltype" multiple="multiple" class="multiselect code_results_table"> 
 								<?php //$dd_singleton_options are indexed by the div id - "abstractor", for example
 									foreach( $dd_singleton_options['searchtooltype'] as $k => $v ){
 									echo '<option value="' . $k . '">' . $v->descr . '</option>';
@@ -282,7 +283,7 @@ function cc_transtria_render_form(){
 					<tr>
 						<td>Search tool name:</td>
 						<td>
-							<select id="searchtoolname" multiple="multiple" name="searchtoolname" class="multiselect general-multiselect">
+							<select id="searchtoolname" multiple="multiple" name="searchtoolname" class="multiselect general-multiselect code_results_table">
 								<?php //$dd_singleton_options are indexed by the div id - "abstractor", for example
 									foreach( $dd_singleton_options['searchtoolname'] as $k => $v ){
 									echo '<option value="' . $k . '">' . $v->descr . '</option>';
@@ -305,35 +306,35 @@ function cc_transtria_render_form(){
 						<td>Grant or Contract #:
 						</td>
 						<td>
-							<input id="grantcontractnumber" type="text" />
+							<input id="grantcontractnumber" class="studies_table" type="text" />
 						</td>
 						<td></td>					
 					</tr>				
 					<tr>
 						<td><span>Grant or Contract # not reported:</span></td>
 						<td>
-							<input type="checkbox" />
+							<input type="checkbox" id="grantcontractnumber_notreported" class="studies_table" />
 						</td>
 						<td></td>					
 					</tr>
 					<tr>
 						<td>Amount of funding:</td>
 						<td>
-							<input id="fundingamount" type="text" />
+							<input id="fundingamount" class="studies_table" type="text" />
 						</td>
 						<td></td>					
 					</tr>				
 					<tr>
 						<td><span>Amount of funding not reported:</span></td>
 						<td>
-							<input id="fundingamount_notreported" type="checkbox" />
+							<input id="fundingamount_notreported" class="studies_table" type="checkbox" />
 						</td>
 						<td></td>					
 					</tr>
 					<tr>
 						<td>Source of funding:</td>
 						<td>
-							<select id="fundingsource" multiple="multiple" name="fundingsource" class="multiselect general-multiselect">
+							<select id="fundingsource" multiple="multiple" name="fundingsource" class="multiselect general-multiselect code_results_table">
 								<?php //$dd_singleton_options are indexed by the div id - "abstractor", for example
 									foreach( $dd_singleton_options['fundingsource'] as $k => $v ){
 									echo '<option value="' . $k . '">' . $v->descr . '</option>';
@@ -342,27 +343,27 @@ function cc_transtria_render_form(){
 							</select>					
 						</td>
 						<td>
-							Other funding source: <input id="otherfunding" type="text" />			
+							Other funding source: <input id="otherfunding" class="studies_table" type="text" />			
 						</td>					
 					</tr>				
 					<tr>
 						<td><span>Source of funding not reported:</span></td>
 						<td>
-							<input id="fundingsource_notreported" type="checkbox" />
+							<input id="fundingsource_notreported" class="studies_table" type="checkbox" />
 						</td>
 						<td></td>					
 					</tr>
 					<tr>
 						<td>Domestic/International Funding Source:</td>
 						<td>
-							Domestic: <input id="DomesticFundingSourceType" type="checkbox" /> International: <input id="InternationalFundingSourceType" type="checkbox" />
+							Domestic: <input id="DomesticFundingSourceType" class="studies_table" type="checkbox" /> International: <input id="InternationalFundingSourceType" type="checkbox" />
 						</td>
 						<td></td>					
 					</tr>				
 					<tr>
 						<td>Domestic funding source type:</td>
 						<td >
-							<select id="domesticfundingsources" multiple="multiple" class="multiselect general-multiselect">
+							<select id="domesticfundingsources" multiple="multiple" class="multiselect general-multiselect code_results_table">
 								<?php //$dd_singleton_options are indexed by the div id - "abstractor", for example
 									foreach( $dd_singleton_options['domesticfundingsources'] as $k => $v ){
 									echo '<option value="' . $k . '">' . $v->descr . '</option>';
@@ -375,14 +376,14 @@ function cc_transtria_render_form(){
 					<tr>
 						<td><span>Domestic funding source type not reported:</span></td>
 						<td>
-							<input id="domesticfundingsources_notreported" type="checkbox" />
+							<input id="domesticfundingsources_notreported" class="studies_table" type="checkbox" />
 						</td>
 						<td></td>					
 					</tr>
 					<tr>
 						<td>Funding purpose:</td>
 						<td>
-							<select id="fundingpurpose" multiple="multiple" class="multiselect general-multiselect">
+							<select id="fundingpurpose" multiple="multiple" class="multiselect general-multiselect code_results_table">
 								<?php //$dd_singleton_options are indexed by the div id - "abstractor", for example
 									foreach( $dd_singleton_options['fundingpurpose'] as $k => $v ){
 									echo '<option value="' . $k . '">' . $v->descr . '</option>';
@@ -395,7 +396,7 @@ function cc_transtria_render_form(){
 					<tr>
 						<td><span>Funding purpose not reported:</span></td>
 						<td>
-							<input id="fundingpurpose_notreported" type="checkbox" />
+							<input id="fundingpurpose_notreported" class="studies_table" type="checkbox" />
 						</td>
 						<td></td>					
 					</tr>				
@@ -409,7 +410,7 @@ function cc_transtria_render_form(){
 					<tr>
 						<td>Study Design:</td>
 						<td>
-							<select id="StudyDesign" name="StudyDesign">
+							<select id="StudyDesign" name="StudyDesign" class="studies_table">
 								<option value="-1">-- Select --</option>
 								<?php //$dd_singleton_options are indexed by the div id - "abstractor", for example
 									
@@ -419,12 +420,12 @@ function cc_transtria_render_form(){
 								} ?>								
 							</select>
 						</td>
-						<td>Other study design: <input id="otherstudydesign" type="text" /></td>
+						<td>Other study design: <input id="otherstudydesign" class="studies_table" type="text" /></td>
 					</tr>				
 					<tr>
 						<td>Design Limitations:</td>
 						<td colspan="2">
-							<textarea style="width:97%"></textarea>
+							<textarea id="design_limitations" class="studies_table" style="width:97%"></textarea>
 						</td>					
 					</tr>				
 					<tr>
@@ -432,14 +433,14 @@ function cc_transtria_render_form(){
 							<span>Design limitations not reported:</span>
 						</td>
 						<td>
-							<input id="designlimitations_notreported" type="checkbox" />
+							<input id="designlimitations_notreported" class="studies_table" type="checkbox" />
 						</td>
 						<td></td>					
 					</tr>	
 					<tr>
 						<td>Data Collection:</td>
 						<td colspan="2">
-							<textarea id="data_collection" style="width:97%"></textarea>	
+							<textarea id="data_collection" class="studies_table" style="width:97%"></textarea>	
 						</td>
 					
 					</tr>	
@@ -447,8 +448,8 @@ function cc_transtria_render_form(){
 						<td>Threat to internal validity?:</td>
 						<td colspan="2">
 							<span id="validitythreatflag">
-								<input type="radio" value="Y" name="validitythreatflag">Yes
-								<input type="radio" value="N" name="validitythreatflag">No
+								<input type="radio" value="Y" class="studies_table" name="validitythreatflag">Yes
+								<input type="radio" value="N" class="studies_table" name="validitythreatflag">No
 							</span>
 						</td>					
 					</tr>
@@ -457,7 +458,7 @@ function cc_transtria_render_form(){
 							Select type(s) of threats to internal validity:
 						</td>
 						<td>
-							<select id="validity_threats" multiple="multiple" name="validity_threats" class="multiselect general-multiselect">
+							<select id="validity_threats" multiple="multiple" name="validity_threats" class="multiselect general-multiselect code_results_table">
 								<?php //$dd_singleton_options are indexed by the div id - "abstractor", for example
 									foreach( $dd_singleton_options['validity_threats'] as $k => $v ){
 									echo '<option value="' . $k . '">' . $v->descr . '</option>';
@@ -470,10 +471,17 @@ function cc_transtria_render_form(){
 					<tr>
 						<td><span>Threat to internal validity not reported:</span></td>
 						<td>
-							<input id="validitythreat_notreported" type="checkbox" />
+							<input id="validitythreat_notreported" class="studies_table" type="checkbox" />
 						</td>
 						<td></td>					
-					</tr>				
+					</tr>
+
+					<tr>
+						<td colspan="2"></td>
+						<td class="submit_form">
+							<a class="button save_study alignright">SAVE STUDY</a>
+						</td>
+					</tr>
 				</table>
 		   </div> 
 	   </div>

@@ -123,6 +123,7 @@ class CC_Transtria_Extras {
 		//Transtria ajaxing goes here!
 		// gets study data via ajax...
 		add_action( 'wp_ajax_get_study_data' , array( $this, 'get_study_data' ) );
+		add_action( 'wp_ajax_save_study_data' , array( $this, 'save_study_data' ) );
 		
 		//get endnote citation info 
 		add_action( 'wp_ajax_get_citation_info' , array( $this, 'get_citation_info' ) );
@@ -839,7 +840,6 @@ class CC_Transtria_Extras {
 	}
 	
 
-	
 	/**
 	 * Returns arrays of Study Data fora  given study ID
 	 *
@@ -899,6 +899,55 @@ class CC_Transtria_Extras {
 		die();
 	
 	}
+	
+	/**
+	 * saves Study Data for a given study ID or creates next study id and saves to that
+	 *
+	 *
+	*/
+	public function save_study_data(){
+	
+		// Is the nonce good?
+		if ( ! check_ajax_referer( 'cc_transtria_ajax_nonce', 'transtria_nonce' ) ) {
+			return false;
+		}
+		
+		//TODO: build this out
+		
+		$this_study_id = $_POST["this_study_id"];
+		$new_study = false;
+		
+		if( empty( $this_study_id ) || ( $this_study_id = "-1" ) ){
+			$this_study_id = cc_transtria_get_next_study_id();
+			$new_study = true;
+		}
+
+		$data['study_id'] = $this_study_id;
+		
+		//load in form parts
+		$studies_data = $_POST['studies_table_vals'];
+		
+		//convert to db field names
+		$converted_to_db_fields = cc_transtria_match_div_ids_to_studies_columns( $studies_data, true );
+		
+		//save to tables
+		$studies_success = cc_transtria_save_to_studies_table( $converted_to_db_fields, $this_study_id, $new_study );
+		$data['studies_test'] = $studies_success;
+		//$data['studies_test'] = $data['studies_table_vals'];
+		
+		//echo json_encode( $study_data['single'] );
+		echo json_encode( $data );
+		
+		die();
+	
+	}
+	
+	
+	
+	
+	
+	
+	
 	
 	public function create_evaluation_sample_div(){
 	

@@ -81,6 +81,76 @@ function cc_transtria_get_single_study_data( $study_id = null ){
 }
 
 /**
+ * Saves single study data to studies tables
+ * 
+ * @param array. Associative array of db_label => incoming value
+ * @return string. Error message?
+ */
+function cc_transtria_save_to_studies_table( $studies_data, $study_id, $new_study = false ){
+	
+	global $wpdb;
+	
+	//TODO: if this works, combine things
+	if( $new_study = false ){
+	
+		$studies_where = array(
+			'StudyID' => $study_id 
+		);
+		
+		
+		//if we have [board] values set by the form, update the table
+		// wpdb->update is perfect for this. Wow. Ref: https://codex.wordpress.org/Class_Reference/wpdb#UPDATE_rows
+		if ( !empty ( $studies_data ) ) {
+			$num_study_rows_updated = $wpdb->update( $wpdb->transtria_studies, $studies_data, $studies_where, $format = null, $where_format = null );
+		}
+		
+		if( $num_study_rows_updated === false ){
+			return "Error: new study data could not be added to db";
+		} else {
+			return $num_study_rows_updated; //should be 1
+		}
+		
+	} else {
+		//insert
+		//Hmmm...maybe just study id and then update, since not all fields are being used...
+		$result = $wpdb->insert( 
+			$wpdb->transtria_studies, 
+			array( 
+				'StudyID' => (int)$study_id
+			),
+			array( 
+				'%d'
+			) 
+		);
+		
+		if( $result === false ){
+			return "Error: new study could not be initialized in db";
+		}
+		
+		$studies_where = array(
+			'StudyID' => $study_id 
+		);
+		$dummy_studies = array(
+			'abstractor' => "04"
+			);
+		
+		
+		if ( !empty ( $studies_data ) ) {
+			$num_study_rows_updated = $wpdb->update( $wpdb->transtria_studies, $studies_data, $studies_where, $format = null, $where_format = null );
+		}
+		
+		if( $num_study_rows_updated === false ){
+			var_dump( $studies_data );
+			return "Error: new study data could not be added to db for new study";
+		} else {
+			return $num_study_rows_updated; //should be 1
+		}
+	}
+
+}
+
+
+/**
  * Returns array of all multiple data for a study
  *
  * @param int. Study ID.
@@ -699,34 +769,25 @@ function cc_transtria_get_all_code_results_by_study_id( $study_id = null ){
 
 
 
-
-
-
-/***** EXAMPLES FROM AHA ******/
-
-
-
 /**
- * Returns all the Worse than Average hospital entries for a metro ID.
+ * Gets the last study id in table and increments it by one.
  *
  * @since   1.0.0
  * @return 	array
  */
-function cc_transtria_get_effect_association( $study_id = 0 ){
+function cc_transtria_get_next_study_id( ){
 	global $wpdb;
 	 
-	$results = $wpdb->get_results( 
-		$wpdb->prepare( 
+	$results = $wpdb->get_col( 
 		"
-		SELECT *
-		FROM $wpdb->transtria_effect_association
-		WHERE `StudyID` = %s
-		",
-		$study_id )
-		, ARRAY_A
+		SELECT max( StudyID )
+		FROM $wpdb->transtria_studies
+		"
 	);
 	
-	return $results;
+	$int_results = (int)$results[0] + 1;//todo: is this the best way?
+	
+	return $int_results;
 
 }
 

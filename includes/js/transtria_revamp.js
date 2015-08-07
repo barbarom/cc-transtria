@@ -21,6 +21,9 @@ function clickListen(){
 	//load in selected study
 	jQuery("a#load_this_study").on("click", load_selected_study );
 	
+	//save selected study
+	jQuery("a.save_study").on("click", save_study );
+	
 	//TODO: ability status listener
 	//jQuery("").on("click", ability_status_limiter );
 	
@@ -374,7 +377,7 @@ function get_current_study_info(){
 		'transtria_nonce' : transtria_ajax.ajax_nonce
 	};
 	
-	if( this_study_id !== null ) {
+	if( ( this_study_id !== null ) && ( this_study_id > 0 ) ) {
 		//Get data associate with this study
 		jQuery.ajax({
 			url: transtria_ajax.ajax_url, 
@@ -662,6 +665,122 @@ function load_selected_study(){
 	
 	//aaand, redirect
 	window.location.replace( redirectTo );
+}
+
+//save study
+function save_study(){
+	//what's the study id in the url?
+	this_study_id = getURLParameter('study_id');
+	
+	//user messages
+	var spinny = jQuery('.basic_info_messages .spinny');
+	var usrmsg = jQuery('.basic_info_messages .usr-msg');
+	var usrmsgshell = jQuery('.basic_info_messages');
+	var studies_table_data = jQuery('.studies_table');
+	var studies_table_vals = {};
+	var index_name = "";
+	
+	jQuery.each( studies_table_data, function( index, element ){
+	
+		//if element is checkbox, index by name, else by id
+		if( jQuery( element ).is('input:radio')){
+			//we need to think about this.
+			index_name = jQuery(this).attr("name");
+			studies_table_data[ index_name ] = jQuery('input[name="' + name + '"]:checked').val();
+		} else {
+			index_name = jQuery(this).attr("id");
+			studies_table_vals[ index_name ] = get_field_value( jQuery(this ) );
+		}
+		
+		
+		//console.log( element );
+	//get_field_value 
+	});
+	
+	//console.log( studies_table_vals);
+
+	//ajax data
+	var ajax_action = 'save_study_data';
+	var ajax_data = {
+		'action': ajax_action,
+		'this_study_id' : this_study_id,
+		'transtria_nonce' : transtria_ajax.ajax_nonce,
+		'studies_table_vals' : studies_table_vals
+	};
+	
+
+	//Save study data
+	jQuery.ajax({
+		url: transtria_ajax.ajax_url, 
+		data: ajax_data, 
+		type: "POST",
+		dataType: "json",
+		beforeSend: function() {
+			//show user message and spinny
+			usrmsg.html("Saving Study" );
+			usrmsgshell.fadeIn();
+			spinny.fadeIn();
+			
+		}
+	}).success( function( data ) {
+		
+		//var post_meat = JSON.parse( data );
+		console.log('success: ' + data['studies_test']);
+		
+		usrmsg.html("Saving Study, ID: " + data['study_id'] );
+		
+		
+		//TODO: send message if empty (directing user to add priority page?)
+		if( data == "0" || data == 0 )  {
+			//console.log('what');=
+			return;
+		} else {
+		
+		}
+		//var post_meat = data['single']; // = JSON.parse(data);
+	}).complete( function( data ) {
+		spinny.hide();
+		usrmsgshell.fadeOut( 1000 );
+
+	
+	});;
+
+	
+	
+}
+
+//gets the field value given a jQuery selector
+//does not handle checkboxes right now!
+function get_field_value( incoming ){
+
+	var current_val;
+	//what is our selector type?
+	if( incoming.is('select') ){
+		//see if there's a matching option
+		var children = incoming.children('option');
+		//iterate through option values
+		jQuery.each( children, function(){
+			if( jQuery(this).prop("selected") == true){
+				//what is current option value
+				current_val = jQuery(this).val();
+				current_val = current_val.trim(); //if whitespace because sometimes there is..*sigh*
+			}
+		});
+	} else if ( incoming.is('input:text') || incoming.is('textarea') ){
+		//easy-peasy
+		current_val = incoming.val( );
+	
+	} else if ( incoming.is('input:checkbox') ){
+		if( incoming.is(":checked") ){
+			current_val = "Y";
+		} else {
+			current_val = "N";
+		}
+	} 
+	
+	return current_val;
+	//console.log( incoming );
+
 }
 
 //listen to ability status multiselect and show/hide corresponding percentage inputs

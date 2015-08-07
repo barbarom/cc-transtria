@@ -199,6 +199,11 @@ table.showolddata-table h4{
 /* END TABS CSS */
 
 
+form#study_form a.save_study {
+	font-size: 2em;
+    width: 200px;
+}
+
 
 /** BEGIN UI STYLINGS **/
 
