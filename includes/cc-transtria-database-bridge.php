@@ -631,6 +631,10 @@ function cc_transtria_get_all_pops_type_for_study( $study_id ){
  */
 function cc_transtria_get_num_ea_tabs_for_study( $study_id ){
 
+	if( empty( $study_id ) ) {
+		return 0;
+	}
+	
 	global $wpdb;
 	
 	$which_ea_tabs = [];

@@ -21,6 +21,7 @@ function cc_transtria_render_results_tab( $field_data ){
 
 	$results_singletons = $field_data['dd_singleton_options']; //just making it easier for dev, although a waste of memory.  TODO: don't waste memory
 	$num_ea_tabs = $field_data['num_ea_tabs'];
+	var_dump( $num_ea_tabs );
 	
 	//options for dropdowns
 	$dd_multiple_options_ea = $field_data['dd_multiple_options_ea'];
