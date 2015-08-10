@@ -30,7 +30,7 @@ function clickListen(){
 	
 	//TODO: restrict options in EA tabs based on intervention tabs. 
 
-	//TODO: variables in ea tab on 'adjusted'
+	//TODO: variables in ea tabs on 'adjusted'
 	
 	//TODO: ea direction!
 	
@@ -38,6 +38,7 @@ function clickListen(){
 	//Add new ESE tabs
 	jQuery('#add-ese-tab').on("click", copy_ese_tab );
 	
+	jQuery('a.add_ea_button').on("click", add_empty_ea_tab);
 	//copy EA tabs from dropdown
 	jQuery('.ea_copy_tab_button').on("click", copy_ea_tab );
 	
@@ -197,8 +198,6 @@ function sub_pops_tabber( ){
 	jQuery('.subpops_content.' + which_content).show();
 
 };
-
-
 
 
 //tabs toggle for citation info (inner tabs)
@@ -836,7 +835,7 @@ function copy_ese_tab(){
 	if (!isNaN(lastChar)) 
 	{
 		new_tab_id = Number(lastChar) + 1;
-	}		
+	}
 	
 	//add a new tab to the pops section
 	jQuery('#sub_pops_tabs').append("<div id='ese" + new_tab_id + "-tab' class='subpops_tab'><label class='subpops_tab_label' for='ese" + new_tab_id + "-tab' data-whichpop='ese" + new_tab_id + "'>ese" + new_tab_id + "</label></div>");
@@ -1018,7 +1017,7 @@ function copy_ea_tab(){
 	jQuery('#effect_association_tabs label.ea_tab_label[data-whichea="' + new_tab_num + '"]').parent().on("click", function() {
 	
 		//hide all subpops content
-		jQuery('.one_ea_tab').fadeOut();
+		jQuery('.one_ea_tab').hide();
 		
 		//add selected active class after removing it from all
 		jQuery('label.ea_tab_label').removeClass('active');
@@ -1036,6 +1035,104 @@ function copy_ea_tab(){
 
 }
 
+//TODO: can we combine this with the copy function?
+//adds blank ea tab to page, copying hidden div
+function add_empty_ea_tab(){
+
+	//remove click listener from copy tab while we're here
+	jQuery('.ea_copy_tab_button').off("click", copy_ea_tab );
+
+	var num_current_tabs = jQuery("#effect_association_tabs ul li").length;
+	var new_tab_num = num_current_tabs + 1;
+	
+	//add a new tab to the ea tabs section
+	jQuery('#effect_association_tabs ul').append("<li id='ea-tab-" + new_tab_num + "' class='ea_tab'><label class='ea_tab_label' for='ea-tab-" + new_tab_num + "' data-whichea='" + new_tab_num + "'>EA TAB " + new_tab_num + "</label></li>");
+	
+	//we will need to copy whichever tab is selected
+	var new_ea_copy = jQuery('#effect_association_tab_template' ).clone(true,true);
+
+
+	//vars
+	//what prepend do we need? 
+	var new_prepend = "ea_" + new_tab_num;
+	//what prepend are we getting rid of?
+	var old_prepend = "ea_template";
+	var old_id = "";
+	var new_id = "";
+	var old_name = "";
+	var new_name = "";
+	
+	//change subtitle
+	//new_ese_copy.find("td.inner_table_header").html("<strong>Evaluation Sample - EXPOSED: " + new_tab_num + "</strong>");
+		
+	//change all the div ids that begin w/ ea_old#
+	var all_old_ea_ids = new_ea_copy.find("[id^='" + old_prepend + "']");
+	var all_old_ea_names = new_ea_copy.find("[name^='" + old_prepend + "']");
+	
+	//update overall div#
+	new_id = 'effect_association_tab_' + new_tab_num;
+	new_ea_copy.attr("id", new_id);
+	//overall_div_id.attr("id", new_id);
+	
+	
+	//go through each div in the clone and update the id
+	jQuery.each( all_old_ea_ids, function() {
+		//get old id
+		old_id = jQuery(this).attr("id");
+		
+		//replace old prepend w new, save to new_id
+		new_id = old_id.replace(old_prepend, new_prepend);  
+		
+		//replace div id
+		jQuery(this).attr("id", new_id);
+	});
+	
+	//go through each name in the clone and update the name
+	jQuery.each( all_old_ea_names, function() {
+		//get old id
+		old_name = jQuery(this).attr("name");
+		
+		//replace old prepend w new, save to new_id
+		new_name = old_name.replace(old_prepend, new_prepend);  
+		
+		//update the name?
+		jQuery(this).attr("name", new_name);
+	});
+		
+	//append to effect_associations_tab
+	new_ea_copy.appendTo( jQuery("#effect_association_tabs") );
+	
+	var which_content = "#effect_association_tab_" + new_tab_num;
+	
+	//attach click listeners to this ea tab
+	jQuery('#effect_association_tabs label.ea_tab_label[data-whichea="' + new_tab_num + '"]').parent().on("click", function() {
+	
+		//hide all subpops content
+		jQuery('.one_ea_tab').hide();
+		
+		//add selected active class after removing it from all
+		jQuery('label.ea_tab_label').removeClass('active');
+		jQuery(this).children('label').addClass('active');
+
+		jQuery(which_content + '.one_ea_tab').fadeIn();
+		
+	});
+	
+	//readd click listener to copy tabs (will include new dropdown)
+	jQuery('.ea_copy_tab_button').on("click", copy_ea_tab );
+	
+	//hide all tabs
+	jQuery('label.ea_tab_label').removeClass('active');
+	jQuery('.one_ea_tab').hide();
+	
+	//make this tab visible
+	jQuery('#effect_association_tabs label.ea_tab_label[data-whichea="' + new_tab_num + '"]').addClass('active');
+	jQuery(which_content + '.one_ea_tab').fadeIn();
+	
+	//refresh copytab options
+	refresh_ea_copy_tab();
+
+}
 
 
 //helper function to get URL param
