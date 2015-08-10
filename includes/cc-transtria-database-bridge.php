@@ -89,9 +89,9 @@ function cc_transtria_get_single_study_data( $study_id = null ){
 function cc_transtria_save_to_studies_table( $studies_data, $study_id, $new_study = false ){
 	
 	global $wpdb;
-	
+		
 	//TODO: if this works, combine things
-	if( $new_study = false ){
+	if( $new_study == false ){
 	
 		$studies_where = array(
 			'StudyID' => $study_id 
@@ -143,9 +143,125 @@ function cc_transtria_save_to_studies_table( $studies_data, $study_id, $new_stud
 			var_dump( $studies_data );
 			return "Error: new study data could not be added to db for new study";
 		} else {
+			var_dump( $studies_data );
 			return $num_study_rows_updated; //should be 1
 		}
 	}
+
+}
+
+/**
+ * Saves single study data to studies tables
+ * 
+ * @param array. Associative array of db_label => incoming value
+ * @return string. Error message?
+ */
+function cc_transtria_save_to_pops_table_raw( $studies_data, $study_id, $new_study = false, $num_pops_tab ){
+	
+	global $wpdb;
+	
+	//prep population types we care about
+	$pops_types = cc_transtria_get_basic_pops_types();
+	if( !is_null( $num_pops_tab ) && ( $num_pops_tab != "" ) ){
+		//add to normal pops
+		for( $i = 0; $i <= $num_pops_tab; $i++ ){
+			$pops_types[] = 'ese' . $i;
+		
+		}
+	} 
+	
+	$parsed_studies_data = [];
+	$notparsed_studies_data = [];
+	$new_index = [];
+	
+	//parse incoming array by pop type
+	foreach( $studies_data as $data_piece_index => $data_piece_value ){
+		
+		foreach( $pops_types as $pop_type ){
+			
+			if( substr( $data_piece_index, 0, strlen($pop_type . '_') ) === ( $pop_type . '_' ) ) {
+				$parsed_studies_data[ $pop_type ][ $data_piece_index ] = $data_piece_value;
+			} else {
+				$notparsed_studies_data[ $data_piece_index ] = $data_piece_value;
+			}
+		}
+	}
+	
+	//take each poptype array and convert to db label
+	foreach( $parsed_studies_data as $pop_type => $pop_array ){
+	
+		$new_index[ $pop_type ] = cc_transtria_match_div_ids_to_pops_columns_single( $pop_type, $pop_array, true );
+	
+	}
+	
+	//return( $parsed_studies_data );
+	return( $new_index );
+	
+	/*
+	//TODO: if this works, combine things
+	if( $new_study == false ){
+	
+		foreach( $pops_types as $pop_type ){
+			$studies_where = array(
+				'StudyID' => $study_id,
+				'PopulationType' => $pop_type
+			);
+		
+			//update each row
+		
+		}
+		
+		//if we have [board] values set by the form, update the table
+		// wpdb->update is perfect for this. Wow. Ref: https://codex.wordpress.org/Class_Reference/wpdb#UPDATE_rows
+		if ( !empty ( $studies_data ) ) {
+			$num_study_rows_updated = $wpdb->update( $wpdb->transtria_studies, $studies_data, $studies_where, $format = null, $where_format = null );
+		}
+		
+		if( $num_study_rows_updated === false ){
+			return "Error: new study data could not be added to db";
+		} else {
+			return $num_study_rows_updated; //should be 1
+		}
+		
+	} else {
+		//insert
+		//Hmmm...maybe just study id and then update, since not all fields are being used...
+		$result = $wpdb->insert( 
+			$wpdb->transtria_studies, 
+			array( 
+				'StudyID' => (int)$study_id
+			),
+			array( 
+				'%d'
+			) 
+		);
+		
+		if( $result === false ){
+			return "Error: new study could not be initialized in db";
+		}
+		
+		$studies_where = array(
+			'StudyID' => $study_id 
+		);
+		$dummy_studies = array(
+			'abstractor' => "04"
+			);
+		
+		
+		if ( !empty ( $studies_data ) ) {
+			$num_study_rows_updated = $wpdb->update( $wpdb->transtria_studies, $studies_data, $studies_where, $format = null, $where_format = null );
+		}
+		
+		if( $num_study_rows_updated === false ){
+			var_dump( $studies_data );
+			return "Error: new study data could not be added to db for new study";
+		} else {
+			var_dump( $studies_data );
+			return $num_study_rows_updated; //should be 1
+		}
+	}
+	*/
+	
 
 }
 
@@ -795,4 +911,4 @@ function cc_transtria_get_next_study_id( ){
 
 }
 
-//TODO: code table things....
+//TODO: code table things.....

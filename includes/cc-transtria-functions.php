@@ -438,6 +438,8 @@ function cc_transtria_match_div_ids_to_studies_columns( $study_labels = null, $t
 		//basic_info_verification //is this used?
 		'sample_size_available' => 'sample_size_available',
 		'sample_estimate' => 'sample_estimate',
+		
+		'unitanalysis_notreported' => 'unitanalysis_notreported', 
 		//representativeness
 		'domestic_setting' => 'DomesticSetting',
 		'international_setting' => 'InternationalSetting',
@@ -469,7 +471,10 @@ function cc_transtria_match_div_ids_to_studies_columns( $study_labels = null, $t
 		//duration_notreported //on ea tabs
 		'indicators_notreported' => 'indicators_notreported',
 		'other_intervention_location' => 'other_intervention_location',
+		'other_intervention_outcomes_assessed' => 'other_intervention_outcomes_assessed',
+		'other_intervention_indicators' => 'other_intervention_indicators',
 		'locationintervention_notreported' => 'locationintervention_notreported',
+		
 		'alloutcomesassessed_notreported' => 'alloutcomesassessed_notreported',
 
 		
@@ -485,13 +490,21 @@ function cc_transtria_match_div_ids_to_studies_columns( $study_labels = null, $t
 		//inclusiveness
 		'replication_flag' => 'replication',
 		'replication_descr' => 'replication_descr',
+		
+		'replication_notreported' => 'replication_notreported',
+		'support_notreported' => 'support_notreported',
+		'opposition_notreported' => 'opposition_notreported',
+		'fidelity_notreported' => 'fidelity_notreported',
+		'evidencebased_notreported' => 'evidencebased_notreported',
 		'support' => 'support',
 		'opposition' => 'opposition',
 		'evidence_based' => 'evidence_based',
-		'fidelity' => 'fidelity_notreported',
+		'fidelity' => 'fidelity',
 		'implementation_limitations' => 'implementation_limitations',
+		'implementationlimitations_notreported' => 'implementationlimitations_notreported',
 		'lessons_learned' => 'lessons_learned',
 		'lessons_learned_descr' => 'lessons_learned_descr',
+		'lessonslearned_notreported' => 'lessonslearned_notreported',
 		//intervention_verification  //used?
 		//evaluation_type //is this used? Mel thinks this is multi, so no
 		//evaluation_method //is this used? Mel thinks this is multi, so no
@@ -523,33 +536,25 @@ function cc_transtria_match_div_ids_to_studies_columns( $study_labels = null, $t
 		
 		
 		
+		'otherevaluationmethods' => 'otherevaluationmethods',
+		'evaluationmethods_notreported' => 'evaluationmethods_notreported',
+		'evaluationtype_notreported' => 'evaluationtype_notreported',
 		'confounders' => 'confounders',
 		'confounders_textarea' => 'confounders_textarea',
 		'confounders_notreported' => 'confounders_notreported',
 		'analysis_limitations' => 'analysis_limitations',
-		'analysislimitations_notreporteded' => 'analysislimitations_notreported',
+		'analysislimitations_notreported' => 'analysislimitations_notreported',
 		'stat_analysis_results_descr' => 'stat_analysis_results_descr',
 		'statisticalanalysis_notreported' => 'statisticalanalysis_notreported',
 
-		'replication_notreported' => 'replication_notreported',
-		'support_notreported' => 'support_notreported',
-		'opposition_notreported' => 'opposition_notreported',
-		'evidencebased_notreported' => 'evidencebased_notreported',
-		'implementationlimitations_notreported' => 'implementationlimitations_notreported',
-		'lessonslearned_notreported' => 'lessonslearned_notreported',
-		'fidelity_notreported' => 'fidelity_notreported',
-		'evaluationtype_notreported' => 'evaluationtype_notreported',
-		//unitanalysis_notreported  //using?
 		//representativeness_notreported //on pops tabs?
 		'EndNoteID' => 'EndNoteID',
 		'Phase' => 'Phase', //??
 		'StudyGroupingID' => 'StudyGroupingID',
 		
 		'abstraction_complete' => 'abstraction_complete',
-		'validation_complete' => 'validation_complete',
+		'validation_complete' => 'validation_complete'
 		//results_verification //no longer a thing?
-		'otherevaluationmethods' => 'otherevaluationmethods',
-		'evaluationmethods_notreported' => 'evaluationmethods_notreported'
 	
 	);
 	
@@ -733,10 +738,10 @@ function cc_transtria_match_div_ids_to_multiple_columns( $study_labels = null ){
 /**
  * function to relate div ids and study id columns
  *
- * @param array
+ * @param string, array, bool, bool. Which population, array of incoming study labels => values, whether we are going INTO the db (else form).
  * @return array
  */
-function cc_transtria_match_div_ids_to_pops_columns_single( $which_pop, $study_labels = null ){
+function cc_transtria_match_div_ids_to_pops_columns_single( $which_pop, $study_labels = null, $to_db = false){
 
 	//we can use array_flip if we need to!
 	
@@ -810,20 +815,42 @@ function cc_transtria_match_div_ids_to_pops_columns_single( $which_pop, $study_l
 	$flipped_array = array_flip( $db_to_div_array );
 	
 	if( !empty( $study_labels ) ){
-		$new_study_labels = [];
-		//we have an incoming array whose labels need to be changed
-		foreach( $study_labels as $label => $value ){
+	
+		if( $to_db == false ) {
+			$new_study_labels = [];
+			//we have an incoming array whose labels need to be changed
+			foreach( $study_labels as $label => $value ){
 
-			if( in_array( $label, $flipped_array ) ) {
-				//var_dump( $label );
-				$new_label = $db_to_div_array[ $label ];
-				$new_study_labels[ $new_label ] = $value;
-			} else {
-				$new_study_labels[ $label ] = $value; //same ol
+				if( in_array( $label, $flipped_array ) ) {
+					//var_dump( $label );
+					$new_label = $db_to_div_array[ $label ];
+					$new_study_labels[ $new_label ] = $value;
+				} else {
+					$new_study_labels[ $label ] = $value; //same ol
+				}
+			
 			}
+			return $new_study_labels;	
+		} else {
+			//array_search - Searches the array for a given value and returns the corresponding key if successful
+			//$flipped_array = $db_to_div_array;
+			$new_study_labels = [];
+		//	return $study_labels;
+			//we have an incoming array whose labels need to be changed
+			foreach( $study_labels as $label => $value ){
+			
+				$db_key = array_search( $label, $db_to_div_array );
+				
+				if( $db_key !== false ){
+					$new_study_labels[ $db_key ] = $value;
+				} else {
+					$new_study_labels[ $label ] = 0; //same ol
+				}
+			
+			}
+			return $new_study_labels;
 		
 		}
-		return $new_study_labels;	
 		
 	} else {
 		//we're just returning the above array

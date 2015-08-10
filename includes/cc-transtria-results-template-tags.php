@@ -51,7 +51,7 @@ function cc_transtria_render_results_tab( $field_data ){
 		
 		<tr class="not-reported">
 			<td class="not-reported"><label>Evaluation Type not reported</label></td>
-			<td colspan="3"><input id="evaluationtype_notreported" type="checkbox"></td>
+			<td colspan="3"><input id="evaluationtype_notreported" class="studies_table" type="checkbox"></td>
 		</tr>
 
 		<tr>
@@ -67,50 +67,50 @@ function cc_transtria_render_results_tab( $field_data ){
 				</select>
 			</span></td>
 			<td><label>Other evaluation methods:</label></td>
-			<td><input type="text" id="otherevaluationmethods"></input></td>
+			<td><input type="text" id="otherevaluationmethods" class="studies_table"></input></td>
 		</tr>
 		<tr class="not-reported">
 			<td class="not-reported"><label>Evaluation Methods not reported</label></td>
-			<td colspan="3"><input id="evaluationmethods_notreported" type="checkbox"></td>
+			<td colspan="3"><input id="evaluationmethods_notreported" class="studies_table" type="checkbox"></td>
 		</tr>
 
 		<tr>
 			<td><label>Statistical Analysis and Results Description</label></td>
-			<td colspan="3"><textarea id="stat_analysis_results_descr" style="width:98%"></textarea></td>
+			<td colspan="3"><textarea id="stat_analysis_results_descr" class="studies_table" style="width:98%"></textarea></td>
 		</tr>
 
 		<tr class="not-reported">
 			<td class="not-reported"><label>Statistical Analysis/Results Desc. not reported</label></td>
-			<td colspan="3"><input id="statisticalanalysis_notreported" type="checkbox"></td>
+			<td colspan="3"><input id="statisticalanalysis_notreported" class="studies_table" type="checkbox"></td>
 		</tr>
 
 
 		<tr>
 			<td><label>Confounders/Mediators/Moderators:</label></td>
-			<td><span id="confounders">
-				<input type="radio" value="Y" name="confounders">Yes
-				<input type="radio" value="N" name="confounders">No
+			<td><span id="confounders-holder">
+				<input type="radio" value="Y" name="confounders" class="studies_table">Yes
+				<input type="radio" value="N" name="confounders" class="studies_table">No
 			</span></td>
 		</tr>
 
 		<tr class="not-reported">
 			<td class="not-reported"><label>Confounders/Mediators/Moderators not reported</label></td>
-			<td colspan="3"><input id="confounders_notreported" type="checkbox"></td>
+			<td colspan="3"><input id="confounders_notreported" class="studies_table" type="checkbox"></td>
 		</tr>
 
 		<tr id="confounders_type">
 			<td><label>Type</label></td>
-			<td colspan="3"><textarea id="confounders_textarea" style="width:98%;"></textarea></td>
+			<td colspan="3"><textarea id="confounders_textarea" class="studies_table" style="width:98%;"></textarea></td>
 		</tr>
 
 		<tr>
 		<td><label>Analysis Limitations:</label></td>
-		<td colspan="3"><textarea id="analysis_limitations" style="width:98%;"></textarea></td>
+		<td colspan="3"><textarea id="analysis_limitations" class="studies_table" style="width:98%;"></textarea></td>
 			</tr> 
 
 		<tr class="not-reported">
 			<td class="not-reported"><label>Analysis Limitations not reported</label></td>
-			<td colspan="3"><input id="analysislimitations_notreported" type="checkbox"></td>
+			<td colspan="3"><input id="analysislimitations_notreported" class="studies_table" type="checkbox"></td>
 		</tr>
 
 
@@ -153,40 +153,40 @@ function cc_transtria_render_results_tab( $field_data ){
 
 		<tr>
 			<td><label>Staff and volunteer costs:</label></td>
-			<td><input id="staff_volunteer_cost_text"></input></td>
+			<td><input id="staff_volunteer_cost_text" class="studies_table"></input></td>
 			<td><label>Staff and volunteer costs value:</label></td>
-			<td><input id="staff_volunteer_cost_value"></input></td>
+			<td><input id="staff_volunteer_cost_value" class="studies_table"></input></td>
 		</tr>
 
 		<tr class="not-reported">
 			<td class="not-reported"><label>Staff and Volunteer Costs not reported</label></td>
-			<td colspan="3"><input id="staffvolunteercosts_notreported" type="checkbox"></td>
+			<td colspan="3"><input id="staffvolunteercosts_notreported" class="studies_table" type="checkbox"></td>
 		</tr>
 
 
 		<tr>
 			<td><label>Space and Infrastructure costs:</label></td>
-			<td><input id="space_infrastructure_cost_text"></input></td>
+			<td><input id="space_infrastructure_cost_text" class="studies_table"></input></td>
 			<td><label>Space and Infrastructure costs value:</label></td>
-			<td><input id="space_infrastructure_cost_value"></input></td>
+			<td><input id="space_infrastructure_cost_value" class="studies_table"></input></td>
 		</tr>
 
 		<tr class="not-reported">
 			<td class="not-reported"><label>Space and Infrastructure Costs not reported</label></td>
-			<td colspan="3"><input id="spacecosts_notreported" type="checkbox"></td>
+			<td colspan="3"><input id="spacecosts_notreported" class="studies_table" type="checkbox"></td>
 		</tr>
 
 
 		<tr>
 			<td><label>Equipment and material costs:</label></td>
-			<td><input id="equipment_material_cost_text"></input></td>
+			<td><input id="equipment_material_cost_text" class="studies_table"></input></td>
 			<td><label>Equipment and material costs value:</label></td>
-			<td><input id="equipment_material_cost_value"></input></td>
+			<td><input id="equipment_material_cost_value" class="studies_table"></input></td>
 		</tr>
 
 		<tr class="not-reported">
 			<td class="not-reported"><label>Equipment and material costs not reported</label></td>
-			<td colspan="3"><input id="equipmentcosts_notreported" type="checkbox"></td>
+			<td colspan="3"><input id="equipmentcosts_notreported" class="studies_table" type="checkbox"></td>
 		</tr>
 
 		<tr>
@@ -196,44 +196,44 @@ function cc_transtria_render_results_tab( $field_data ){
 		<tr>
 			<td><label>Was the outcome maintained?:</label></td>
 			<td><span id="outcome_maintained_flag">
-				<input type="radio" value="Y" name="outcome_maintained_flag">Yes
-				<input type="radio" value="N" name="outcome_maintained_flag">No
+				<input type="radio" value="Y" name="outcome_maintained_flag" class="studies_table">Yes
+				<input type="radio" value="N" name="outcome_maintained_flag" class="studies_table">No
 			</span></td>
 			<td><label>If yes, explain:</label></td>
-			<td><input type="text" id="explain_maintenance"></input></td>
+			<td><input type="text" id="explain_maintenance" class="studies_table"></input></td>
 		</tr>
 
 		<tr class="not-reported">
 			<td class="not-reported"><label>Outcome Maintained not reported</label></td>
-			<td colspan="3"><input id="outcomemaintained_notreported" type="checkbox"></td>
+			<td colspan="3"><input id="outcomemaintained_notreported" class="studies_table" type="checkbox"></td>
 		</tr>
 
 		<tr>
 			<td><label>Was there a plan for sustainability?:</label></td>
-			<td><span id="sustainability_plan_flag">
-				<input type="radio" value="Y" name="sustainability_plan_flag">Yes
-				<input type="radio" value="N" name="sustainability_plan_flag">No
+			<td><span id="sustainability_plan_flag-holder">
+				<input type="radio" value="Y" name="sustainability_plan_flag" class="studies_table">Yes
+				<input type="radio" value="N" name="sustainability_plan_flag" class="studies_table">No
 			</span></td>
 			<td><label>If yes, explain:</label></td>
-			<td><input type="text" id="explain_sustainability"></input></td>
+			<td><input type="text" id="explain_sustainability" class="studies_table"></input></td>
 		</tr>
 
 		<tr class="not-reported">
 			<td class="not-reported"><label>Sustainability plan not reported</label></td>
-			<td colspan="3"><input id="sustainabilityplan_notreported" type="checkbox"></td>
+			<td colspan="3"><input id="sustainabilityplan_notreported" class="studies_table" type="checkbox"></td>
 		</tr>
 
 		<tr>
 			<td colspan="3"></td>
 			<td align="right">Abstraction Complete?:
-				<input id="abstraction_complete" type="checkbox"></input>
+				<input id="abstraction_complete" class="studies_table" type="checkbox"></input>
 			</td>
 		</tr>
 
 		<tr>
 			<td colspan="3"></td>
 			<td align="right">Validation Complete?:
-				<input id="validation_complete" type="checkbox"></input>
+				<input id="validation_complete" class="studies_table" type="checkbox"></input>
 			</td>
 		</tr>
 
@@ -242,6 +242,14 @@ function cc_transtria_render_results_tab( $field_data ){
 		</tr>
 		<tr class="result-user-message">     
 			<td class="validator-stop-time-reminder">Please remember to enter the Validator stop time on the Basic Info page!</td>
+		</tr>
+		
+		<tr></tr>
+		<tr>
+			<td colspan="3"></td>
+			<td class="submit_form">
+				<a class="button save_study alignright">SAVE STUDY</a>
+			</td>
 		</tr>
 
 	</table>

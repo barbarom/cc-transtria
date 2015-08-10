@@ -34,6 +34,8 @@ function clickListen(){
 	
 	//TODO: ea direction!
 	
+	//TODO: list indicators selected (Intervention/Partnerships tab)
+	
 	
 	//Add new ESE tabs
 	jQuery('#add-ese-tab').on("click", copy_ese_tab );
@@ -250,7 +252,7 @@ function get_citation_data(){
 		'transtria_nonce' : transtria_ajax.ajax_nonce
 	};
 	
-	if( endnote_id !== null ) {
+	if( ( endnote_id !== undefined ) && ( endnote_id !== "" ) ) {
 		//Get data associate with this study
 		jQuery.ajax({
 			url: transtria_ajax.ajax_url, 
@@ -362,6 +364,14 @@ function get_current_study_info(){
 
 	//what's the study id in the url?
 	this_study_id = getURLParameter('study_id');
+	
+	//if study id not in current studies list, bounce!
+	if( ( jQuery.inArray( parseInt( this_study_id ), transtria_ajax.all_studies ) == "-1" ) && ( this_study_id != undefined ) ){
+		//update user message at top of page
+		jQuery('.basic_info_messages .usr-msg').html('No Study ID ' + this_study_id + ' in Studies database (as specified in the url parameter).  Please contact CARES if you think this is in error.');
+		jQuery('.basic_info_messages').show();
+		return false;
+	}
 	
 	//user messages
 	var spinny = jQuery('.basic_info_messages .spinny');
@@ -675,8 +685,18 @@ function save_study(){
 	var spinny = jQuery('.basic_info_messages .spinny');
 	var usrmsg = jQuery('.basic_info_messages .usr-msg');
 	var usrmsgshell = jQuery('.basic_info_messages');
+	
+	//form metsdata
+	var num_ea_tabs = jQuery("#effect_association_tabs ul li").length;
+	var last_tab = jQuery('.subpops_tab').last().attr('id').split('-')[0];
+	var last_tab_num = last_tab.replace('ese', '');
+	var num_ese_tabs = parseInt( last_tab_num );
+	
+	//form data
 	var studies_table_data = jQuery('.studies_table');
 	var studies_table_vals = {};
+	var population_table_data = jQuery('.population_table');
+	var pops_table_vals = {};
 	var index_name = "";
 	
 	jQuery.each( studies_table_data, function( index, element ){
@@ -685,15 +705,29 @@ function save_study(){
 		if( jQuery( element ).is('input:radio')){
 			//we need to think about this.
 			index_name = jQuery(this).attr("name");
-			studies_table_data[ index_name ] = jQuery('input[name="' + name + '"]:checked').val();
+			studies_table_vals[ index_name ] = jQuery('input[name="' + index_name + '"]:checked').val();
+			
 		} else {
 			index_name = jQuery(this).attr("id");
 			studies_table_vals[ index_name ] = get_field_value( jQuery(this ) );
 		}
 		
+	});
+	
+	//cycle through pops data and put in flat object
+	jQuery.each( population_table_data, function( index, element ){
+	
+		//if element is checkbox, index by name, else by id
+		if( jQuery( element ).is('input:radio')){
+			//we need to think about this.
+			index_name = jQuery(this).attr("name");
+			pops_table_vals[ index_name ] = jQuery('input[name="' + index_name + '"]:checked').val();
+			
+		} else {
+			index_name = jQuery(this).attr("id");
+			pops_table_vals[ index_name ] = get_field_value( jQuery(this ) );
+		}
 		
-		//console.log( element );
-	//get_field_value 
 	});
 	
 	//console.log( studies_table_vals);
@@ -704,7 +738,10 @@ function save_study(){
 		'action': ajax_action,
 		'this_study_id' : this_study_id,
 		'transtria_nonce' : transtria_ajax.ajax_nonce,
-		'studies_table_vals' : studies_table_vals
+		'num_ea_tabs' : num_ea_tabs,
+		'num_ese_tabs' : num_ese_tabs,
+		'studies_table_vals' : studies_table_vals,
+		'population_table_vals' : pops_table_vals
 	};
 	
 
@@ -741,6 +778,7 @@ function save_study(){
 		spinny.hide();
 		usrmsgshell.fadeOut( 1000 );
 
+		
 	
 	});;
 

@@ -112,7 +112,7 @@ class CC_Transtria_Extras {
         add_filter( 'group_reports_create_new_label', array( $this, 'change_group_create_report_label' ), 32, 2 );
 
 		// Add filter to catch form submission -- both "metro ID" and questionnaire answers
-		add_action( 'bp_init', array( $this, 'save_form_submission'), 75 );
+		//add_action( 'bp_init', array( $this, 'save_form_submission'), 75 );
 
 		// Checks existing metro ID cookie value and tries to gracefully set cookie value for Metro ID on page load.
 		//add_action( 'bp_init', array( $this, 'set_metro_id_cookie_on_load'), 22 );
@@ -385,7 +385,8 @@ class CC_Transtria_Extras {
 				array( 
 					'ajax_url' => admin_url( 'admin-ajax.php' ),
 					'ajax_nonce' => wp_create_nonce( 'cc_transtria_ajax_nonce' ),
-					'study_home' => cc_transtria_get_home_permalink()
+					'study_home' => cc_transtria_get_home_permalink(),
+					'all_studies' => cc_transtria_get_study_ids()
 				)
 			);
 			
@@ -528,8 +529,8 @@ class CC_Transtria_Extras {
 	}
 	public function add_registration_interest_parameter( $interests ) {
 
-	    if ( bp_is_groups_component() && cc_aha_is_aha_group() ) {
-	    	$interests[] = 'aha';
+	    if ( bp_is_groups_component() && cc_transtria_is_transtria_group() ) {
+	    	$interests[] = 'transtria';
 		}
 
 	    return $interests;
@@ -549,296 +550,7 @@ class CC_Transtria_Extras {
 		return $label;
 	}
 
-	/**
-	 * Handle form submissions
-	 *  
-	 * @since   1.0.0
-	 * @return  boolean
-	 */
-	public function save_form_submission() {
-		// Fires on bp_init action, so this is a catch-action type of filter.
-		// Bail out if this isn't the AHA assessment component.
-		if ( ! cc_aha_is_component() )
-			return false;
 
-		// Catch-all, handles updating board id user meta or setting the various cookies as needed
-		if ( bp_is_action_variable( 'save-board-ids', 0 ) ) {
-
-			// Is the nonce good?
-			if ( ! wp_verify_nonce( $_REQUEST['save-aha-boards'], 'cc-aha-save-board-id' ) )
-				return false;
-
-			// Filter based on which submit button was used
-			// User is trying to save board affiliations
-			if ( $_POST['submit_save_usermeta_aha_board'] ){
-			    if ( $this->save_metro_ids() ) {
-	   				bp_core_add_message( __( 'Your board affiliation has been updated.', $this->plugin_slug ) );
-			    } else {
-					bp_core_add_message( __( 'Your board affiliation could not be updated.', $this->plugin_slug ), 'error' );
-			    }
-				$url = wp_get_referer();
-
-			} else if ( $_POST['submit_cookie_aha_active_metro_id'] ){
-				// User is setting preference for survey section
-				if ( isset( $_POST['cookie_aha_active_metro_id'] ) ) {
-					setcookie( 'aha_active_metro_id', $_POST['cookie_aha_active_metro_id'], 0, '/' );
-					$url = wp_get_referer();
-				}
-
-			} 
-
-			// Redirect and exit
-			bp_core_redirect( $url );
-
-			return false;
-		}
-
-		// Handle questionnaire form saves
-		if ( bp_is_action_variable( 'update-assessment', 0 ) ) {
-			// Is the nonce good?
-			if ( ! wp_verify_nonce( $_REQUEST['set-aha-assessment-nonce'], 'cc-aha-assessment' ) )
-				return false;
-
-			$page = bp_action_variable(1);
-			
-			// Try to save the form data
-		    if ( cc_aha_update_form_data() !== FALSE ) {
-   				bp_core_add_message( __( 'Your responses have been recorded.', $this->plugin_slug ) );
-		    } else {
-				bp_core_add_message( __( 'There was a problem saving your responses.', $this->plugin_slug ), 'error' );
-		    }
-
-			// Redirect to the appropriate page of the form
-			bp_core_redirect( $this->after_save_get_form_page_url( $page ) );
-			
-		}
-
-		// Handle summary/analysis response saves
-		if ( bp_is_action_variable( 'update-summary', 0 ) ) {
-			// Is the nonce good?
-			if ( ! wp_verify_nonce( $_REQUEST['set-aha-assessment-nonce'], 'cc-aha-assessment' ) )
-				return false;
-
-			$page = isset( $_POST['section-impact-area'] ) ? $_POST['section-impact-area'] : null;
-			$summary_section = isset( $_POST['analysis-section'] ) ? $_POST['analysis-section'] : null;
-			
-			//if no summary section, check for revenue section 
-			if ( $summary_section == null ) {
-				//$summary_section = isset( $_POST['revenue-section'] ) ? $_POST['revenue-section'] : null;
-				$summary_section = isset( $_POST['revenue-section'] ) ? 'revenue' : null;
-			}
-			
-			// Try to save the form data
-		    if ( cc_aha_update_form_data( $_COOKIE['aha_summary_metro_id'] ) !== FALSE ) {
-   				bp_core_add_message( __( 'Your responses have been recorded.', $this->plugin_slug ) );
-		    } else {
-				bp_core_add_message( __( 'There was a problem saving your responses.', $this->plugin_slug ), 'error' );
-		    }
-
-			// Redirect to the appropriate page of the form
-			bp_core_redirect( $this->after_save_get_summary_page_url( $summary_section, $page ) );
-			
-		}
-	}
-
-	/**
-	 * Save metro ids as user meta
-	 * Saves selection as serialized data in the usermeta table
-	 * 
-	 * @since   1.0.0
-	 * @return  boolean
-	 */
-	function save_metro_ids(){
-	    $selected_metros = $_POST['aha_metro_ids'];
-	    $user_metros = get_user_meta( get_current_user_id(), 'aha_board' );
-
-	    if ( empty( $selected_metros ) ) {
-	        $success = delete_user_meta( get_current_user_id(), 'aha_board' );
-	    } else {
-			//TODO: account for non-changing affiliations (do we need to, or is the bug on Mel's local only?): 
-			// since will return false if the previous value is the same as $new_value
-	        $success = update_user_meta( get_current_user_id(), 'aha_board', $selected_metros );
-	    }
-
-	    return $success;
-	}
-
-	/**
-	 * Determine the correct page to redirect the user to after a form page save
-	 *  
-	 * @since   1.0.0
-	 * @return  string - url
-	 */
-	public function after_save_get_form_page_url( $page ){
-			// From $_POST, we know whether the user clicked "continue" or "return to toc" and the form page number
-			if ( isset( $_POST['submit-survey-to-toc'] ) ) {
-				$url = cc_aha_get_survey_permalink( 1 );
-			} else if ( isset( $_POST['submit-revenue-analysis-to-toc'] ) ) {
-				$url = cc_aha_get_analysis_permalink( 'revenue' );
-			} else if ( $page == cc_aha_get_max_page_number() ) {
-				bp_core_add_message( __( 'Thank you for completing the assessment.', $this->plugin_slug ) );
-				$url = cc_aha_get_survey_permalink( 1 );
-			} else {
-				$url = cc_aha_get_survey_permalink( ++$page );
-			}
-
-		return $url;
-	}
-
-	/**
-	 * Determine the correct page to redirect the user to after a summary response save
-	 *  
-	 * @since   1.0.0
-	 * @return  string - url
-	 */
-	public function after_save_get_summary_page_url( $summary_section, $page ){
-			// From $_POST, we know whether the user clicked "continue" or "return to toc" and the form page number
-			// TODO: Maybe add some logic here.
-			$url = cc_aha_get_analysis_permalink( $summary_section );
-			// if ( isset( $_POST['submit-survey-to-toc'] ) ) {
-			// 	$url = cc_aha_get_survey_permalink( 1 );
-			// } else if ( $page == cc_aha_get_max_page_number() ) {
-			// 	bp_core_add_message( __( 'Thank you for completing the assessment.', $this->plugin_slug ) );
-			// 	$url = cc_aha_get_survey_permalink( 1 );
-			// } else {
-			// 	$url = cc_aha_get_survey_permalink( ++$page );
-			// }
-
-		return $url;
-	}
-
-	/**
-	 * Handle form submissions - checkbox fields & yes/no radios
-	 *  
-	 * @since   1.0.0
-	 * @return  boolean
-	 */
-	public function save_boolean_fields( $metro_id, $fields ){
-		foreach ($fields as $field) {
-			// If checked, enter 1 in the field
-			if ( isset( $_POST['$field'] ) && !empty( $_POST['$field'] ) ) {
-				$success = update_aha_field( $metro_id, $field, 1 );
-			} else {
-				$success = update_aha_field( $metro_id, $field, 0 ); 
-			}
-			
-		}
-
-	}
-	/**
-	 * Handle form submissions - radio fields NOT BOOLEAN
-	 *  
-	 * @since   1.0.0
-	 * @return  boolean
-	 */
-	public function save_radio_fields( $metro_id, $fields ){
-		foreach ($fields as $field) {
-			// If marked "yes" enter 1 in the field
-			if ( isset( $_POST['$field'] ) && !empty( $_POST['$field'] ) ) {
-				$success = update_aha_field( $metro_id, $field, 1 );
-			} else {
-				$success = update_aha_field( $metro_id, $field, 0 ); 
-			}
-			
-		}
-	}
-	/**
-	 * Handle form submissions - text fields
-	 *  
-	 * @since   1.0.0
-	 * @return  boolean
-	 */
-	public function save_text_fields( $metro_id, $fields ){
-		foreach ($fields as $field) {
-			if ( isset( $_POST['$field'] ) && !empty( $_POST['$field'] ) ) {
-				$input = sanitize_text_field( $_POST[ $field ] );
-
-				// update_aha_field( $metro_id, $field, $input )
-
-			}
-			
-		}
-		
-	}
-
-	/**
-	 * Checks existing metro ID cookie value and tries to gracefully set cookie value for Metro ID on page load.
-	 *  
-	 * @since   1.0.0
-	 * @return  none, creates cookie
-	 * @uses 	setcookie(), reset(), wp_redirect()
-	 */
-	public function set_metro_id_cookie_on_load() {
-		// Only needed on the AHA tab, and only for logged-in users. (User has to be logged in to reach AHA tab, though. So we'll let BP handle that.)
-		if ( ! cc_aha_is_component() )
-			return;
-
-		$survey_cookie_name = 'aha_active_metro_id';
-	    // We need to know the user's affiliations
-	    $selected_metro_ids = cc_aha_get_array_user_metro_ids();
-	    $redirect = false;
-
-        // Cookie is set, we check that it's a valid value FOR THE SURVEY ONLY, if not, unset it.
-        // Most common case for this is user changes affiliations, so "active" metro ID is no longer applicable
-	    if ( ! empty( $_COOKIE[ $survey_cookie_name ] ) && ! in_array( $_COOKIE[ $survey_cookie_name ], $selected_metro_ids ) ) {
-        	// Cookie path must match the cookie we're trying to unset
-            setcookie( $survey_cookie_name, '', time()-3600, '/' );
-            // Remove it from the $_COOKIE array, too, so the following action will fire.
-            unset( $_COOKIE[ $survey_cookie_name ] );
-			$redirect = true;	           
-	    }
-
-		$cookies = array( 'aha_active_metro_id', 'aha_summary_metro_id', 'aha_action_planning_metro_id', 'aha_action_plan_readonly_metro_id' );
-	    foreach ( $cookies as $cookie_name ) {
-		    // If cookie doesn't exist (or we just deleted it above), we try to set it.
-		    // If user has only one affiliation, we can set the cookie
-		    if ( empty( $_COOKIE[ $cookie_name ] ) && count( $selected_metro_ids ) == 1  ){
-	            setcookie( $cookie_name, reset( $selected_metro_ids ), 0, '/' );
-				$redirect = true;
-	        }
-	    }
-
-        if ( $redirect ) {
-        	wp_redirect( wp_get_referer() );
-        }
-
-	}
-
-	/**
-	 * Checks existing metro ID cookie value and tries to gracefully set cookie value for Metro ID on page load - For summary section only
-	 *  
-	 * @since   1.0.0
-	 * @return  none, creates cookie
-	 * @uses 	setcookie(), wp_redirect()
-	 */
-	public function check_summary_metro_id_cookie_on_load() {
-
-		// We only do this on the analysis screen.
-		if ( ! cc_aha_on_analysis_screen() )
-			return;
-
-		// Only continue if there is a metro id set in the URL.
-		if ( bp_action_variable( 1 ) && bp_action_variable( 1 ) != '00000' )
-			$url_metro_id = bp_action_variable( 1 );
-
-		if ( ! $url_metro_id )
-			return;
-
-		// Is there a cookie set that matches that url?
-		if ( $url_metro_id != $_COOKIE['aha_summary_metro_id'] ){
-			// Either the cookie isn't set, or the two metros don't match. URL should trump cookie.
-            setcookie( 'aha_summary_metro_id', $url_metro_id, 0, '/' );
-			$current_url = home_url( $_SERVER['REQUEST_URI'] );
-			$towrite = PHP_EOL . 'redirecting to: ' . print_r( $current_url, TRUE);
-			$towrite .= PHP_EOL . 'actions_variable: ' . print_r( bp_action_variable( 1 ), TRUE);
-			$fp = fopen('aha_summary_setup.txt', 'a');
-			fwrite($fp, $towrite);
-			fclose($fp);
-            wp_redirect( $current_url );
-            exit;
-		}
-	}
-	
 
 	/**
 	 * Returns arrays of Study Data fora  given study ID
@@ -916,8 +628,8 @@ class CC_Transtria_Extras {
 		
 		$this_study_id = $_POST["this_study_id"];
 		$new_study = false;
-		
-		if( empty( $this_study_id ) || ( $this_study_id = "-1" ) ){
+	//	var_dump( $this_study_id );
+		if( empty( $this_study_id ) || ( $this_study_id == "-1" ) ){
 			$this_study_id = cc_transtria_get_next_study_id();
 			$new_study = true;
 		}
@@ -926,13 +638,17 @@ class CC_Transtria_Extras {
 		
 		//load in form parts
 		$studies_data = $_POST['studies_table_vals'];
+		$pops_data = $_POST['population_table_vals'];
 		
 		//convert to db field names
 		$converted_to_db_fields = cc_transtria_match_div_ids_to_studies_columns( $studies_data, true );
+		//$converted_to_db_fields_pops = cc_transtria_match_div_ids_to_pops_columns_single( $pops_data, true );
 		
 		//save to tables
 		$studies_success = cc_transtria_save_to_studies_table( $converted_to_db_fields, $this_study_id, $new_study );
+		$pops_success = cc_transtria_save_to_pops_table_raw( $pops_data, $this_study_id, $new_study, $_POST['num_ese_tabs'] ); //convert to db field names in the pops save function
 		$data['studies_test'] = $studies_success;
+		$data['pops_success'] = $pops_success;
 		//$data['studies_test'] = $data['studies_table_vals'];
 		
 		//echo json_encode( $study_data['single'] );

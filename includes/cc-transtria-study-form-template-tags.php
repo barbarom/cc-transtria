@@ -26,20 +26,22 @@ function cc_transtria_render_form(){
 
 	//are we loading an existing study?
 	$this_study_id = $_GET["study_id"];
-	
-	//$study_data['single'] = cc_transtria_get_single_study_data( $this_study_id );
-	//var_dump( $study_data['single'] );
-	//$study_data['pops_single'] = cc_transtria_get_pops_study_data_single( $this_study_id );
-	//var_dump( $study_data['pops_single'] );
-	
-	//$pops_ids = array_flip( cc_transtria_get_multiple_dropdown_ids_populations() );
-	//var_dump( $pops_ids );
+
+	//get all study ids in system.  If url param not in system, set this_study_id to null
+	$all_study_ids = cc_transtria_get_study_ids();
+	if( !in_array( $this_study_id, $all_study_ids ) ){
+		$this_study_id = null;
+	}
 	
 	$pops_data_multiple = cc_transtria_get_study_data_multiple( $this_study_id );
+	$dd_multiple_options_pops = cc_transtria_get_multiple_dropdown_options_populations( $this_study_id ); //all options for pops sub tabs
+	$field_data['num_ea_tabs'] = cc_transtria_get_num_ea_tabs_for_study( $this_study_id );
+	//these are separate because of legacy code automatically saving 100 ea tabs even if there AREN't 100. #stupidstupidstupid
+	//$field_data['ea_tab_data'] = cc_transtria_get_ea_tab_data_for_study( $this_study_id, $field_data['num_ea_tabs'] );
+	$ea_data = cc_transtria_get_ea_tab_data_for_study( $this_study_id );
+	//var_dump( $ea_data );
 	//var_dump( $pops_data_multiple );
 	
-	//get all study ids in system
-	$all_study_ids = cc_transtria_get_study_ids();
 	
 	//get all endnote ids and titles in system
 	$all_endnote_ids = cc_transtria_get_endnote_id_title();
@@ -49,7 +51,6 @@ function cc_transtria_render_form(){
 	$dd_singleton_options = cc_transtria_get_singleton_dropdown_options(); //all options for singleton dropdowns
 	//var_dump( $dd_singleton_options );
 	
-	$dd_multiple_options_pops = cc_transtria_get_multiple_dropdown_options_populations( $this_study_id ); //all options for pops sub tabs
 	
 	$dd_multiple_options_ea = cc_transtria_get_multiple_dropdown_options_ea( ); //all options for pops sub tabs
 
@@ -59,11 +60,6 @@ function cc_transtria_render_form(){
 	$field_data['dd_multiple_options_pops'] = $dd_multiple_options_pops;
 	$field_data['dd_multiple_options_ea'] = $dd_multiple_options_ea;
 	
-	//these are separate because of legacy code automatically saving 100 ea tabs even if there AREN't 100. #stupidstupidstupid
-	$field_data['num_ea_tabs'] = cc_transtria_get_num_ea_tabs_for_study( $this_study_id );
-	//$field_data['ea_tab_data'] = cc_transtria_get_ea_tab_data_for_study( $this_study_id, $field_data['num_ea_tabs'] );
-	$ea_data = cc_transtria_get_ea_tab_data_for_study( $this_study_id );
-	//var_dump( $ea_data );
 	
 	//TODO: think about whether we want to populate these in php or in js..	
 	?>
@@ -211,7 +207,7 @@ function cc_transtria_render_form(){
 							EndNote ID:
 						</td>
 						<td>
-							<span><select id="EndNoteID"> 
+							<span><select id="EndNoteID" class="studies_table"> 
 								<option value="">---Select---</option>
 								<?php										
 								//$all_endnote_ids are indexed by the div id - "abstractor", for example
@@ -292,7 +288,7 @@ function cc_transtria_render_form(){
 							</select>
 						</td>
 						<td >
-							Other search tool: <input id="othersearchtool" type="text" />					
+							Other search tool: <input id="othersearchtool" class="studies_table" type="text" />					
 						</td>					
 					</tr>				
 				</table>
@@ -356,7 +352,7 @@ function cc_transtria_render_form(){
 					<tr>
 						<td>Domestic/International Funding Source:</td>
 						<td>
-							Domestic: <input id="DomesticFundingSourceType" class="studies_table" type="checkbox" /> International: <input id="InternationalFundingSourceType" type="checkbox" />
+							Domestic: <input id="DomesticFundingSourceType" class="studies_table" type="checkbox" /> International: <input id="InternationalFundingSourceType" class="studies_table" type="checkbox" />
 						</td>
 						<td></td>					
 					</tr>				
@@ -448,8 +444,8 @@ function cc_transtria_render_form(){
 						<td>Threat to internal validity?:</td>
 						<td colspan="2">
 							<span id="validitythreatflag">
-								<input type="radio" value="Y" class="studies_table" name="validitythreatflag">Yes
-								<input type="radio" value="N" class="studies_table" name="validitythreatflag">No
+								<input type="radio" class="studies_table" value="Y" class="studies_table" name="validitythreatflag">Yes
+								<input type="radio" class="studies_table" value="N" class="studies_table" name="validitythreatflag">No
 							</span>
 						</td>					
 					</tr>

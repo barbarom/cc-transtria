@@ -52,14 +52,14 @@ function cc_transtria_render_populations_header( $field_data ){
 	<div id="population_tabs">
 		<label class="general_pops_label">Sample size available?:</label>
 		<span id="sample_size_available">
-			<input type="radio" value="Y" name="sample_size_available">	Yes
-			<input type="radio" value="N" name="sample_size_available">	No
+			<input type="radio" value="Y" class="studies_table" name="sample_size_available">Yes
+			<input type="radio" value="N" class="studies_table" name="sample_size_available">No
 		</span>
 		<br>
 		<label class="general_pops_label">Is Sample size an estimate?:</label>
 		<span id="sample_estimate">
-			<input type="radio" value="Y" name="sample_estimate">Yes
-			<input type="radio" value="N" name="sample_estimate">No
+			<input type="radio" value="Y" class="studies_table" name="sample_estimate">Yes
+			<input type="radio" value="N" class="studies_table" name="sample_estimate">No
 		</span>
 		<br />
 		<label class="general_pops_label">Unit of Analysis</label>
@@ -73,7 +73,7 @@ function cc_transtria_render_populations_header( $field_data ){
 		<br />
 		<div class="not-reported">
 			<label class="general_pops_label">Unit of Analysis Not Reported</label>
-			<input id="unitanalysis_notreported" type="checkbox">
+			<input id="unitanalysis_notreported" class="studies_table" type="checkbox">
 		</div>
 		<br>
 
@@ -185,19 +185,19 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 			<tr>
 				<td class="minwidth200"><label>Reported?</label></td>
 				<td colspan="3">
-					<span id="<?php echo $which_pop; ?>_reported">
-						<input type="radio" value="Y" name="<?php echo $which_pop; ?>_reported">Yes
-						<input type="radio" value="N" name="<?php echo $which_pop; ?>_reported">No
+					<span id="<?php echo $which_pop; ?>_reported-holder">
+						<input type="radio" value="Y" name="<?php echo $which_pop; ?>_reported" class="population_table">Yes
+						<input type="radio" value="N" name="<?php echo $which_pop; ?>_reported" class="population_table">No
 					</span></td>
 			</tr>
 
 			<tr>
 				<td><label>Population Size:</label></td> 
-				<td colspan="3"><input type="text" id="<?php echo $which_pop; ?>_population_size"></input></td>
+				<td colspan="3"><input type="text" id="<?php echo $which_pop; ?>_population_size" class="population_table"></input></td>
 			</tr>
 			<tr class="not-reported">
 				<td class="not-reported"><label>Population size not reported</label></td>
-				<td colspan="3"><input id="<?php echo $which_pop; ?>_populationsize_notreported" type="checkbox"></td>
+				<td colspan="3"><input id="<?php echo $which_pop; ?>_populationsize_notreported" class="population_table" type="checkbox"></td>
 			</tr>
 
 
@@ -578,6 +578,16 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 				<td class="not-reported"><label>Percent non-English speakers not reported</label></td>
 				<td colspan="3"><input id="<?php echo $which_pop; ?>_percentnonenglish_notreported" type="checkbox"></td>
 			</tr>
+			
+			<tr></tr>
+			
+			<tr>
+				<td colspan="3"></td>
+				<td class="submit_form">
+					<a class="button save_study alignright">SAVE STUDY</a>
+				</td>
+			</tr>
+			
 		</table>
 	
 	</div>
