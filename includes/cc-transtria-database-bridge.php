@@ -198,6 +198,7 @@ function cc_transtria_save_to_pops_table_raw( $studies_data, $study_id, $new_stu
 	if( $new_study == false ){
 	
 		$error_array = [];
+		$error_array[] = 'stuff to say';
 		foreach( $new_index as $pop_type => $index_val ){
 			//we need to check for the existance of these rows, yeah?
 			
@@ -236,7 +237,7 @@ function cc_transtria_save_to_pops_table_raw( $studies_data, $study_id, $new_stu
 					) 
 				);
 				
-				if( $result === false ){
+				if( $new_pop_row === false ){
 					$error_array[] = "Error: new pop " . $pop_type . " could not be initialized in population table in db";
 				}
 			
@@ -246,7 +247,7 @@ function cc_transtria_save_to_pops_table_raw( $studies_data, $study_id, $new_stu
 			// wpdb->update is perfect for this. Wow. Ref: https://codex.wordpress.org/Class_Reference/wpdb#UPDATE_rows
 			if ( !empty ( $index_val ) ) {
 				$num_study_rows_updated = $wpdb->update( $wpdb->transtria_population, $index_val, $pops_where, $format = null, $where_format = null );
-			}
+			} 
 				
 			if( $num_study_rows_updated === false ){
 				$error_array[] = "Error: new pops data could not be added to db for pop type " . $pop_type . " and existing study id";
@@ -288,18 +289,19 @@ function cc_transtria_save_to_pops_table_raw( $studies_data, $study_id, $new_stu
 			
 			
 			//update newly inserted ro
-			if ( !empty ( $studies_data ) ) {
-				$num_study_rows_updated = $wpdb->update( $wpdb->transtria_studies, $index_val, $pops_where, $format = null, $where_format = null );
-			}
+			if ( !empty ( $index_val ) ) {
+				$num_study_rows_updated = $wpdb->update( $wpdb->transtria_population, $index_val, $pops_where, $format = null, $where_format = null );
+			} 
 			
 			if( $num_study_rows_updated === false ){
-				//var_dump( $index_val );
 				$error_array[] = "Error: new population data for " . $pop_type . " could not be added to db for new study";
 			} else {
-				//var_dump( $index_val );
 				$error_array[] = $pop_type . ": " . $num_study_rows_updated; //should be 1
 			}
 		}
+		
+		
+		return $error_array;
 		
 	}
 	
