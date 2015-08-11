@@ -194,73 +194,115 @@ function cc_transtria_save_to_pops_table_raw( $studies_data, $study_id, $new_stu
 	
 	}
 	
-	//return( $parsed_studies_data );
-	return( $new_index );
-	
-	/*
 	//TODO: if this works, combine things
 	if( $new_study == false ){
 	
-		foreach( $pops_types as $pop_type ){
-			$studies_where = array(
+		$error_array = [];
+		foreach( $new_index as $pop_type => $index_val ){
+			//we need to check for the existance of these rows, yeah?
+			
+			$pops_where = array(
 				'StudyID' => $study_id,
 				'PopulationType' => $pop_type
 			);
-		
+			
+			$populations_sql = $wpdb->prepare( 
+				"
+				SELECT      *
+				FROM        $wpdb->transtria_population
+				WHERE		StudyID = %d
+				AND 		PopulationType = %s
+				",
+				$study_id,
+				$pop_type
+			); 
+			
+			//run query
+			$form_rows = $wpdb->get_results( $populations_sql, ARRAY_A );
+			
+			//if there is no row returned for this pop_type, we need to insert one!
+			if( $form_rows === null ){
+			
+				//insert the row first!
+				$new_pop_row = $wpdb->insert( 
+					$wpdb->transtria_population, 
+					array( 
+						'StudyID' => (int)$study_id,
+						'PopulationType' => $pop_type
+					),
+					array( 
+						'%d',
+						'%s'
+					) 
+				);
+				
+				if( $result === false ){
+					$error_array[] = "Error: new pop " . $pop_type . " could not be initialized in population table in db";
+				}
+			
+			}
+			
 			//update each row
-		
+			// wpdb->update is perfect for this. Wow. Ref: https://codex.wordpress.org/Class_Reference/wpdb#UPDATE_rows
+			if ( !empty ( $index_val ) ) {
+				$num_study_rows_updated = $wpdb->update( $wpdb->transtria_population, $index_val, $pops_where, $format = null, $where_format = null );
+			}
+				
+			if( $num_study_rows_updated === false ){
+				$error_array[] = "Error: new pops data could not be added to db for pop type " . $pop_type . " and existing study id";
+			} else {
+				$error_array[] = $pop_type . ": " . $num_study_rows_updated; //should be 1
+			}
+				
 		}
 		
-		//if we have [board] values set by the form, update the table
-		// wpdb->update is perfect for this. Wow. Ref: https://codex.wordpress.org/Class_Reference/wpdb#UPDATE_rows
-		if ( !empty ( $studies_data ) ) {
-			$num_study_rows_updated = $wpdb->update( $wpdb->transtria_studies, $studies_data, $studies_where, $format = null, $where_format = null );
-		}
-		
-		if( $num_study_rows_updated === false ){
-			return "Error: new study data could not be added to db";
-		} else {
-			return $num_study_rows_updated; //should be 1
-		}
+		return $error_array;
 		
 	} else {
-		//insert
-		//Hmmm...maybe just study id and then update, since not all fields are being used...
-		$result = $wpdb->insert( 
-			$wpdb->transtria_studies, 
-			array( 
-				'StudyID' => (int)$study_id
-			),
-			array( 
-				'%d'
-			) 
-		);
-		
-		if( $result === false ){
-			return "Error: new study could not be initialized in db";
-		}
-		
-		$studies_where = array(
-			'StudyID' => $study_id 
-		);
-		$dummy_studies = array(
-			'abstractor' => "04"
+	
+		$error_array = [];
+		foreach( $new_index as $pop_type => $index_val ){
+			
+			//insert new study in table!
+			//Hmmm...maybe just study id and then update, since not all fields are being used...
+			$result = $wpdb->insert( 
+				$wpdb->transtria_population, 
+				array( 
+					'StudyID' => (int)$study_id,
+					'PopulationType' => $pop_type
+				),
+				array( 
+					'%d',
+					'%s'
+				) 
 			);
-		
-		
-		if ( !empty ( $studies_data ) ) {
-			$num_study_rows_updated = $wpdb->update( $wpdb->transtria_studies, $studies_data, $studies_where, $format = null, $where_format = null );
+			
+			if( $result === false ){
+				$error_array[] = "Error: new pop " . $pop_type . " could not be initialized in population table in db";
+			}
+			
+			$pops_where = array(
+				'StudyID' => $study_id,
+				'PopulationType' => $pop_type
+			);
+			
+			
+			//update newly inserted ro
+			if ( !empty ( $studies_data ) ) {
+				$num_study_rows_updated = $wpdb->update( $wpdb->transtria_studies, $index_val, $pops_where, $format = null, $where_format = null );
+			}
+			
+			if( $num_study_rows_updated === false ){
+				//var_dump( $index_val );
+				$error_array[] = "Error: new population data for " . $pop_type . " could not be added to db for new study";
+			} else {
+				//var_dump( $index_val );
+				$error_array[] = $pop_type . ": " . $num_study_rows_updated; //should be 1
+			}
 		}
 		
-		if( $num_study_rows_updated === false ){
-			var_dump( $studies_data );
-			return "Error: new study data could not be added to db for new study";
-		} else {
-			var_dump( $studies_data );
-			return $num_study_rows_updated; //should be 1
-		}
 	}
-	*/
+	
 	
 
 }

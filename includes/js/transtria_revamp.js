@@ -761,7 +761,7 @@ function save_study(){
 	}).success( function( data ) {
 		
 		//var post_meat = JSON.parse( data );
-		console.log('success: ' + data['studies_test']);
+		console.log('success: ' + data['pops_success']);
 		
 		usrmsg.html("Saving Study, ID: " + data['study_id'] );
 		

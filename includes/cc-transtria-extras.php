@@ -647,9 +647,9 @@ class CC_Transtria_Extras {
 		//save to tables
 		$studies_success = cc_transtria_save_to_studies_table( $converted_to_db_fields, $this_study_id, $new_study );
 		$pops_success = cc_transtria_save_to_pops_table_raw( $pops_data, $this_study_id, $new_study, $_POST['num_ese_tabs'] ); //convert to db field names in the pops save function
+		
 		$data['studies_test'] = $studies_success;
 		$data['pops_success'] = $pops_success;
-		//$data['studies_test'] = $data['studies_table_vals'];
 		
 		//echo json_encode( $study_data['single'] );
 		echo json_encode( $data );
