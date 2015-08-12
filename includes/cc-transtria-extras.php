@@ -640,6 +640,12 @@ class CC_Transtria_Extras {
 		$studies_data = $_POST['studies_table_vals'];
 		$pops_data = $_POST['population_table_vals'];
 		
+		$num_ese_tabs = $_POST['num_ese_tabs'];
+		$num_ea_tabs = $_POST['num_ea_tabs'];
+		
+		//update metadata table
+		$meta_success = cc_transtria_save_to_metadata_table( $this_study_id, $num_ese_tabs, $num_ea_tabs );
+		
 		//convert to db field names
 		$converted_to_db_fields = cc_transtria_match_div_ids_to_studies_columns( $studies_data, true );
 		//$converted_to_db_fields_pops = cc_transtria_match_div_ids_to_pops_columns_single( $pops_data, true );
@@ -650,6 +656,7 @@ class CC_Transtria_Extras {
 		
 		$data['studies_test'] = $studies_success;
 		$data['pops_success'] = $pops_success;
+		$data['meta_success'] = $meta_success;
 		
 		//echo json_encode( $study_data['single'] );
 		echo json_encode( $data );

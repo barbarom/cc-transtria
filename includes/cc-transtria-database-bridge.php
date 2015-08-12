@@ -198,7 +198,7 @@ function cc_transtria_save_to_pops_table_raw( $studies_data, $study_id, $new_stu
 	if( $new_study == false ){
 	
 		$error_array = [];
-		//$error_array[] = 'stuff to say';
+		
 		foreach( $new_index as $pop_type => $index_val ){
 			//we need to check for the existance of these rows, yeah?
 			
@@ -219,9 +219,10 @@ function cc_transtria_save_to_pops_table_raw( $studies_data, $study_id, $new_stu
 			); 
 			
 			//run query
-			$form_rows = $wpdb->get_results( $populations_sql, ARRAY_A );
+			$form_rows = $wpdb->get_row( $populations_sql, ARRAY_A );
+			$error_array[] = 'form rows for: ' . $pop_type . ' = ' . $form_rows;
 			
-			//if there is no row returned for this pop_type, we need to insert one!
+			//if there is no row returned for this pop_type, we need to insert one before updating
 			if( $form_rows === null ){
 			
 				//insert the row first!
@@ -309,6 +310,129 @@ function cc_transtria_save_to_pops_table_raw( $studies_data, $study_id, $new_stu
 
 }
 
+/**
+ * Saves ea/ese tab number to metadata table
+ * 
+ * @param int, int. 
+ * @return string. Error message?
+ */
+function cc_transtria_save_to_metadata_table( $study_id, $num_ese_tab, $num_ea_tab ){
+	
+	global $wpdb;
+	
+	$error_array = [];
+	
+	//prep population types we care about
+	$ese_tabs_to_db = 0;
+	$ea_tabs_to_db = 0;
+	
+	if( !is_null( $num_ese_tab ) && ( $num_ese_tab != "" ) && ( $num_ese_tab != "NaN" ) && !is_nan( $num_ese_tab ) ){
+		$error_array[]  = 'ese org: ' . $num_ese_tab;
+		$ese_tabs_to_db = (int)$num_ese_tab + 1;  //0-indexed on form, 1-indexed in db.
+	} 
+	
+	if( !is_null( $num_ea_tab ) && ( $num_ea_tab != "" ) ){
+		$ea_tabs_to_db = (int)$num_ea_tab;  //0-indexed on form, 1-indexed in db.
+	} 
+	
+	//$error_array[] = '$ese_tabs_to_db: ' . $ese_tabs_to_db;
+	//$error_array[] = '$ea_tabs_to_db: ' . $ea_tabs_to_db;
+
+	//not working...? : wpdb->replace will Replace a row in a table if it exists or insert a new row in a table if the row did not already exist. 		
+	//replace ese tab count
+	$ese_table_row_name = "ese tabCount";
+	
+	//first, delete old rows
+	$ese_del_num_row = $wpdb->delete( 
+		$wpdb->transtria_metadata, 
+		array( 
+			'StudyID' => (int)$study_id,
+			'variablename' => $ese_table_row_name
+		)
+	);
+	
+	$ese_num_row = $wpdb->insert( 
+		$wpdb->transtria_metadata, 
+		array( 
+			'StudyID' => (int)$study_id,
+			'variablename' => $ese_table_row_name,
+			'value' => $ese_tabs_to_db
+		),
+		array( 
+			'%d',
+			'%s',
+			'%d'
+		) 
+	);
+	
+	//
+	/*$ese_num_row = $wpdb->replace( 
+		$wpdb->transtria_metadata, 
+		array( 
+			'StudyID' => (int)$study_id,
+			'variablename' => $ese_table_row_name,
+			'value' => $ese_tabs_to_db
+		),
+		array( 
+			'%d',
+			'%s',
+			'%d'
+		) 
+	);*/
+	
+	if( $ese_num_row === false ){
+		$error_array[] = "Error: ese num row could not be inserted in metadata table in db, study_id: " . $study_id;
+	} else {
+		$error_array[] = "Num ese rows updated: " . $ese_num_row . ", study_id: " . $study_id;	
+	}
+	
+			
+	//replace ea tab count
+	$ea_table_row_name = "ea tabCount";
+	//first, delete old rows
+	$ea_del_num_row = $wpdb->delete( 
+		$wpdb->transtria_metadata, 
+		array( 
+			'StudyID' => (int)$study_id,
+			'variablename' => $ea_table_row_name
+		)
+	);
+	
+	$ea_num_row = $wpdb->insert( 
+		$wpdb->transtria_metadata, 
+		array( 
+			'StudyID' => (int)$study_id,
+			'variablename' => $ea_table_row_name,
+			'value' => $ea_tabs_to_db
+		),
+		array( 
+			'%d',
+			'%s',
+			'%d'
+		) 
+	);
+	
+	/*$ea_num_row = $wpdb->replace( 
+		$wpdb->transtria_metadata, 
+		array( 
+			'StudyID' => (int)$study_id,
+			'variablename' => $ea_table_row_name,
+			'value' => $ea_tabs_to_db
+		),
+		array( 
+			'%d',
+			'%s',
+			'%d'
+		) 
+	);*/
+	
+	if( $ea_num_row === false ){
+		$error_array[] = "Error: ea num row could not be inserted in metadata table in db, study_id: " . $study_id;
+	}
+			
+	return $error_array;
+	
+}
 
 /**
  * Returns array of all multiple data for a study
