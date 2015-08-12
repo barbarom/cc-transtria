@@ -865,7 +865,7 @@ function cc_transtria_match_div_ids_to_pops_columns_single( $which_pop, $study_l
  * @param array
  * @return array
  */
-function cc_transtria_match_div_ids_to_ea_columns_single( $which_ea, $study_labels = null ){
+function cc_transtria_match_div_ids_to_ea_columns_single( $which_ea, $study_labels = null, $to_db = false ){
 
 	//we can use array_flip if we need to!
 	
@@ -913,27 +913,52 @@ function cc_transtria_match_div_ids_to_ea_columns_single( $which_ea, $study_labe
 	
 	$flipped_array = array_flip( $db_to_div_array );
 	
-	if( !empty( $study_labels ) ){
-		$new_study_labels = [];
-		//we have an incoming array whose labels need to be changed
-		foreach( $study_labels as $label => $value ){
-
-			if( in_array( $label, $flipped_array ) ) {
-				//var_dump( $label );
-				$new_label = $db_to_div_array[ $label ];
-				$new_study_labels[ $new_label ] = $value;
-			} else {
-				$new_study_labels[ $label ] = $value; //same ol
+	if( $to_db == false ){ 
+		//we're loading the form
+		if( !empty( $study_labels ) ){
+			$new_study_labels = [];
+			//we have an incoming array whose labels need to be changed
+			foreach( $study_labels as $label => $value ){
+				
+				if( in_array( $label, $flipped_array ) ) {
+					$new_label = $db_to_div_array[ $label ];
+					$new_study_labels[ $new_label ] = $value;
+				} else {
+					$new_study_labels[ $label ] = $value; //same ol
+				}
+			
 			}
-		
+			return $new_study_labels;	
+			
+		} else {
+			//we're just returning the above array
+			return $db_to_div_array;
 		}
-		return $new_study_labels;	
 		
 	} else {
-		//we're just returning the above array
-		return $db_to_div_array;
+		//we're saving to db	
+		if( !empty( $study_labels ) ){
+			$new_study_labels = [];
+			//we have an incoming array whose labels need to be changed
+			foreach( $study_labels as $label => $value ){
+				
+				if( in_array( $label, $db_to_div_array ) ) {
+					//return $label;
+					$new_label = $flipped_array[ $label ];
+					
+					$new_study_labels[ $new_label ] = $value;
+				} else {
+					$new_study_labels[ $label ] = $value; //same ol
+				}
+			
+			}
+			return $new_study_labels;	
+			
+		} else {
+			//we're just returning the above array
+			return $db_to_div_array;
+		}
 	}
-	
 }
 
 

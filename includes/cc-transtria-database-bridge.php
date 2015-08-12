@@ -81,6 +81,130 @@ function cc_transtria_get_single_study_data( $study_id = null ){
 }
 
 /**
+ * Saves ea/ese tab number to metadata table
+ * 
+ * @param int, int. 
+ * @return string. Error message?
+ */
+function cc_transtria_save_to_metadata_table( $study_id, $num_ese_tab, $num_ea_tab ){
+	
+	global $wpdb;
+	
+	$error_array = [];
+	
+	//prep population types we care about
+	$ese_tabs_to_db = 0;
+	$ea_tabs_to_db = 0;
+	
+	if( !is_null( $num_ese_tab ) && ( $num_ese_tab != "" ) && ( $num_ese_tab != "NaN" ) && !is_nan( $num_ese_tab ) ){
+		$error_array[]  = 'ese org: ' . $num_ese_tab;
+		$ese_tabs_to_db = (int)$num_ese_tab + 1;  //0-indexed on form, 1-indexed in db.
+	} 
+	
+	if( !is_null( $num_ea_tab ) && ( $num_ea_tab != "" ) ){
+		$ea_tabs_to_db = (int)$num_ea_tab;  //0-indexed on form, 1-indexed in db.
+	} 
+	
+	//$error_array[] = '$ese_tabs_to_db: ' . $ese_tabs_to_db;
+	//$error_array[] = '$ea_tabs_to_db: ' . $ea_tabs_to_db;
+
+	//not working...? : wpdb->replace will Replace a row in a table if it exists or insert a new row in a table if the row did not already exist. 		
+	//replace ese tab count
+	$ese_table_row_name = "ese tabCount";
+	
+	//first, delete old rows
+	$ese_del_num_row = $wpdb->delete( 
+		$wpdb->transtria_metadata, 
+		array( 
+			'StudyID' => (int)$study_id,
+			'variablename' => $ese_table_row_name
+		)
+	);
+	
+	$ese_num_row = $wpdb->insert( 
+		$wpdb->transtria_metadata, 
+		array( 
+			'StudyID' => (int)$study_id,
+			'variablename' => $ese_table_row_name,
+			'value' => $ese_tabs_to_db
+		),
+		array( 
+			'%d',
+			'%s',
+			'%d'
+		) 
+	);
+	
+	//
+	/*$ese_num_row = $wpdb->replace( 
+		$wpdb->transtria_metadata, 
+		array( 
+			'StudyID' => (int)$study_id,
+			'variablename' => $ese_table_row_name,
+			'value' => $ese_tabs_to_db
+		),
+		array( 
+			'%d',
+			'%s',
+			'%d'
+		) 
+	);*/
+	
+	if( $ese_num_row === false ){
+		$error_array[] = "Error: ese num row could not be inserted in metadata table in db, study_id: " . $study_id;
+	} else {
+		$error_array[] = "Num ese rows updated: " . $ese_num_row . ", study_id: " . $study_id;	
+	}
+	
+			
+	//replace ea tab count
+	$ea_table_row_name = "ea tabCount";
+	//first, delete old rows
+	$ea_del_num_row = $wpdb->delete( 
+		$wpdb->transtria_metadata, 
+		array( 
+			'StudyID' => (int)$study_id,
+			'variablename' => $ea_table_row_name
+		)
+	);
+	
+	$ea_num_row = $wpdb->insert( 
+		$wpdb->transtria_metadata, 
+		array( 
+			'StudyID' => (int)$study_id,
+			'variablename' => $ea_table_row_name,
+			'value' => $ea_tabs_to_db
+		),
+		array( 
+			'%d',
+			'%s',
+			'%d'
+		) 
+	);
+	
+	/*$ea_num_row = $wpdb->replace( 
+		$wpdb->transtria_metadata, 
+		array( 
+			'StudyID' => (int)$study_id,
+			'variablename' => $ea_table_row_name,
+			'value' => $ea_tabs_to_db
+		),
+		array( 
+			'%d',
+			'%s',
+			'%d'
+		) 
+	);*/
+	
+	if( $ea_num_row === false ){
+		$error_array[] = "Error: ea num row could not be inserted in metadata table in db, study_id: " . $study_id;
+	}
+			
+	return $error_array;
+	
+}
+
+/**
  * Saves single study data to studies tables
  * 
  * @param array. Associative array of db_label => incoming value
@@ -220,7 +344,7 @@ function cc_transtria_save_to_pops_table_raw( $studies_data, $study_id, $new_stu
 			
 			//run query
 			$form_rows = $wpdb->get_row( $populations_sql, ARRAY_A );
-			$error_array[] = 'form rows for: ' . $pop_type . ' = ' . $form_rows;
+			//$error_array[] = 'form rows for: ' . $pop_type . ' = ' . $form_rows;
 			
 			//if there is no row returned for this pop_type, we need to insert one before updating
 			if( $form_rows === null ){
@@ -311,128 +435,119 @@ function cc_transtria_save_to_pops_table_raw( $studies_data, $study_id, $new_stu
 }
 
 /**
- * Saves ea/ese tab number to metadata table
+ * Saves single study data to studies tables
  * 
- * @param int, int. 
+ * @param array. Associative array of db_label => incoming value
  * @return string. Error message?
  */
-function cc_transtria_save_to_metadata_table( $study_id, $num_ese_tab, $num_ea_tab ){
+function cc_transtria_save_to_ea_table_raw( $studies_data, $study_id, $new_study = false, $num_ea_tab ){
 	
 	global $wpdb;
 	
+	$parsed_studies_data = [];
+	$notparsed_studies_data = [];
+	$new_index = [];
+	
+	
+	//parse incoming array by ea number
+	foreach( $studies_data as $data_piece_index => $data_piece_value ){
+		
+		for( $i = 1; $i <= $num_ea_tab; $i++ ){ //foreach( $pops_types as $pop_type ){
+			
+			$this_ea_tab = 'ea_' . $i; //put into ea_# format
+			
+			if( substr( $data_piece_index, 0, strlen($this_ea_tab . '_') ) === ( $this_ea_tab . '_' ) ) {
+				//remove prepend from $data_piece_index
+				//$data_piece_index = str_replace( $this_ea_tab, '', $data_piece_index );
+				$parsed_studies_data[ $this_ea_tab ][ $data_piece_index ] = $data_piece_value;
+			} else {
+				$notparsed_studies_data[ $data_piece_index ] = $data_piece_value;
+			}
+		}
+	}
+	
+	//take each ea num array and convert to db label
+	foreach( $parsed_studies_data as $ea_type => $ea_data ){
+	
+		$new_index[ $ea_type ] = cc_transtria_match_div_ids_to_ea_columns_single( $ea_type, $ea_data, true );
+	
+	}
+	
 	$error_array = [];
+		
+	//TODO: if this works, combine things
+	if( $new_study == false ){
 	
-	//prep population types we care about
-	$ese_tabs_to_db = 0;
-	$ea_tabs_to_db = 0;
-	
-	if( !is_null( $num_ese_tab ) && ( $num_ese_tab != "" ) && ( $num_ese_tab != "NaN" ) && !is_nan( $num_ese_tab ) ){
-		$error_array[]  = 'ese org: ' . $num_ese_tab;
-		$ese_tabs_to_db = (int)$num_ese_tab + 1;  //0-indexed on form, 1-indexed in db.
-	} 
-	
-	if( !is_null( $num_ea_tab ) && ( $num_ea_tab != "" ) ){
-		$ea_tabs_to_db = (int)$num_ea_tab;  //0-indexed on form, 1-indexed in db.
-	} 
-	
-	//$error_array[] = '$ese_tabs_to_db: ' . $ese_tabs_to_db;
-	//$error_array[] = '$ea_tabs_to_db: ' . $ea_tabs_to_db;
-
-	//not working...? : wpdb->replace will Replace a row in a table if it exists or insert a new row in a table if the row did not already exist. 		
-	//replace ese tab count
-	$ese_table_row_name = "ese tabCount";
-	
-	//first, delete old rows
-	$ese_del_num_row = $wpdb->delete( 
-		$wpdb->transtria_metadata, 
-		array( 
-			'StudyID' => (int)$study_id,
-			'variablename' => $ese_table_row_name
-		)
-	);
-	
-	$ese_num_row = $wpdb->insert( 
-		$wpdb->transtria_metadata, 
-		array( 
-			'StudyID' => (int)$study_id,
-			'variablename' => $ese_table_row_name,
-			'value' => $ese_tabs_to_db
-		),
-		array( 
-			'%d',
-			'%s',
-			'%d'
-		) 
-	);
-	
-	//
-	/*$ese_num_row = $wpdb->replace( 
-		$wpdb->transtria_metadata, 
-		array( 
-			'StudyID' => (int)$study_id,
-			'variablename' => $ese_table_row_name,
-			'value' => $ese_tabs_to_db
-		),
-		array( 
-			'%d',
-			'%s',
-			'%d'
-		) 
-	);*/
-	
-	if( $ese_num_row === false ){
-		$error_array[] = "Error: ese num row could not be inserted in metadata table in db, study_id: " . $study_id;
+		//first, delete old rows 
+		$ea_del_row = $wpdb->delete( 
+			$wpdb->transtria_effect_association, 
+			array( 
+				'StudyID' => (int)$study_id
+			)
+		);
+			
+		foreach( $new_index as $which_ea_tab => $index_val ){
+			//get ea tab number for 'seq' in db 
+			$which_ea_tab_num = str_replace( 'ea_', '', $which_ea_tab );
+			$index_val['StudyID'] = (int)$study_id;
+			$index_val['seq'] = (int)$which_ea_tab_num;
+			
+			
+			$ea_num_row = $wpdb->insert( 
+				$wpdb->transtria_effect_association, 
+				$index_val
+			);
+			
+			if( $ea_num_row === false ){
+				$error_array[] = "Error: new ea data could not be inserted to db for ea seq " . $which_ea_tab_num . " and existing study id";
+			} else {
+				$error_array[] = $which_ea_tab_num . ": " . $ea_num_row; //should be 1
+			}
+				
+		}
+		
+		return $error_array;
+		
 	} else {
-		$error_array[] = "Num ese rows updated: " . $ese_num_row . ", study_id: " . $study_id;	
+	
+		//first, delete old rows just in case? This should be none
+		$ea_del_row = $wpdb->delete( 
+			$wpdb->transtria_effect_association, 
+			array( 
+				'StudyID' => (int)$study_id
+			)
+		);
+		
+		foreach( $new_index as $which_ea_tab => $index_val ){
+			//get ea tab number for 'seq' in db 
+			$which_ea_tab_num = str_replace( 'ea_', '', $which_ea_tab );
+			$index_val['StudyID'] = (int)$study_id;
+			$index_val['seq'] = (int)$which_ea_tab_num;
+			
+			
+			$ea_num_row = $wpdb->insert( 
+				$wpdb->transtria_effect_association, 
+				$index_val
+			);
+			
+				
+			if( $ea_num_row === false ){
+				$error_array[] = "Error: new ea data could not be inserted to db for ea seq " . $which_ea_tab_num . " and existing study id";
+			} else {
+				$error_array[] = $which_ea_tab_num . ": " . $ea_num_row; //should be 1
+			}
+				
+		}
+		
+		return $error_array;
+		
 	}
 	
-			
-	//replace ea tab count
-	$ea_table_row_name = "ea tabCount";
-	//first, delete old rows
-	$ea_del_num_row = $wpdb->delete( 
-		$wpdb->transtria_metadata, 
-		array( 
-			'StudyID' => (int)$study_id,
-			'variablename' => $ea_table_row_name
-		)
-	);
 	
-	$ea_num_row = $wpdb->insert( 
-		$wpdb->transtria_metadata, 
-		array( 
-			'StudyID' => (int)$study_id,
-			'variablename' => $ea_table_row_name,
-			'value' => $ea_tabs_to_db
-		),
-		array( 
-			'%d',
-			'%s',
-			'%d'
-		) 
-	);
-	
-	/*$ea_num_row = $wpdb->replace( 
-		$wpdb->transtria_metadata, 
-		array( 
-			'StudyID' => (int)$study_id,
-			'variablename' => $ea_table_row_name,
-			'value' => $ea_tabs_to_db
-		),
-		array( 
-			'%d',
-			'%s',
-			'%d'
-		) 
-	);*/
-	
-	if( $ea_num_row === false ){
-		$error_array[] = "Error: ea num row could not be inserted in metadata table in db, study_id: " . $study_id;
-	}
-			
-	return $error_array;
-	
+
 }
+
+
 
 /**
  * Returns array of all multiple data for a study
@@ -603,7 +718,7 @@ function cc_transtria_get_ea_tab_data_for_study( $study_id, $num_ea_tabs = null 
 	for( $i = 1; $i <= $num_ea_tabs; $i++ ){
 		//put label of form rows in div id form
 		$label = 'ea_' . $i;
-		$new_form_rows = cc_transtria_match_div_ids_to_ea_columns_single( $label, $form_rows[$i - 1] ); //0-indexed form_rows..
+		$new_form_rows = cc_transtria_match_div_ids_to_ea_columns_single( $label, $form_rows[$i - 1], false ); //0-indexed form_rows..
 	
 		//add to master array
 		$all_ea_tabs[ $i ] = $new_form_rows;

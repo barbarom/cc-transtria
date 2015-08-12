@@ -570,6 +570,7 @@ class CC_Transtria_Extras {
 
 		$study_data['single'] = cc_transtria_get_single_study_data( $this_study_id );
 		$study_data['population_single'] = cc_transtria_get_pops_study_data_single( $this_study_id );
+		$study_data['num_ea_tabs'] = cc_transtria_get_num_ea_tabs_for_study( $this_study_id );
 		$study_data['ea'] = cc_transtria_get_ea_tab_data_for_study( $this_study_id );
 		$study_data['multiple'] = cc_transtria_get_study_data_multiple( $this_study_id );
 		
@@ -639,6 +640,7 @@ class CC_Transtria_Extras {
 		//load in form parts
 		$studies_data = $_POST['studies_table_vals'];
 		$pops_data = $_POST['population_table_vals'];
+		$ea_data = $_POST['ea_table_vals'];
 		
 		$num_ese_tabs = $_POST['num_ese_tabs'];
 		$num_ea_tabs = $_POST['num_ea_tabs'];
@@ -652,11 +654,19 @@ class CC_Transtria_Extras {
 		
 		//save to tables
 		$studies_success = cc_transtria_save_to_studies_table( $converted_to_db_fields, $this_study_id, $new_study );
-		$pops_success = cc_transtria_save_to_pops_table_raw( $pops_data, $this_study_id, $new_study, $_POST['num_ese_tabs'] ); //convert to db field names in the pops save function
+		$pops_success = cc_transtria_save_to_pops_table_raw( $pops_data, $this_study_id, $new_study, $num_ese_tabs ); //convert to db field names in the pops save function
+		
+		if( (int)$num_ea_tabs > 0 ){
+			$ea_success = cc_transtria_save_to_ea_table_raw( $ea_data, $this_study_id, $new_study, $num_ea_tabs );
+		} else {
+			$ea_success = 'no ea tabs';
+		}
+		
 		
 		$data['studies_test'] = $studies_success;
 		$data['pops_success'] = $pops_success;
 		$data['meta_success'] = $meta_success;
+		$data['ea_success'] = $ea_success;
 		
 		//echo json_encode( $study_data['single'] );
 		echo json_encode( $data );
@@ -664,10 +674,6 @@ class CC_Transtria_Extras {
 		die();
 	
 	}
-	
-	
-	
-	
 	
 	
 	

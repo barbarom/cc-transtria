@@ -281,7 +281,7 @@ function cc_transtria_render_ea_tabs( $num_ea_tab, $dd_multiple_options_ea ){
 
 				<tr>
 					<td class="minwidth200"><label>Results (numeric)</label></td>
-					<td><input id="ea_<?php echo $num_ea_tab; ?>_result_numeric" regex="^-?\d{1,6}(\.\d{1,4})?$"></input></td>
+					<td><input id="ea_<?php echo $num_ea_tab; ?>_result_numeric" class="ea_table" regex="^-?\d{1,6}(\.\d{1,4})?$"></input></td>
 				</tr>
 
 				<tr>
@@ -298,7 +298,7 @@ function cc_transtria_render_ea_tabs( $num_ea_tab, $dd_multiple_options_ea ){
 
 				<tr class="not-reported">
 					<td class="not-reported"><label>Duration not reported</label></td>
-					<td><input id="ea_<?php echo $num_ea_tab; ?>_duration_notreported" type="checkbox"></input></td>
+					<td><input id="ea_<?php echo $num_ea_tab; ?>_duration_notreported" class="ea_table" type="checkbox"></input></td>
 				</tr>
 
 				<tr>

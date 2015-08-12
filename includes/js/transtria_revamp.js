@@ -41,6 +41,7 @@ function clickListen(){
 	jQuery('#add-ese-tab').on("click", copy_ese_tab );
 	
 	jQuery('a.add_ea_button').on("click", add_empty_ea_tab);
+	
 	//copy EA tabs from dropdown
 	jQuery('.ea_copy_tab_button').on("click", copy_ea_tab );
 	
@@ -416,6 +417,9 @@ function get_current_study_info(){
 			var ea_meat = data['ea'];
 			var multi_meat = data['multiple'];
 			//console.log( ea_meat);	
+			
+			//
+			jQuery.each( data['num_ea_tabs'], add_empty_ea_tab );
 					
 			//now.. populate fields!
 			//single data (from studies db table)
@@ -551,10 +555,12 @@ function get_current_study_info(){
 				
 			});
 			
-			//now handle incoming single popualation data
+			
+			//now handle incoming ea data
 			jQuery.each( ea_meat, function( ea_num, ea_data) {
 				
 				jQuery.each( ea_data, function( index, element ){
+				
 					//do we have an element div id w this index?  
 					selector_obj = jQuery("#" + index );
 					selector_obj_by_name = jQuery("input[name='" + index + "']");
@@ -619,6 +625,7 @@ function get_current_study_info(){
 				});
 				
 			});
+			
 			
 			//now handle the incoming multiple data
 			jQuery.each( multi_meat, function(index, element) {
@@ -697,6 +704,8 @@ function save_study(){
 	var studies_table_vals = {};
 	var population_table_data = jQuery('.population_table');
 	var pops_table_vals = {};
+	var ea_table_data = jQuery('.ea_table').not("[id^=ea_template]"); //ignore our ea template (hidden and from which we get/copy our ea tabs)
+	var ea_table_vals = {};
 	var index_name = "";
 	
 	jQuery.each( studies_table_data, function( index, element ){
@@ -730,6 +739,22 @@ function save_study(){
 		
 	});
 	
+	//cycle through ea data and put in flat object
+	jQuery.each( ea_table_data, function( index, element ){
+	
+		//if element is checkbox, index by name, else by id
+		if( jQuery( element ).is('input:radio')){
+			//we need to think about this.
+			index_name = jQuery(this).attr("name");
+			ea_table_vals[ index_name ] = jQuery('input[name="' + index_name + '"]:checked').val();
+			
+		} else {
+			index_name = jQuery(this).attr("id");
+			ea_table_vals[ index_name ] = get_field_value( jQuery(this ) );
+		}
+		
+	});
+	
 	//console.log( studies_table_vals);
 
 	//ajax data
@@ -741,7 +766,8 @@ function save_study(){
 		'num_ea_tabs' : num_ea_tabs,
 		'num_ese_tabs' : num_ese_tabs,
 		'studies_table_vals' : studies_table_vals,
-		'population_table_vals' : pops_table_vals
+		'population_table_vals' : pops_table_vals,
+		'ea_table_vals' : ea_table_vals
 	};
 	
 
@@ -1075,13 +1101,12 @@ function copy_ea_tab(){
 
 //TODO: can we combine this with the copy function?
 //adds blank ea tab to page, copying hidden div
-function add_empty_ea_tab(){
+function add_empty_ea_tab(  ){
 
+		var num_current_tabs = jQuery("#effect_association_tabs ul li").length;
+		var new_tab_num = num_current_tabs + 1;
 	//remove click listener from copy tab while we're here
 	jQuery('.ea_copy_tab_button').off("click", copy_ea_tab );
-
-	var num_current_tabs = jQuery("#effect_association_tabs ul li").length;
-	var new_tab_num = num_current_tabs + 1;
 	
 	//add a new tab to the ea tabs section
 	jQuery('#effect_association_tabs ul').append("<li id='ea-tab-" + new_tab_num + "' class='ea_tab'><label class='ea_tab_label' for='ea-tab-" + new_tab_num + "' data-whichea='" + new_tab_num + "'>EA TAB " + new_tab_num + "</label></li>");
