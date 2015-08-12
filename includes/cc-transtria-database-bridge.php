@@ -198,7 +198,7 @@ function cc_transtria_save_to_pops_table_raw( $studies_data, $study_id, $new_stu
 	if( $new_study == false ){
 	
 		$error_array = [];
-		$error_array[] = 'stuff to say';
+		//$error_array[] = 'stuff to say';
 		foreach( $new_index as $pop_type => $index_val ){
 			//we need to check for the existance of these rows, yeah?
 			
