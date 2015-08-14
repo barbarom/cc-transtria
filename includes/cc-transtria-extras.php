@@ -641,6 +641,7 @@ class CC_Transtria_Extras {
 		$studies_data = $_POST['studies_table_vals'];
 		$pops_data = $_POST['population_table_vals'];
 		$ea_data = $_POST['ea_table_vals'];
+		$code_results_data = $_POST['code_table_vals'];
 		
 		$num_ese_tabs = $_POST['num_ese_tabs'];
 		$num_ea_tabs = $_POST['num_ea_tabs'];
@@ -662,11 +663,14 @@ class CC_Transtria_Extras {
 			$ea_success = 'no ea tabs';
 		}
 		
+		$code_results_success = cc_transtria_save_to_code_results( $code_results_data, $this_study_id );
+		
 		
 		$data['studies_test'] = $studies_success;
 		$data['pops_success'] = $pops_success;
 		$data['meta_success'] = $meta_success;
 		$data['ea_success'] = $ea_success;
+		$data['code_results_success'] = $code_results_success;
 		
 		//echo json_encode( $study_data['single'] );
 		echo json_encode( $data );

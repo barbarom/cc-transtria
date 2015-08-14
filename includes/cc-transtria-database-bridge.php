@@ -275,9 +275,9 @@ function cc_transtria_save_to_studies_table( $studies_data, $study_id, $new_stud
 }
 
 /**
- * Saves single study data to studies tables
+ * Saves single study data to pops table
  * 
- * @param array. Associative array of db_label => incoming value
+ * @param array, int, bool, int. Associative array of db_label => incoming value
  * @return string. Error message?
  */
 function cc_transtria_save_to_pops_table_raw( $studies_data, $study_id, $new_study = false, $num_pops_tab ){
@@ -435,9 +435,9 @@ function cc_transtria_save_to_pops_table_raw( $studies_data, $study_id, $new_stu
 }
 
 /**
- * Saves single study data to studies tables
+ * Saves single study data to ea table
  * 
- * @param array. Associative array of db_label => incoming value
+ * @param array, int, bool(opt), int. Associative array of db_label => incoming value
  * @return string. Error message?
  */
 function cc_transtria_save_to_ea_table_raw( $studies_data, $study_id, $new_study = false, $num_ea_tab ){
@@ -546,6 +546,114 @@ function cc_transtria_save_to_ea_table_raw( $studies_data, $study_id, $new_study
 	
 
 }
+
+/**
+ * Saves multiple study data (from multiselects) to code results tables
+ * 
+ * @param array, int, bool (opt). Associative array of db_label => incoming value
+ * @return string. Error message?
+ */
+function cc_transtria_save_to_code_results( $studies_data, $study_id ){
+	
+	global $wpdb;
+	
+	$parsed_studies_data = [];
+	$notparsed_studies_data = [];
+	$new_index = [];
+	
+	/*
+	//parse incoming array by ea number
+	foreach( $studies_data as $data_piece_index => $data_piece_value ){
+		
+		for( $i = 1; $i <= $num_ea_tab; $i++ ){ //foreach( $pops_types as $pop_type ){
+			
+			$this_ea_tab = 'ea_' . $i; //put into ea_# format
+			
+			if( substr( $data_piece_index, 0, strlen($this_ea_tab . '_') ) === ( $this_ea_tab . '_' ) ) {
+				//remove prepend from $data_piece_index
+				//$data_piece_index = str_replace( $this_ea_tab, '', $data_piece_index );
+				$parsed_studies_data[ $this_ea_tab ][ $data_piece_index ] = $data_piece_value;
+			} else {
+				$notparsed_studies_data[ $data_piece_index ] = $data_piece_value;
+			}
+		}
+	}
+	
+	//take each ea num array and convert to db label
+	foreach( $parsed_studies_data as $ea_type => $ea_data ){
+	
+		$new_index[ $ea_type ] = cc_transtria_match_div_ids_to_ea_columns_single( $ea_type, $ea_data, true );
+	
+	}
+	*/
+	
+	//convert incoming labels to db-specific labels
+	$parsed_studies_data = cc_transtria_match_div_ids_to_multiple_columns( $studies_data, true );
+	
+	$error_array = [];
+	
+	//first, delete old rows 
+	$ea_del_row = $wpdb->delete( 
+		$wpdb->transtria_code_results, 
+		array( 
+			'ID' => (int)$study_id
+		)
+	);
+	
+	//next, grab array of all code numbers = code names
+	$codetype_sql =
+		"
+		SELECT codetypeID, codetype
+		FROM $wpdb->transtria_codetype
+		order by codetypeID
+		"
+	;
+	
+	$codetypes_by_id = $wpdb->get_results( $codetype_sql, OBJECT_K );
+	
+	//massage incoming codetype array to be number => label
+	$parsed_codetypes = [];
+	foreach( $codetypes_by_id as $codetypeID => $weird_array ){
+		$parsed_codetypes[ (int)$codetypeID ] = $weird_array->codetype;	
+	}
+	
+	//take each incoming study_label and map to code type id, then insert into db
+	foreach( $parsed_studies_data as $code_name => $code_val_array ){
+		//get db label
+		$codenum = array_search( $code_name, $parsed_codetypes );
+		
+		//now, cycle through code_val_array and insert to code results table
+		foreach( $code_val_array as $code_val ){
+			
+			$index_val['ID'] = (int)$study_id;
+			$index_val['codetypeID'] = (int)$codenum;
+			$index_val['result'] = (int)$code_val;
+				
+			$code_result_row = $wpdb->insert( 
+				$wpdb->transtria_code_results, 
+				$index_val,
+				array(
+					'%d',
+					'%d',
+					'%s'
+				)
+			);
+				
+			if( $code_result_row === false ){
+				$error_array[] = "Error: new code result db insert error for codelabel: " . $code_name . ", codetypeID: " . $codenum . " and study id";
+			} else {
+				$error_array[] = $code_val . ": " . $code_result_row; //should be 1
+			}
+		}
+		
+	}
+	
+	return $error_array;
+		
+	
+
+}
+
 
 
 

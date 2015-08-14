@@ -612,7 +612,7 @@ function cc_transtria_match_div_ids_to_studies_columns( $study_labels = null, $t
  * @param array
  * @return array
  */
-function cc_transtria_match_div_ids_to_multiple_columns( $study_labels = null ){
+function cc_transtria_match_div_ids_to_multiple_columns( $study_labels = null, $to_db = false ){
 
 	//we can use array_flip if we need to!
 	$all_pops_strings = array(
@@ -713,6 +713,45 @@ function cc_transtria_match_div_ids_to_multiple_columns( $study_labels = null ){
 	$flipped_array = array_flip( $db_to_div_array );
 	
 	if( !empty( $study_labels ) ){
+	
+		if( $to_db == false ) {
+			$new_study_labels = [];
+			//we have an incoming array whose labels need to be changed
+			foreach( $study_labels as $label => $value ){
+
+				if( in_array( $label, $flipped_array ) ) {
+					//var_dump( $label );
+					$new_label = $db_to_div_array[ $label ];
+					$new_study_labels[ $new_label ] = $value;
+				} else {
+					$new_study_labels[ $label ] = $value; //same ol
+				}
+			
+			}
+			return $new_study_labels;	
+		} else {
+			//array_search - Searches the array for a given value and returns the corresponding key if successful
+			//$flipped_array = $db_to_div_array;
+			$new_study_labels = [];
+		//	return $study_labels;
+			//we have an incoming array whose labels need to be changed
+			foreach( $study_labels as $label => $value ){
+			
+				$db_key = array_search( $label, $db_to_div_array );
+				
+				if( $db_key !== false ){
+					$new_study_labels[ $db_key ] = $value;
+				} else {
+					$new_study_labels[ $label ] = 0; //same ol
+				}
+			
+			}
+			return $new_study_labels;
+		
+		}
+	
+		/*
+	
 		$new_study_labels = [];
 		//we have an incoming array whose labels need to be changed
 		foreach( $study_labels as $label => $value ){
@@ -726,7 +765,8 @@ function cc_transtria_match_div_ids_to_multiple_columns( $study_labels = null ){
 			}
 		
 		}
-		return $new_study_labels;	
+		return $new_study_labels;
+*/		
 		
 	} else {
 		//we're just returning the above array

@@ -706,6 +706,10 @@ function save_study(){
 	var pops_table_vals = {};
 	var ea_table_data = jQuery('.ea_table').not("[id^=ea_template]"); //ignore our ea template (hidden and from which we get/copy our ea tabs)
 	var ea_table_vals = {};
+	var code_table_data = jQuery(".multiselect"); //multiselects all go to code results table
+	var checked_holder = {};
+	var checked_holder_vals = []; //holds multiselect vals while iterating
+	var code_table_vals = {};
 	var index_name = "";
 	
 	jQuery.each( studies_table_data, function( index, element ){
@@ -755,7 +759,19 @@ function save_study(){
 		
 	});
 	
-	//console.log( studies_table_vals);
+	jQuery.each( code_table_data, function( index, element ){
+	
+		index_name = jQuery(this).attr("id");
+		//multiselect returns object array of those checked
+		checked_holder = jQuery(this).multiselect("getChecked");
+		jQuery.each( checked_holder, function(  ){
+			checked_holder_vals.push( jQuery(this).val() );
+		
+		});
+		code_table_vals[ index_name ] = checked_holder_vals;
+		checked_holder_vals = []; //clear our temp checked vals
+	});
+	//console.log( code_table_vals);
 
 	//ajax data
 	var ajax_action = 'save_study_data';
@@ -767,7 +783,8 @@ function save_study(){
 		'num_ese_tabs' : num_ese_tabs,
 		'studies_table_vals' : studies_table_vals,
 		'population_table_vals' : pops_table_vals,
-		'ea_table_vals' : ea_table_vals
+		'ea_table_vals' : ea_table_vals,
+		'code_table_vals' : code_table_vals
 	};
 	
 
