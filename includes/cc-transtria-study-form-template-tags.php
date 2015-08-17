@@ -359,7 +359,7 @@ function cc_transtria_render_form(){
 					<tr>
 						<td>Domestic funding source type:</td>
 						<td >
-							<select id="domesticfundingsources" multiple="multiple" class="multiselect general-multiselect code_results_table">
+							<select id="domesticfundingsources"class="studies_table">
 								<?php //$dd_singleton_options are indexed by the div id - "abstractor", for example
 									foreach( $dd_singleton_options['domesticfundingsources'] as $k => $v ){
 									echo '<option value="' . $k . '">' . $v->descr . '</option>';
@@ -379,7 +379,7 @@ function cc_transtria_render_form(){
 					<tr>
 						<td>Funding purpose:</td>
 						<td>
-							<select id="fundingpurpose" multiple="multiple" class="multiselect general-multiselect code_results_table">
+							<select id="fundingpurpose" class="studies_table">
 								<?php //$dd_singleton_options are indexed by the div id - "abstractor", for example
 									foreach( $dd_singleton_options['fundingpurpose'] as $k => $v ){
 									echo '<option value="' . $k . '">' . $v->descr . '</option>';

@@ -622,12 +622,13 @@ function cc_transtria_save_to_code_results( $studies_data, $study_id ){
 		//get db label
 		$codenum = array_search( $code_name, $parsed_codetypes );
 		
+		$error_array[] = 'code_val_array for $code_name: ' . $code_name . ', and $codenum: ' . $codenum . ' : ' . $code_val_array;
 		//now, cycle through code_val_array and insert to code results table
 		foreach( $code_val_array as $code_val ){
 			
 			$index_val['ID'] = (int)$study_id;
 			$index_val['codetypeID'] = (int)$codenum;
-			$index_val['result'] = (int)$code_val;
+			$index_val['result'] = $code_val;
 				
 			$code_result_row = $wpdb->insert( 
 				$wpdb->transtria_code_results, 

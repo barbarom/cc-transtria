@@ -426,7 +426,7 @@ function cc_transtria_match_div_ids_to_studies_columns( $study_labels = null, $t
 		'designlimitations_notreported' => 'designlimitations_notreported',
 		'data_collection' => 'data_collection',
 		'validitythreatflag' => 'validitythreatflag',
-		'validitythreat' => 'validity_threats',
+		//'validitythreat' => 'validity_threats', //multi
 		'PubMedID_notreported' => 'PubMedID_notreported',
 		'grantcontractnumber_notreported' => 'grantcontractnumber_notreported',
 		'fundingamount_notreported' => 'fundingamount_notreported',
@@ -640,7 +640,8 @@ function cc_transtria_match_div_ids_to_multiple_columns( $study_labels = null, $
 		'Indicator' => 'intervention_indicators', 
 		'OutcomesAccessed' => 'intervention_outcomes_assessed', 
 		'EvaluationType' => 'evaluation_type', 
-		'EvaluationMethod' => 'evaluation_methods'
+		'EvaluationMethod' => 'evaluation_methods',
+		'ValidityThreats' => 'validity_threats'
 		
 	);
 	
@@ -668,6 +669,8 @@ function cc_transtria_match_div_ids_to_multiple_columns( $study_labels = null, $
 		//'ese.RepresentativeSubpopulations' => 'ese_representative_subpopulations',  //TODO: check w Transtria - is this a thing anymore??
 		'ese.RepresentativeSubpopulations' => 'ese_representative_subpopulations',
 		'ipe.RepresentativeSubpopulations' => 'ipe_representative_subpopulations',
+		'ipe.HighRiskSubpopulations' => 'ipe_hr_subpopulations',
+		'ese.HighRiskSubpopulations' => 'ese_hr_subpopulations',
 
 		'ese.HighRiskSubpopulations' => 'ese_hr_subpopulations',
 		'ese0.HighRiskSubpopulations' => 'ese0_hr_subpopulations',

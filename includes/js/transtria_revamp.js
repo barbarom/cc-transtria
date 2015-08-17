@@ -657,8 +657,8 @@ function get_current_study_info(){
 			usrmsgshell.fadeOut(6000);
 			
 			//refresh all our multiselects
-			jQuery(".general-multiselect").multiselect("refresh");
-			jQuery(".ea_multiselect").multiselect("refresh");
+			jQuery(".multiselect").multiselect("refresh");
+			jQuery(".ea_multiselect").multiselect("refresh"); //these are special
 			
 			//refresh the endnote info
 			get_citation_data();
@@ -761,6 +761,7 @@ function save_study(){
 	
 	jQuery.each( code_table_data, function( index, element ){
 	
+		checked_holder_vals = []; //clear our temp checked vals
 		index_name = jQuery(this).attr("id");
 		//multiselect returns object array of those checked
 		checked_holder = jQuery(this).multiselect("getChecked");
@@ -769,7 +770,6 @@ function save_study(){
 		
 		});
 		code_table_vals[ index_name ] = checked_holder_vals;
-		checked_holder_vals = []; //clear our temp checked vals
 	});
 	//console.log( code_table_vals);
 
