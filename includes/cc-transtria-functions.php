@@ -752,28 +752,14 @@ function cc_transtria_match_div_ids_to_multiple_columns( $study_labels = null, $
 			return $new_study_labels;
 		
 		}
-	
-		/*
-	
-		$new_study_labels = [];
-		//we have an incoming array whose labels need to be changed
-		foreach( $study_labels as $label => $value ){
-
-			if( in_array( $label, $flipped_array ) ) {
-				//var_dump( $label );
-				$new_label = $db_to_div_array[ $label ];
-				$new_study_labels[ $new_label ] = $value;
-			} else {
-				$new_study_labels[ $label ] = $value; //same ol
-			}
-		
-		}
-		return $new_study_labels;
-*/		
 		
 	} else {
-		//we're just returning the above array
-		return $db_to_div_array;
+		//we're just returning the above array IF !$to_db (if there are no study_data for this section, return nothing)
+		if( $to_db ){
+			return $db_to_div_array;
+		} else {
+			return 0;
+		}
 	}
 	
 }

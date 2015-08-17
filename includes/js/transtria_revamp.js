@@ -685,8 +685,14 @@ function load_selected_study(){
 
 //save study
 function save_study(){
-	//what's the study id in the url?
-	this_study_id = getURLParameter('study_id');
+	
+	//if hidden param 
+	if( jQuery("#this_study_id").val().length > 0 ){
+		this_study_id = jQuery("#this_study_id").val();
+	} else {
+		//what's the study id in the url?
+		this_study_id = getURLParameter('study_id');
+	}
 	
 	//user messages
 	var spinny = jQuery('.basic_info_messages .spinny');
@@ -795,8 +801,10 @@ function save_study(){
 		type: "POST",
 		dataType: "json",
 		beforeSend: function() {
+			//scroll to top
+			jQuery("html, body").animate({ scrollTop: 0 }, "slow");
 			//show user message and spinny
-			usrmsg.html("Saving Study" );
+			usrmsg.html("Saving Study, hang tight..." );
 			usrmsgshell.fadeIn();
 			spinny.fadeIn();
 			
@@ -804,7 +812,7 @@ function save_study(){
 	}).success( function( data ) {
 		
 		//var post_meat = JSON.parse( data );
-		console.log('success: ' + data['pops_success']);
+		//console.log('success: ' + data['pops_success']);
 		
 		usrmsg.html("Saving Study, ID: " + data['study_id'] );
 		
@@ -819,8 +827,22 @@ function save_study(){
 		//var post_meat = data['single']; // = JSON.parse(data);
 	}).complete( function( data ) {
 		spinny.hide();
-		usrmsgshell.fadeOut( 1000 );
-
+		//console.log( data );
+		if( ( data.responseJSON["study_id"] > 0 ) && ( data.responseJSON["study_id"] != null ) && ( data.responseJSON["study_id"] != undefined ) ){
+			usrmsg.html("Study ID " + data.responseJSON["study_id"] + " saved successfully!" );
+			usrmsgshell.fadeOut( 6000 );
+			
+			//make sure our returned study id is saved to hidden param
+			jQuery("#this_study_id").val( data.responseJSON["study_id"] );
+			
+			//add study value to select#studyid and mark as checked
+			jQuery("select#studyid").append("<option value='" + data.responseJSON["study_id"] + "'>" + data.responseJSON["study_id"] + "</option>")
+			jQuery("select#studyid").val( data.responseJSON["study_id"] );
+			
+		} else { 
+			usrmsg.html("Problem occured while saving. <br /> Report: " + data.responseJSON );
+			jQuery("#this_study_id").val("");
+		}
 		
 	
 	});;

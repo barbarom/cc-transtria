@@ -70,6 +70,8 @@ function cc_transtria_render_form(){
 	</div>
 	
 	<form id="study_form">
+	
+		<input type="hidden" id="this_study_id" value="<?php echo $this_study_id; ?>">
 		<div class="bottom_margin">			
 			<label for="studyid"><strong>Study ID</strong></label>
 			<select id="studyid">
@@ -380,6 +382,7 @@ function cc_transtria_render_form(){
 						<td>Funding purpose:</td>
 						<td>
 							<select id="fundingpurpose" class="studies_table">
+								<option value="-1">-- Select --</option>
 								<?php //$dd_singleton_options are indexed by the div id - "abstractor", for example
 									foreach( $dd_singleton_options['fundingpurpose'] as $k => $v ){
 									echo '<option value="' . $k . '">' . $v->descr . '</option>';
