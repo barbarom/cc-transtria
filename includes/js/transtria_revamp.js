@@ -500,7 +500,7 @@ function get_current_study_info(){
 			var pops_meat = data['population_single'];
 			var ea_meat = data['ea'];
 			var multi_meat = data['multiple'];
-			console.log( multi_meat);	
+			//console.log( multi_meat);	
 			
 			//add a ea tab shell for all the incoming ea tabs
 			//jQuery.each( data['num_ea_tabs'], add_empty_ea_tab );
@@ -1056,6 +1056,9 @@ function copy_ese_tab(){
 	//add a new tab to the pops section
 	jQuery('#sub_pops_tabs').append("<div id='ese" + new_tab_id + "-tab' class='subpops_tab'><label class='subpops_tab_label' for='ese" + new_tab_id + "-tab' data-whichpop='ese" + new_tab_id + "'>ese" + new_tab_id + "</label></div>");
 	
+	//destroy the multiselects before we clone
+	jQuery('.ese_copy_multiselect').multiselect("destroy");
+	
 	//we will need to copy the main ese tab
 	var new_ese_copy = jQuery('.ese_content').clone(true,true);
 	
@@ -1080,9 +1083,9 @@ function copy_ese_tab(){
 	new_ese_copy.addClass( new_pop_type + "_content");
 	
 	//change all the div ids that begin w ese
-	var all_ese_ids = new_ese_copy.find("[id^=ese]").not(".multiselect");
-	var all_ese_names = new_ese_copy.find("[name^=ese]").not(".multiselect");
-	var all_ese_multis = new_ese_copy.find(".multiselect");
+	var all_ese_ids = new_ese_copy.find("[id^=ese]");
+	var all_ese_names = new_ese_copy.find("[name^=ese]");
+	//var all_ese_multis = new_ese_copy.find(".multiselect");
 	
 	//go through each div in the clone and update the id
 	jQuery.each( all_ese_ids, function() {
@@ -1110,26 +1113,6 @@ function copy_ese_tab(){
 		jQuery(this).attr("name", new_name);
 	});
 	
-	//TODO: what is going on here?
-	//go through each copied multiselect and initialize
-	jQuery.each( all_ese_multis, function() {
-		try {
-			jQuery( this ).multiselect('destroy')
-		} catch(e) {
-			console.log(e)
-		}
-                
-		jQuery( this ).multiselect({
-			header: true,
-			position: {my: 'left bottom', at: 'left top'},
-			selectedText: '# of # checked',
-			//selectedList: 4, 
-			close: function( event, ui ){
-				//multiselect_listener( jQuery(this) );
-			}
-		});
-	
-	})
 	
 		
 	//append to population div id="populations_Tabs
@@ -1151,7 +1134,17 @@ function copy_ese_tab(){
 		
 	});
 	
-		
+	
+	//recreate ese multiselects
+	jQuery(".ese_copy_multiselect").multiselect({
+		header: true,
+		position: {my: 'left bottom', at: 'left top'},
+		selectedText: '# of # checked',
+		//selectedList: 4, 
+		close: function( event, ui ){
+			//multiselect_listener( jQuery(this) );
+		}
+	}); 
 
 }
 

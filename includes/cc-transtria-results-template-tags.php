@@ -286,7 +286,7 @@ function cc_transtria_render_ea_tabs( $num_ea_tab, $dd_multiple_options_ea ){
 
 				<tr>
 					<td><label>Duration</label></td>
-					<td><select id="ea_<?php echo $num_ea_tab; ?>_duration" >
+					<td><select id="ea_<?php echo $num_ea_tab; ?>_duration" class="ea_table">
 						<option value="">---Select---</option>
 						<?php //$dd_multiple_options_ea are indexed by the general id
 						foreach( $dd_multiple_options_ea['ea_duration'] as $k => $v ){
@@ -304,20 +304,20 @@ function cc_transtria_render_ea_tabs( $num_ea_tab, $dd_multiple_options_ea ){
 				<tr>
 					<td><label>Result Type</label></td>
 					<td><span id="ea_<?php echo $num_ea_tab; ?>_result_type" data-ea-count="<?php echo $num_ea_tab; ?>">
-						<input type="radio" value="C" name="ea_<?php echo $num_ea_tab; ?>_result_type">Crude
-						<input type="radio" value="A" name="ea_<?php echo $num_ea_tab; ?>_result_type">Adjusted
+						<input type="radio" class="ea_table" value="C" name="ea_<?php echo $num_ea_tab; ?>_result_type">Crude
+						<input type="radio" class="ea_table" value="A" name="ea_<?php echo $num_ea_tab; ?>_result_type">Adjusted
 					</span></td>
 				</tr>
 
 				<tr id="ea_<?php echo $num_ea_tab; ?>_results_variables_tr" class="noshow">
 					<td><label>Variables</label></td>
-					<td colspan="3"><textarea id="ea_<?php echo $num_ea_tab; ?>_results_variables" style="width:98%"></textarea></td>
+					<td colspan="3"><textarea id="ea_<?php echo $num_ea_tab; ?>_results_variables" class="ea_table" style="width:98%"></textarea></td>
 				</tr>
 
 				<tr>
 					<td><label>Statistical analysis model:</label></td>
 					<td>
-						<select id="ea_<?php echo $num_ea_tab; ?>_result_statistical_model">
+						<select id="ea_<?php echo $num_ea_tab; ?>_result_statistical_model" class="ea_table">
 							<option value="">---Select---</option>
 							<?php //$dd_multiple_options_ea are indexed by the general id
 							foreach( $dd_multiple_options_ea['ea_result_statistical_model'] as $k => $v ){
@@ -331,7 +331,6 @@ function cc_transtria_render_ea_tabs( $num_ea_tab, $dd_multiple_options_ea ){
 				<tr>
 					<td><label>Result evaluation population:</label></td>
 					<td><select id="ea_<?php echo $num_ea_tab; ?>_result_evaluation_population" class="ea_multiselect multiselect code_results_table" multiple="multiple">
-						<option value="">---Select---</option>
 						<?php //$dd_multiple_options_ea are indexed by the general id
 						foreach( $dd_multiple_options_ea['ea_result_evaluation_population'] as $k => $v ){
 							echo '<option value="' . $k . '">' . $v->descr . '</option>';
@@ -344,8 +343,8 @@ function cc_transtria_render_ea_tabs( $num_ea_tab, $dd_multiple_options_ea ){
 					<td><label>Result Subpopulation:</label>
 					</td>
 					<td><span id="ea_<?php echo $num_ea_tab; ?>_result_subpopulationYN">
-						<input type="radio" value="Y" name="ea_<?php echo $num_ea_tab; ?>_result_subpopulationYN">Yes
-						<input type="radio" value="N" name="ea_<?php echo $num_ea_tab; ?>_result_subpopulationYN">No
+						<input type="radio" class="ea_table" value="Y" name="ea_<?php echo $num_ea_tab; ?>_result_subpopulationYN">Yes
+						<input type="radio" class="ea_table" value="N" name="ea_<?php echo $num_ea_tab; ?>_result_subpopulationYN">No
 					</span>
 
 					</td>
@@ -363,7 +362,7 @@ function cc_transtria_render_ea_tabs( $num_ea_tab, $dd_multiple_options_ea ){
 
 				<tr>
 					<td><label>Indicator Direction:</label></td>
-					<td><select id="ea_<?php echo $num_ea_tab; ?>_result_indicator_direction">
+					<td><select id="ea_<?php echo $num_ea_tab; ?>_result_indicator_direction" class="ea_table">
 						<option value="">---Select---</option>
 						<?php //$dd_multiple_options_ea are indexed by the general id
 						foreach( $dd_multiple_options_ea['ea_result_indicator_direction'] as $k => $v ){
@@ -376,7 +375,7 @@ function cc_transtria_render_ea_tabs( $num_ea_tab, $dd_multiple_options_ea ){
 
 				<tr>
 					<td><label>Outcome Direction:</label></td>
-					<td><select id="ea_<?php echo $num_ea_tab; ?>_result_outcome_direction">
+					<td><select id="ea_<?php echo $num_ea_tab; ?>_result_outcome_direction" class="ea_table">
 						<option value="">---Select---</option>
 						<?php //$dd_multiple_options_ea are indexed by the general id
 						foreach( $dd_multiple_options_ea['ea_result_outcome_direction'] as $k => $v ){
@@ -389,12 +388,12 @@ function cc_transtria_render_ea_tabs( $num_ea_tab, $dd_multiple_options_ea ){
 
 				<tr>
 					<td><label>Effect/Association direction:</label></td>
-					<td><input id="ea_<?php echo $num_ea_tab; ?>_result_effect_association_direction" readonly></input></td>
+					<td><input id="ea_<?php echo $num_ea_tab; ?>_result_effect_association_direction" class="ea_table" readonly></input></td>
 				</tr>
 
 				<tr>
 					<td><label>Result Strategy:</label></td>
-					<td><select id="ea_<?php echo $num_ea_tab; ?>_result_strategy">
+					<td><select id="ea_<?php echo $num_ea_tab; ?>_result_strategy" class="ea_table">
 						<option value="">---Select---</option>
 						<?php //$dd_multiple_options_ea are indexed by the general id
 						foreach( $dd_multiple_options_ea['ea_result_strategy'] as $k => $v ){
@@ -408,7 +407,7 @@ function cc_transtria_render_ea_tabs( $num_ea_tab, $dd_multiple_options_ea ){
 
 				<tr>
 					<td><label>Outcome type:</label></td>
-					<td><select id="ea_<?php echo $num_ea_tab; ?>_result_outcome_type">
+					<td><select id="ea_<?php echo $num_ea_tab; ?>_result_outcome_type" class="ea_table">
 						<option value="">---Select---</option>
 						<?php //$dd_multiple_options_ea are indexed by the general id
 						foreach( $dd_multiple_options_ea['ea_result_outcome_type'] as $k => $v ){
@@ -419,7 +418,7 @@ function cc_transtria_render_ea_tabs( $num_ea_tab, $dd_multiple_options_ea ){
 					<td><label>Other:</label>
 					</td>
 					<td>
-						<input id="ea_<?php echo $num_ea_tab; ?>_result_outcome_type_other" type="text"></input>
+						<input id="ea_<?php echo $num_ea_tab; ?>_result_outcome_type_other" class="ea_table" type="text"></input>
 					</td>
 				</tr>
 
@@ -436,7 +435,7 @@ function cc_transtria_render_ea_tabs( $num_ea_tab, $dd_multiple_options_ea ){
 					<td><label>Other:</label>
 					</td>
 					<td>
-						<input id="ea_<?php echo $num_ea_tab; ?>_result_outcome_accessed_other" type="text"></input>
+						<input id="ea_<?php echo $num_ea_tab; ?>_result_outcome_accessed_other" class="ea_table" type="text"></input>
 					</td>
 				</tr>
 
@@ -452,7 +451,7 @@ function cc_transtria_render_ea_tabs( $num_ea_tab, $dd_multiple_options_ea ){
 					<td><label>Other:</label>
 					</td>
 					<td>
-						<input id="ea_<?php echo $num_ea_tab; ?>_result_measures_other" type="text"></input>
+						<input id="ea_<?php echo $num_ea_tab; ?>_result_measures_other" class="ea_table" type="text"></input>
 					</td>
 				</tr>
 
@@ -470,7 +469,7 @@ function cc_transtria_render_ea_tabs( $num_ea_tab, $dd_multiple_options_ea ){
 
 				<tr>
 					<td><label>Method of Accessing Significance:</label></td>
-					<td><select id="ea_<?php echo $num_ea_tab; ?>_result_statistical_measure">
+					<td><select id="ea_<?php echo $num_ea_tab; ?>_result_statistical_measure" class="ea_table">
 						<option value="">---Select---</option>
 						<?php //$dd_multiple_options_ea are indexed by the general id
 						foreach( $dd_multiple_options_ea['ea_result_statistical_measure'] as $k => $v ){
@@ -486,8 +485,8 @@ function cc_transtria_render_ea_tabs( $num_ea_tab, $dd_multiple_options_ea ){
 					<td>
 						<input type="text" id="ea_<?php echo $num_ea_tab; ?>_statistical_measure_p_value" style="display:none"></input>
 						<div id="statistical_measure_p_value">
-							<input id="ea_<?php echo $num_ea_tab; ?>_statistical_measure_ci_value1" size="7" maxlength="7" ></input> to
-							<input id="ea_<?php echo $num_ea_tab; ?>_statistical_measure_ci_value2" size="7" maxlength="7" ></input>
+							<input id="ea_<?php echo $num_ea_tab; ?>_statistical_measure_ci_value1" class="ea_table" size="7" maxlength="7" ></input> to
+							<input id="ea_<?php echo $num_ea_tab; ?>_statistical_measure_ci_value2" class="ea_table" size="7" maxlength="7" ></input>
 						</div>
 					</td>
 				</tr>
@@ -495,8 +494,8 @@ function cc_transtria_render_ea_tabs( $num_ea_tab, $dd_multiple_options_ea ){
 				<tr>
 					<td><label>Significant?:</label></td>
 					<td><span id="ea_<?php echo $num_ea_tab; ?>_result_significant">
-						<input type="radio" value="Y" name="ea_1_result_significant">Yes
-						<input type="radio" value="N" name="ea_1_result_significant">No
+						<input type="radio" class="ea_table" value="Y" name="ea_<?php echo $num_ea_tab; ?>_result_significant">Yes
+						<input type="radio" class="ea_table" value="N" name="ea_<?php echo $num_ea_tab; ?>_result_significant">No
 					</span></td>
 				</tr>
 				
