@@ -444,6 +444,33 @@ function show_adjusted_variables(){
 	}
 }
 
+function init_adjusted_variables(){
+
+	//get the parent?
+	var input_wrapper = jQuery("input[name$='_result_type']").parent();
+	
+	jQuery.each( input_wrapper, function(){ 
+		//var checked_results_types = jQuery("input[name$='_result_type']:checked");
+		var checked_results_types = input_wrapper.find("input:checked");
+		
+		//if we have checked result types
+		if( checked_results_types.length > 0 ) {
+			jQuery.each( checked_results_types, function(){
+				//if 'adjusted' is chosen, show variables box
+				if( jQuery( this ).val() == "A" ){
+					jQuery( this ).parents('.one_ea_tab').find('[id$="_results_variables_tr"]').removeClass("noshow");
+				} else {
+					//hide variables box
+					jQuery( this ).parents('.one_ea_tab').find('[id$="_results_variables_tr"]').addClass("noshow");
+				}
+			
+			});
+		}
+	});
+
+
+}
+
 //get current study info via ajax
 function get_current_study_info(){
 
@@ -768,8 +795,10 @@ function get_current_study_info(){
 			intervention_indicator_limiter( jQuery('#ea_template_result_indicator') );
 			
 			//listen to Result Type radio (and show variables textarea if adjusted is selected on any)
-			jQuery("input[name$='_result_type']").off("click", show_adjusted_variables );
 			jQuery("input[name$='_result_type']").on("click", show_adjusted_variables );
+			
+			//initialize adjusted variables (to show if saved value is 'adjusted' for ResultType radio
+			init_adjusted_variables();
 			
 		}).always(function() {
 			//regardless of outcome, hide spinny
