@@ -23,32 +23,40 @@ function clickListen(){
 	
 	//save selected study
 	jQuery("a.save_study").on("click", save_study );
-	
-	//TODO: ability status listener
-	//jQuery("").on("click", ability_status_limiter );
-	
-	
-	//TODO: restrict options in EA tabs based on intervention tabs. 
 
-	//TODO: variables in ea tabs on 'adjusted'
+	
+	//TODO: restrict options in EA tabs based on intervention tabs.
 	
 	//TODO: ea direction!
 	
-	//TODO: list indicators selected (Intervention/Partnerships tab)
-	
+
 	
 	//Add new ESE tabs
 	jQuery('#add-ese-tab').on("click", copy_ese_tab );
 	
+	//add new ea tab
 	jQuery('a.add_ea_button').on("click", add_empty_ea_tab);
 	
 	//copy EA tabs from dropdown
 	jQuery('.ea_copy_tab_button').on("click", copy_ea_tab );
 	
-	//TODO: add new EA tab from a#add_effect_association_row
-	//jQuery("#add_effect_association_row").on("click", add_ea_tab);  //from div#effect_association_tab_template
-
 } 
+
+function ea_clickListen(){
+	//show/hide variables textarea if 'adjusted'/'crude' is selected
+	jQuery("input[name$='_result_type']").on("click", show_adjusted_variables );
+
+	//initialize intervention indicator limiter 
+	/*var num_current_tabs = jQuery("#effect_association_tabs ul li").length;
+	for ( var tabCounter = 1; tabCounter <= num_current_tabs; tabCounter++ ) {
+		//our current ea indicator tab
+		intervention_indicator_limiter( jQuery('#ea_' + tabCounter + '_result_indicator') );
+	} 
+	//update our template, as well
+	intervention_indicator_limiter( jQuery('#ea_template_result_indicator') );
+	*/
+}
+
 
 
 //function setup_multiselect(comp) {
@@ -100,7 +108,20 @@ function setup_multiselect() {
 
 			}
 		});
-		//searchtooltype
+		//searchtooltype..why is this special?
+		
+		jQuery('#intervention_indicators').multiselect({
+		
+			close : function (e) {
+				var num_current_tabs = jQuery("#effect_association_tabs ul li").length;
+				for ( var tabCounter = 1; tabCounter <= num_current_tabs; tabCounter++ ) {
+					//our current ea indicator tab
+					intervention_indicator_limiter( jQuery('#ea_' + tabCounter + '_result_indicator') );
+				} 
+				//update our template, as well
+				intervention_indicator_limiter( jQuery('#ea_template_result_indicator') );
+           }
+		});
 
 		
 		jQuery("[id$=_ability_status]").multiselect({
@@ -233,6 +254,45 @@ function ea_tab_toggle(){
 	
 }
 
+//limit options for intervention components for ea tabs (based on #intervention_indicators)
+function intervention_indicator_limiter( incoming ){
+
+	//this should be incoming..
+	//var which_ea_select = jQuery('#ea_template_result_indicator');
+	var which_ea_select = incoming;
+	
+	//on the intervention tab - this is the original 
+	var original_select = jQuery('#intervention_indicators').multiselect('getChecked');
+
+	var _ea_options = which_ea_select.find('option');
+
+	var _values = [];
+
+	for ( var i=0; i < original_select.length; i++ ) {
+		_values.push(original_select[i].value);
+	}
+
+	//remove all options from ea_option array
+	for ( var i=_ea_options.length-1; i >= 0; i-- ) {
+		if (_values.indexOf(_ea_options[i].value) == -1) {
+			_ea_options[i].remove();
+		}
+	}
+
+	_ea_values=[];
+	for (var i=0; i < _ea_options.length; i++) {
+		_ea_values.push(_ea_options[i].value);
+	}
+
+	//populate with the selected items from intervention_outcomes_assessed multiselect
+	for (var i=0; i < original_select.length; i++) {
+		if (_ea_values.indexOf( original_select[i].value ) == -1) {
+			which_ea_select.append('<option value="' + original_select[i].value +'">' + original_select[i].title + "</option>");
+		}
+	}
+
+	which_ea_select.multiselect('refresh');
+}
 
 //get endnote id citation info, for selected endnote id
 function get_citation_data(){
@@ -359,6 +419,30 @@ function get_phase_by_endnoteid( which_endnoteid ){
 	}
 }
 
+//show 'variables' textarea if corresponding result_type 'Adjusted' radio is selected
+function show_adjusted_variables(){
+
+	//get the parent?
+	var input_wrapper = jQuery( this ).parent();
+	
+	//disable _result_type
+	//var checked_results_types = jQuery("input[name$='_result_type']:checked");
+	var checked_results_types = input_wrapper.find("input:checked");
+	
+	//if we have checked result types
+	if( checked_results_types.length > 0 ) {
+		jQuery.each( checked_results_types, function(){
+			//if 'adjusted' is chosen, show variables box
+			if( jQuery( this ).val() == "A" ){
+				jQuery( this ).parents('.one_ea_tab').find('[id$="_results_variables_tr"]').removeClass("noshow");
+			} else {
+				//hide variables box
+				jQuery( this ).parents('.one_ea_tab').find('[id$="_results_variables_tr"]').addClass("noshow");
+			}
+		
+		});
+	}
+}
 
 //get current study info via ajax
 function get_current_study_info(){
@@ -416,10 +500,14 @@ function get_current_study_info(){
 			var pops_meat = data['population_single'];
 			var ea_meat = data['ea'];
 			var multi_meat = data['multiple'];
-			//console.log( ea_meat);	
+			console.log( multi_meat);	
 			
-			//
-			jQuery.each( data['num_ea_tabs'], add_empty_ea_tab );
+			//add a ea tab shell for all the incoming ea tabs
+			//jQuery.each( data['num_ea_tabs'], add_empty_ea_tab );
+			for( var it = 0; it < data['num_ea_tabs']; it++){
+				add_empty_ea_tab();
+			}
+			//console.log( data['num_ea_tabs'] );
 					
 			//now.. populate fields!
 			//single data (from studies db table)
@@ -666,6 +754,18 @@ function get_current_study_info(){
 			//refresh copytab dropdown options
 			refresh_ea_copy_tab();
 			
+			//initialize ability status limiter
+			ability_status_initialize();
+			
+			//initialize the intervention component limiter
+			var num_current_tabs = jQuery("#effect_association_tabs ul li").length;
+			for ( var tabCounter = 1; tabCounter <= num_current_tabs; tabCounter++ ) {
+				//our current ea indicator tab
+				intervention_indicator_limiter( jQuery('#ea_' + tabCounter + '_result_indicator') );
+			} 
+			//update our template, as well
+			intervention_indicator_limiter( jQuery('#ea_template_result_indicator') );
+			
 		}).always(function() {
 			//regardless of outcome, hide spinny
 			//jQuery('.action-steps').removeClass("hidden");
@@ -899,13 +999,26 @@ function ability_status_limiter( all_pops ){
 	jQuery( "tr." + which_pop + "-ability-percent").hide();
 	
 	//show only those ability percents chosen
-	jQuery.each( which_selected, function() {
-	
-		var this_selection = parseInt(this);
-		jQuery( "tr." + which_pop + "-ability-percent[data-ability-value='" + this_selection + "']" ).show();
-	
-	});
+	if( which_selected != null ){
+		jQuery.each( which_selected, function() {
+		
+			var this_selection = parseInt(this);
+			jQuery( "tr." + which_pop + "-ability-percent[data-ability-value='" + this_selection + "']" ).show();
+		
+		});
+	}
 
+}
+
+function ability_status_initialize(){
+
+	//on page laod, trigger ability status listener on all pop drop downs
+	var initial_ability_dropdowns = jQuery( "[id$='_ability_status']" );
+	jQuery.each( initial_ability_dropdowns, function() {
+		jQuery( this ).on("click", ability_status_limiter );
+		jQuery( this ).trigger("click" );
+	});
+	
 }
 
 //update the ea copy tab ('.ea_copy_tab') options
@@ -966,9 +1079,10 @@ function copy_ese_tab(){
 	new_ese_copy.removeClass("ese_content");
 	new_ese_copy.addClass( new_pop_type + "_content");
 	
-	//change all the div ids that beginw ese
-	var all_ese_ids = new_ese_copy.find("[id^=ese]");
-	var all_ese_names = new_ese_copy.find("[name^=ese]");
+	//change all the div ids that begin w ese
+	var all_ese_ids = new_ese_copy.find("[id^=ese]").not(".multiselect");
+	var all_ese_names = new_ese_copy.find("[name^=ese]").not(".multiselect");
+	var all_ese_multis = new_ese_copy.find(".multiselect");
 	
 	//go through each div in the clone and update the id
 	jQuery.each( all_ese_ids, function() {
@@ -995,6 +1109,28 @@ function copy_ese_tab(){
 		
 		jQuery(this).attr("name", new_name);
 	});
+	
+	//TODO: what is going on here?
+	//go through each copied multiselect and initialize
+	jQuery.each( all_ese_multis, function() {
+		try {
+			jQuery( this ).multiselect('destroy')
+		} catch(e) {
+			console.log(e)
+		}
+                
+		jQuery( this ).multiselect({
+			header: true,
+			position: {my: 'left bottom', at: 'left top'},
+			selectedText: '# of # checked',
+			//selectedList: 4, 
+			close: function( event, ui ){
+				//multiselect_listener( jQuery(this) );
+			}
+		});
+	
+	})
+	
 		
 	//append to population div id="populations_Tabs
 	new_ese_copy.appendTo( jQuery("#population_tabs") );
@@ -1014,36 +1150,8 @@ function copy_ese_tab(){
 		jQuery('.subpops_content.' + which_content).show();
 		
 	});
+	
 		
-	//Mel doesn't think we need to get data from the server at all but rather from the page itself, so she's commenting this out for now..
-	/*
-	//ajax data
-	var ajax_action = 'create_evaluation_sample_div';
-	var ajax_data = {
-		'action': ajax_action,
-		'new_tab_id' : new_tab_id,
-		'transtria_nonce' : transtria_ajax.ajax_nonce
-	};		
-	jQuery.ajax({
-		url: transtria_ajax.ajax_url, 
-		data: ajax_data, 
-		type: "POST",
-		dataType: "json",
-
-	}).success( function( data ) {
-		console.log(data.d);
-	}).complete( function( data ){
-				//we're done!
-				//spinny.css("display", "none");
-
-				//refresh all our multiselects
-				//jQuery(".multiselect").multiselect("refresh");
-				
-	}).always(function() {
-		//regardless of outcome, hide spinny
-		//jQuery('.action-steps').removeClass("hidden");
-	});
-	*/
 
 }
 
@@ -1060,6 +1168,9 @@ function copy_ea_tab(){
 	
 	//add a new tab to the ea tabs section
 	jQuery('#effect_association_tabs ul').append("<li id='ea-tab-" + new_tab_num + "' class='ea_tab'><label class='ea_tab_label' for='ea-tab-" + new_tab_num + "' data-whichea='" + new_tab_num + "'>EA TAB " + new_tab_num + "</label></li>");
+	
+	//destroy the multiselects before we clone
+	jQuery('.ea_multiselect').multiselect("destroy");
 	
 	//we will need to copy whichever tab is selected
 	var new_ea_copy = jQuery('#effect_association_tab_' + whichtab_to_copy ).clone(true,true);
@@ -1135,20 +1246,39 @@ function copy_ea_tab(){
 	
 	//refresh copytab options
 	refresh_ea_copy_tab();
+	
+	//add clicklistener 'variables' textarea click listen based on whether "adjsuted" is selected
+	//turn off previous click listen and turn back on
+	jQuery("input[name$='_result_type']").off("click", show_adjusted_variables );
+	jQuery("input[name$='_result_type']").on("click", show_adjusted_variables );
 
+	//create the multiselects again
+	//ea multiselects
+	jQuery(".ea_multiselect").multiselect({
+		header: true,
+		position: {my: 'left bottom', at: 'left top'},
+		selectedText: '# of # checked',
+		//selectedList: 4, 
+		close: function( event, ui ){
+			//multiselect_listener( jQuery(this) );
+		}
+	}); 
 }
 
 //TODO: can we combine this with the copy function?
 //adds blank ea tab to page, copying hidden div
-function add_empty_ea_tab(  ){
+function add_empty_ea_tab(){
 
-		var num_current_tabs = jQuery("#effect_association_tabs ul li").length;
-		var new_tab_num = num_current_tabs + 1;
+	var num_current_tabs = jQuery("#effect_association_tabs ul li").length;
+	var new_tab_num = num_current_tabs + 1;
 	//remove click listener from copy tab while we're here
 	jQuery('.ea_copy_tab_button').off("click", copy_ea_tab );
 	
 	//add a new tab to the ea tabs section
 	jQuery('#effect_association_tabs ul').append("<li id='ea-tab-" + new_tab_num + "' class='ea_tab'><label class='ea_tab_label' for='ea-tab-" + new_tab_num + "' data-whichea='" + new_tab_num + "'>EA TAB " + new_tab_num + "</label></li>");
+	
+	//destroy the multiselects before we clone
+	jQuery('.ea_multiselect').multiselect("destroy");
 	
 	//we will need to copy whichever tab is selected
 	var new_ea_copy = jQuery('#effect_association_tab_template' ).clone(true,true);
@@ -1233,7 +1363,24 @@ function add_empty_ea_tab(  ){
 	
 	//refresh copytab options
 	refresh_ea_copy_tab();
+	
+	//add clicklistener 'variables' textarea click listen based on whether "adjsuted" is selected
+	//turn off previous click listen and turn back on
+	jQuery("input[name$='_result_type']").off("click", show_adjusted_variables );
+	jQuery("input[name$='_result_type']").on("click", show_adjusted_variables );
 
+	//create the multiselects again
+	//ea multiselects
+	jQuery(".ea_multiselect").multiselect({
+		header: true,
+		position: {my: 'left bottom', at: 'left top'},
+		selectedText: '# of # checked',
+		//selectedList: 4, 
+		close: function( event, ui ){
+			//multiselect_listener( jQuery(this) );
+		}
+	}); 
+		
 }
 
 
@@ -1241,7 +1388,6 @@ function add_empty_ea_tab(  ){
 function getURLParameter(name) {
 	return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null
 }
-
 
 
 
@@ -1264,6 +1410,9 @@ jQuery( document ).ready(function() {
 	
 	//get current study info
 	get_current_study_info();
+	
+	//initialize ability status limiter
+	ea_clickListen();
 	
 	
 });
