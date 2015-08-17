@@ -763,8 +763,13 @@ function get_current_study_info(){
 				//our current ea indicator tab
 				intervention_indicator_limiter( jQuery('#ea_' + tabCounter + '_result_indicator') );
 			} 
+			
 			//update our template, as well
 			intervention_indicator_limiter( jQuery('#ea_template_result_indicator') );
+			
+			//listen to Result Type radio (and show variables textarea if adjusted is selected on any)
+			jQuery("input[name$='_result_type']").off("click", show_adjusted_variables );
+			jQuery("input[name$='_result_type']").on("click", show_adjusted_variables );
 			
 		}).always(function() {
 			//regardless of outcome, hide spinny
