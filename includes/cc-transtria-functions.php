@@ -49,7 +49,7 @@ function cc_transtria_get_group_id(){
             $group_id = 690;  //Mel's compy
             break;
         case 'http://dev.communitycommons.org':
-            $group_id = 592; //TODO
+            $group_id = 5321; //TODO
             break;
         default:
             $group_id = 594;  //TODO
@@ -182,7 +182,7 @@ function cc_transtria_get_singleton_dropdown_ids(){
 		'searchtooltype' => 'SearchToolType',
 		'searchtoolname' => 'SearchToolName',
 		"fundingsource" => "FundingSource",
-		"domesticfundingsources" => "domesticfundingsources",
+		"domesticfundingsources" => "DomesticFundingSourceType",
 		"fundingpurpose" => "fundingpurpose",
 		'StudyDesign' => 'StudyDesign',
 		"validity_threats"=> "ValidityThreats",

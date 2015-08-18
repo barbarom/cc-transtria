@@ -24,7 +24,10 @@ function clickListen(){
 	//save selected study
 	jQuery("a.save_study").on("click", save_study );
 
-	
+	//reminder messages on results page
+	jQuery("#validatorstoptime, #abstractorstoptime").on("change", function() {
+		stop_time_validate();
+	});
 	//TODO: restrict options in EA tabs based on intervention tabs.
 	
 	//TODO: ea direction!
@@ -267,6 +270,7 @@ function ea_tab_toggle(){
 	
 }
 
+
 //limit options for intervention components for ea tabs (based on #intervention_indicators)
 function intervention_indicator_limiter( incoming ){
 
@@ -346,6 +350,7 @@ function outcomes_assessed_limiter( incoming ){
 
 	which_ea_select.multiselect('refresh');
 }
+
 
 //get endnote id citation info, for selected endnote id
 function get_citation_data(){
@@ -483,57 +488,6 @@ function get_phase_by_endnoteid( which_endnoteid ){
 	}
 }
 
-//show 'variables' textarea if corresponding result_type 'Adjusted' radio is selected
-function show_adjusted_variables(){
-
-	//get the parent?
-	var input_wrapper = jQuery( this ).parent();
-	
-	//disable _result_type
-	//var checked_results_types = jQuery("input[name$='_result_type']:checked");
-	var checked_results_types = input_wrapper.find("input:checked");
-	
-	//if we have checked result types
-	if( checked_results_types.length > 0 ) {
-		jQuery.each( checked_results_types, function(){
-			//if 'adjusted' is chosen, show variables box
-			if( jQuery( this ).val() == "A" ){
-				jQuery( this ).parents('.one_ea_tab').find('[id$="_results_variables_tr"]').removeClass("noshow");
-			} else {
-				//hide variables box
-				jQuery( this ).parents('.one_ea_tab').find('[id$="_results_variables_tr"]').addClass("noshow");
-			}
-		
-		});
-	}
-}
-
-function init_adjusted_variables(){
-
-	//get the parent?
-	var input_wrapper = jQuery("input[name$='_result_type']").parent();
-	
-	jQuery.each( input_wrapper, function(){ 
-		//var checked_results_types = jQuery("input[name$='_result_type']:checked");
-		var checked_results_types = input_wrapper.find("input:checked");
-		
-		//if we have checked result types
-		if( checked_results_types.length > 0 ) {
-			jQuery.each( checked_results_types, function(){
-				//if 'adjusted' is chosen, show variables box
-				if( jQuery( this ).val() == "A" ){
-					jQuery( this ).parents('.one_ea_tab').find('[id$="_results_variables_tr"]').removeClass("noshow");
-				} else {
-					//hide variables box
-					jQuery( this ).parents('.one_ea_tab').find('[id$="_results_variables_tr"]').addClass("noshow");
-				}
-			
-			});
-		}
-	});
-
-
-}
 
 //get current study info via ajax
 function get_current_study_info(){
@@ -866,6 +820,9 @@ function get_current_study_info(){
 			//initialize adjusted variables (to show if saved value is 'adjusted' for ResultType radio
 			init_adjusted_variables();
 			
+			//stop time messages on results page
+			stop_time_validate();
+			
 		}).always(function() {
 			//regardless of outcome, hide spinny
 			//jQuery('.action-steps').removeClass("hidden");
@@ -1087,7 +1044,60 @@ function get_field_value( incoming ){
 
 //listen to ability status multiselect and show/hide corresponding percentage inputs
 
-//TODO - this on form instantiation
+/***** form field functionality ****/
+
+//show 'variables' textarea if corresponding result_type 'Adjusted' radio is selected
+function show_adjusted_variables(){
+
+	//get the parent?
+	var input_wrapper = jQuery( this ).parent();
+	
+	//disable _result_type
+	//var checked_results_types = jQuery("input[name$='_result_type']:checked");
+	var checked_results_types = input_wrapper.find("input:checked");
+	
+	//if we have checked result types
+	if( checked_results_types.length > 0 ) {
+		jQuery.each( checked_results_types, function(){
+			//if 'adjusted' is chosen, show variables box
+			if( jQuery( this ).val() == "A" ){
+				jQuery( this ).parents('.one_ea_tab').find('[id$="_results_variables_tr"]').removeClass("noshow");
+			} else {
+				//hide variables box
+				jQuery( this ).parents('.one_ea_tab').find('[id$="_results_variables_tr"]').addClass("noshow");
+			}
+		
+		});
+	}
+}
+
+function init_adjusted_variables(){
+
+	//get the parent?
+	var input_wrapper = jQuery("input[name$='_result_type']").parent();
+	
+	jQuery.each( input_wrapper, function(){ 
+		//var checked_results_types = jQuery("input[name$='_result_type']:checked");
+		var checked_results_types = input_wrapper.find("input:checked");
+		
+		//if we have checked result types
+		if( checked_results_types.length > 0 ) {
+			jQuery.each( checked_results_types, function(){
+				//if 'adjusted' is chosen, show variables box
+				if( jQuery( this ).val() == "A" ){
+					jQuery( this ).parents('.one_ea_tab').find('[id$="_results_variables_tr"]').removeClass("noshow");
+				} else {
+					//hide variables box
+					jQuery( this ).parents('.one_ea_tab').find('[id$="_results_variables_tr"]').addClass("noshow");
+				}
+			
+			});
+		}
+	});
+
+
+}
+
 function ability_status_limiter( all_pops ){
 
 
@@ -1121,6 +1131,45 @@ function ability_status_initialize(){
 	
 }
 
+
+//display message on Results page if stop time isn't entered
+function stop_time_validate( thisid, thisvalue ){
+	//console.log("stop time validate functiooon");
+	//really convoluted way of detecting SELECTED event with combobox...change not working, grr
+	thisid = thisid || '';
+	thisvalue = thisvalue || '';
+
+	//if abstractor selected and no stop time selected, give message 
+	var abstractorVal = jQuery("#abstractor").val();
+	var validatorVal = jQuery("#validator").val();
+
+	if( ( ( validatorVal != '' ) && ( validatorVal != 'None' ) && ( thisid == '' ) ) ||
+		( ( thisid == "validator" ) && ( thisvalue != "00" ) ) ) {
+		if ( jQuery('#validatorstoptime').val() == '' ){
+			jQuery('.validator-stop-time-reminder').show();
+		} else {
+			jQuery('.validator-stop-time-reminder').hide();
+		}
+	} else if( ( ( ( validatorVal == '' ) || ( validatorVal == 'None' ) ) && ( thisid == '' ) ) || 
+		( ( thisid == "validator" ) && ( thisvalue == "00" ) ) ) {
+		jQuery('.validator-stop-time-reminder').hide();
+	}
+
+	if( ( ( abstractorVal != '' ) && ( abstractorVal != 'None' ) && ( thisid == '' ) ) ||
+		( ( thisid == "abstractor" ) && ( thisvalue != "00" ) ) ) { 
+		if( jQuery('#abstractorstoptime').val() == '' ){
+			jQuery('.abstractor-stop-time-reminder').show(); 
+		} else {
+			jQuery('.abstractor-stop-time-reminder').hide();
+		}
+	} else if( ( ( ( abstractorVal == '' ) || ( abstractorVal == 'None' ) ) && ( thisid == '' ) ) ||
+		( ( thisid == "abstractor" ) && ( thisvalue == "00" ) ) ) {
+			jQuery('.abstractor-stop-time-reminder').hide();
+	}
+}
+
+
+
 //update the ea copy tab ('.ea_copy_tab') options
 function refresh_ea_copy_tab(){
 	
@@ -1137,9 +1186,6 @@ function refresh_ea_copy_tab(){
 	tab_selects.html( txt );
 	
 }
-
-
-
 
 //when 'add ese' is clicked, copy original ESE tab 
 function copy_ese_tab(){
@@ -1506,6 +1552,9 @@ jQuery( document ).ready(function() {
 	
 	//initialize ability status limiter
 	ea_clickListen();
+	
+	//initialize message on results page and then add change listener to stop time inputs
+	stop_time_validate();
 	
 	
 });

@@ -251,7 +251,7 @@ function cc_transtria_render_form(){
 						<td></td>					
 					</tr>				
 					<tr>
-						<td><span>PubMedID not reported:</span></td>
+						<td class="not-reported"><label>PubMedID not reported:</label></td>
 						<td>
 							<input id="PubMedID_notreported" type="checkbox" />
 						</td>
@@ -315,7 +315,7 @@ function cc_transtria_render_form(){
 						<td></td>					
 					</tr>				
 					<tr>
-						<td><span>Grant or Contract # not reported:</span></td>
+						<td class="not-reported"><label>Grant or Contract # not reported:</label></td>
 						<td>
 							<input type="checkbox" id="grantcontractnumber_notreported" class="studies_table" />
 						</td>
@@ -329,7 +329,7 @@ function cc_transtria_render_form(){
 						<td></td>					
 					</tr>				
 					<tr>
-						<td><span>Amount of funding not reported:</span></td>
+						<td class="not-reported"><label>Amount of funding not reported:</label></td>
 						<td>
 							<input id="fundingamount_notreported" class="studies_table" type="checkbox" />
 						</td>
@@ -351,7 +351,7 @@ function cc_transtria_render_form(){
 						</td>					
 					</tr>				
 					<tr>
-						<td><span>Source of funding not reported:</span></td>
+						<td class="not-reported"><label>Source of funding not reported:</label></td>
 						<td>
 							<input id="fundingsource_notreported" class="studies_table" type="checkbox" />
 						</td>
@@ -378,7 +378,7 @@ function cc_transtria_render_form(){
 						<td></td>					
 					</tr>				
 					<tr>
-						<td><span>Domestic funding source type not reported:</span></td>
+						<td class="not-reported"><label>Domestic funding source type not reported:</label></td>
 						<td>
 							<input id="domesticfundingsources_notreported" class="studies_table" type="checkbox" />
 						</td>
@@ -399,7 +399,7 @@ function cc_transtria_render_form(){
 						<td></td>					
 					</tr>				
 					<tr>
-						<td><span>Funding purpose not reported:</span></td>
+						<td class="not-reported"><label>Funding purpose not reported:</label></td>
 						<td>
 							<input id="fundingpurpose_notreported" class="studies_table" type="checkbox" />
 						</td>
@@ -434,8 +434,8 @@ function cc_transtria_render_form(){
 						</td>					
 					</tr>				
 					<tr>
-						<td>
-							<span>Design limitations not reported:</span>
+						<td class="not-reported">
+							<label>Design limitations not reported:</label>
 						</td>
 						<td>
 							<input id="designlimitations_notreported" class="studies_table" type="checkbox" />
@@ -474,7 +474,7 @@ function cc_transtria_render_form(){
 						<td></td>					
 					</tr>				
 					<tr>
-						<td><span>Threat to internal validity not reported:</span></td>
+						<td class="not-reported"><label>Threat to internal validity not reported:</label></td>
 						<td>
 							<input id="validitythreat_notreported" class="studies_table" type="checkbox" />
 						</td>

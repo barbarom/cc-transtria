@@ -29,7 +29,7 @@ button, a.button{
 /* START TABS CSS */
 .tabs {
   position: relative;   
-  min-height: 2800px; /* This part sucks */
+  min-height: 2500px; /* This part sucks */
   clear: both;
   margin: 25px 0;
 }
@@ -188,8 +188,12 @@ table.showolddata-table h4{
 	border: 5px solid #d6d6d6;
 	padding: 0 1em 1em;
 }
-
-
+.entry-content table.population_container {
+	border: 5px solid #d6d6d6;
+}
+.entry-content table.population_container tbody tr td {
+    padding: 0.5em 1em;
+}
 
 
 [type=radio]:checked ~ label {
