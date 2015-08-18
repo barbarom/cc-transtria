@@ -21,6 +21,16 @@ function clickListen(){
 	//load in selected study
 	jQuery("a#load_this_study").on("click", load_selected_study );
 	
+	//load in selected study
+	jQuery("a#start_new_study").on("click", function(){
+
+		//construct url
+		var redirectTo = transtria_ajax.study_home;
+		
+		//aaand, redirect
+		window.location.replace( redirectTo );
+	});
+	
 	//save selected study
 	jQuery("a.save_study").on("click", save_study );
 
@@ -308,7 +318,11 @@ function intervention_indicator_limiter( incoming ){
 		}
 	}
 
-	which_ea_select.multiselect('refresh');
+	try { 
+		which_ea_select.multiselect('refresh');
+	} catch(e){
+		console.log(e);
+	}
 }
 
 //limit options for outcomes assessed for ea tabs (based on #intervention_outcomes_assessed)
@@ -348,7 +362,11 @@ function outcomes_assessed_limiter( incoming ){
 		}
 	}
 
-	which_ea_select.multiselect('refresh');
+	try { 
+		which_ea_select.multiselect('refresh');
+	} catch(e){
+		console.log(e);
+	}
 }
 
 
@@ -547,10 +565,10 @@ function get_current_study_info(){
 			var multi_meat = data['multiple'];
 			//console.log( multi_meat);	
 			
-			//add a ea tab shell for all the incoming ea tabs
+			//add a ea tab shell for all the incoming ea tabs - should have been added in php already
 			//jQuery.each( data['num_ea_tabs'], add_empty_ea_tab );
 			for( var it = 0; it < data['num_ea_tabs']; it++){
-				add_empty_ea_tab();
+				//add_empty_ea_tab();
 			}
 			//console.log( data['num_ea_tabs'] );
 					
@@ -1145,7 +1163,7 @@ function stop_time_validate( thisid, thisvalue ){
 
 	if( ( ( validatorVal != '' ) && ( validatorVal != 'None' ) && ( thisid == '' ) ) ||
 		( ( thisid == "validator" ) && ( thisvalue != "00" ) ) ) {
-		if ( jQuery('#validatorstoptime').val() == '' ){
+		if ( ( jQuery('#validatorstoptime').val() == '' ) || ( parseInt( jQuery('#validatorstoptime').val()  ) == 0 ) ){
 			jQuery('.validator-stop-time-reminder').show();
 		} else {
 			jQuery('.validator-stop-time-reminder').hide();
@@ -1157,7 +1175,7 @@ function stop_time_validate( thisid, thisvalue ){
 
 	if( ( ( abstractorVal != '' ) && ( abstractorVal != 'None' ) && ( thisid == '' ) ) ||
 		( ( thisid == "abstractor" ) && ( thisvalue != "00" ) ) ) { 
-		if( jQuery('#abstractorstoptime').val() == '' ){
+		if ( ( jQuery('#abstractorstoptime').val() == '' ) || ( parseInt( jQuery('#abstractorstoptime').val() ) == 0 ) ){
 			jQuery('.abstractor-stop-time-reminder').show(); 
 		} else {
 			jQuery('.abstractor-stop-time-reminder').hide();
@@ -1408,6 +1426,9 @@ function copy_ea_tab(){
 //adds blank ea tab to page, copying hidden div
 function add_empty_ea_tab(){
 
+	var spinny = jQuery("#results_content .spinny");
+	spinny.show();
+	
 	var num_current_tabs = jQuery("#effect_association_tabs ul li").length;
 	var new_tab_num = num_current_tabs + 1;
 	//remove click listener from copy tab while we're here
@@ -1520,6 +1541,7 @@ function add_empty_ea_tab(){
 		}
 	}); 
 		
+	spinny.hide();
 }
 
 
@@ -1554,7 +1576,7 @@ jQuery( document ).ready(function() {
 	ea_clickListen();
 	
 	//initialize message on results page and then add change listener to stop time inputs
-	stop_time_validate();
+	//stop_time_validate();
 	
 	
 });

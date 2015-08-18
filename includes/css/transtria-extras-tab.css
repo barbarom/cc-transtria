@@ -68,6 +68,12 @@ button, a.button{
   margin-left: -1px; 
   position: relative;
   left: 1px; 
+  color: #757575;
+  font-weight:bold;
+  text-transform:uppercase;
+}
+.tab label.primary_tab_label{
+	font-size:1.2em;
 }
 #citation_tabs ul li,
 #effect_association_tabs ul li {
@@ -82,9 +88,10 @@ button, a.button{
 #sub_pops_tabs label.subpops_tab_label.active,
 #citation_tabs ul li.active,
 #effect_association_tabs label.ea_tab_label.active {
-	background: #eee; 
+	background: white; 
 	padding: 6px; 
-	border: 8px solid #888; 
+	border: 8px solid #888;
+	color:#222222;
 }
 
 #effect_association_tabs ul li{
@@ -98,7 +105,7 @@ button, a.button{
 
 .content {
   position: absolute;
-  top: 28px;
+  top: 36px;
   left: 0;
   background: white;
   right: 0;
@@ -133,7 +140,8 @@ button, a.button{
 	font-weight: bold;
 }
 .basic_info_messages  .spinny,
-.citation_spinny.spinny {
+.citation_spinny.spinny,
+#results_content .spinny {
 	background-image: url('images/ajax-loader.gif');
 	background-repeat:no-repeat;
 	background-position:center center;
@@ -144,6 +152,11 @@ button, a.button{
     width: 16px;
 	padding-top:8px;
 }
+tr.result-user-message td{
+	font-weight:bold;
+	color:red;
+}
+
 
 .title_info {
 	padding: 0 2em 0.5em;
@@ -200,6 +213,7 @@ table.showolddata-table h4{
   background: white;
   border-bottom: 1px solid white;
   z-index: 2;
+	color:#555555;
 }
 [type=radio]:checked ~ label ~ .content {
   z-index: 1;
@@ -209,6 +223,8 @@ table.showolddata-table h4{
 
 form#study_form a.save_study {
 	font-size: 2em;
+    font-weight: bold;
+    margin-top: 0.5em;
     width: 200px;
 }
 
@@ -228,7 +244,9 @@ select option{
 
 
 
-
+.placeholder-tr{
+	height:3em;
+}
 input.no-edit{
 	border: none;
 	background-color: white !important;
@@ -240,7 +258,12 @@ input.no-edit{
 .minwidth200{
 	min-width:200px !important;
 }
-
+.notopborder, td.notopborder{
+	border-top: none !important;
+}
+.nobottomborder, td.nobottomborder{
+	border-bottom: none !important;
+}
 
 
 .not-reported label {

@@ -25,7 +25,8 @@
 function cc_transtria_render_form(){
 
 	//are we loading an existing study?
-	$this_study_id = $_GET["study_id"];
+	if( !empty( $_GET["study_id"] ) ) 
+		$this_study_id = $_GET["study_id"];
 
 	//get all study ids in system.  If url param not in system, set this_study_id to null
 	$all_study_ids = cc_transtria_get_study_ids();
@@ -55,7 +56,7 @@ function cc_transtria_render_form(){
 	$dd_multiple_options_ea = cc_transtria_get_multiple_dropdown_options_ea( ); //all options for pops sub tabs
 
 	//bundle field options into single array (or whatever, really) to send to other render functions
-	$field_data = [];
+	$field_data;
 	$field_data['dd_singleton_options'] = $dd_singleton_options;
 	$field_data['dd_multiple_options_pops'] = $dd_multiple_options_pops;
 	$field_data['dd_multiple_options_ea'] = $dd_multiple_options_ea;
@@ -83,7 +84,8 @@ function cc_transtria_render_form(){
 				} ?>
 			</select>
 			<span>
-				<a id="load_this_study" class="button">Load this study!</a>
+				<a id="load_this_study" class="button">Load selected study</a>
+				<a id="start_new_study" class="button">Start New Study</a>
 			</span>		
 		</div>
 		
@@ -109,7 +111,7 @@ function cc_transtria_render_form(){
 		   <label for="tab-1" class="primary_tab_label">Basic Info</label>
        
 		   <div id="basic_form_content" class="content">
-				<table id="citation_table">
+				<table id="citation_table" class="nobottomborder">
 					<tr>
 						<td class="citation_button" colspan="2">
 							<!--<button>SHOW ENDNOTE CITATION DATA</button>-->
@@ -125,9 +127,9 @@ function cc_transtria_render_form(){
 							GENERAL
 						</td>
 					</tr>
-					<tr>
+					<tr class="nobottomborder">
 						<td>
-							<table>
+							<table class="nobottomborder">
 								<tr>
 									<td>
 										Abstractor:
@@ -166,7 +168,7 @@ function cc_transtria_render_form(){
 							</table>
 						</td>
 						<td>
-							<table>
+							<table class="nobottomborder">
 								<tr>
 									<td>
 										Validator:
@@ -204,7 +206,7 @@ function cc_transtria_render_form(){
 						</td>			
 					</tr>
 				</table>
-				<table>			
+				<table class="nobottomborder">			
 					<tr>
 						<td colspan="3" class="inner_table_header">
 							STUDY
@@ -300,7 +302,7 @@ function cc_transtria_render_form(){
 						</td>					
 					</tr>				
 				</table>
-				<table>			
+				<table class="nobottomborder">			
 					<tr>
 						<td colspan="3" class="inner_table_header">
 							FUNDING
@@ -406,7 +408,7 @@ function cc_transtria_render_form(){
 						<td></td>					
 					</tr>				
 				</table>
-				<table>			
+				<table class="nobottomborder">			
 					<tr>
 						<td colspan="3" class="inner_table_header">
 							DESIGN

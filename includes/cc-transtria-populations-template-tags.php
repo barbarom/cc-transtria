@@ -34,7 +34,8 @@ function cc_transtria_render_populations_tab( $field_data ){
 function cc_transtria_render_populations_header( $field_data ){
 
 	//are we loading in a study?
-	$this_study_id = $_GET["study_id"];
+	if( !empty( $_GET["study_id"] ) ) 
+		$this_study_id = $_GET["study_id"];
 	
 	$dd_singleton_options = $field_data['dd_singleton_options'];
 	$dd_multiple_options_pops = $field_data['dd_multiple_options_pops'];
@@ -109,6 +110,9 @@ function cc_transtria_render_populations_header( $field_data ){
 		
 		} ?>
 		
+		
+		<a class="button save_study alignright">SAVE STUDY</a>
+				
 	</div>
 		
 	<?php
@@ -523,8 +527,8 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 
 			<tr class="<?php echo $which_pop; ?>_not_general">
 				<td colspan="4">
-					<table style="border:1px solid">
-						<tr><th colspan="6">Race Percentages</th></tr>
+					<table style="border:5px solid #a6a6a6; margin:1px">
+						<tr class="inner_table_header"><th colspan="6">Race Percentages</th></tr>
 						<tr>
 							<td>Black</td>
 							<td>White</td>
@@ -581,12 +585,6 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 			
 			<tr></tr>
 			
-			<tr>
-				<td colspan="3"></td>
-				<td class="submit_form">
-					<a class="button save_study alignright">SAVE STUDY</a>
-				</td>
-			</tr>
 			
 		</table>
 	

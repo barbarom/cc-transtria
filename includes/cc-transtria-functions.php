@@ -93,8 +93,8 @@ function cc_transtria_get_assignments_permalink( $page = 1, $group_id = false ) 
     $permalink = cc_transtria_get_home_permalink( $group_id ) . cc_transtria_get_assignments_slug() . '/' . $page . '/';
     return apply_filters( "cc_transtria_assignments_permalink", $permalink, $group_id);
 }
-function cc_transtria_get_analysis_permalink( $section = false, $metro_id = false ) {
-    $permalink = cc_transtria_get_home_permalink( $group_id ) . cc_transtria_get_analysis_slug() . '/' . $page . '/';
+function cc_transtria_get_analysis_permalink( $section = false, $group_id = false ) {
+    $permalink = cc_transtria_get_home_permalink( $group_id ) . cc_transtria_get_analysis_slug() . '/';
     return apply_filters( "cc_transtria_analysis_permalink", $permalink, $group_id);
 
     // If we've specified a section, build it, else assume health.
@@ -564,7 +564,7 @@ function cc_transtria_match_div_ids_to_studies_columns( $study_labels = null, $t
 		
 			//because in_array is looking at values and we need to get db values
 			$flipped_array = array_flip( $db_to_div_array );
-			$new_study_labels = [];
+			$new_study_labels;
 			//we have an incoming array whose labels need to be changed
 			foreach( $study_labels as $label => $value ){
 				if( in_array( $label, $flipped_array ) ) {
@@ -580,7 +580,7 @@ function cc_transtria_match_div_ids_to_studies_columns( $study_labels = null, $t
 		} else {
 			//array_search - Searches the array for a given value and returns the corresponding key if successful
 			//$flipped_array = $db_to_div_array;
-			$new_study_labels = [];
+			$new_study_labels;
 			//we have an incoming array whose labels need to be changed
 			foreach( $study_labels as $label => $value ){
 			
@@ -647,7 +647,7 @@ function cc_transtria_match_div_ids_to_multiple_columns( $study_labels = null, $
 	
 	
 	//array to hold pops columns
-	$all_pops_columns = [];
+	$all_pops_columns = array();
 	
 	foreach( $all_pops_strings as $pop ){
 	
@@ -686,7 +686,7 @@ function cc_transtria_match_div_ids_to_multiple_columns( $study_labels = null, $
 	);
 	
 	
-	$all_ea_columns = [];
+	$all_ea_columns = array();
 	
 	for( $i = 1; $i <= 100; $i++ ){
 		
@@ -718,7 +718,7 @@ function cc_transtria_match_div_ids_to_multiple_columns( $study_labels = null, $
 	if( !empty( $study_labels ) ){
 	
 		if( $to_db == false ) {
-			$new_study_labels = [];
+			$new_study_labels = array();
 			//we have an incoming array whose labels need to be changed
 			foreach( $study_labels as $label => $value ){
 
@@ -735,7 +735,7 @@ function cc_transtria_match_div_ids_to_multiple_columns( $study_labels = null, $
 		} else {
 			//array_search - Searches the array for a given value and returns the corresponding key if successful
 			//$flipped_array = $db_to_div_array;
-			$new_study_labels = [];
+			$new_study_labels;
 		//	return $study_labels;
 			//we have an incoming array whose labels need to be changed
 			foreach( $study_labels as $label => $value ){
@@ -846,7 +846,7 @@ function cc_transtria_match_div_ids_to_pops_columns_single( $which_pop, $study_l
 	if( !empty( $study_labels ) ){
 	
 		if( $to_db == false ) {
-			$new_study_labels = [];
+			$new_study_labels;
 			//we have an incoming array whose labels need to be changed
 			foreach( $study_labels as $label => $value ){
 
@@ -863,7 +863,7 @@ function cc_transtria_match_div_ids_to_pops_columns_single( $which_pop, $study_l
 		} else {
 			//array_search - Searches the array for a given value and returns the corresponding key if successful
 			//$flipped_array = $db_to_div_array;
-			$new_study_labels = [];
+			$new_study_labels;
 		//	return $study_labels;
 			//we have an incoming array whose labels need to be changed
 			foreach( $study_labels as $label => $value ){
@@ -945,7 +945,7 @@ function cc_transtria_match_div_ids_to_ea_columns_single( $which_ea, $study_labe
 	if( $to_db == false ){ 
 		//we're loading the form
 		if( !empty( $study_labels ) ){
-			$new_study_labels = [];
+			$new_study_labels;
 			//we have an incoming array whose labels need to be changed
 			foreach( $study_labels as $label => $value ){
 				
@@ -967,7 +967,7 @@ function cc_transtria_match_div_ids_to_ea_columns_single( $which_ea, $study_labe
 	} else {
 		//we're saving to db	
 		if( !empty( $study_labels ) ){
-			$new_study_labels = [];
+			$new_study_labels;
 			//we have an incoming array whose labels need to be changed
 			foreach( $study_labels as $label => $value ){
 				

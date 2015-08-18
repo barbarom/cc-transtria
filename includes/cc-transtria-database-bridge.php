@@ -90,7 +90,7 @@ function cc_transtria_save_to_metadata_table( $study_id, $num_ese_tab, $num_ea_t
 	
 	global $wpdb;
 	
-	$error_array = [];
+	$error_array;
 	
 	//prep population types we care about
 	$ese_tabs_to_db = 0;
@@ -294,9 +294,9 @@ function cc_transtria_save_to_pops_table_raw( $studies_data, $study_id, $new_stu
 		}
 	} 
 	
-	$parsed_studies_data = [];
-	$notparsed_studies_data = [];
-	$new_index = [];
+	$parsed_studies_data;
+	$notparsed_studies_data;
+	$new_index;
 	
 	//parse incoming array by pop type
 	foreach( $studies_data as $data_piece_index => $data_piece_value ){
@@ -321,7 +321,7 @@ function cc_transtria_save_to_pops_table_raw( $studies_data, $study_id, $new_stu
 	//TODO: if this works, combine things
 	if( $new_study == false ){
 	
-		$error_array = [];
+		$error_array;
 		
 		foreach( $new_index as $pop_type => $index_val ){
 			//we need to check for the existance of these rows, yeah?
@@ -386,7 +386,7 @@ function cc_transtria_save_to_pops_table_raw( $studies_data, $study_id, $new_stu
 		
 	} else {
 	
-		$error_array = [];
+		$error_array;
 		foreach( $new_index as $pop_type => $index_val ){
 			
 			//insert new study in table!
@@ -444,9 +444,9 @@ function cc_transtria_save_to_ea_table_raw( $studies_data, $study_id, $new_study
 	
 	global $wpdb;
 	
-	$parsed_studies_data = [];
-	$notparsed_studies_data = [];
-	$new_index = [];
+	$parsed_studies_data;
+	$notparsed_studies_data;
+	$new_index;
 	
 	
 	//parse incoming array by ea number
@@ -473,7 +473,7 @@ function cc_transtria_save_to_ea_table_raw( $studies_data, $study_id, $new_study
 	
 	}
 	
-	$error_array = [];
+	$error_array;
 		
 	//TODO: if this works, combine things
 	if( $new_study == false ){
@@ -557,9 +557,9 @@ function cc_transtria_save_to_code_results( $studies_data, $study_id ){
 	
 	global $wpdb;
 	
-	$parsed_studies_data = [];
-	$notparsed_studies_data = [];
-	$new_index = [];
+	$parsed_studies_data;
+	$notparsed_studies_data;
+	$new_index;
 
 	//first, delete old rows 
 	$ea_del_row = $wpdb->delete( 
@@ -569,7 +569,7 @@ function cc_transtria_save_to_code_results( $studies_data, $study_id ){
 		)
 	);
 	//output
-	$error_array = [];
+	$error_array;
 
 	if( !( is_null( $studies_data ) ) && !( empty( $studies_data ) ) ) {
 		//convert incoming labels to db-specific labels
@@ -588,7 +588,7 @@ function cc_transtria_save_to_code_results( $studies_data, $study_id ){
 		$codetypes_by_id = $wpdb->get_results( $codetype_sql, OBJECT_K );
 
 		//massage incoming codetype array to be number => label
-		$parsed_codetypes = [];
+		$parsed_codetypes;
 		foreach( $codetypes_by_id as $codetypeID => $weird_array ){
 			$parsed_codetypes[ (int)$codetypeID ] = $weird_array->codetype;	
 		}
@@ -693,7 +693,7 @@ function cc_transtria_get_pops_study_data_single( $study_id = null ){
 		array_push( $which_pops, $current_ese_tab );
 	}
 	
-	$all_pops_tabs = []; //instantiate empty array to hold all the pops data
+	$all_pops_tabs; //instantiate empty array to hold all the pops data
 	
 	foreach( $which_pops as $which_pop ){
 		//there are multiple rows in the pops table per study
@@ -787,7 +787,7 @@ function cc_transtria_get_ea_tab_data_for_study( $study_id, $num_ea_tabs = null 
 	
 	} 
 	
-	$which_ea_tabs = [];
+	$which_ea_tabs;
 	
 	//how many ea tabs do we have?
 	$ea_sql = $wpdb->prepare( 
@@ -803,7 +803,7 @@ function cc_transtria_get_ea_tab_data_for_study( $study_id, $num_ea_tabs = null 
 	
 	$form_rows = $wpdb->get_results( $ea_sql, ARRAY_A );
 	
-	$all_ea_tabs = []; //instantiate empty array to hold all the pops data
+	$all_ea_tabs = array(); //instantiate empty array to hold all the pops data
 	
 	//cycle through all ea #s and do some stuff (Mel's brain is tired right now)
 	for( $i = 1; $i <= $num_ea_tabs; $i++ ){
@@ -845,7 +845,7 @@ function cc_transtria_get_study_ids( ){
 	
 	//TODO: can we just use get_results instead of this mess?  Probably..
 	//declare our array to hold study vals
-	$study_array = [];
+	$study_array = array();
 	
 	//cycle through the array and get the int values of study id
 	foreach ( $form_rows as $row ){ //intval("string")
@@ -878,7 +878,7 @@ function cc_transtria_get_endnote_id_title( ){
 	
 	//TODO: can we just use get_results instead of this mess?  Probably..
 	//declare our array to hold study vals
-	$endnote_array = [];
+	$endnote_array;
 	
 	//cycle through the array and get the int values of study id
 	foreach ( $form_rows as $row ){ //intval("string")
@@ -916,7 +916,7 @@ function cc_transtria_get_endnote_citation_info( $endnoteid ){
 	
 	//TODO: can we just use get_results instead of this mess?  Probably..
 	//declare our array to hold study vals
-	//$endnote_array = [];
+	//$endnote_array;
 
 	
 	return $form_rows;
@@ -960,7 +960,7 @@ function cc_transtria_get_singleton_dropdown_options(){
 	$dd_ids = cc_transtria_get_singleton_dropdown_ids();
 	
 	//array to hold all the options, indexed by div_id name
-	$dd_options = [];
+	$dd_options;
 	
 	//Now, perform lookup.
 	foreach( $dd_ids as $div_id => $lookup_name ){
@@ -1127,7 +1127,7 @@ function cc_transtria_get_num_ea_tabs_for_study( $study_id ){
 	
 	global $wpdb;
 	
-	$which_ea_tabs = [];
+	$which_ea_tabs;
 	
 	//how many ea tabs do we have?
 	$meta_sql = $wpdb->prepare( 

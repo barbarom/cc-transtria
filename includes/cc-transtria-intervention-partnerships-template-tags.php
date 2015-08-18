@@ -80,7 +80,8 @@ function cc_transtria_render_intervention_partnerships_tab( $field_data ){
 			<td colspan="3"><input id="settingtype_notreported" class="studies_table" type="checkbox"></td>
 		</tr>
 
-
+		<tr class="notopborder nobottomborder placeholder-tr">&nbsp;</tr>
+		
 		<tr>
 			<td colspan="4" class="inner_table_header"><strong>Partnerships</strong></td>
 		</tr>
@@ -127,7 +128,8 @@ function cc_transtria_render_intervention_partnerships_tab( $field_data ){
 			<td colspan="3"><input id="leadagencyrole_notreported" class="studies_table" type="checkbox"></td>
 		 </tr>
 
-
+		<tr class="notopborder nobottomborder placeholder-tr">&nbsp;</tr>
+		
 		 <tr>
 			<td colspan="4" class="inner_table_header"><strong>Framework</strong></td>
 		 </tr>
@@ -166,7 +168,8 @@ function cc_transtria_render_intervention_partnerships_tab( $field_data ){
 			<td class="not-reported"><label>Theory/Framework Type not reported</label></td>
 			<td colspan="3"><input id="theoryframeworktype_notreported" class="studies_table" type="checkbox"></td>
 		 </tr>
-
+		 
+		<tr class="notopborder nobottomborder placeholder-tr">&nbsp;</tr>
 
 		 <tr>
 			<td colspan="4" class="inner_table_header"><strong>Intervention</strong></td>
