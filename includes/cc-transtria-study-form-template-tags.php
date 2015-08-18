@@ -88,11 +88,17 @@ function cc_transtria_render_form(){
 		</div>
 		
 		
-		<div id="study_basic_info">
+		<div id="study_top_info">
 			<p><strong>Study Grouping ID:</strong>
 				<input id="StudyGroupingID" class="no-edit" readonly="">
 			</p>
+			<div class="title_info">
+					Title: <span id="endnote_title"></span><br />
+					Author: <span id="endnote_author"></span><br />
+					Dates: <span id="endnote_dates"></span> <span id="endnote_dates_year"></span><br />
+				</p>
 		</div>
+		
 	
 
 	

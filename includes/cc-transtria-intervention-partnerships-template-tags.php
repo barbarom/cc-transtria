@@ -431,7 +431,7 @@ function cc_transtria_render_intervention_partnerships_tab( $field_data ){
 
 		<tr></tr>
 		<tr>
-			<td colspan="2"></td>
+			<td colspan="3"></td>
 			<td class="submit_form">
 				<a class="button save_study alignright">SAVE STUDY</a>
 			</td>

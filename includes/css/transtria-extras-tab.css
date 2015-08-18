@@ -145,6 +145,10 @@ button, a.button{
 	padding-top:8px;
 }
 
+.title_info {
+	padding: 0 2em 0.5em;
+}
+
 tr.endnote_citation_data{
 	display:none;
 }

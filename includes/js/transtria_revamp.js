@@ -120,9 +120,22 @@ function setup_multiselect() {
 				} 
 				//update our template, as well
 				intervention_indicator_limiter( jQuery('#ea_template_result_indicator') );
+				outcomes_assessed_limiter( jQuery('#ea_template_outcome_accessed') );
            }
 		});
 
+		jQuery('#intervention_outcomes_assessed').multiselect({
+		
+			close : function (e) {
+				var num_current_tabs = jQuery("#effect_association_tabs ul li").length;
+				for ( var tabCounter = 1; tabCounter <= num_current_tabs; tabCounter++ ) {
+					//our current ea indicator tab
+					outcomes_assessed_limiter( jQuery('#ea_' + tabCounter + '_result_outcome_accessed') );
+				} 
+				//update our template, as well
+				outcomes_assessed_limiter( jQuery('#ea_template_outcome_accessed') );
+           }
+		});
 		
 		jQuery("[id$=_ability_status]").multiselect({
 			header: true,
@@ -294,6 +307,46 @@ function intervention_indicator_limiter( incoming ){
 	which_ea_select.multiselect('refresh');
 }
 
+//limit options for outcomes assessed for ea tabs (based on #intervention_outcomes_assessed)
+function outcomes_assessed_limiter( incoming ){
+
+	//this should be incoming..
+	//var which_ea_select = jQuery('#ea_template_result_indicator');
+	var which_ea_select = incoming;
+	
+	//on the intervention tab - this is the original 
+	var original_select = jQuery('#intervention_outcomes_assessed').multiselect('getChecked');
+
+	var _ea_options = which_ea_select.find('option');
+
+	var _values = [];
+
+	for ( var i=0; i < original_select.length; i++ ) {
+		_values.push(original_select[i].value);
+	}
+
+	//remove all options from ea_option array
+	for ( var i=_ea_options.length-1; i >= 0; i-- ) {
+		if (_values.indexOf(_ea_options[i].value) == -1) {
+			_ea_options[i].remove();
+		}
+	}
+
+	_ea_values=[];
+	for (var i=0; i < _ea_options.length; i++) {
+		_ea_values.push(_ea_options[i].value);
+	}
+
+	//populate with the selected items from intervention_outcomes_assessed multiselect
+	for (var i=0; i < original_select.length; i++) {
+		if (_ea_values.indexOf( original_select[i].value ) == -1) {
+			which_ea_select.append('<option value="' + original_select[i].value +'">' + original_select[i].title + "</option>");
+		}
+	}
+
+	which_ea_select.multiselect('refresh');
+}
+
 //get endnote id citation info, for selected endnote id
 function get_citation_data(){
 
@@ -363,12 +416,23 @@ function get_citation_data(){
 				
 				}
 				
+				//other divs not indexed to match db
 				if( index == "endnotes_accession-num" ){
 					jQuery( "#accession-num" ).val( value );
 				} else if ( index == "endnotes_remote-database-name" ){
 					jQuery( "#remote-database-name" ).val( value );
-				} else if( index == "endnotes_remote-database-provider" ){
+				} else if ( index == "endnotes_remote-database-provider" ){
 					jQuery( "#remote-database-provider" ).val( value );
+				} 
+				//top of study form info
+				else if ( index == "endnotes_contributors_authors_author" ){
+					jQuery( "#endnote_author" ).html( value );
+				} else if ( index == "endnotes_titles_title" ){
+					jQuery( "#endnote_title" ).html( value );
+				} else if ( index == "endnotes_dates_pub-dates_date" ){
+					jQuery( "#endnote_dates" ).html( value );
+				} else if ( index == "endnotes_dates_year" ){
+					jQuery( "#endnote_dates_year" ).html( value );
 				}
 			
 			});
@@ -784,15 +848,17 @@ function get_current_study_info(){
 			//initialize ability status limiter
 			ability_status_initialize();
 			
-			//initialize the intervention component limiter
+			//initialize the intervention component limiter and outcomes assessed limiter
 			var num_current_tabs = jQuery("#effect_association_tabs ul li").length;
 			for ( var tabCounter = 1; tabCounter <= num_current_tabs; tabCounter++ ) {
 				//our current ea indicator tab
 				intervention_indicator_limiter( jQuery('#ea_' + tabCounter + '_result_indicator') );
+				outcomes_assessed_limiter( jQuery('#ea_' + tabCounter + '_result_outcome_accessed') );
 			} 
 			
 			//update our template, as well
 			intervention_indicator_limiter( jQuery('#ea_template_result_indicator') );
+			outcomes_assessed_limiter( jQuery('#ea_template_result_outcome_accessed') );
 			
 			//listen to Result Type radio (and show variables textarea if adjusted is selected on any)
 			jQuery("input[name$='_result_type']").on("click", show_adjusted_variables );
