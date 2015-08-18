@@ -23,10 +23,8 @@ function clickListen(){
 	
 	//load in selected study
 	jQuery("a#start_new_study").on("click", function(){
-
 		//construct url
 		var redirectTo = transtria_ajax.study_home;
-		
 		//aaand, redirect
 		window.location.replace( redirectTo );
 	});
@@ -41,7 +39,36 @@ function clickListen(){
 	//TODO: restrict options in EA tabs based on intervention tabs.
 	
 	//TODO: ea direction!
-	
+		
+     //Representativeness subpopulations option - show if YES, hide if NO
+     rep_subpops_show(); //on init  
+     jQuery("[name='representativeness']").on("change", function(){
+         rep_subpops_show();
+     });
+
+     //Confounders Type option - show if Confounders is YES, hide if NO
+     confounder_type_show(); //on init
+     jQuery("[name='confounders']").on("change", function(){
+         confounder_type_show();
+     });
+
+     //IPE applicability question shows HR Subpops select
+     ipe_hr_subpops_show();
+     jQuery("[name='ipe_applicability_hr_pops']").on("change", function(){
+         ipe_hr_subpops_show();
+     });
+
+     //ESE oversampling question shows HR subpops select
+     ese_hr_subpops_show();
+     jQuery("[name='ese_oversampling']").on("change", function(){
+         ese_hr_subpops_show();
+     });
+
+     //Limit strategies on EA/results tab based on ones selected on intervention
+     jQuery("#strategies").on("change", function(){
+        strategy_limit_results(); 
+     });
+     //strategy_limit_results(); //hmm, not yet, multiselects take a while to set up, apparently
 
 	
 	//Add new ESE tabs
@@ -787,17 +814,9 @@ function get_current_study_info(){
 				//selector_obj_by_name = jQuery("input[name='" + index + "']");
 				
 				if( selector_obj.length > 0 ){
-				
-					//uncheck all?
-					//selector_obj.multiselect("uncheckAll");
-					
 					//mark child options of that value as 'selected'
 					selector_obj.val( element ).prop("checked", true);
 				
-					//selector_obj.multiselect("refresh");
-					//console.log( selector_obj);
-					//console.log( index );
-					//console.log( element );
 				}
 			});
 			
@@ -841,6 +860,13 @@ function get_current_study_info(){
 			//stop time messages on results page
 			stop_time_validate();
 			
+			//field-specific limits
+			strategy_limit_results();
+			ese_hr_subpops_show();
+			ipe_hr_subpops_show();
+			confounder_type_show();
+			rep_subpops_show();
+			
 		}).always(function() {
 			//regardless of outcome, hide spinny
 			//jQuery('.action-steps').removeClass("hidden");
@@ -857,6 +883,8 @@ function load_selected_study(){
 	//aaand, redirect
 	window.location.replace( redirectTo );
 }
+
+
 
 //save study
 function save_study(){
@@ -1149,7 +1177,6 @@ function ability_status_initialize(){
 	
 }
 
-
 //display message on Results page if stop time isn't entered
 function stop_time_validate( thisid, thisvalue ){
 	//console.log("stop time validate functiooon");
@@ -1185,6 +1212,87 @@ function stop_time_validate( thisid, thisvalue ){
 			jQuery('.abstractor-stop-time-reminder').hide();
 	}
 }
+
+//show/hide representativeness subpopulations on representativeness radio YES/NO
+function rep_subpops_show(){
+	if( jQuery("[name='representativeness']:checked").val() == "Y" ){
+		jQuery("#representative_subpopulations_div").show();
+	} else {
+		jQuery("#representative_subpopulations_div").hide();
+	}
+}
+
+//show/hide confounders text area on confounders YES/NO
+function confounder_type_show(){
+	if( jQuery("[name='confounders']:checked").val() == "Y" ){
+		jQuery("tr#confounders_type").show();
+	} else {
+		jQuery("tr#confounders_type").hide();
+	}
+}
+
+//show/hide HR subpopulations on IPE tabs based on applicability to HR sub pops question
+function ipe_hr_subpops_show(){
+	if( jQuery("[name='ipe_applicability_hr_pops']:checked").val() == "Y" ){
+		jQuery("tr.ipe_hr_subpopulations").show();
+	} else {
+		jQuery("tr.ipe_hr_subpopulations").hide();
+	}
+} 
+
+//show/hide HR subpopulations on ESE tab based on oversampling question
+function ese_hr_subpops_show(){
+	if( jQuery("[name='ese_oversampling']:checked").val() == "Y" ){
+		jQuery("tr.ese_hr_subpopulations").show();
+	} else {
+		jQuery("tr.ese_hr_subpopulations").hide();
+	}
+}
+
+//Limit strategy selects on EA/Results based on intervention selection
+function strategy_limit_results( ){
+
+	var selected = jQuery("#strategies").multiselect("getChecked");
+	//get values and titles
+	var selection = {};
+	var selections = [];  //array to hold selection objects
+
+	jQuery.each( selected.filter(":input"), function(){
+	selection = { 
+	   _value : this.value,
+	   _title : this.title
+	}    
+	selections.push(selection);
+
+	});
+	//update the results strategies dropdowns
+	var resultsDropdowns = jQuery("[id$=_result_strategy]");
+
+	jQuery.each( resultsDropdowns, function() {
+		var result = jQuery(this); 
+		//remove ALL options
+		jQuery(this).find("option").remove();
+
+		//iterate for each value
+		jQuery.each(selections, function(){
+		   //result.find("option[value=" + this + "]").remove();   
+		   //add options
+		   result.append(
+			  jQuery('<option></option>').val(this._value).html(this._title)
+		   );
+		});
+	});
+
+}
+
+	
+	
+
+
+
+
+
+
 
 
 
@@ -1563,20 +1671,33 @@ jQuery( document ).ready(function() {
 	jQuery('#validatorstarttime').datetimepicker();
 	jQuery('#validatorstoptime').datetimepicker();
 	
-	//enable clicklisteners
-	clickListen();
-	
 	//set up our multiple checkboxes
 	setup_multiselect();
 	
 	//get current study info
 	get_current_study_info();
 	
+	//enable clicklisteners
+	clickListen();
+	
 	//initialize ability status limiter
 	ea_clickListen();
 	
 	//initialize message on results page and then add change listener to stop time inputs
 	//stop_time_validate();
+	
+	/*
+	jQuery.validator.setDefaults({
+		debug: true,
+		success: "valid"
+		});
+	jQuery( "#myform" ).validate({
+		rules: {
+			field: {
+			  number: true
+			}
+		}
+	}); */
 	
 	
 });
