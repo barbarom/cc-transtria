@@ -40,12 +40,6 @@ function clickListen(){
 	
 	//TODO: ea direction!
 		
-     //Representativeness subpopulations option - show if YES, hide if NO
-     rep_subpops_show(); //on init  
-     jQuery("[name='representativeness']").on("change", function(){
-         rep_subpops_show();
-     });
-
      //Confounders Type option - show if Confounders is YES, hide if NO
      confounder_type_show(); //on init
      jQuery("[name='confounders']").on("change", function(){
@@ -1210,15 +1204,6 @@ function stop_time_validate( thisid, thisvalue ){
 	} else if( ( ( ( abstractorVal == '' ) || ( abstractorVal == 'None' ) ) && ( thisid == '' ) ) ||
 		( ( thisid == "abstractor" ) && ( thisvalue == "00" ) ) ) {
 			jQuery('.abstractor-stop-time-reminder').hide();
-	}
-}
-
-//show/hide representativeness subpopulations on representativeness radio YES/NO
-function rep_subpops_show(){
-	if( jQuery("[name='representativeness']:checked").val() == "Y" ){
-		jQuery("#representative_subpopulations_div").show();
-	} else {
-		jQuery("#representative_subpopulations_div").hide();
 	}
 }
 

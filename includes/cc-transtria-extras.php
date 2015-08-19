@@ -128,6 +128,9 @@ class CC_Transtria_Extras {
 		//get endnote citation info 
 		add_action( 'wp_ajax_get_citation_info' , array( $this, 'get_citation_info' ) );
 		
+		//get data for assigments tab
+		add_action( 'wp_ajax_get_assignments' , array( $this, 'get_assignments' ) );
+		
 		add_action( 'wp_ajax_create_evaluation_sample_div' , array( $this, 'create_evaluation_sample_div' ) );		
 
 	}
@@ -378,6 +381,7 @@ class CC_Transtria_Extras {
 			//wp_enqueue_script( $this->plugin_slug . 'dynamic_page_components', plugins_url( 'js/dynamic_components.js', __FILE__ ), array( 'jquery' ), '1.1' );
 			//wp_enqueue_script( $this->plugin_slug . 'transtria_basic_js', plugins_url( 'js/transtria_basic.js', __FILE__ ), array( 'jquery' ), '1.1' );
 			wp_enqueue_script( $this->plugin_slug . 'transtria_revamp_js', plugins_url( 'js/transtria_revamp.js', __FILE__ ), array( 'jquery' ), '1.0' );
+			wp_enqueue_script( $this->plugin_slug . 'transtria_revamp_assignments_js', plugins_url( 'js/transtria_revamp_assignments.js', __FILE__ ), array( 'jquery' ), '1.0' );
 			
 			
 			wp_localize_script( 
@@ -613,6 +617,27 @@ class CC_Transtria_Extras {
 		die();
 	
 	}
+	
+	/**
+	 * Returns citation info for a given endnote id
+	 *
+	 *
+	*/
+	public function get_assignments(){
+	
+		// Is the nonce good?
+		if ( ! check_ajax_referer( 'cc_transtria_ajax_nonce', 'transtria_nonce' ) ) {
+			return false;
+		}
+
+		$assignments_info = cc_transtria_get_assignements_info( );
+		
+		echo json_encode( $assignments_info );
+		
+		die();
+	
+	}
+	
 	
 	/**
 	 * saves Study Data for a given study ID or creates next study id and saves to that

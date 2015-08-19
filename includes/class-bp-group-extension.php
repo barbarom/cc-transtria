@@ -6,7 +6,7 @@ class CC_Transtria_Extras_Extension extends BP_Group_Extension {
     function __construct() {
         $args = array(
             'slug' => cc_transtria_get_slug(),
-            'name' => 'The Study Editor',
+            'name' => 'Study Entry',
             'visibility' => 'private',
             'enable_nav_item'   => $this->transtria_tab_is_enabled(),
             // 'access' => 'members',

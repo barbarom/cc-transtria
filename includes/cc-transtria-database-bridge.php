@@ -921,11 +921,69 @@ function cc_transtria_get_endnote_citation_info( $endnoteid ){
 	
 	return $form_rows;
 
+}
+
+/**
+ * Returns assignment data for all studies in system
+ *
+ * @return array
+ */
+function cc_transtria_get_assignements_info(){
+
+	global $wpdb;
+	//Get all Studies w/ EndNote and Phase info from Studies 1 w SG data
+	$studies_query_has_sg =
+		"SELECT
+		StudyID, abstraction_complete, validation_complete, EndNoteID, StudyGroupingID, $wpdb->transtria_studygroupings.readyAnalysis
+			from $wpdb->transtria_studies
+			INNER JOIN $wpdb->transtria_studygroupings
+			ON $wpdb->transtria_studies.StudyGroupingID = $wpdb->transtria_studygroupings.EPNP_ID
+			WHERE $wpdb->transtria_studies.StudyGroupingID IS NOT NULL
+			AND $wpdb->transtria_studies.EndNoteID IS NOT NULL
+			ORDER BY StudyID";
+		
+	// Get all Studies w/ EndNote and Phase info from Studies 1 w/o SG data
+	$studies_query_no_sg =
+		"SELECT StudyID, abstraction_complete, validation_complete, EndNoteID
+			from $wpdb->transtria_studies
+			WHERE StudyGroupingID IS NULL
+			AND EndNoteID IS NOT NULL
+			ORDER BY StudyID";  
+
+	// Get all Studies w/o EndNote/Phase data w SG data
+	$studies_query_no_endnote_has_sg =
+		"SELECT StudyID, abstraction_complete, validation_complete, StudyGroupingID, $wpdb->transtria_studygroupings.StudyGroupingOrgIDs.readyAnalysis
+			from $wpdb->transtria_studies
+			INNER JOIN $wpdb->transtria_studygroupings
+			ON $wpdb->transtria_studies.StudyGroupingID = $wpdb->transtria_studygroupings.EPNP_ID
+			WHERE $wpdb->transtria_studies.StudyGroupingID IS NOT NULL
+			AND $wpdb->transtria_studies.EndNoteID IS NULL
+			ORDER BY StudyID";				   
+
+	// Get all Studies w/o EndNote/Phase data w/o SG data
+	$studies_query_no_endnote_no_sg = 
+		"SELECT StudyID, abstraction_complete, validation_complete 
+			from $wpdb->transtria_studies
+			WHERE $wpdb->transtria_studies.StudyGroupingID IS NULL
+			AND $wpdb->transtria_studies.EndNoteID IS NULL
+			ORDER BY StudyID";
+
+
+	$form_rows = $wpdb->get_results( $studies_query_has_sg, ARRAY_A );
+
+	return $form_rows;
+
+
+
+
+
 
 
 
 
 }
+
+
 
 //TODO: are we using this?
 /**

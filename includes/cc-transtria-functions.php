@@ -89,8 +89,8 @@ function cc_transtria_get_home_permalink( $group_id = false ) {
     $permalink = bp_get_group_permalink( groups_get_group( array( 'group_id' => $group_id ) ) ) .  cc_transtria_get_slug() . '/';
     return apply_filters( "cc_transtria_home_permalink", $permalink, $group_id);
 }
-function cc_transtria_get_assignments_permalink( $page = 1, $group_id = false ) {
-    $permalink = cc_transtria_get_home_permalink( $group_id ) . cc_transtria_get_assignments_slug() . '/' . $page . '/';
+function cc_transtria_get_assignments_permalink( $group_id = false ) {
+    $permalink = cc_transtria_get_home_permalink( $group_id ) . cc_transtria_get_assignments_slug() . '/';
     return apply_filters( "cc_transtria_assignments_permalink", $permalink, $group_id);
 }
 function cc_transtria_get_analysis_permalink( $section = false, $group_id = false ) {

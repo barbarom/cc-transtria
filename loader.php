@@ -60,6 +60,7 @@ function cc_transtria_class_init(){
     $wpdb->transtria_population = $wpdb->prefix . 'transtria_population';
     $wpdb->transtria_effect_association = $wpdb->prefix . 'transtria_effect_association';
     $wpdb->transtria_code_results = $wpdb->prefix . 'transtria_code_results';
+    $wpdb->transtria_studygroupings = $wpdb->prefix . 'transtria_studygroupings';
 	
 }
 add_action( 'bp_include', 'cc_transtria_class_init' );
