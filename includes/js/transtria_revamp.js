@@ -859,7 +859,6 @@ function get_current_study_info(){
 			ese_hr_subpops_show();
 			ipe_hr_subpops_show();
 			confounder_type_show();
-			rep_subpops_show();
 			
 		}).always(function() {
 			//regardless of outcome, hide spinny

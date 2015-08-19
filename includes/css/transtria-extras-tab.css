@@ -71,6 +71,7 @@ button, a.button{
   color: #757575;
   font-weight:bold;
   text-transform:uppercase;
+  cursor:pointer;
 }
 .tab label.primary_tab_label{
 	font-size:1.2em;
@@ -237,6 +238,13 @@ form#study_form a.save_study {
 }
 select option{
 	padding-right:2px;
+}
+
+
+
+/* Assignments Tab */
+table#assignment-table th{
+	min-width: 40px;
 }
 
 

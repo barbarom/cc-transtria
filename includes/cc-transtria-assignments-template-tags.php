@@ -18,6 +18,10 @@
  * @return 	outputs html
  */
 function cc_transtria_render_assignments_form(){
+
+	$study_group_ids = cc_transtria_get_study_groupings();
+	
+
 	?>
 		ASSIGNMENTS PAGE
 		
@@ -30,7 +34,14 @@ function cc_transtria_render_assignments_form(){
 		
 		
 		
-	<input id="StudyGroupingIDAssignment" style="display:none;"></input>
+	<select id="StudyGroupingIDAssignment" style="">
+	<?php
+		foreach( $study_group_ids as $key => $val ){
+			echo "<option value='" . (int)$val['EPNP_ID'] . "'>" . $val['EPNP_ID'] . "</option>";
+			
+		}
+	?>
+	</select>
 
 	<label class="table-label">View Studies Completed and In Progress; Assign Study Groupings</label>
 

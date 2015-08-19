@@ -381,8 +381,10 @@ class CC_Transtria_Extras {
 			//wp_enqueue_script( $this->plugin_slug . 'dynamic_page_components', plugins_url( 'js/dynamic_components.js', __FILE__ ), array( 'jquery' ), '1.1' );
 			//wp_enqueue_script( $this->plugin_slug . 'transtria_basic_js', plugins_url( 'js/transtria_basic.js', __FILE__ ), array( 'jquery' ), '1.1' );
 			wp_enqueue_script( $this->plugin_slug . 'transtria_revamp_js', plugins_url( 'js/transtria_revamp.js', __FILE__ ), array( 'jquery' ), '1.0' );
-			wp_enqueue_script( $this->plugin_slug . 'transtria_revamp_assignments_js', plugins_url( 'js/transtria_revamp_assignments.js', __FILE__ ), array( 'jquery' ), '1.0' );
 			
+			if( cc_transtria_on_assignments_screen() ){
+				wp_enqueue_script( $this->plugin_slug . 'transtria_revamp_assignments_js', plugins_url( 'js/transtria_revamp_assignments.js', __FILE__ ), array( 'jquery' ), '1.0' );
+			}
 			
 			wp_localize_script( 
 				$this->plugin_slug . 'transtria_revamp_js', 
@@ -630,9 +632,10 @@ class CC_Transtria_Extras {
 			return false;
 		}
 
-		$assignments_info = cc_transtria_get_assignements_info( );
+		$data['assignments_info'] = cc_transtria_get_assignments_info();
+		$data['endnotes_info'] = cc_transtria_get_endnote_for_assignments();
 		
-		echo json_encode( $assignments_info );
+		echo json_encode( $data );
 		
 		die();
 	

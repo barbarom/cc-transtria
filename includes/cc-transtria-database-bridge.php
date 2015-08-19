@@ -928,7 +928,7 @@ function cc_transtria_get_endnote_citation_info( $endnoteid ){
  *
  * @return array
  */
-function cc_transtria_get_assignements_info(){
+function cc_transtria_get_assignments_info(){
 
 	global $wpdb;
 	//Get all Studies w/ EndNote and Phase info from Studies 1 w SG data
@@ -952,7 +952,7 @@ function cc_transtria_get_assignements_info(){
 
 	// Get all Studies w/o EndNote/Phase data w SG data
 	$studies_query_no_endnote_has_sg =
-		"SELECT StudyID, abstraction_complete, validation_complete, StudyGroupingID, $wpdb->transtria_studygroupings.StudyGroupingOrgIDs.readyAnalysis
+		"SELECT StudyID, abstraction_complete, validation_complete, StudyGroupingID, $wpdb->transtria_studygroupings.readyAnalysis
 			from $wpdb->transtria_studies
 			INNER JOIN $wpdb->transtria_studygroupings
 			ON $wpdb->transtria_studies.StudyGroupingID = $wpdb->transtria_studygroupings.EPNP_ID
@@ -968,21 +968,61 @@ function cc_transtria_get_assignements_info(){
 			AND $wpdb->transtria_studies.EndNoteID IS NULL
 			ORDER BY StudyID";
 
+	//run queries!
+	$studies_rows_has_sg = $wpdb->get_results( $studies_query_has_sg, ARRAY_A );
+	$studies_rows_no_sg = $wpdb->get_results( $studies_query_no_sg, ARRAY_A );
+	$studies_rows_no_endnote_has_sg = $wpdb->get_results( $studies_query_no_endnote_has_sg, ARRAY_A );
+	$studies_rows_no_endnote_no_sg = $wpdb->get_results( $studies_query_no_endnote_no_sg, ARRAY_A );
+	
 
-	$form_rows = $wpdb->get_results( $studies_query_has_sg, ARRAY_A );
-
-	return $form_rows;
-
-
-
-
-
-
+	$all_assignment_studies = array_merge( $studies_rows_has_sg, $studies_rows_no_sg, $studies_rows_no_endnote_has_sg, $studies_rows_no_endnote_no_sg );
+	return $all_assignment_studies;
 
 
 
 }
 
+/**
+ * Returns initial endnote information for Assignments table
+ *
+ * @param array.
+ */
+function cc_transtria_get_endnote_for_assignments(){
+	
+	global $wpdb;
+
+	//need to get endnote data (phase2 table) for all study groupings.  Mel is not making this work in single call, due to 'rec-number' hyphen...
+	$endnotes_query =
+		"SELECT t1.EndNoteID, `titles_title`, `contributors_authors_author`, `dates_pub-dates_date`, `dates_year`
+			from $wpdb->transtria_phase2, $wpdb->transtria_studies t1
+			WHERE `rec-number` = t1.EndNoteID
+			AND t1.EndNoteID IS NOT NULL";  
+	
+	
+	$endnote_rows = $wpdb->get_results( $endnotes_query, OBJECT_K );
+	
+	return( $endnote_rows );
+
+}
+
+/**
+ * Returns list of study groupings
+ *
+ * @return array
+ */
+function cc_transtria_get_study_groupings(){
+	global $wpdb;
+	
+	$study_groupings_query =
+		"SELECT
+			EPNP_ID
+			from $wpdb->transtria_studygroupings
+			ORDER BY EPNP_ID";
+
+	$study_groupings = $wpdb->get_results( $study_groupings_query, ARRAY_A );
+	
+	return $study_groupings;
+}
 
 
 //TODO: are we using this?
