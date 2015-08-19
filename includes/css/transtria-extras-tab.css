@@ -245,6 +245,7 @@ select option{
 /* Assignments Tab */
 table#assignment-table th{
 	min-width: 40px;
+	cursor:pointer;
 }
 
 
@@ -273,6 +274,9 @@ input.no-edit{
 	border-bottom: none !important;
 }
 
+.textaligncenter{
+	text-align:center;
+}
 
 .not-reported label {
     padding-left: 20px;

@@ -73,20 +73,20 @@ function cc_transtria_render_assignments_form(){
 	<table id="assignment-table" class="tablesorter">
 		<thead>
 			<tr>
-				<th>Study Grouping ID</th>
-				<th>Study ID</th>
-				<th class="th-endnote">EndNote - rec number</th>
-				<th>Phase</th>
-				<th>Author</th>
-				<th>Date</th>
-				<th class="th-title">Title</th>
+				<th>Study Grouping ID<br>&nbsp;&nbsp;&#x25BC;</th>
+				<th>Study ID<br>&nbsp;&nbsp;&#x25BC;</th>
+				<th class="th-endnote">EndNote - rec number<br>&nbsp;&nbsp;&#x25BC;</th>
+				<th>Phase<br>&nbsp;&nbsp;&#x25BC;</th>
+				<th>Author<br>&nbsp;&nbsp;&#x25BC;</th>
+				<th>Date<br>&nbsp;&nbsp;&#x25BC;</th>
+				<th class="th-title">Title<br>&nbsp;&nbsp;&#x25BC;</th>
 
-				<th>Abstraction Complete?</th>
-				<th>Study Grouping Assigned</th>
-				<th>Study Validation Complete</th>
+				<th>Abstraction Complete?<br>&nbsp;&nbsp;&#x25BC;</th>
+				<th>Study Grouping Assigned<br>&nbsp;&nbsp;&#x25BC;</th>
+				<th>Study Validation Complete<br>&nbsp;&nbsp;&#x25BC;</th>
 
-				<th>Ready for Analysis?</th>
-				<th>Study Grouping Complete</th>
+				<th>Ready for Analysis?<br>&nbsp;&nbsp;&#x25BC;</th>
+				<th>Study Grouping Complete<br>&nbsp;&nbsp;&#x25BC;</th>
 			</tr>
 		</thead>
 
@@ -100,7 +100,7 @@ function cc_transtria_render_assignments_form(){
 
 
 	<div class="assign-save-button">
-		<button onclick="upload_assignment_data()">Save Assignments</button>
+		<button onclick="save_assignment_data()">Save Assignments</button>
 	</div>
 
 	<div id="get-next-endnote">

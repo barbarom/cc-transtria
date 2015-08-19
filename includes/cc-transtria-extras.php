@@ -128,8 +128,9 @@ class CC_Transtria_Extras {
 		//get endnote citation info 
 		add_action( 'wp_ajax_get_citation_info' , array( $this, 'get_citation_info' ) );
 		
-		//get data for assigments tab
+		//get/save data for assigments tab
 		add_action( 'wp_ajax_get_assignments' , array( $this, 'get_assignments' ) );
+		add_action( 'wp_ajax_save_assignments' , array( $this, 'save_assignments' ) );
 		
 		add_action( 'wp_ajax_create_evaluation_sample_div' , array( $this, 'create_evaluation_sample_div' ) );		
 
@@ -634,6 +635,35 @@ class CC_Transtria_Extras {
 
 		$data['assignments_info'] = cc_transtria_get_assignments_info();
 		$data['endnotes_info'] = cc_transtria_get_endnote_for_assignments();
+		
+		echo json_encode( $data );
+		
+		die();
+	
+	}
+	
+		
+	/**
+	 * Returns citation info for a given endnote id
+	 *
+	 *
+	*/
+	public function save_assignments(){
+	
+		global $wpdb;
+		
+		// Is the nonce good?
+		if ( ! check_ajax_referer( 'cc_transtria_ajax_nonce', 'transtria_nonce' ) ) {
+			return false;
+		}
+		
+		$incoming_studygroupings = $_POST['studygrouping_data'];
+		$incoming_analysisinfo = $_POST['ready_analysis'];
+		
+		
+		//for now, just save study grouping assignment and ready analysis 
+		$data['studygrouping_success'] = cc_transtria_update_study_groupings( $incoming_studygroupings );
+		$data['readyanalysis_success'] = cc_transtria_update_ready_analysis( $incoming_analysisinfo );
 		
 		echo json_encode( $data );
 		

@@ -1006,6 +1006,116 @@ function cc_transtria_get_endnote_for_assignments(){
 }
 
 /**
+ * Updates studies table with new study grouping assignment
+ *
+ * @param array
+ *
+ */
+function cc_transtria_update_study_groupings( $incoming ){
+
+	global $wpdb;
+	
+	//log
+	$error_array = array();
+	
+	//iterate through incoming data and assign study groupings to studies
+	foreach( $incoming as $i => $v ){
+			
+		$data = array( 
+			'StudyGroupingID' => $v 
+		);
+		$where = array( 'StudyID' => $i );
+
+		$result = $wpdb->update( $wpdb->transtria_studies, $data, $where, $format = null, $where_format = null );
+		
+		$error_array[ $i ] = $result;
+
+	}
+	
+	return $error_array;
+	
+}
+
+/**
+ * Updates studygroupings table with readyAnalysis info (or whatever else when the time comes
+ *
+ * @param array.
+ * @return array. Error messages per update attempt (0 means no change OR fail)
+ */
+function cc_transtria_update_ready_analysis( $incoming ){
+
+	global $wpdb;
+	
+	//log
+	$error_array = array();
+	
+	//iterate through incoming data and assign study groupings to studies
+	foreach( $incoming as $i => $v ){
+			
+		$data = array( 
+			'readyAnalysis' => $v 
+		);
+		$where = array( 'EPNP_ID' => $i );
+
+		$result = $wpdb->update( $wpdb->transtria_studygroupings, $data, $where, $format = null, $where_format = null );
+		
+		$error_array[ $i ] = $v;
+
+	}
+	
+	return $error_array;
+
+		  # Save assignment of Study Grouping to related study
+      # also, Save readyanalysis to StudyGrouping db table
+
+	  /*
+    
+
+      for i, v in data['assignment_data'].iteritems():
+         print i, v
+         _ready = 'Y' if v is True else 'N'
+         print _ready
+         if i < 1 or i is None:
+            pass
+
+         else: 
+            _exists_query="""select count(1) from Transtria.dbo.StudyGroupingOrgIDs
+                       where EPNP_ID = %s""" % (i)
+
+            self._db.execute(_exists_query)
+
+            _exists = 0
+            for _count in self._db:
+               _exists = _count[0]
+
+            if _exists > 0:
+               _update_query="""update Transtria.dbo.StudyGroupingOrgIDs
+                                set readyAnalysis=%s
+                                where EPNP_ID=%s""" % (_ready, i)    
+
+               print self._db.execute(_update_query)
+
+            else:
+               _insert_query="""insert into Transtria.dbo.StudyGroupingOrgIDs
+                                (EPNP_ID, readyAnalysis)
+                                VALUES (%s, %s)""" % (i, _ready)
+
+      #return _existing_SGIDs
+      return data 
+
+	  */
+
+
+
+
+
+
+
+}
+
+
+
+/**
  * Returns list of study groupings
  *
  * @return array

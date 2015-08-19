@@ -105,14 +105,14 @@ function get_assignment_data_basic( ){
                    }
 */
 					//if ReadyAnalysis is null, mark as N
-					if (data.assignments_info[i].ReadyAnalysis != undefined) {
-						readyanalysis = (String( data.assignments_info[i].ReadyAnalysis.length > 0 )) ? data.assignments_info[i].ReadyAnalysis : "N"; 
+					if (data.assignments_info[i].readyAnalysis != undefined) {
+						readyanalysis = (String( data.assignments_info[i].readyAnalysis.length > 0 )) ? data.assignments_info[i].readyAnalysis : "N"; 
 					} else { //there is no val in db
 						readyanalysis = "N";
 					}
 
 					//set checked property
-					if( readyanalysis == "Y" ){
+					if( ( readyanalysis == "Y" ) || ( readyanalysis == "true" ) ){
 						readyanalysis_checked = 'checked';
 					} else {
 						readyanalysis_checked = '';
@@ -126,7 +126,7 @@ function get_assignment_data_basic( ){
 					}
 					txt += " " + data.assignments_info[i].StudyID + "' data-studyid='" + data.assignments_info[i].StudyID + "'>"; 
 					txt += "<td>" + studygroup + "</td>";
-					txt += "<td class='studyid_val'><a class='link' href='" + basepath + "&epnpid=" + data.assignments_info[i].StudyID + "'>" + data.assignments_info[i].StudyID + "</a></td>";
+					txt += "<td class='studyid_val' style='font-weight:bold;'><a class='link' href='" + basepath + "&study_id=" + data.assignments_info[i].StudyID + "'>" + data.assignments_info[i].StudyID + "</a></td>";
 
 					//EndNote rec number, for now since Mel see that as unique
 					txt += "<td>" + endnoteid + "</td>";
@@ -137,7 +137,7 @@ function get_assignment_data_basic( ){
 					}				   
 					txt += "</td>";
 
-					if( endnoteobject != null && endnoteid > 0 && endnoteobject != undefined ){
+					if( endnoteobject[ endnoteid ] != null && endnoteid > 0 && endnoteobject[ endnoteid ] != undefined ){
                    //from endnote: author, year, title
 						txt += "<td class='author'>" + endnoteobject[ endnoteid ][ 'contributors_authors_author' ] + "</td>";
 						txt += "<td>" + endnoteobject[ endnoteid ][ 'dates_pub-dates_date' ] + " " + endnoteobject[ endnoteid ][ 'dates_year' ] + "</td>";
@@ -182,37 +182,37 @@ function get_assignment_data_basic( ){
 			}
 		}
 
-       //now, add strategy search drop down (clone from intevention page)
-       var strategy_clone = jQuery("#strategies").clone();
-       var strategy_html="";
-       strategy_clone.addClass("strategy_filter");
-       strategy_clone.removeAttr('id');
-       strategy_html = "<select>";
-       strategy_html += "<option value=''></option>" + strategy_clone.html() + "</select>";
-       jQuery("#assignment-strategy").html( strategy_html );
-      
-       jQuery.tablesorter.addParser({
-          id:'select',
-          is: function() {
-             return false;
-          },
-          format: function(s, table, cell, cellIndex) {
-             var $c = jQuery(cell);
+		//now, add strategy search drop down (clone from intevention page)
+		var strategy_clone = jQuery("#strategies").clone();
+		var strategy_html="";
+		strategy_clone.addClass("strategy_filter");
+		strategy_clone.removeAttr('id');
+		strategy_html = "<select>";
+		strategy_html += "<option value=''></option>" + strategy_clone.html() + "</select>";
+		jQuery("#assignment-strategy").html( strategy_html );
 
-             return $c.find('select').val() || s;
-          },
-          type: 'text'
-       });
+		jQuery.tablesorter.addParser({
+			id:'select',
+			is: function() {
+			 return false;
+			},
+			format: function(s, table, cell, cellIndex) {
+			 var $c = jQuery(cell);
 
-       jQuery("#assignment-table").tablesorter(
-          {widgets: ['zebra'],
-           headers: {
-              3: {
-                 sorter: 'select'
-              }
-           }
-          }
-       );
+			 return $c.find('select').val() || s;
+			},
+			type: 'text'
+		});
+
+		jQuery("#assignment-table").tablesorter(
+			{widgets: ['zebra'],
+			headers: {
+			  3: {
+				 sorter: 'select'
+			  }
+			}
+			}
+		);
 
        //make all studygroupid checkboxes "Ready for Analysis" update together (if same #)
        //turn on listeners for analysis checkbox and searches/filters
@@ -237,8 +237,61 @@ function get_assignment_data_basic( ){
     });
 
   }
-  
-  
+
+//function to save study groupings
+function save_assignment_data(){
+
+    //Send study id, study grouping id and ready analysis info thru ajax
+	var studyGroupings = {};
+	var all_tr = jQuery("#assignment-table tbody tr");
+	var sg_val;
+	var sid_val;
+	jQuery.each( all_tr, function(){
+		sg_val = jQuery(this).find(".StudyGroupingClass").val(); 
+		//sid_val = parseInt( jQuery(this).find(".studyid_val").html() );
+		sid_val = parseInt( jQuery(this).data("studyid") );
+		studyGroupings[ sid_val ] = sg_val;
+	});
+
+	//ready analysis info: get values on assignment tab checkbox
+	var readyAnalysis = {};
+	jQuery("input[name='ready-analysis']").each(function(){
+		readyAnalysis[ jQuery(this).attr('value')] = jQuery(this).is(":checked"); 
+	});
+
+	//ajax data
+	var ajax_action = 'save_assignments';
+	var ajax_data = {
+		'action': ajax_action,
+		'transtria_nonce' : transtria_ajax.ajax_nonce,
+		'studygrouping_data' : studyGroupings,
+		'ready_analysis' : readyAnalysis
+		//'data': JSON.stringify({ 'studygrouping_data' : studyGroupings, 'assignment_data' : readyAnalysis })
+	};
+	
+	jQuery.ajax({
+		url: transtria_ajax.ajax_url, 
+		data: ajax_data, 
+		type: "POST",
+		dataType: "json",
+		beforeSend: function() {
+			//show user message and spinny
+			//usrmsg.html("Loading Study ID: " + this_study_id );
+			//usrmsgshell.fadeIn();
+			//spinny.fadeIn();
+			
+		}
+    }).success( function( data ) {
+
+       console.log('Assignments saved');
+       console.log(data);
+
+    });
+
+    //return readyAnalysis;
+
+  }
+
 
   //function to ajax-get study strategy data for main assignment table
   function get_assignment_strategies_js( data, url ){
@@ -279,27 +332,27 @@ function get_assignment_data_basic( ){
   }
 
 
-  //add phase filter listener to Main table on Assignments Tab
-  function phaseFilterButtonListen(){
-    jQuery("#phase1_filter").off("click", phaseFilterAssignmentsTable);
-    jQuery("#phase1_filter").on("click", function() {
-       phaseFilterAssignmentsTable("1");
-       jQuery("#assignment-tab .filters button").removeClass("active");
-       jQuery(this).addClass("active");
-    });
-    jQuery("#phase2_filter").off("click", phaseFilterAssignmentsTable);
-    jQuery("#phase2_filter").on("click", function() {
-       phaseFilterAssignmentsTable("2");
-       jQuery("#assignment-tab .filters button").removeClass("active");
-       jQuery(this).addClass("active");
-    });
-    jQuery("#phaseall_filter").off("click", phaseFilterAssignmentsTable);
-    jQuery("#phaseall_filter").on("click", function() {
-       phaseFilterAssignmentsTable("all");
-       jQuery("#assignment-tab .filters button").removeClass("active");
-       jQuery(this).addClass("active");
-    });
-  } 
+	//add phase filter listener to Main table on Assignments Tab
+	function phaseFilterButtonListen(){
+		jQuery("#phase1_filter").off("click", phaseFilterAssignmentsTable);
+		jQuery("#phase1_filter").on("click", function() {
+		   phaseFilterAssignmentsTable("1");
+		   jQuery("#assignment-tab .filters button").removeClass("active");
+		   jQuery(this).addClass("active");
+		});
+		jQuery("#phase2_filter").off("click", phaseFilterAssignmentsTable);
+		jQuery("#phase2_filter").on("click", function() {
+		   phaseFilterAssignmentsTable("2");
+		   jQuery("#assignment-tab .filters button").removeClass("active");
+		   jQuery(this).addClass("active");
+		});
+		jQuery("#phaseall_filter").off("click", phaseFilterAssignmentsTable);
+		jQuery("#phaseall_filter").on("click", function() {
+		   phaseFilterAssignmentsTable("all");
+		   jQuery("#assignment-tab .filters button").removeClass("active");
+		   jQuery(this).addClass("active");
+		});
+	} 
 
   //add phase filter function to Main table on Assignments Tab
   function phaseFilterAssignmentsTable( phase_num ){
