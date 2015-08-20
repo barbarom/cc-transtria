@@ -20,21 +20,18 @@
 function cc_transtria_render_assignments_form(){
 
 	$study_group_ids = cc_transtria_get_study_groupings();
-	
+	$endnote_ids_titles = cc_transtria_get_endnote_id_title();
 
 	?>
-		ASSIGNMENTS PAGE
+	
+	<div class="assignments_messages">
+		<span class="usr-msg"></span>
+		<span class="spinny"></span>
+	</div>
+	
 		
 		
-		
-		
-		
-		
-		
-		
-		
-		
-	<select id="StudyGroupingIDAssignment" style="">
+	<select id="StudyGroupingIDAssignment" style="display:none;">
 	<?php
 		foreach( $study_group_ids as $key => $val ){
 			echo "<option value='" . (int)$val['EPNP_ID'] . "'>" . $val['EPNP_ID'] . "</option>";
@@ -43,7 +40,7 @@ function cc_transtria_render_assignments_form(){
 	?>
 	</select>
 
-	<label class="table-label">View Studies Completed and In Progress; Assign Study Groupings</label>
+	<label class="table-label"><h2>View Studies Completed and In Progress; Assign Study Groupings</h2></label>
 
 	<div class="filters">
 		<h3>Filter and Search</h3>
@@ -103,14 +100,28 @@ function cc_transtria_render_assignments_form(){
 		<button onclick="save_assignment_data()">Save Assignments</button>
 	</div>
 
+	<br />
 	<div id="get-next-endnote">
-		<label class="table-label">Get Next Study</label>
+		<h2>Get Next Study</h2>
 
-		<br />
-		<select id="next_phase1"><label>Phase 1</label></select>
+		<select id="next_phase1"><label>Phase 1</label>
+			<?php foreach( $endnote_ids_titles as $id => $title ){
+				//phase 1 only means:   503 <= endnote id <= 1102
+				if( ( (int)$id >= 503 ) && ( (int)$id <= 1102 ) ){
+					echo "<option value='" . $id . "'>" . $id . ": " . $title . "</option>";
+				}
+			} ?>
+		</select>
 		<button id="phase1_submit">Start Next Phase 1 Study</button>
-		<br />
-		<select id="next_phase2"><label>Phase 2</label></select>
+		<p></p>
+		<select id="next_phase2"><label>Phase 2</label>
+			<?php foreach( $endnote_ids_titles as $id => $title ){
+				//phase 2 only means:   1-502 OR 1103+
+				if( ( (int)$id <= 502 ) || ( (int)$id >= 1103 ) ){
+					echo "<option value='" . $id . "'>" . $id . ": " . $title . "</option>";
+				}
+			} ?>
+		</select>
 		<button id="phase2_submit">Start Next Phase 2 Study</button>
 
 

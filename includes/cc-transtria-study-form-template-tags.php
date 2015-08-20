@@ -28,6 +28,9 @@ function cc_transtria_render_form(){
 	if( !empty( $_GET["study_id"] ) ) 
 		$this_study_id = $_GET["study_id"];
 
+	if( !empty( $_GET["endnoteid"] ) ) 
+		$this_endnote_id = $_GET["endnoteid"];
+		
 	//get all study ids in system.  If url param not in system, set this_study_id to null
 	$all_study_ids = cc_transtria_get_study_ids();
 	if( !in_array( $this_study_id, $all_study_ids ) ){
@@ -223,7 +226,12 @@ function cc_transtria_render_form(){
 								//$all_endnote_ids are indexed by the div id - "abstractor", for example
 								foreach( $all_endnote_ids as $k => $v ){
 									echo '<option value="' . $k . '"';
-									echo '>' . $k . ': ' . $v . '</option>';
+									if( (int) $this_endnote_id == (int)$k ){
+										echo ' selected="selected">';
+									} else {
+										echo '>';
+									}
+									echo $k . ': ' . $v . '</option>';
 								} ?>
 							</select></span>
 							<span class="citation_spinny spinny"></span>

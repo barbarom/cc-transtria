@@ -129,7 +129,8 @@ button, a.button{
 }
 
 
-.basic_info_messages{
+.basic_info_messages,
+.assignments_messages{
 	width:100%;
 	margin-bottom:1em;
 	background-color:#ccffcc;
@@ -137,12 +138,14 @@ button, a.button{
 	display:none;
 }
 
-.basic_info_messages .usr-msg{
+.basic_info_messages .usr-msg,
+.assignments_messages .usr-msg{
 	font-weight: bold;
 }
 .basic_info_messages  .spinny,
 .citation_spinny.spinny,
-#results_content .spinny {
+#results_content .spinny,
+.assignments_messages .spinny {
 	background-image: url('images/ajax-loader.gif');
 	background-repeat:no-repeat;
 	background-position:center center;
@@ -248,7 +251,16 @@ table#assignment-table th{
 	cursor:pointer;
 }
 
+.filters{
+	border: 3px solid #cccccc;
+    margin-bottom: 2em;
+    padding: 0 2em 2em;
+    width: auto;
+}
 
+.filters .search{
+	margin: 1em 0;
+}
 
 
 

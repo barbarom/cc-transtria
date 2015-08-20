@@ -8,6 +8,9 @@ function get_assignment_data_basic( ){
     //clear __CARES__.used_endnotedids
 	//__CARES__.used_endnoteids=[]; //clearing method works if NO REFERENCES
 
+	var usrmsg = jQuery(".assignments_messages .usr-msg");
+	var usrmsgshell = jQuery(".assignments_messages");
+	var spinny = jQuery(".assignments_messages .spinny");
     //placeholder for studyids in table
 	var data_studyids = []; 
 
@@ -25,9 +28,9 @@ function get_assignment_data_basic( ){
 		dataType: "json",
 		beforeSend: function() {
 			//show user message and spinny
-			//usrmsg.html("Loading Study ID: " + this_study_id );
-			//usrmsgshell.fadeIn();
-			//spinny.fadeIn();
+			usrmsg.html("Loading Assignments.." );
+			usrmsgshell.fadeIn();
+			spinny.fadeIn();
 			
 		}
 	}).success( function( data ) {
@@ -44,7 +47,10 @@ function get_assignment_data_basic( ){
 					//placeholders
 					var studygroup;
 					var studygroup_val;
-					var endnoteid;
+					
+					//get endnoteid and summary; TODO: add to __CARES__.used_endnoteids
+					endnoteid = data.assignments_info[i].EndNoteID || ""; 
+					
 					var endnoteobject = {};
 					if( ! jQuery.isEmptyObject( data.endnotes_info) ){
 						endnoteobject = data.endnotes_info;
@@ -52,58 +58,56 @@ function get_assignment_data_basic( ){
 					var readyanalysis;
 					var readyanalysis_checked;
 					var sgid_clone;
+					var this_phase = get_phase_by_endnoteid( endnoteid );
 
 					//for table links
 					var basepath = transtria_ajax.study_home;
 
 					if( data.assignments_info[i] ){
-                   //console.log(i);
-                   //handle null/empty data
-                   if ( data.assignments_info[i].StudyGroupingID != undefined ) { 
-                      studygroup_val = (String( data.assignments_info[i].StudyGroupingID.length > 0 )) ? parseInt( data.assignments_info[i].StudyGroupingID ) : ""; 
-                   } else {
-                      studygroup_val = 0;
-                   } 
+					//console.log(i);
+					//handle null/empty data
+					if ( data.assignments_info[i].StudyGroupingID != undefined ) { 
+						studygroup_val = (String( data.assignments_info[i].StudyGroupingID.length > 0 )) ? parseInt( data.assignments_info[i].StudyGroupingID ) : ""; 
+					} else {
+						studygroup_val = 0;
+					} 
 
-                   studygroup = ""; //null prev value
-                   //Study Group here as clone of AssignmentSGID, so we don't have to render all the comboboxes
-                   sgid_clone = jQuery("#StudyGroupingIDAssignment").clone();
-                   sgid_clone.addClass("sgid_dd");
-                   sgid_clone.removeAttr('id');
+					studygroup = ""; //null prev value
+					//Study Group here as clone of AssignmentSGID, so we don't have to render all the comboboxes
+					sgid_clone = jQuery("#StudyGroupingIDAssignment").clone();
+					sgid_clone.addClass("sgid_dd");
+					sgid_clone.removeAttr('id');
 
-                   //hide original combobox, just a placeholder for cloning
-                   //jQuery("#StudyGroupingIDAssignment").combobox("hide");
-                   jQuery("#StudyGroupingIDAssignment").hide();
+					//hide original combobox, just a placeholder for cloning
+					//jQuery("#StudyGroupingIDAssignment").combobox("hide");
+					jQuery("#StudyGroupingIDAssignment").hide();
 
-                   //get html of sgid_options; two methods, since Chrome shows empty for html()
-                   var sgid_html = sgid_clone.html();
-                   if( sgid_html == "" ){
-                      var childs = sgid_clone.children();
-                      var childs_html = "";
-                      var childs_temp;
+					//get html of sgid_options; two methods, since Chrome shows empty for html()
+					var sgid_html = sgid_clone.html();
+					if( sgid_html == "" ){
+						var childs = sgid_clone.children();
+						var childs_html = "";
+						var childs_temp;
 
-                      jQuery.each( childs, function( index, value ) {
-                         childs_temp = jQuery( value ).html();
-                         childs_html += "<option value ='" + childs_temp + "'>" + childs_temp + "</option>"; 
+						jQuery.each( childs, function( index, value ) {
+							childs_temp = jQuery( value ).html();
+							childs_html += "<option value ='" + childs_temp + "'>" + childs_temp + "</option>"; 
 
-                      });
-                      sgid_html = childs_html;
+						});
+						sgid_html = childs_html;
 
-                   }
+					}
 
-                   //parse text to add dropdown to table, adding null option
-                   studygroup = "<select class='StudyGroupingClass'>";
-                   //studygroup += "<option value=''></option>" + sgid_clone.html() + "</select>"; //"<input class='StudyGroupingDD'></input>";
-                   //studygroup += "<option value=''></option>" + sgid_html + "</select>"; //"<input class='StudyGroupingDD'></input>";
-                   studygroup += sgid_html + "</select>"; //"<input class='StudyGroupingDD'></input>";
-                   
-                   //get endnoteid and summary; add to __CARES__.used_endnoteids
-                   endnoteid = data.assignments_info[i].EndNoteID || ""; 
-/*					if( endnoteid != "" ){
-                      endnoteobject = __CARES__.endnote_summaries[ endnoteid ];
-                      __CARES__.used_endnoteids.push(endnoteid);
-                   }
-*/
+					//parse text to add dropdown to table, adding null option
+					studygroup = "<select class='StudyGroupingClass'>";
+					studygroup += sgid_html + "</select>";
+
+					
+					/*					if( endnoteid != "" ){
+					  endnoteobject = __CARES__.endnote_summaries[ endnoteid ];
+					  __CARES__.used_endnoteids.push(endnoteid);
+					}
+					*/
 					//if ReadyAnalysis is null, mark as N
 					if (data.assignments_info[i].readyAnalysis != undefined) {
 						readyanalysis = (String( data.assignments_info[i].readyAnalysis.length > 0 )) ? data.assignments_info[i].readyAnalysis : "N"; 
@@ -122,7 +126,7 @@ function get_assignment_data_basic( ){
 					txt += "<tr class='assignment-study phase_";
 
 					if( endnoteobject != null && endnoteid > 0 && endnoteobject != undefined ){
-						txt += endnoteobject.Phase;
+						txt += this_phase
 					}
 					txt += " " + data.assignments_info[i].StudyID + "' data-studyid='" + data.assignments_info[i].StudyID + "'>"; 
 					txt += "<td>" + studygroup + "</td>";
@@ -133,12 +137,12 @@ function get_assignment_data_basic( ){
 					txt += "<td>";
 
 					if( endnoteobject != null && endnoteid > 0 && endnoteobject != undefined ){
-						txt += endnoteobject.Phase;
+						txt += this_phase;
 					}				   
 					txt += "</td>";
 
 					if( endnoteobject[ endnoteid ] != null && endnoteid > 0 && endnoteobject[ endnoteid ] != undefined ){
-                   //from endnote: author, year, title
+					//from endnote: author, year, title
 						txt += "<td class='author'>" + endnoteobject[ endnoteid ][ 'contributors_authors_author' ] + "</td>";
 						txt += "<td>" + endnoteobject[ endnoteid ][ 'dates_pub-dates_date' ] + " " + endnoteobject[ endnoteid ][ 'dates_year' ] + "</td>";
 						txt += "<td class='title'>" + endnoteobject[ endnoteid ][ 'titles_title' ] + "</td>";
@@ -153,9 +157,6 @@ function get_assignment_data_basic( ){
 					txt += "<td>" + data.assignments_info[i].validation_complete + "</td>";
 					//new checkbox field with study id in value..
 					txt += "<td><input type='checkbox' name='ready-analysis' value='" + studygroup_val + "' " + readyanalysis_checked + "></input></td>";
-
-                   //old stuff
-                   //txt += "<td><input type='checkbox' name='ready-analysis' value='" + studygroup + "' " + readyanalysis_checked + "></input></td>";
 
                    txt += "</tr>";
 
@@ -223,17 +224,13 @@ function get_assignment_data_basic( ){
        strategyFilterListen();
 */
     }).complete( function( ) {
-
-       console.log( data_studyids );
+		
+		spinny.css("display", "none");
+		usrmsg.html("Assignments Loaded!");
+		usrmsgshell.fadeOut(4000);
+		
+		console.log( data_studyids );
        
-       //call ajax function to pull in multiselect study strategy data
-      // get_assignment_strategies_js( data_studyids, '/cgi-bin/Transtria/dataentry/basic_info.py' );
-
-	   
-	   
-	   
-	   
-	   
     });
 
   }
@@ -576,27 +573,38 @@ function save_assignment_data(){
 
   }
 
-  function nextAssignmentButtonListen(){
+function nextAssignmentButtonListen(){
 
-    var basepath = window.location.origin + window.location.pathname + "?page=basic_form";
+	var basepath = transtria_ajax.study_home;
 
     jQuery("#phase1_submit").on("click", function(){
-       var whichEndNote = parseInt( jQuery( "#next_phase1 :selected").val());
-       window.location = basepath + "&endnoteid=" + whichEndNote;
-    });
+		var whichEndNote = parseInt( jQuery( "#next_phase1 :selected").val());
+		window.location = basepath + "?endnoteid=" + whichEndNote;
+	});
 
-    jQuery("#phase2_submit").on("click", function(){
-       var whichEndNote = parseInt( jQuery( "#next_phase2 :selected").val());
-       window.location = basepath + "&endnoteid=" + whichEndNote;
-    });
+	jQuery("#phase2_submit").on("click", function(){
+		var whichEndNote = parseInt( jQuery( "#next_phase2 :selected").val());
+		window.location = basepath + "?endnoteid=" + whichEndNote;
+	});
 
-  }
+}
+
+//returns phase by endnote id
+function get_phase_by_endnoteid( which_endnoteid ){
+
+	if( ( parseInt( which_endnoteid ) > 502 ) && ( parseInt( which_endnoteid ) < 1103 ) ){
+		return "1";
+	} else {
+		return "2";
+	}
+}
+
   
 
 jQuery( document ).ready(function() {
 
 	get_assignment_data_basic();
-
+	nextAssignmentButtonListen();
 
 
 });
