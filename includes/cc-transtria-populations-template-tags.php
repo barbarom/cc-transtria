@@ -111,10 +111,10 @@ function cc_transtria_render_populations_header( $field_data ){
 		} ?>
 		
 		
-		<a class="button save_study alignright">SAVE STUDY</a>
 				
 	</div>
 		
+	<a class="button save_study alignright">SAVE STUDY</a>
 	<?php
 
 }

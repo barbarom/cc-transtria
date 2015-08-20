@@ -29,7 +29,7 @@ button, a.button{
 /* START TABS CSS */
 .tabs {
   position: relative;   
-  min-height: 2500px; /* This part sucks */
+  min-height: 2600px; /* This part sucks */
   clear: both;
   margin: 25px 0;
 }

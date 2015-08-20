@@ -28,8 +28,8 @@ function cc_transtria_render_form(){
 	if( !empty( $_GET["study_id"] ) ) 
 		$this_study_id = $_GET["study_id"];
 
-	if( !empty( $_GET["endnoteid"] ) ) 
-		$this_endnote_id = $_GET["endnoteid"];
+	$this_endnote_id = ( !empty( $_GET["endnoteid"] ) ) ? $this_endnote_id : "";
+
 		
 	//get all study ids in system.  If url param not in system, set this_study_id to null
 	$all_study_ids = cc_transtria_get_study_ids();
