@@ -111,10 +111,10 @@ function cc_transtria_render_populations_header( $field_data ){
 		} ?>
 		
 		
+		<a class="button save_study alignright">SAVE STUDY</a>
 				
 	</div>
 		
-	<a class="button save_study alignright">SAVE STUDY</a>
 	<?php
 
 }
@@ -177,7 +177,7 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 			
 ?>
 	<div class="subpops_content <?php echo $which_pop; ?>_content <?php if( $which_pop != "tp" ){ echo 'noshow'; } ?>">
-		<input class="population_type" value="<?php echo $which_pop; ?>" hidden>
+		<input class="population_type" value="<?php echo $which_pop; ?>" type="hidden" hidden>
 		<table class="population_container">
 			<tr>
 				<td colspan="4" class="inner_table_header"><strong><?php echo $subtitle; ?></strong></td>

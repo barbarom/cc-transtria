@@ -366,10 +366,11 @@ class CC_Transtria_Extras {
 			//wp_enqueue_script( 'autocomplete', plugins_url( 'js/jquery-ui.min.js', __FILE__ ), array( 'jquery' ), self::VERSION );
 			
 			//wp_enqueue_script( 'custom_combobox', plugins_url( 'js/custom_combobox.js', __FILE__ ), array( 'jquery' ), '1.1' );
-			
+			//global $wp_scripts, $wp_styles;
+			//var_dump( $wp_scripts );
 			//requirements
-			wp_enqueue_script( 'jquery-ui-core' );
-			wp_enqueue_script( 'jquery-ui-widget' );
+			wp_enqueue_script( 'jquery-ui-core-mel', "/wp-includes/js/jquery/ui/core.min.js", array( "jquery") );
+			wp_enqueue_script( 'jquery-ui-widget-mel', "/wp-includes/js/jquery/ui/widget.min.js", array( "jquery") ); 
 			//wp_enqueue_script( 'jquery-ui-datepicker' );
 			
 			//our files
@@ -722,8 +723,11 @@ class CC_Transtria_Extras {
 			$ea_success = 'no ea tabs';
 		}
 		
-		$code_results_success = cc_transtria_save_to_code_results( $code_results_data, $this_study_id );
-		
+		if( !empty( $code_results_data ) ){
+			$code_results_success = cc_transtria_save_to_code_results( $code_results_data, $this_study_id );
+		} else {
+			$code_results_success = 'no multis selected';
+		}
 		
 		$data['studies_test'] = $studies_success;
 		$data['pops_success'] = $pops_success;

@@ -378,6 +378,7 @@ function cc_transtria_render_form(){
 						<td>Domestic funding source type:</td>
 						<td >
 							<select id="domesticfundingsources"class="studies_table">
+								<option value="-1">-- Select --</option>
 								<?php //$dd_singleton_options are indexed by the div id - "abstractor", for example
 									foreach( $dd_singleton_options['domesticfundingsources'] as $k => $v ){
 									echo '<option value="' . $k . '">' . $v->descr . '</option>';
