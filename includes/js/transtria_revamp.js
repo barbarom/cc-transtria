@@ -74,6 +74,9 @@ function clickListen(){
 	//copy EA tabs from dropdown
 	jQuery('.ea_copy_tab_button').on("click", copy_ea_tab );
 	
+	//when clicking 'not reported', unselected related radio fields
+	jQuery('.not_reported_clear').on("click", uncheck_not_reported_related_fields);
+	
 } 
 
 function ea_clickListen(){
@@ -136,8 +139,8 @@ function setup_multiselect() {
 			header: true,
 			position: {my: 'left bottom', at: 'left top'},
 			selectedText: '# of # checked',
-			checkAllText: 'Select all states',
-			uncheckAllText: 'Deselect all states',
+			checkAllText: 'Select all',
+			uncheckAllText: 'Deselect all',
 			close: function( event, ui){
 
 			}
@@ -175,7 +178,7 @@ function setup_multiselect() {
 			header: true,
 			position: {my: 'left bottom', at: 'left top'},
 			selectedText: '# of # checked',
-			checkAllText: 'Select stati',
+			checkAllText: 'Select all',
 			close: ability_status_limiter
 		});
 		
@@ -860,6 +863,11 @@ function get_current_study_info(){
 			ipe_hr_subpops_show();
 			confounder_type_show();
 			
+			//uncheck any not-reported radios/fields on incoming data
+			var not_reported_checkboxes = jQuery('form#study_form .not_reported_clear');
+			jQuery.each( not_reported_checkboxes, uncheck_not_reported_related_fields );
+			
+			
 		}).always(function() {
 			//regardless of outcome, hide spinny
 			//jQuery('.action-steps').removeClass("hidden");
@@ -1257,6 +1265,11 @@ function strategy_limit_results( ){
 		//remove ALL options
 		jQuery(this).find("option").remove();
 
+		//ad a -- Select Option -- option
+		result.append(
+		  jQuery('<option></option>').val( "-1 ").html("---Select---")
+	   );
+		   
 		//iterate for each value
 		jQuery.each(selections, function(){
 		   //result.find("option[value=" + this + "]").remove();   
@@ -1271,15 +1284,8 @@ function strategy_limit_results( ){
 
 	
 	
-
-
-
-
-
-
-
-
-
+	
+	
 //update the ea copy tab ('.ea_copy_tab') options
 function refresh_ea_copy_tab(){
 	
@@ -1313,10 +1319,17 @@ function copy_ese_tab(){
 	jQuery('#sub_pops_tabs').append("<div id='ese" + new_tab_id + "-tab' class='subpops_tab'><label class='subpops_tab_label' for='ese" + new_tab_id + "-tab' data-whichpop='ese" + new_tab_id + "'>ese" + new_tab_id + "</label></div>");
 	
 	//destroy the multiselects before we clone
-	jQuery('.ese_copy_multiselect').multiselect("destroy");
+	try {
+		jQuery('.ese_copy_multiselect').multiselect("destroy");
+	} catch( err ) {
+		console.log( "could not destroy ese_copy_multiselect");
+	}
 	
 	//we will need to copy the main ese tab
 	var new_ese_copy = jQuery('.ese_content').clone(true,true);
+	
+	//copy textareas (clone does not do this)
+	new_ese_copy.find("#ese_other_population_description").val( jQuery(".ese_content #ese_other_population_description").val() );
 	
 	//vars
 	var new_pop_type = "";
@@ -1636,6 +1649,25 @@ function add_empty_ea_tab(){
 	spinny.hide();
 }
 
+//for unselecting related radio fields
+function uncheck_not_reported_related_fields(){
+
+	//have we selected the checkbox? We don't care if it's unselected..
+	if( jQuery(this).is(":checked") ){
+		//get the id of this checkbox
+		var not_reported_id = jQuery(this).attr("id");
+		
+		//which radio is related to this 'not reported' checkbox?
+		var not_reported_radio = jQuery('form#study_form').find("[data-notreported_id='" + not_reported_id +"']");
+		
+		//for each radio (Yes and No), clear selection
+		jQuery.each( not_reported_radio, function(){
+			jQuery(this).prop('checked', false); 
+		});
+	}
+}
+
+
 
 //helper function to get URL param
 function getURLParameter(name) {
@@ -1666,7 +1698,7 @@ jQuery( document ).ready(function() {
 	
 	//initialize ability status limiter
 	ea_clickListen();
-	
+
 	//initialize message on results page and then add change listener to stop time inputs
 	//stop_time_validate();
 	

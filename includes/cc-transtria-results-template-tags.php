@@ -88,14 +88,14 @@ function cc_transtria_render_results_tab( $field_data ){
 		<tr>
 			<td><label>Confounders/Mediators/Moderators:</label></td>
 			<td colspan="3"><span id="confounders-holder">
-				<input type="radio" value="Y" name="confounders" class="studies_table">Yes
-				<input type="radio" value="N" name="confounders" class="studies_table">No
+				<input type="radio" value="Y" name="confounders" class="studies_table" data-notreported_id="confounders_notreported">Yes
+				<input type="radio" value="N" name="confounders" class="studies_table" data-notreported_id="confounders_notreported">No
 			</span></td>
 		</tr>
 
 		<tr class="not-reported">
 			<td class="not-reported"><label>Confounders/Mediators/Moderators not reported</label></td>
-			<td colspan="3"><input id="confounders_notreported" class="studies_table" type="checkbox"></td>
+			<td colspan="3"><input id="confounders_notreported" class="studies_table not_reported_clear" type="checkbox"></td>
 		</tr>
 
 		<tr id="confounders_type">
@@ -201,8 +201,8 @@ function cc_transtria_render_results_tab( $field_data ){
 		<tr>
 			<td><label>Was the outcome maintained?:</label></td>
 			<td><span id="outcome_maintained_flag">
-				<input type="radio" value="Y" name="outcome_maintained_flag" class="studies_table">Yes
-				<input type="radio" value="N" name="outcome_maintained_flag" class="studies_table">No
+				<input type="radio" value="Y" name="outcome_maintained_flag" class="studies_table" data-notreported_id="outcomemaintained_notreported">Yes
+				<input type="radio" value="N" name="outcome_maintained_flag" class="studies_table" data-notreported_id="outcomemaintained_notreported">No
 			</span></td>
 			<td><label>If yes, explain:</label></td>
 			<td><input type="text" id="explain_maintenance" class="studies_table"></input></td>
@@ -210,14 +210,14 @@ function cc_transtria_render_results_tab( $field_data ){
 
 		<tr class="not-reported">
 			<td class="not-reported"><label>Outcome Maintained not reported</label></td>
-			<td colspan="3"><input id="outcomemaintained_notreported" class="studies_table" type="checkbox"></td>
+			<td colspan="3"><input id="outcomemaintained_notreported" class="studies_table not_reported_clear" type="checkbox"></td>
 		</tr>
 
 		<tr>
 			<td><label>Was there a plan for sustainability?:</label></td>
 			<td><span id="sustainability_plan_flag-holder">
-				<input type="radio" value="Y" name="sustainability_plan_flag" class="studies_table">Yes
-				<input type="radio" value="N" name="sustainability_plan_flag" class="studies_table">No
+				<input type="radio" value="Y" name="sustainability_plan_flag" class="studies_table" data-notreported_id="sustainabilityplan_notreported">Yes
+				<input type="radio" value="N" name="sustainability_plan_flag" class="studies_table" data-notreported_id="sustainabilityplan_notreported">No
 			</span></td>
 			<td><label>If yes, explain:</label></td>
 			<td><input type="text" id="explain_sustainability" class="studies_table"></input></td>
@@ -225,7 +225,7 @@ function cc_transtria_render_results_tab( $field_data ){
 
 		<tr class="not-reported">
 			<td class="not-reported"><label>Sustainability plan not reported</label></td>
-			<td colspan="3"><input id="sustainabilityplan_notreported" class="studies_table" type="checkbox"></td>
+			<td colspan="3"><input id="sustainabilityplan_notreported" class="studies_table not_reported_clear" type="checkbox"></td>
 		</tr>
 
 		<tr>

@@ -320,16 +320,15 @@ function cc_transtria_render_form(){
 						<td>Grant or Contract #:
 						</td>
 						<td>
-							<input id="grantcontractnumber" class="studies_table" type="text" />
+							<textarea id="grantcontractnumber" class="studies_table" type="text"></textarea>
 						</td>
 						<td></td>					
 					</tr>				
 					<tr>
 						<td class="not-reported"><label>Grant or Contract # not reported:</label></td>
-						<td>
+						<td colspan="2">
 							<input type="checkbox" id="grantcontractnumber_notreported" class="studies_table" />
-						</td>
-						<td></td>					
+						</td>			
 					</tr>
 					<tr>
 						<td>Amount of funding:</td>
@@ -357,7 +356,7 @@ function cc_transtria_render_form(){
 							</select>					
 						</td>
 						<td>
-							Other funding source: <input id="otherfunding" class="studies_table" type="text" />			
+							Other funding source: <textarea id="otherfunding" class="studies_table" type="text"></textarea>			
 						</td>					
 					</tr>				
 					<tr>
@@ -464,8 +463,8 @@ function cc_transtria_render_form(){
 						<td>Threat to internal validity?:</td>
 						<td colspan="2">
 							<span id="validitythreatflag">
-								<input type="radio" class="studies_table" value="Y" class="studies_table" name="validitythreatflag">Yes
-								<input type="radio" class="studies_table" value="N" class="studies_table" name="validitythreatflag">No
+								<input type="radio" class="studies_table" value="Y" class="studies_table" name="validitythreatflag" data-notreported_id="validitythreat_notreported">Yes
+								<input type="radio" class="studies_table" value="N" class="studies_table" name="validitythreatflag" data-notreported_id="validitythreat_notreported">No
 							</span>
 						</td>					
 					</tr>
@@ -487,7 +486,7 @@ function cc_transtria_render_form(){
 					<tr>
 						<td class="not-reported"><label>Threat to internal validity not reported:</label></td>
 						<td>
-							<input id="validitythreat_notreported" class="studies_table" type="checkbox" />
+							<input id="validitythreat_notreported" class="studies_table not_reported_clear" type="checkbox" />
 						</td>
 						<td></td>					
 					</tr>

@@ -190,7 +190,7 @@ function cc_transtria_get_singleton_dropdown_ids(){
 		'StudyDesign' => 'StudyDesign',
 		"validity_threats"=> "ValidityThreats",
 		"unit_of_analysis" => "UnitOfAnalysis",
-		"ipe_exposure_frequency" => "ipe.ExposureFrequency",  //only on IPE tab.  TODO: confirm!
+		"ipe_exposure_frequency" => "ExposureFrequency",  //only on IPE tab.  TODO: confirm!
 		"state_setting" => 'US States',
 		"setting_type" => "SettingType",
 		"partner_discipline" => "Partner discipline",
@@ -227,7 +227,8 @@ function cc_transtria_get_multiple_dropdown_ids_populations( $which_pop = 'all',
 		'_ability_status' => "AbilityStatus",
 		"_sub_populations" => "SubPopulations",
 		"_youth_populations" => "YouthPopulations",
-		"_professional_populations" => 'ProfessionalPopulations'
+		"_professional_populations" => 'ProfessionalPopulations',
+		
 	);
 	
 	//Special cases for certain pops.
@@ -239,7 +240,7 @@ function cc_transtria_get_multiple_dropdown_ids_populations( $which_pop = 'all',
 		"ese_hr_subpopulations" => "ese.HighRiskSubpopulations",
 		"ipe_hr_subpopulations" => "ipe.HighRiskSubpopulations",
 		//special!
-		"ipe_exposure_frequency" => "ipe.ExposureFrequency"
+		"ipe_exposure_frequency" => "ExposureFrequency"
 	);
 	
 	//which pops are we interested in? Usually all, but ese is going to be special
@@ -301,7 +302,7 @@ function cc_transtria_get_multiple_dropdown_ids_ea(){
 		"ea_duration" => "Duration", //"%s_duration" % _prefix, "%s_duration"
 		"ea_result_statistical_model" => "StatisticalModel", //"%s_result_statistical_model" % _prefix, "statistical_model"
 		"ea_result_evaluation_population" => "Results Populations", //"%s_result_evaluation_population" % _prefix, "%s Results Populations"
-		"ea_result_subpopulations" => "Results SubPopulations", //"%s_result_subpopulations" % _prefix, "%s Results SubPopulations"
+		"ea_result_subpopulations" => "ea_1 Results SubPopulations", //"%s_result_subpopulations" % _prefix, "%s Results SubPopulations"
 		"ea_result_indicator_direction"=> "Results Indicator Direction", //"%s_result_indicator_direction" % _prefix, "indicator_direction"
 		"ea_result_outcome_direction" => "Results Outcome Direction", //"%s_result_outcome_direction" % _prefix, "outcome_direction"
 		"ea_result_strategy" => "Strategies", //"%s_result_strategy" % _prefix, "result_strategy"

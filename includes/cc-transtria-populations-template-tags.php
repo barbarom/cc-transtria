@@ -190,8 +190,8 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 				<td class="minwidth200"><label>Reported?</label></td>
 				<td colspan="3">
 					<span id="<?php echo $which_pop; ?>_reported-holder">
-						<input type="radio" value="Y" name="<?php echo $which_pop; ?>_reported" class="population_table">Yes
-						<input type="radio" value="N" name="<?php echo $which_pop; ?>_reported" class="population_table">No
+						<input type="radio" value="Y" name="<?php echo $which_pop; ?>_reported" class="population_table" data-notreported_id="<?php echo $which_pop; ?>_populationsize_notreported">Yes
+						<input type="radio" value="N" name="<?php echo $which_pop; ?>_reported" class="population_table" data-notreported_id="<?php echo $which_pop; ?>_populationsize_notreported">No
 					</span></td>
 			</tr>
 
@@ -201,7 +201,7 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 			</tr>
 			<tr class="not-reported">
 				<td class="not-reported"><label>Population size not reported</label></td>
-				<td colspan="3"><input id="<?php echo $which_pop; ?>_populationsize_notreported" class="population_table" type="checkbox"></td>
+				<td colspan="3"><input id="<?php echo $which_pop; ?>_populationsize_notreported" class="population_table not_reported_clear" type="checkbox"></td>
 			</tr>
 
 
@@ -228,26 +228,26 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 			<tr>
 				<td><label>Eligibility criteria:</label></td>
 				<td colspan="3"><span id="<?php echo $which_pop; ?>_eligibility_criteria-holder">
-					<input type="radio" value="Y" name="<?php echo $which_pop; ?>_eligibility_criteria" class="population_table">Yes
-					<input type="radio" value="N" name="<?php echo $which_pop; ?>_eligibility_criteria" class="population_table">No
+					<input type="radio" value="Y" name="<?php echo $which_pop; ?>_eligibility_criteria" class="population_table" data-notreported_id="<?php echo $which_pop; ?>_eligibilitycriteria_notreported">Yes
+					<input type="radio" value="N" name="<?php echo $which_pop; ?>_eligibility_criteria" class="population_table" data-notreported_id="<?php echo $which_pop; ?>_eligibilitycriteria_notreported">No
 				</span></td>
 			</tr>
 			<tr class="not-reported">
 				<td class="not-reported"><label>Eligibility criteria not reported</label></td>
-				<td colspan="3"><input id="<?php echo $which_pop; ?>_eligibilitycriteria_notreported" class="population_table" type="checkbox"></td>
+				<td colspan="3"><input id="<?php echo $which_pop; ?>_eligibilitycriteria_notreported" class="population_table not_reported_clear" type="checkbox"></td>
 			</tr>
 
 
 			<tr>
 				<td><label><?php echo strtoupper( $which_pop ); ?> is general population?:</label></td>
 				<td colspan="3"><span id="<?php echo $which_pop; ?>_general_population-holder">
-					<input type="radio" value="Y" name="<?php echo $which_pop; ?>_general_population" class="population_table">Yes
-					<input type="radio" value="N" name="<?php echo $which_pop; ?>_general_population" class="population_table">No
+					<input type="radio" value="Y" name="<?php echo $which_pop; ?>_general_population" class="population_table" data-notreported_id="<?php echo $which_pop; ?>_generalpopulation_notreported">Yes
+					<input type="radio" value="N" name="<?php echo $which_pop; ?>_general_population" class="population_table" data-notreported_id="<?php echo $which_pop; ?>_generalpopulation_notreported">No
 				</span></td>
 			</tr>
 			<tr class="not-reported">
 				<td class="not-reported"><label><?php echo strtoupper( $which_pop ); ?> is general population not reported</label></td>
-				<td colspan="3"><input id="<?php echo $which_pop; ?>_generalpopulation_notreported" class="population_table" type="checkbox"></td>
+				<td colspan="3"><input id="<?php echo $which_pop; ?>_generalpopulation_notreported" class="population_table not_reported_clear" type="checkbox"></td>
 			</tr>
 
 		<?php if( $which_pop == 'ese' ){ ?>
@@ -255,26 +255,26 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 			<tr>
 				<td><label>Representativeness?</label></td>
 				<td colspan="4"><span id="ese_representativeness-holder">
-					<input type="radio" value="Y" name="ese_representativeness" class="population_table">Yes (no statistical differences from target or intervention-exposed populations reported)
-					<input type="radio" value="N" name="ese_representativeness" class="population_table">No (statistical differences from target or intervention-exposed populations reported)
+					<input type="radio" value="Y" name="ese_representativeness" class="population_table" data-notreported_id="ese_representativeness_notreported">Yes (no statistical differences from target or intervention-exposed populations reported)
+					<input type="radio" value="N" name="ese_representativeness" class="population_table" data-notreported_id="ese_representativeness_notreported">No (statistical differences from target or intervention-exposed populations reported)
 				</span></td>
 			</tr>
 			<tr class="not-reported">
 				<td class="not-reported"><label>Representativeness not reported</label></td>
-				<td colspan="3"><input id="ese_representativeness_notreported" class="population_table" type="checkbox"></td>
+				<td colspan="3"><input id="ese_representativeness_notreported" class="population_table not_reported_clear" type="checkbox"></td>
 			</tr>
 
 
 			<tr>
 				<td><label>Oversampling?</label></td>
 				<td colspan="4"><span id="ese_oversampling-holder">
-					<input type="radio" value="Y" name="ese_oversampling" class="population_table">Yes
-					<input type="radio" value="N" name="ese_oversampling" class="population_table">No
+					<input type="radio" value="Y" name="ese_oversampling" class="population_table" data-notreported_id="ese_oversampling_notreported">Yes
+					<input type="radio" value="N" name="ese_oversampling" class="population_table" data-notreported_id="ese_oversampling_notreported">No
 				</span></td>
 			</tr>
 			<tr class="not-reported">
 				<td class="not-reported"><label>Oversampling not reported</label></td>
-				<td colspan="3"><input id="ese_oversampling_notreported" class="population_table" type="checkbox"></td>
+				<td colspan="3"><input id="ese_oversampling_notreported" class="population_table not_reported_clear" type="checkbox"></td>
 			</tr>
 
 
@@ -296,25 +296,25 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 			<tr>
 				<td><label>Representativeness?</label></td>
 				<td colspan="4"><span id="ipe_representativeness-holder">
-					<input type="radio" value="Y" name="ipe_representativeness" class="population_table">Yes (no statistical differences from target population reported)
-					<input type="radio" value="N" name="ipe_representativeness" class="population_table">No (statistical differences from target population reported)
+					<input type="radio" value="Y" name="ipe_representativeness" class="population_table" data-notreported_id="ipe_representativeness_notreported">Yes (no statistical differences from target population reported)
+					<input type="radio" value="N" name="ipe_representativeness" class="population_table" data-notreported_id="ipe_representativeness_notreported">No (statistical differences from target population reported)
 				</span></td>
 			</tr>
 			<tr class="not-reported">
 				<td class="not-reported"><label>Representativeness not reported</label></td>
-				<td colspan="3"><input id="ipe_representativeness_notreported" class="population_table" type="checkbox"></td>
+				<td colspan="3"><input id="ipe_representativeness_notreported" class="population_table not_reported_clear" type="checkbox"></td>
 			</tr>
 			
 			<tr>
 				<td><label>Applicability to high-risk populations?</label></td>
 				<td colspan="4"><span id="ipe_applicability_hr_pops-holder">
-					<input type="radio" value="Y" name="ipe_applicability_hr_pops" class="population_table">Yes (intervention specific to high-risk population)
-					<input type="radio" value="N" name="ipe_applicability_hr_pops" class="population_table">No (intervention applies to general population)
+					<input type="radio" value="Y" name="ipe_applicability_hr_pops" class="population_table" data-notreported_id="ipe_applicabilityhrpops_notreported">Yes (intervention specific to high-risk population)
+					<input type="radio" value="N" name="ipe_applicability_hr_pops" class="population_table" data-notreported_id="ipe_applicabilityhrpops_notreported">No (intervention applies to general population)
 				</span></td>
 			</tr>
 			<tr class="not-reported">
 				<td class="not-reported"><label>Applicability to HR populations not reported</label></td>
-				<td colspan="3"><input id="ipe_applicabilityhrpops_notreported" class="population_table" type="checkbox"></td>
+				<td colspan="3"><input id="ipe_applicabilityhrpops_notreported" class="population_table not_reported_clear" type="checkbox"></td>
 			</tr>
 
 			<tr class="ipe_hr_subpopulations">

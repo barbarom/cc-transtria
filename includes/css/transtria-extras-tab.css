@@ -24,12 +24,17 @@ button, a.button{
 	cursor: pointer;
 }
 
+textarea{
+	width:98%;
+}
+
+
 
 
 /* START TABS CSS */
 .tabs {
   position: relative;   
-  min-height: 2600px; /* This part sucks */
+  min-height: 2800px; /* This part sucks */
   clear: both;
   margin: 25px 0;
 }

@@ -130,7 +130,7 @@ function get_assignment_data_basic( ){
 					}
 					txt += " " + data.assignments_info[i].StudyID + "' data-studyid='" + data.assignments_info[i].StudyID + "'>"; 
 					txt += "<td>" + studygroup + "</td>";
-					txt += "<td class='studyid_val' style='font-weight:bold;'><a class='link' href='" + basepath + "&study_id=" + data.assignments_info[i].StudyID + "'>" + data.assignments_info[i].StudyID + "</a></td>";
+					txt += "<td class='studyid_val' style='font-weight:bold;'><a class='link' href='" + basepath + "?study_id=" + data.assignments_info[i].StudyID + "'>" + data.assignments_info[i].StudyID + "</a></td>";
 
 					//EndNote rec number, for now since Mel see that as unique
 					txt += "<td>" + endnoteid + "</td>";

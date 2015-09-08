@@ -109,7 +109,7 @@ function cc_transtria_render_intervention_partnerships_tab( $field_data ){
 		 
 		 <tr>
 			<td><label>Name of lead agencies:</label></td>
-			<td colspan="3"><input type="text" id="lead_agencies" class="studies_table"></input></td>
+			<td colspan="3"><textarea id="lead_agencies" class="studies_table"></textarea></td>
 		 </tr>
 
 		 <tr class="not-reported">
@@ -120,7 +120,7 @@ function cc_transtria_render_intervention_partnerships_tab( $field_data ){
 
 		 <tr>
 			<td><label>Lead agency role:</label></td>
-			<td colspan="3"><input type="text" id="lead_agency_role" class="studies_table"></input></td>
+			<td colspan="3"><textarea id="lead_agency_role" class="studies_table"></textarea></td>
 		 </tr>
 
 		 <tr class="not-reported">
@@ -137,15 +137,15 @@ function cc_transtria_render_intervention_partnerships_tab( $field_data ){
 		 <tr>
 			<td><label>Theory/Framework:</label></td>
 			<td><span id="theory_framework_flag">
-				<input type="radio" value="Y" name="theory_framework_flag" class="studies_table">Yes
-				<input type="radio" value="N" name="theory_framework_flag" class="studies_table">No
+				<input type="radio" value="Y" name="theory_framework_flag" class="studies_table" data-notreported_id="theoryframework_notreported">Yes
+				<input type="radio" value="N" name="theory_framework_flag" class="studies_table" data-notreported_id="theoryframework_notreported">No
 			</span></td>
 		 </tr>
 
 		 <tr class="not-reported">
 			<td class="not-reported"><label>Theory/Framework not reported</label></td>
 			<td>
-				<input id="theoryframework_notreported" class="studies_table" type="checkbox">
+				<input id="theoryframework_notreported" class="studies_table not_reported_clear" type="checkbox">
 			</td>
 		 </tr>
 
@@ -177,7 +177,7 @@ function cc_transtria_render_intervention_partnerships_tab( $field_data ){
 
 		 <tr>
 			<td><label>Intervention purpose:</label></td>
-			<td colspan="2"><input type="text" id="intervention_purpose" class="studies_table"></input></td>
+			<td colspan="3"><textarea id="intervention_purpose" class="studies_table"></textarea></td>
 		 </tr>
 		  
 		 <tr class="not-reported">
@@ -187,7 +187,7 @@ function cc_transtria_render_intervention_partnerships_tab( $field_data ){
 
 		 <tr>
 			<td><label>Intervention summary:</label></td>
-			<td colspan="3"><textarea id="intervention_summary" class="studies_table" style="width:100%"></textarea></td>
+			<td colspan="3"><textarea id="intervention_summary" class="studies_table"></textarea></td>
 		 </tr>
 
 		 <tr class="not-reported">
@@ -339,16 +339,16 @@ function cc_transtria_render_intervention_partnerships_tab( $field_data ){
 		<tr>
 			<td><label>Replication:</label></td>
 			<td><span id="replication">
-				<input type="radio" value="Y" name="replication" class="studies_table">Yes
-				<input type="radio" value="N" name="replication" class="studies_table">No
+				<input type="radio" value="Y" name="replication" class="studies_table" data-notreported_id="replication_notreported">Yes
+				<input type="radio" value="N" name="replication" class="studies_table" data-notreported_id="replication_notreported">No
 			</span></td>
 			<td><label>Description:</label></td>
-			<td><input type="text" id="replication_descr" class="studies_table"></input></td>
+			<td><textarea id="replication_descr" class="studies_table"></textarea></td>
 		</tr>
 
 		<tr class="not-reported">
 			<td class="not-reported"><label>Replication not reported</label></td>
-			<td colspan="3"><input id="replication_notreported" class="studies_table" type="checkbox"></td>
+			<td colspan="3"><input id="replication_notreported" class="studies_table not_reported_clear" type="checkbox"></td>
 		</tr>
 
 
@@ -377,28 +377,28 @@ function cc_transtria_render_intervention_partnerships_tab( $field_data ){
 		<tr>
 			<td><label>Evidence-based:</label></td>
 			<td><span id="evidence_based">
-				<input type="radio" value="Y" name="evidence_based" class="studies_table">Yes
-				<input type="radio" value="N" name="evidence_based" class="studies_table">No
+				<input type="radio" value="Y" name="evidence_based" class="studies_table" data-notreported_id="evidencebased_notreported">Yes
+				<input type="radio" value="N" name="evidence_based" class="studies_table" data-notreported_id="evidencebased_notreported">No
 			</span></td>
 		</tr>
 
 		<tr class="not-reported">
 			<td class="not-reported"><label>Evidence-based not reported</label></td>
-			<td colspan="3"><input id="evidencebased_notreported" class="studies_table" type="checkbox"></td>
+			<td colspan="3"><input id="evidencebased_notreported" class="studies_table not_reported_clear" type="checkbox"></td>
 		</tr>
 
 
 		<tr>
 			<td><label>Fidelity:</label></td>
 			<td><span id="fidelity">
-				<input type="radio" value="Y" name="fidelity" class="studies_table">Yes
-				<input type="radio" value="N" name="fidelity" class="studies_table">No
+				<input type="radio" value="Y" name="fidelity" class="studies_table" data-notreported_id="fidelity_notreported">Yes
+				<input type="radio" value="N" name="fidelity" class="studies_table" data-notreported_id="fidelity_notreported">No
 			</span></td>
 		</tr>
 
 		<tr class="not-reported">
 			<td class="not-reported"><label>Fidelity not reported</label></td>
-			<td colspan="3"><input id="fidelity_notreported" class="studies_table" type="checkbox"></td>
+			<td colspan="3"><input id="fidelity_notreported" class="studies_table not_reported_clear" type="checkbox"></td>
 		</tr>
 
 
@@ -416,14 +416,14 @@ function cc_transtria_render_intervention_partnerships_tab( $field_data ){
 		<tr>
 			<td><label>Lessons Learned:</label></td>
 			<td><span id="lessons_learned">
-				<input type="radio" value="Y" name="lessons_learned" class="studies_table">Yes
-				<input type="radio" value="N" name="lessons_learned" class="studies_table">No
+				<input type="radio" value="Y" name="lessons_learned" class="studies_table" data-notreported_id="lessonslearned_notreported">Yes
+				<input type="radio" value="N" name="lessons_learned" class="studies_table" data-notreported_id="lessonslearned_notreported">No
 			</span></td>
 		</tr>
 
 		<tr class="not-reported">
 			<td class="not-reported"><label>Lessons Learned not reported</label></td>
-			<td colspan="3"><input id="lessonslearned_notreported" class="studies_table" type="checkbox"></td>
+			<td colspan="3"><input id="lessonslearned_notreported" class="studies_table not_reported_clear" type="checkbox"></td>
 		</tr>
 
 
