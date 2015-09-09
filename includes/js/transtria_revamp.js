@@ -1585,6 +1585,9 @@ function copy_ea_tab(){
 		jQuery(this).attr("name", new_name);
 	});
 	
+	//copy textareas (clone does not do this: http://api.jquery.com/clone/)
+	new_ea_copy.find('[id$="_results_variables"]').val( tab_copied.find('[id$="_results_variables"]').val() );
+	
 	//go through each dropdown in the old and copy to new(jQuery clone() does not do this!)
 	//copy select selections (clone does not do this)
 	var selections_object = {};
