@@ -182,7 +182,7 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 			<tr>
 				<td colspan="4" class="inner_table_header"><strong><?php echo $subtitle; ?></strong></td>
 				<?php if ($which_pop == 'ese' ){ ?>
-					<td><a id="" class="button remove_tab_button alignright hidden" data-tabnumber="" onclick="remove_extra_ese_tab()">Clear this ES-E tab data</a>
+					<!--<td><a id="" class="button remove_tab_button alignright hidden" data-tabnumber="" onclick="remove_extra_ese_tab()">Clear this ES-E tab data</a>-->
 				<?php } ?>
 			</tr>
 
@@ -256,6 +256,7 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 				<td><label>Representativeness?</label></td>
 				<td colspan="4"><span id="ese_representativeness-holder">
 					<input type="radio" value="Y" name="ese_representativeness" class="population_table" data-notreported_id="ese_representativeness_notreported">Yes (no statistical differences from target or intervention-exposed populations reported)
+					<br />
 					<input type="radio" value="N" name="ese_representativeness" class="population_table" data-notreported_id="ese_representativeness_notreported">No (statistical differences from target or intervention-exposed populations reported)
 				</span></td>
 			</tr>
@@ -297,6 +298,7 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 				<td><label>Representativeness?</label></td>
 				<td colspan="4"><span id="ipe_representativeness-holder">
 					<input type="radio" value="Y" name="ipe_representativeness" class="population_table" data-notreported_id="ipe_representativeness_notreported">Yes (no statistical differences from target population reported)
+					<br />
 					<input type="radio" value="N" name="ipe_representativeness" class="population_table" data-notreported_id="ipe_representativeness_notreported">No (statistical differences from target population reported)
 				</span></td>
 			</tr>
@@ -309,6 +311,7 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 				<td><label>Applicability to high-risk populations?</label></td>
 				<td colspan="4"><span id="ipe_applicability_hr_pops-holder">
 					<input type="radio" value="Y" name="ipe_applicability_hr_pops" class="population_table" data-notreported_id="ipe_applicabilityhrpops_notreported">Yes (intervention specific to high-risk population)
+					<br />
 					<input type="radio" value="N" name="ipe_applicability_hr_pops" class="population_table" data-notreported_id="ipe_applicabilityhrpops_notreported">No (intervention applies to general population)
 				</span></td>
 			</tr>

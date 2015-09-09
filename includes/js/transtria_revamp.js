@@ -1335,27 +1335,7 @@ function strategy_limit_results( ){
 	});
 
 }
-
 	
-	
-	
-	
-//update the ea copy tab ('.ea_copy_tab') options
-function refresh_ea_copy_tab(){
-	
-	//how many tabs?
-	var num_tabs = jQuery("#effect_association_tabs ul li").length;
-	var tab_selects = jQuery(".ea_copy_tab");
-	
-	var txt = "";
-	for( var i=1; i<=num_tabs; i++ ){
-		txt += "<option value='" + i + "'>" + i + "</option>"
-	
-	}
-	
-	tab_selects.html( txt );
-	
-}
 
 //when 'add ese' is clicked, copy original ESE tab 
 function copy_ese_tab(){
@@ -1388,10 +1368,25 @@ function copy_ese_tab(){
 	var new_ese_copy = jQuery('.ese_content').clone(true,true);
 	var save_study_button_html = jQuery('.button.save_study');
 	
-	//copy textareas (clone does not do this)
+	//copy textareas (clone does not do this: http://api.jquery.com/clone/)
 	new_ese_copy.find("#ese_other_population_description").val( jQuery(".ese_content #ese_other_population_description").val() );
 	
-	//vars
+	//copy select selections (clone does not do this)
+	var selected_geo_options = jQuery('.ese_content').find('[id$="_geographic_scale"] option:selected');
+	var selected_hr_pops_options = jQuery('.ese_content').find('[id$="_hr_subpopulations"] option:selected');
+	var selected_ability_options = jQuery('.ese_content').find('[id$="_ability_status"] option:selected');
+	var selected_subpops_options = jQuery('.ese_content').find('[id$="_sub_populations"] option:selected');
+	var selected_youthpops_options = jQuery('.ese_content').find('[id$="_youth_populations"] option:selected');
+	var selected_profpops_options = jQuery('.ese_content').find('[id$="_professional_populations"] option:selected');
+	var selected_gender_option = jQuery('.ese_content').find('[id$="_gender"] option:selected'); //there should be just one
+	
+	//mark 'selected' options as selected in new_ese_copy (this really could be more elegant..)
+	jQuery.each( selected_geo_options, function( index, value ){
+	
+	
+	});
+	
+	//var inits
 	var new_pop_type = "";
 	var old_id = "";
 	var new_id = "";
@@ -1482,7 +1477,6 @@ function copy_ese_tab(){
 	}); 
 
 }
-
 
 //when 'add ese' is clicked, copy whichever ea tab is selected
 function copy_ea_tab(){
@@ -1715,6 +1709,23 @@ function add_empty_ea_tab(){
 	}); 
 		
 	spinny.hide();
+}
+	
+//update the ea copy tab ('.ea_copy_tab') options
+function refresh_ea_copy_tab(){
+	
+	//how many tabs?
+	var num_tabs = jQuery("#effect_association_tabs ul li").length;
+	var tab_selects = jQuery(".ea_copy_tab");
+	
+	var txt = "";
+	for( var i=1; i<=num_tabs; i++ ){
+		txt += "<option value='" + i + "'>" + i + "</option>"
+	
+	}
+	
+	tab_selects.html( txt );
+	
 }
 
 //for unselecting related radio fields
