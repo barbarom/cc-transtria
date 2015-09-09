@@ -92,7 +92,7 @@ function cc_transtria_render_populations_header( $field_data ){
 		} ?>
 		
 		<div id="add-ese-tab" class="alignright">
-			<label class="ese_add_tab_label" for="ass-ese-tab">Add ESE tab</label>
+			<label class="ese_add_tab_label" for="add-ese-tab">Add ESE tab</label>
 		</div>
 		
 		</div> <br />
@@ -182,7 +182,7 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 			<tr>
 				<td colspan="4" class="inner_table_header"><strong><?php echo $subtitle; ?></strong></td>
 				<?php if ($which_pop == 'ese' ){ ?>
-					<td><button id="" class="remove_tab_button alignright hidden" data-tabnumber="" onclick="remove_extra_ese_tab()">Clear this ES-E tab data</button>
+					<td><a id="" class="button remove_tab_button alignright hidden" data-tabnumber="" onclick="remove_extra_ese_tab()">Clear this ES-E tab data</a>
 				<?php } ?>
 			</tr>
 
@@ -516,12 +516,12 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 
 			<tr class="<?php echo $which_pop; ?>_not_general">
 				<td class=""><label>Other populations</label></td>
-				<td colspan="3"><input id="<?php echo $which_pop; ?>_other_populations" class="population_table" type="checkbox"></td>
+				<td colspan="3"><input id="<?php echo $which_pop; ?>_other_populations" class="population_table other_populations_textenable" type="checkbox"></td>
 			</tr>
 
 			<tr class="<?php echo $which_pop; ?>_not_general">
 				<td class=""><label>Other population description</label></td>
-				<td colspan="3"><textarea id="<?php echo $which_pop; ?>_other_population_description" class="population_table" style="width:98%"></textarea></td>
+				<td colspan="3"><textarea id="<?php echo $which_pop; ?>_other_population_description" class="population_table" disabled data-otherpopcheckbox_id="<?php echo $which_pop; ?>_other_populations"></textarea></td>
 			</tr>
 
 

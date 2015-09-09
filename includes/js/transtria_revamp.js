@@ -39,30 +39,34 @@ function clickListen(){
 	//TODO: restrict options in EA tabs based on intervention tabs.
 	
 	//TODO: ea direction!
-		
-     //Confounders Type option - show if Confounders is YES, hide if NO
-     confounder_type_show(); //on init
-     jQuery("[name='confounders']").on("change", function(){
-         confounder_type_show();
-     });
+	//jQuery("input[id$='_result_effect_association_direction']").
+	jQuery("select[id$='_result_indicator_direction']").on( "change", ea_direction_calc );
+	jQuery("select[id$='_result_outcome_direction']").on( "change", ea_direction_calc );
+	
+	
+	//Confounders Type option - show if Confounders is YES, hide if NO
+	confounder_type_show(); //on init
+	jQuery("[name='confounders']").on("change", function(){
+		confounder_type_show();
+	});
 
-     //IPE applicability question shows HR Subpops select
-     ipe_hr_subpops_show();
-     jQuery("[name='ipe_applicability_hr_pops']").on("change", function(){
-         ipe_hr_subpops_show();
-     });
+	//IPE applicability question shows HR Subpops select
+	ipe_hr_subpops_show();
+	jQuery("[name='ipe_applicability_hr_pops']").on("change", function(){
+		ipe_hr_subpops_show();
+	});
 
-     //ESE oversampling question shows HR subpops select
-     ese_hr_subpops_show();
-     jQuery("[name='ese_oversampling']").on("change", function(){
-         ese_hr_subpops_show();
-     });
+	//ESE oversampling question shows HR subpops select
+	ese_hr_subpops_show();
+	jQuery("[name='ese_oversampling']").on("change", function(){
+		ese_hr_subpops_show();
+	});
 
-     //Limit strategies on EA/results tab based on ones selected on intervention
-     jQuery("#strategies").on("change", function(){
-        strategy_limit_results(); 
-     });
-     //strategy_limit_results(); //hmm, not yet, multiselects take a while to set up, apparently
+	//Limit strategies on EA/results tab based on ones selected on intervention
+	jQuery("#strategies").on("change", function(){
+		strategy_limit_results(); 
+	});
+	//strategy_limit_results(); //hmm, not yet, multiselects take a while to set up, apparently
 
 	
 	//Add new ESE tabs
@@ -76,6 +80,10 @@ function clickListen(){
 	
 	//when clicking 'not reported', unselected related radio fields
 	jQuery('.not_reported_clear').on("click", uncheck_not_reported_related_fields);
+	
+	//other populations checkbox should enable other populations description (textarea). 
+	//TODO: are we clearing anything?
+	jQuery('.other_populations_textenable').on("click", other_populations_textarea_enable);
 	
 } 
 
@@ -867,6 +875,10 @@ function get_current_study_info(){
 			var not_reported_checkboxes = jQuery('form#study_form .not_reported_clear');
 			jQuery.each( not_reported_checkboxes, uncheck_not_reported_related_fields );
 			
+			//other populations textarea listen
+			jQuery('.other_populations_textenable').off("click", other_populations_textarea_enable);
+			jQuery('.other_populations_textenable').on("click", other_populations_textarea_enable);
+			
 			
 		}).always(function() {
 			//regardless of outcome, hide spinny
@@ -1214,6 +1226,48 @@ function stop_time_validate( thisid, thisvalue ){
 	}
 }
 
+//change ea direction based on
+function ea_direction_calc(){
+
+	var which_tab = jQuery(this).parents('.one_ea_tab').attr("data-which_tab_num");
+	
+	var ind = jQuery('#ea_' + which_tab + '_result_indicator_direction').val();
+	var out = jQuery('#ea_' + which_tab + '_result_outcome_direction').val();
+	
+	var this_direction = jQuery('#ea_' + which_tab + '_result_effect_association_direction');
+	
+	//if either indicator or outcome direction isn't selected, we have no EA direction
+	if ( ind == undefined || out == undefined || ind == "" || out == "") {
+		this_direction.val('');
+		return;
+	}
+	
+	//if both ind and out have values, algorithmize for ea direction!
+	switch(ind) {
+		case '01':
+		case '04':
+			if (out == '01' || out == '04') {
+				this_direction.val('Positive(+)')
+			} else if (out == '02' || out == '03') {
+				this_direction.val('Negative(-)')
+			} else {
+				this_direction.val('')
+			}
+			return;
+		case '02':
+		case '03':
+			if (out == '02' || out == '03') {
+				this_direction.val('Positive(+)')
+			} else if (out == '01' || out == '04') {
+				this_direction.val('Negative(-)')
+			} else {
+				this_direction.val('')
+			}
+			return;
+	} // switch
+
+}
+
 //show/hide confounders text area on confounders YES/NO
 function confounder_type_show(){
 	if( jQuery("[name='confounders']:checked").val() == "Y" ){
@@ -1315,6 +1369,11 @@ function copy_ese_tab(){
 		new_tab_id = Number(lastChar) + 1;
 	}
 	
+	if( new_tab_id > 9 ){
+		console.log('max tabs reached!');
+		return;
+	}
+	
 	//add a new tab to the pops section
 	jQuery('#sub_pops_tabs').append("<div id='ese" + new_tab_id + "-tab' class='subpops_tab'><label class='subpops_tab_label' for='ese" + new_tab_id + "-tab' data-whichpop='ese" + new_tab_id + "'>ese" + new_tab_id + "</label></div>");
 	
@@ -1327,6 +1386,7 @@ function copy_ese_tab(){
 	
 	//we will need to copy the main ese tab
 	var new_ese_copy = jQuery('.ese_content').clone(true,true);
+	var save_study_button_html = jQuery('.button.save_study');
 	
 	//copy textareas (clone does not do this)
 	new_ese_copy.find("#ese_other_population_description").val( jQuery(".ese_content #ese_other_population_description").val() );
@@ -1382,10 +1442,16 @@ function copy_ese_tab(){
 		jQuery(this).attr("name", new_name);
 	});
 	
+	//other populations textarea listen
+	new_ese_copy.find('.other_populations_textenable').on("click", other_populations_textarea_enable);
 	
 		
 	//append to population div id="populations_Tabs
 	new_ese_copy.appendTo( jQuery("#population_tabs") );
+	
+	//remove old 'save study' button and re-place
+	//save_study_button_html.remove();
+	//save_study_button_html.appendTo( jQuery("#population_tabs") );
 	
 	//reattach click listeners to pops tabs
 	var which_content = new_pop_type + '_content';
@@ -1457,6 +1523,7 @@ function copy_ea_tab(){
 	//update overall div#
 	new_id = 'effect_association_tab_' + new_tab_num;
 	new_ea_copy.attr("id", new_id);
+	new_ea_copy.attr("data-which_tab_num", new_tab_num);
 	//overall_div_id.attr("id", new_id);
 	
 	
@@ -1509,7 +1576,7 @@ function copy_ea_tab(){
 	//refresh copytab options
 	refresh_ea_copy_tab();
 	
-	//add clicklistener 'variables' textarea click listen based on whether "adjsuted" is selected
+	//add clicklistener 'variables' textarea click listen based on whether "adjusted" is selected
 	//turn off previous click listen and turn back on
 	jQuery("input[name$='_result_type']").off("click", show_adjusted_variables );
 	jQuery("input[name$='_result_type']").on("click", show_adjusted_variables );
@@ -1569,6 +1636,7 @@ function add_empty_ea_tab(){
 	//update overall div#
 	new_id = 'effect_association_tab_' + new_tab_num;
 	new_ea_copy.attr("id", new_id);
+	new_ea_copy.attr("data-which_tab_num", new_tab_num);
 	//overall_div_id.attr("id", new_id);
 	
 	
@@ -1667,6 +1735,24 @@ function uncheck_not_reported_related_fields(){
 	}
 }
 
+//other populations checkbox checked should enable other populations description
+function other_populations_textarea_enable(){
+
+	//have we selected the checkbox? 
+	var is_checked = jQuery(this).is(":checked");
+	
+	//get the id of this checkbox
+	var other_pops_checkbox_id = jQuery(this).attr("id");
+	
+	//which radio is related to this 'not reported' checkbox?
+	var other_pops_textarea = jQuery('form#study_form').find("[data-otherpopcheckbox_id='" + other_pops_checkbox_id +"']");
+	
+	//for each radio (Yes and No), clear selection
+	jQuery.each( other_pops_textarea, function(){
+		jQuery(this).prop('disabled', !is_checked); 
+	});
+
+}
 
 
 //helper function to get URL param
