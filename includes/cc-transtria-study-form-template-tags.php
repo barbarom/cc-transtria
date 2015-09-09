@@ -28,7 +28,7 @@ function cc_transtria_render_form(){
 	if( !empty( $_GET["study_id"] ) ) 
 		$this_study_id = $_GET["study_id"];
 
-	$this_endnote_id = ( !empty( $_GET["endnoteid"] ) ) ? $this_endnote_id : "";
+	$this_endnote_id = ( !empty( $_GET["endnoteid"] ) ) ? $_GET["endnoteid"] : "";
 
 		
 	//get all study ids in system.  If url param not in system, set this_study_id to null
@@ -223,10 +223,11 @@ function cc_transtria_render_form(){
 							<span><select id="EndNoteID" class="studies_table"> 
 								<option value="">---Select---</option>
 								<?php										
+										//var_dump( $this_endnote_id );
 								//$all_endnote_ids are indexed by the div id - "abstractor", for example
 								foreach( $all_endnote_ids as $k => $v ){
 									echo '<option value="' . $k . '"';
-									if( (int) $this_endnote_id == (int)$k ){
+									if( (int)$this_endnote_id == (int)$k ){
 										echo ' selected="selected">';
 									} else {
 										echo '>';

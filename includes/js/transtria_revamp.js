@@ -1916,6 +1916,8 @@ jQuery( document ).ready(function() {
 	//initialize ability status limiter
 	ea_clickListen();
 
+	//in case we have an endnoteid param in the url, get the citation data
+	get_citation_data();
 	//initialize message on results page and then add change listener to stop time inputs
 	//stop_time_validate();
 	

@@ -267,6 +267,16 @@ table#assignment-table th{
 	margin: 1em 0;
 }
 
+.filters button.active {
+	background-color: #008eaa;
+    background-image: none;
+    color: white;
+}
+
+#assignment-table td .yellow{
+	background-color:yellow;
+}
+
 
 
 

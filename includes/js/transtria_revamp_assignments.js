@@ -217,10 +217,12 @@ function get_assignment_data_basic( ){
 
        //make all studygroupid checkboxes "Ready for Analysis" update together (if same #)
        //turn on listeners for analysis checkbox and searches/filters
- /*      readyAnalysisListen();
-       getAssignmentDataNext();
        phaseFilterButtonListen();
        searchButtonListen();
+	   
+	   
+ /*      readyAnalysisListen();
+       getAssignmentDataNext();
        strategyFilterListen();
 */
     }).complete( function( ) {
@@ -329,131 +331,135 @@ function save_assignment_data(){
   }
 
 
-	//add phase filter listener to Main table on Assignments Tab
-	function phaseFilterButtonListen(){
-		jQuery("#phase1_filter").off("click", phaseFilterAssignmentsTable);
-		jQuery("#phase1_filter").on("click", function() {
-		   phaseFilterAssignmentsTable("1");
-		   jQuery("#assignment-tab .filters button").removeClass("active");
-		   jQuery(this).addClass("active");
-		});
-		jQuery("#phase2_filter").off("click", phaseFilterAssignmentsTable);
-		jQuery("#phase2_filter").on("click", function() {
-		   phaseFilterAssignmentsTable("2");
-		   jQuery("#assignment-tab .filters button").removeClass("active");
-		   jQuery(this).addClass("active");
-		});
-		jQuery("#phaseall_filter").off("click", phaseFilterAssignmentsTable);
-		jQuery("#phaseall_filter").on("click", function() {
-		   phaseFilterAssignmentsTable("all");
-		   jQuery("#assignment-tab .filters button").removeClass("active");
-		   jQuery(this).addClass("active");
-		});
+//add phase filter listener to Main table on Assignments Tab
+function phaseFilterButtonListen(){
+	jQuery("#phase1_filter").off("click", phaseFilterAssignmentsTable);
+	jQuery("#phase1_filter").on("click", function() {
+		phaseFilterAssignmentsTable("1");
+		jQuery(".filters button").removeClass("active");
+		jQuery(this).addClass("active");
+	});
+	jQuery("#phase2_filter").off("click", phaseFilterAssignmentsTable);
+	jQuery("#phase2_filter").on("click", function() {
+		phaseFilterAssignmentsTable("2");
+		jQuery(".filters button").removeClass("active");
+		jQuery(this).addClass("active");
+	});
+	jQuery("#phaseall_filter").off("click", phaseFilterAssignmentsTable);
+	jQuery("#phaseall_filter").on("click", function() {
+		phaseFilterAssignmentsTable("all");
+		jQuery(".filters button").removeClass("active");
+		jQuery(this).addClass("active");
+	});
+} 
+
+//add phase filter function to Main table on Assignments Tab
+function phaseFilterAssignmentsTable( phase_num ){
+
+	if ( ( phase_num != "all" ) || ( phase_num == undefined ) ){    
+		phase_num = parseInt( phase_num ) || 2;
+	} 
+	if( phase_num ){
+		phase_num = "phase_" + phase_num;
+	} else {
+		phase_num = "-1";
+	}
+
+	//make sure correct rows are showing, all else hide
+	if ( !( jQuery("tr.assignment-study." + phase_num + "").is(":visible") ) && ( phase_num !="-1" ) ){
+		jQuery("tr.assignment-study." + phase_num + "").show();
 	} 
 
-  //add phase filter function to Main table on Assignments Tab
-  function phaseFilterAssignmentsTable( phase_num ){
-    if ( ( phase_num != "all" ) || ( phase_num == undefined ) ){    
-       phase_num = parseInt( phase_num ) || 2;
-    } 
-    if( phase_num ){
-       phase_num = "phase_" + phase_num;
-    } else {
-       phase_num = "-1";
-    }
+	//now, hide by tr.class (added above when getting assignments)
+	if( ( phase_num != "-1" ) && ( phase_num != "phase_all" ) ){
+		jQuery("tr.assignment-study:not(." + phase_num + " )").hide();
+	} else { //or, show all
+		jQuery("tr.assignment-study").show();
+	}
 
-    //make sure correct rows are showing, all else hide
-    if ( !( jQuery("tr.assignment-study." + phase_num + "").is(":visible") ) && ( phase_num !="-1" ) ){
-       jQuery("tr.assignment-study." + phase_num + "").show();
-    } 
+}
 
-    //now, hide by tr.class (added above when getting assignments)
-    if( ( phase_num != "-1" ) && ( phase_num != "phase_all" ) ){
-       jQuery("tr.assignment-study:not(." + phase_num + " )").hide();
-    } else { //or, show all
-       jQuery("tr.assignment-study").show();
-    }
+function searchButtonListen(){
+	jQuery(".filters .search_button").on("click", function() {
+		var searchterm = jQuery("#search_text").val();
+		searchMainAssignmentTable( searchterm );
+		jQuery(".filters button").removeClass("active");
+		jQuery(this).addClass("active");
+	});
+	jQuery(".filters .clear_search").on("click", function() {
+		searchMainAssignmentTable( "" );
+		jQuery(".filters .search_button").removeClass("active");
+		jQuery(".filters button").removeClass("active");
+	});
+}
 
-  }
-
-  function searchButtonListen(){
-    jQuery("#assignment-tab .filters .search_button").on("click", function() {
-       var searchterm = jQuery("#search_text").val();
-       searchMainAssignmentTable( searchterm );
-       jQuery("#assignment-tab .filters button").removeClass("active");
-       jQuery(this).addClass("active");
-    });
-    jQuery("#assignment-tab .filters .clear_search").on("click", function() {
-       searchMainAssignmentTable( "" );
-       jQuery("#assignment-tab .filters .search_button").removeClass("active");
-       jQuery("#assignment-tab .filters button").removeClass("active");
-    });
-  }
-
-  function searchMainAssignmentTable( searchterm ){
+function searchMainAssignmentTable( searchterm ){
      
-    removeMainTableHighlight( jQuery("table#assignment-table tr em") ); 
+	removeMainTableHighlight( jQuery("table#assignment-table tr em") ); 
 
     //show all rows (reset)
-    jQuery("table#assignment-table tr").show(); 
-    if( searchterm != "" ){
+	jQuery("table#assignment-table tr").show(); 
+	if( searchterm != "" ){
 
-       var authorElement;
-       var author;
-       var titleElement;
-       var title;
-       var authorIndex;
-       var titleIndex;
-       var count = 0;
+		var authorElement;
+		var author;
+		var titleElement;
+		var title;
+		var authorIndex;
+		var titleIndex;
+		var count = 0;
 
-       jQuery("table#assignment-table tr").each( function( index ) {
-          if (index !== 0){
-             row = jQuery(this);
+		jQuery("table#assignment-table tr").each( function( index ) {
+			if (index !== 0){
+				row = jQuery(this);
 
-             authorElement = row.find("td.author");
-             author = authorElement.text();
-             authorIndex = author.indexOf(searchterm);
-             titleElement = row.find("td.title");
-             title = titleElement.text();
-             titleIndex = title.indexOf(searchterm);
+				authorElement = row.find("td.author");
+				author = authorElement.text().toLowerCase();
+				authorIndex = author.indexOf(searchterm);
+				titleElement = row.find("td.title");
+				title = titleElement.text().toLowerCase();
+				titleIndex = title.indexOf(searchterm);
 
-             //need to beef up logic for rows
-             //if( ( authorIndex !=0 ) || ( titleIndex !=0 ) ){
-             //if( authorIndex !=0 ){
-             if( ( authorIndex == -1 ) && ( titleIndex == -1 ) ){
-                row.hide();
-             } else if ( authorIndex !=0 && authorIndex != -1 ) {
-                addMainTableHighlight(authorElement, searchterm);
-                row.show();
-                count++;
+				//need to beef up logic for rows
+				//if( ( authorIndex !=0 ) || ( titleIndex !=0 ) ){
+				//if( authorIndex !=0 ){
+				if( ( authorIndex == -1 ) && ( titleIndex == -1 ) ){
+					row.hide();
+				} 
+				if ( authorIndex != -1 ) {
+					addMainTableHighlight(authorElement, searchterm);
+					row.show();
+					count++;
 
-             } else if ( titleIndex != 0 && titleIndex != -1 ){
+				}
+				if ( titleIndex != -1 ){
 
-             //else {
-                //addMainTableHighlight(authorElement, searchterm);
-                addMainTableHighlight(titleElement, searchterm);
-                row.show();
-                count++;
-             }
-          }
-       });
-      if( count <= 0 ){
-         //display a message saying no results found
-         jQuery("#assignment-tab .filters .no-results").show();
-         jQuery("#assignment-tab .filters .no-results").html('No Results Found for searchterm: ' + searchterm ).show();
-      } else {
-         jQuery("#assignment-tab .filters .no-results").hide();
-      }
-    }
-  }
+					addMainTableHighlight(titleElement, searchterm);
+					row.show();
+					count++;
+				}
+			}
+		});
+		if( count <= 0 ){
+			//display a message saying no results found
+			jQuery(".filters .no-results").show();
+			jQuery(".filters .no-results").html('No Results Found for searchterm: ' + searchterm ).show();
+		} else {
+			jQuery(".filters .no-results").hide();
+		}
+	}
+}
  
-  function addMainTableHighlight(element, textToHighlight){
-    var text = element.text();
-    var highlightText = '<em class="yellow">' + textToHighlight + '</em>';
-    var newText = text.replace(textToHighlight, highlightText);
+function addMainTableHighlight(element, textToHighlight){
 
-    element.html(newText);
-  }
+	var text = element.text();
+	var highlightText = '<em class="yellow">' + textToHighlight + '</em>';
+	var newText = text.replace(textToHighlight, highlightText);
+	
+	//var highlightTextUC = '<em class="yellow">' + textToHighlight + '</em>'; //in case we are uppercase in our search results
+
+	element.html(newText);
+}
 
   function removeMainTableHighlight(highlightedElements){
     highlightedElements.each( function() {
