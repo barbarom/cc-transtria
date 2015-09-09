@@ -1372,18 +1372,57 @@ function copy_ese_tab(){
 	new_ese_copy.find("#ese_other_population_description").val( jQuery(".ese_content #ese_other_population_description").val() );
 	
 	//copy select selections (clone does not do this)
-	var selected_geo_options = jQuery('.ese_content').find('[id$="_geographic_scale"] option:selected');
-	var selected_hr_pops_options = jQuery('.ese_content').find('[id$="_hr_subpopulations"] option:selected');
-	var selected_ability_options = jQuery('.ese_content').find('[id$="_ability_status"] option:selected');
-	var selected_subpops_options = jQuery('.ese_content').find('[id$="_sub_populations"] option:selected');
-	var selected_youthpops_options = jQuery('.ese_content').find('[id$="_youth_populations"] option:selected');
-	var selected_profpops_options = jQuery('.ese_content').find('[id$="_professional_populations"] option:selected');
-	var selected_gender_option = jQuery('.ese_content').find('[id$="_gender"] option:selected'); //there should be just one
+	var selections_object = {};
 	
-	//mark 'selected' options as selected in new_ese_copy (this really could be more elegant..)
-	jQuery.each( selected_geo_options, function( index, value ){
+	//create object with old options and new select object (for fun and easy iteration)
+	selections_object[ 'selected_geo_options' ] = {
+		_options : jQuery('.ese_content').find('[id$="_geographic_scale"] option:selected'),
+		_new_select : new_ese_copy.find('[id$="_geographic_scale"]')
+	}
+	selections_object[ 'selected_hr_pops_options' ] = {
+		_options : jQuery('.ese_content').find('[id$="_hr_subpopulations"] option:selected'),
+		_new_select : new_ese_copy.find('[id$="_hr_subpopulations"]')
+	}
+	selections_object[ 'selected_ability_options' ] = {
+		_options : jQuery('.ese_content').find('[id$="_ability_status"] option:selected'),
+		_new_select : new_ese_copy.find('[id$="_ability_status"]')
+	}
+	selections_object[ 'selected_subpops_options' ] = {
+		_options : jQuery('.ese_content').find('[id$="_sub_populations"] option:selected'),
+		_new_select : new_ese_copy.find('[id$="_sub_populations"]')
+	}
+	selections_object[ 'selected_youthpops_options' ] = {
+		_options : jQuery('.ese_content').find('[id$="_youth_populations"] option:selected'),
+		_new_select : new_ese_copy.find('[id$="_youth_populations"]')
+	}
+	selections_object[ 'selected_profpops_options' ] = {
+		_options : jQuery('.ese_content').find('[id$="_professional_populations"] option:selected'),
+		_new_select : new_ese_copy.find('[id$="_professional_populations"]')
+	}
+	selections_object[ 'selected_gender_option' ] = {
+		_options : jQuery('.ese_content').find('[id$="_gender"] option:selected'),
+		_new_select : new_ese_copy.find('[id$="_gender"]') //there should be just one
+	}
 	
+	//mark 'selected' options as selected in new_ese_copy 
+	jQuery.each( selections_object, function( index, value ){
 	
+		var org_options = this._options;
+		var new_select = this._new_select;
+		
+		//if we have selected options in original tab
+		if( org_options.length > 0 ){
+		
+			jQuery.each( org_options, function(){
+				current_option_val = jQuery(this).val();
+				//.find('option[value="01"]')
+				new_option = new_select.find('option[value="' + current_option_val + '"]');
+				if( new_option.length > 0 ) { //if new option exists
+					new_option.attr("selected","selected");
+				
+				}
+			});
+		}
 	});
 	
 	//var inits
@@ -1495,7 +1534,8 @@ function copy_ea_tab(){
 	jQuery('.ea_multiselect').multiselect("destroy");
 	
 	//we will need to copy whichever tab is selected
-	var new_ea_copy = jQuery('#effect_association_tab_' + whichtab_to_copy ).clone(true,true);
+	var tab_copied = jQuery('#effect_association_tab_' + whichtab_to_copy );
+	var new_ea_copy = tab_copied.clone(true,true);
 	
 	//vars
 	//what prepend do we need? 
@@ -1544,7 +1584,84 @@ function copy_ea_tab(){
 		//update the name?
 		jQuery(this).attr("name", new_name);
 	});
+	
+	//go through each dropdown in the old and copy to new(jQuery clone() does not do this!)
+	//copy select selections (clone does not do this)
+	var selections_object = {};
+	
+	//create object with old, selected options and new select object (for fun and easy iteration)
+	selections_object[ 'selected_duration' ] = {
+		_options : tab_copied.find('[id$="_duration"] option:selected'),
+		_new_select : new_ea_copy.find('[id$="_duration"]')
+	}
+	selections_object[ 'selected_stat_model' ] = {
+		_options : tab_copied.find('[id$="_result_statistical_model"] option:selected'),
+		_new_select : new_ea_copy.find('[id$="_result_statistical_model"]')
+	}
+	selections_object[ 'selected_result_eval_pop' ] = {
+		_options : tab_copied.find('[id$="_result_evaluation_population"] option:selected'),
+		_new_select : new_ea_copy.find('[id$="_result_evaluation_population"]')
+	}
+	selections_object[ 'selected_result_subpops' ] = {
+		_options : tab_copied.find('[id$="_result_subpopulations"] option:selected'),
+		_new_select : new_ea_copy.find('[id$="_result_subpopulations"]')
+	}
+	selections_object[ 'selected_ind_direction' ] = {
+		_options : tab_copied.find('[id$="_result_indicator_direction"] option:selected'),
+		_new_select : new_ea_copy.find('[id$="_result_indicator_direction"]')
+	}
+	selections_object[ 'selected_out_direction' ] = {
+		_options : tab_copied.find('[id$="_result_outcome_direction"] option:selected'),
+		_new_select : new_ea_copy.find('[id$="_result_outcome_direction"]')
+	}
+	selections_object[ 'selected_result_strategy' ] = {
+		_options : tab_copied.find('[id$="_result_strategy"] option:selected'),
+		_new_select : new_ea_copy.find('[id$="_result_strategy"]')
+	}
+	selections_object[ 'selected_outcome_type' ] = {
+		_options : tab_copied.find('[id$="_result_outcome_type"] option:selected'),
+		_new_select : new_ea_copy.find('[id$="_result_outcome_type"]')
+	}
+	selections_object[ 'selected_outcome_assessed' ] = {
+		_options : tab_copied.find('[id$="_result_outcome_accessed"] option:selected'),
+		_new_select : new_ea_copy.find('[id$="_result_outcome_accessed"]') //yes, this is a legacy typo.  Nope, we can't change it now. DONT DO IT PLZ.
+	}
+	selections_object[ 'selected_measures' ] = {
+		_options : tab_copied.find('[id$="_result_measures"] option:selected'),
+		_new_select : new_ea_copy.find('[id$="_result_measures"]')
+	}
+	selections_object[ 'selected_indicators' ] = {
+		_options : tab_copied.find('[id$="_result_indicator"] option:selected'),
+		_new_select : new_ea_copy.find('[id$="_result_indicator"]')
+	}
+	selections_object[ 'selected_stat_measure' ] = {
+		_options : tab_copied.find('[id$="_result_statistical_measure"] option:selected'),
+		_new_select : new_ea_copy.find('[id$="_result_statistical_measure"]') 
+	}
+	
+	//mark 'selected' options as selected in new_ea_copy 
+	jQuery.each( selections_object, function( index, value ){
+	
+		var org_options = this._options;
+		var new_select = this._new_select;
 		
+		//if we have selected options in original tab
+		if( org_options.length > 0 ){
+		
+			jQuery.each( org_options, function(){
+				current_option_val = jQuery(this).val();
+				//.find('option[value="01"]')
+				new_option = new_select.find('option[value="' + current_option_val + '"]');
+				if( new_option.length > 0 ) { //if new option exists
+					new_option.attr("selected","selected");
+				
+				}
+			});
+		}
+	});
+	
+	
+	
 	//append to population div id="populations_Tabs
 	new_ea_copy.appendTo( jQuery("#effect_association_tabs") );
 	
