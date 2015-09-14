@@ -81,6 +81,9 @@ function clickListen(){
 	//when clicking 'not reported', unselected related radio fields
 	jQuery('.not_reported_clear').on("click", uncheck_not_reported_related_fields);
 	
+	//when clicking on a radio with a corresponding 'not reported' attribute, selecting radio fields unclicks 'not reported' checkbox
+	jQuery('input[data-notreported_id]').on("click", uncheck_not_reported_checkboxes);
+	
 	//other populations checkbox should enable other populations description (textarea). 
 	//TODO: are we clearing anything?
 	jQuery('.other_populations_textenable').on("click", other_populations_textarea_enable);
@@ -871,10 +874,18 @@ function get_current_study_info(){
 			ipe_hr_subpops_show();
 			confounder_type_show();
 			
-			//uncheck any not-reported radios/fields on incoming data
+			//add click/select listeners to 'not reported' checkboxes and corresponding radios
 			var not_reported_checkboxes = jQuery('form#study_form .not_reported_clear');
-			jQuery.each( not_reported_checkboxes, uncheck_not_reported_related_fields );
+			var not_reported_radios = jQuery('form#study_form input[data-notreported_id]');
 			
+			//remove previous click handler (so no duplicate events)
+			//not_reported_checkboxes.off("click", uncheck_not_reported_related_fields);
+			//not_reported_radios.off("click", uncheck_not_reported_checkboxes);
+			
+			//add new clickhandler to all checkboxes/radios
+			jQuery.each( not_reported_checkboxes, uncheck_not_reported_related_fields );
+			jQuery.each( not_reported_radios, uncheck_not_reported_checkboxes );
+		
 			//other populations textarea listen
 			jQuery('.other_populations_textenable').off("click", other_populations_textarea_enable);
 			jQuery('.other_populations_textenable').on("click", other_populations_textarea_enable);
@@ -1865,6 +1876,28 @@ function uncheck_not_reported_related_fields(){
 		});
 	}
 }
+
+//function to uncheck 'not reported' when a corresponding radio is selected
+function uncheck_not_reported_checkboxes(){
+
+	//have we selected the radio? We don't care if it's unselected..
+	if( jQuery(this).is(":checked") ){
+		//get the id of this checkbox
+		var not_reported_id = jQuery(this).attr('data-notreported_id');
+		
+		//which radio is related to this 'not reported' checkbox?
+		var not_reported_checkbox = jQuery('form#study_form').find("#" + not_reported_id );
+		
+		//for each radio (Yes and No), clear selection
+		jQuery.each( not_reported_checkbox, function(){
+			jQuery(this).prop('checked', false); 
+		});
+	}
+
+
+
+}
+
 
 //other populations checkbox checked should enable other populations description
 function other_populations_textarea_enable(){
