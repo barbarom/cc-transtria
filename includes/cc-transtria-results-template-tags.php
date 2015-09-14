@@ -205,7 +205,7 @@ function cc_transtria_render_results_tab( $field_data ){
 				<input type="radio" value="N" name="outcome_maintained_flag" class="studies_table" data-notreported_id="outcomemaintained_notreported">No
 			</span></td>
 			<td><label>If yes, explain:</label></td>
-			<td><input type="text" id="explain_maintenance" class="studies_table"></input></td>
+			<td><textarea id="explain_maintenance" class="studies_table"></textarea></td>
 		</tr>
 
 		<tr class="not-reported">
@@ -220,7 +220,7 @@ function cc_transtria_render_results_tab( $field_data ){
 				<input type="radio" value="N" name="sustainability_plan_flag" class="studies_table" data-notreported_id="sustainabilityplan_notreported">No
 			</span></td>
 			<td><label>If yes, explain:</label></td>
-			<td><input type="text" id="explain_sustainability" class="studies_table"></input></td>
+			<td><textarea id="explain_sustainability" class="studies_table"></textarea></td>
 		</tr>
 
 		<tr class="not-reported">

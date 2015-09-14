@@ -136,8 +136,8 @@ function setup_multiselect() {
 			header: true,
 			position: {my: 'left bottom', at: 'left top'},
 			selectedText: '# of # checked',
-			checkAllText: 'Select all states',
-			uncheckAllText: 'Deselect all states',
+			checkAllText: 'Select all states and territories',
+			uncheckAllText: 'Deselect all states and territories',
 			close: function( event, ui){
 
 			}
