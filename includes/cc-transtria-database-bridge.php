@@ -43,7 +43,7 @@ function cc_transtria_get_study_metadata( $study_id = null ){
 		FROM $wpdb->transtria_metadata
 		WHERE `StudyID` = $study_id
 		AND 
-			( `variablename` = 'ea tabCount' OR `variablename` = 'ese tabCount')
+			( `variablename` = 'ea tabCount' OR `variablename` = 'ese tabCount' OR `variablename` = 'indicatorNum')
 		";
 		
 	$form_rows = $wpdb->get_results( $question_sql, OBJECT );
@@ -86,7 +86,7 @@ function cc_transtria_get_single_study_data( $study_id = null ){
  * @param int, int. 
  * @return string. Error message?
  */
-function cc_transtria_save_to_metadata_table( $study_id, $num_ese_tab, $num_ea_tab ){
+function cc_transtria_save_to_metadata_table( $study_id, $num_ese_tab, $num_ea_tab, $num_other_ind ){
 	
 	global $wpdb;
 	
@@ -95,6 +95,7 @@ function cc_transtria_save_to_metadata_table( $study_id, $num_ese_tab, $num_ea_t
 	//prep population types we care about
 	$ese_tabs_to_db = 0;
 	$ea_tabs_to_db = 0;
+	$other_ind_to_db = 0;
 	
 	if( !is_null( $num_ese_tab ) && ( $num_ese_tab != "" ) && ( $num_ese_tab != "NaN" ) && !is_nan( $num_ese_tab ) ){
 		$error_array[]  = 'ese org: ' . $num_ese_tab;
@@ -103,6 +104,10 @@ function cc_transtria_save_to_metadata_table( $study_id, $num_ese_tab, $num_ea_t
 	
 	if( !is_null( $num_ea_tab ) && ( $num_ea_tab != "" ) ){
 		$ea_tabs_to_db = (int)$num_ea_tab;  //0-indexed on form, 1-indexed in db.
+	}
+	
+	if( !is_null( $num_other_ind ) && ( $num_other_ind != "" ) ){
+		$other_ind_to_db = (int)$num_other_ind;  //0-indexed on form, 1-indexed in db.
 	} 
 	
 	//$error_array[] = '$ese_tabs_to_db: ' . $ese_tabs_to_db;
@@ -134,26 +139,11 @@ function cc_transtria_save_to_metadata_table( $study_id, $num_ese_tab, $num_ea_t
 			'%d'
 		) 
 	);
-	
-	//
-	/*$ese_num_row = $wpdb->replace( 
-		$wpdb->transtria_metadata, 
-		array( 
-			'StudyID' => (int)$study_id,
-			'variablename' => $ese_table_row_name,
-			'value' => $ese_tabs_to_db
-		),
-		array( 
-			'%d',
-			'%s',
-			'%d'
-		) 
-	);*/
-	
+
 	if( $ese_num_row === false ){
 		$error_array[] = "Error: ese num row could not be inserted in metadata table in db, study_id: " . $study_id;
 	} else {
-		$error_array[] = "Num ese rows updated: " . $ese_num_row . ", study_id: " . $study_id;	
+		$error_array[] = "Num ese rows updated: " . $ese_num_row;	
 	}
 	
 			
@@ -182,24 +172,46 @@ function cc_transtria_save_to_metadata_table( $study_id, $num_ese_tab, $num_ea_t
 		) 
 	);
 	
-	/*$ea_num_row = $wpdb->replace( 
+	if( $ea_num_row === false ){
+		$error_array[] = "Error: ea num row could not be inserted in metadata table in db, study_id: " . $study_id;
+	} else {
+		$error_array[] = "Num ea rows updated: " . $ea_num_row ;	
+	}
+
+	
+	//replace 'other indicator count' count
+	$other_ind_row_name = "indicatorNum";
+	//first, delete old rows
+	$other_ind_del_num_row = $wpdb->delete( 
 		$wpdb->transtria_metadata, 
 		array( 
 			'StudyID' => (int)$study_id,
-			'variablename' => $ea_table_row_name,
-			'value' => $ea_tabs_to_db
+			'variablename' => $other_ind_row_name
+		)
+	);
+	
+	$other_ind_num_row = $wpdb->insert( 
+		$wpdb->transtria_metadata, 
+		array( 
+			'StudyID' => (int)$study_id,
+			'variablename' => $other_ind_row_name,
+			'value' => (int)$other_ind_to_db
 		),
 		array( 
 			'%d',
 			'%s',
 			'%d'
 		) 
-	);*/
+	);
 	
-	if( $ea_num_row === false ){
-		$error_array[] = "Error: ea num row could not be inserted in metadata table in db, study_id: " . $study_id;
+	if( $other_ind_num_row === false ){
+		$error_array[] = "Error: other_ind_num_row could not be inserted in metadata table in db, study_id: " . $study_id .', other ind num: ' . $other_ind_to_db;
+	}else {
+		$error_array[] = "Num other ind rows updated: " . $other_ind_num_row . ", study_id: " . $study_id;	
 	}
-			
+	
+	
+	
 	return $error_array;
 	
 }
@@ -1354,6 +1366,42 @@ function cc_transtria_get_num_ea_tabs_for_study( $study_id ){
 	return $ea_tab_count;
 
 }
+
+
+/**
+ * Gets num other indicators given a study id
+ *
+ * @param int. Study ID
+ * @return array. String list of EA tab names
+ */
+function cc_transtria_get_num_other_ind_for_study( $study_id ){
+
+	if( empty( $study_id ) ) {
+		return 0;
+	}
+	
+	global $wpdb;
+	
+	$which_ea_tabs;
+	
+	//how many ea tabs do we have?
+	$meta_sql = $wpdb->prepare( 
+		"
+		SELECT      value
+		FROM        $wpdb->transtria_metadata
+		WHERE		StudyID = %d
+		AND 		variablename = 'indicatorNum'
+		",
+		$study_id
+	); 
+	
+	$ind_count = $wpdb->get_results( $meta_sql, ARRAY_A );
+	$ind_count = intval( $ind_count[0]['value'] ); 
+
+	return $ind_count;
+
+}
+
 
 /**
  * Returns codetypeID of lookups, given array of string names

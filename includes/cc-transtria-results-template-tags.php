@@ -462,7 +462,9 @@ function cc_transtria_render_ea_tabs( $num_ea_tab, $dd_multiple_options_ea ){
 				</tr>
 
 				<tr>
-					<td><label>Indicator</label></td>
+					<td><label>Indicator</label>
+						<input type="text" id="ea_<?php echo $num_ea_tab; ?>_other_indicators" class="ea_table other_indicators" hidden>
+					</td>
 					<td colspan="3"><select id="ea_<?php echo $num_ea_tab; ?>_result_indicator" class="ea_multiselect multiselect code_results_table" multiple="multiple">
 						<?php //$dd_multiple_options_ea are indexed by the general id
 						foreach( $dd_multiple_options_ea['ea_result_indicator'] as $k => $v ){

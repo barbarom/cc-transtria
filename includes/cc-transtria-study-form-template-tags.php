@@ -40,6 +40,9 @@ function cc_transtria_render_form(){
 	$pops_data_multiple = cc_transtria_get_study_data_multiple( $this_study_id );
 	$dd_multiple_options_pops = cc_transtria_get_multiple_dropdown_options_populations( $this_study_id ); //all options for pops sub tabs
 	$field_data['num_ea_tabs'] = cc_transtria_get_num_ea_tabs_for_study( $this_study_id );
+	$field_data['num_other_indicators'] = cc_transtria_get_num_other_ind_for_study( $this_study_id );
+	
+	
 	//these are separate because of legacy code automatically saving 100 ea tabs even if there AREN't 100. #stupidstupidstupid
 	//$field_data['ea_tab_data'] = cc_transtria_get_ea_tab_data_for_study( $this_study_id, $field_data['num_ea_tabs'] );
 	$ea_data = cc_transtria_get_ea_tab_data_for_study( $this_study_id );
@@ -526,7 +529,7 @@ function cc_transtria_render_form(){
 
 		<div class="tab primary_tab">
 		   <input type="radio" id="tab-4" name="tab-group-1" class="noshow">
-		   <label for="tab-4" class="primary_tab_label">Results</label>
+		   <label for="tab-4" class="primary_tab_label results_tab_label">Results</label>
 		 
 		   <div id="results_content" class="content">
 			   <?php

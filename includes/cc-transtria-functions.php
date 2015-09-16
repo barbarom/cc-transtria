@@ -476,7 +476,6 @@ function cc_transtria_match_div_ids_to_studies_columns( $study_labels = null, $t
 		'indicators_notreported' => 'indicators_notreported',
 		'other_intervention_location' => 'other_intervention_location',
 		'other_intervention_outcomes_assessed' => 'other_intervention_outcomes_assessed',
-		'other_intervention_indicators' => 'other_intervention_indicators',
 		'locationintervention_notreported' => 'locationintervention_notreported',
 		
 		'alloutcomesassessed_notreported' => 'alloutcomesassessed_notreported',
@@ -557,8 +556,20 @@ function cc_transtria_match_div_ids_to_studies_columns( $study_labels = null, $t
 		'StudyGroupingID' => 'StudyGroupingID',
 		
 		'abstraction_complete' => 'abstraction_complete',
-		'validation_complete' => 'validation_complete'
+		'validation_complete' => 'validation_complete',
 		//results_verification //no longer a thing?
+		
+		//other intervention indicators
+		'other_intervention_indicators' => 'other_intervention_indicators',
+		'other_intervention_indicators2' => 'other_intervention_indicators2',
+		'other_intervention_indicators3' => 'other_intervention_indicators3',
+		'other_intervention_indicators4' => 'other_intervention_indicators4',
+		'other_intervention_indicators5' => 'other_intervention_indicators5',
+		'other_intervention_indicators6' => 'other_intervention_indicators6',
+		'other_intervention_indicators7' => 'other_intervention_indicators7',
+		'other_intervention_indicators8' => 'other_intervention_indicators8',
+		'other_intervention_indicators9' => 'other_intervention_indicators9',
+		'other_intervention_indicators10' => 'other_intervention_indicators10'
 	
 	);
 	
@@ -940,7 +951,8 @@ function cc_transtria_match_div_ids_to_ea_columns_single( $which_ea, $study_labe
 		'outcome_accessed' => $which_ea . 'outcome_accessed',
 		'result_population' => $which_ea . 'result_population',
 		'result_subpopulation_text' => $which_ea . 'result_subpopulation_text',
-		'statistical_measure_p_value' => $which_ea . 'statistical_measure_p_value'
+		'statistical_measure_p_value' => $which_ea . 'statistical_measure_p_value',
+		'other_indicators' => $which_ea . '_other_indicators'
 
 	);
 	

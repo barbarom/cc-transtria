@@ -250,7 +250,6 @@ function cc_transtria_render_intervention_partnerships_tab( $field_data ){
 			<td colspan="3"><input id="psecomponents_notreported" class="studies_table" type="checkbox"></td>
 		 </tr>
 
-
 		 <tr>
 			<td><label>Complexity:</label></td>
 			<td colspan="3"><span>
@@ -268,7 +267,6 @@ function cc_transtria_render_intervention_partnerships_tab( $field_data ){
 			<td class="not-reported"><label>Complexity not reported</label></td>
 			<td colspan="3"><input id="complexity_notreported" class="studies_table" type="checkbox"></td>
 		 </tr>
-
 
 		 <tr>
 			<td><label>Location of intervention:</label></td>
@@ -302,9 +300,32 @@ function cc_transtria_render_intervention_partnerships_tab( $field_data ){
 					} ?>
 				</select>
 			</span></td>
-			<td><label>Other:</label></td>
-			<td><input type="text" id="other_intervention_indicators" class="studies_table"></input></td>
 		</tr>
+		
+		<tr class="additional_indicators">
+			<td></td>
+			<td><label>Other Intervention Indicator 1:</label></td>
+			<td><input type="text" id="other_intervention_indicators" class="studies_table other_indicator" data-which_other="1"></input></td>
+			<td><a class="show_indicator_field button <?php if( $field_data['num_other_indicators'] > 1 ){ echo 'noshow'; } ?>">+</a></td>
+		</tr>
+		
+		<?php //if we have other intervention indicators saved, load them
+		if( $field_data['num_other_indicators'] > 1 ){
+			for( $i = 2; $i <=10; $i++ ){
+				if( $field_data['num_other_indicators'] < $i ){
+					break;
+				} else {
+					//draw shell for other indicators
+					echo '<tr class="additional_indicators"><td></td><td><label>Other Intervention Indicator ' . $i . ':</label></td>';
+					echo '<td><input type="text" id="other_intervention_indicators' . $i .'" class="studies_table other_indicator" data-which_other="' . $i . '"></input></td>';
+					echo '<td><a class="show_indicator_field button ';
+					if( $field_data['num_other_indicators'] != $i ) { echo 'noshow'; }
+					echo '">+</a></td></tr>';
+									
+				}
+			
+			} 
+		} ?>
 
 		<tr class="not-reported">
 		<td class="not-reported"><label>Indicators not reported</label></td>
@@ -312,7 +333,7 @@ function cc_transtria_render_intervention_partnerships_tab( $field_data ){
 		</tr>
 
 		<tr class="intervention_indicators_display">
-			<td><label>Indicators Selected:</label></td>
+			<td colspan="4"><label>Indicators Selected:</label></td>
 		</tr>
 
 		<tr>

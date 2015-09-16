@@ -181,17 +181,21 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 		<table class="population_container">
 			<tr>
 				<td colspan="4" class="inner_table_header"><strong><?php echo $subtitle; ?></strong></td>
-				<?php if ($which_pop == 'ese' ){ ?>
-					<!--<td><a id="" class="button remove_tab_button alignright hidden" data-tabnumber="" onclick="remove_extra_ese_tab()">Clear this ES-E tab data</a>-->
-				<?php } ?>
+				
+				
 			</tr>
-
+			<?php //if ($which_pop == 'ese' ){ 
+			if ( ( substr( $which_pop, 0, 3 ) == 'ese' ) && ( $which_pop != 'ese' ) ){ ?>
+				<tr><td colspan="4"><a id="" class="button remove_ese_tab alignright" data-tabnumber="" >Delete this ES-E tab</a></tr>
+			<?php } else if ( $which_pop == 'ese' ) { //create the delete but hide it (for copying purposes) ?>
+				<tr><td colspan="4" class="remove_ese_tab_td"><a id="" class="button remove_ese_tab alignright noshow" data-tabnumber="" >Delete this ES-E tab</a></tr>
+			<?php } ?>
 			<tr>
 				<td class="minwidth200"><label>Reported?</label></td>
 				<td colspan="3">
 					<span id="<?php echo $which_pop; ?>_reported-holder">
-						<input type="radio" value="Y" name="<?php echo $which_pop; ?>_reported" class="population_table" data-notreported_id="<?php echo $which_pop; ?>_populationsize_notreported">Yes
-						<input type="radio" value="N" name="<?php echo $which_pop; ?>_reported" class="population_table" data-notreported_id="<?php echo $which_pop; ?>_populationsize_notreported">No
+						<input type="radio" value="Y" name="<?php echo $which_pop; ?>_reported" class="population_table" >Yes
+						<input type="radio" value="N" name="<?php echo $which_pop; ?>_reported" class="population_table" >No
 					</span></td>
 			</tr>
 
@@ -201,7 +205,7 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 			</tr>
 			<tr class="not-reported">
 				<td class="not-reported"><label>Population size not reported</label></td>
-				<td colspan="3"><input id="<?php echo $which_pop; ?>_populationsize_notreported" class="population_table not_reported_clear" type="checkbox"></td>
+				<td colspan="3"><input id="<?php echo $which_pop; ?>_populationsize_notreported" class="population_table" type="checkbox"></td>
 			</tr>
 
 

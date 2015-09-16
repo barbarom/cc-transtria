@@ -18,6 +18,9 @@ function clickListen(){
 	//show citation info
 	jQuery("a.show_citation_data").on("click", show_citation_data);
 	
+	//show next indicator field
+	jQuery('.show_indicator_field').on("click", next_indicator_field );
+	
 	//load in selected study
 	jQuery("a#load_this_study").on("click", load_selected_study );
 	
@@ -70,7 +73,11 @@ function clickListen(){
 
 	
 	//Add new ESE tabs
-	jQuery('#add-ese-tab').on("click", copy_ese_tab );
+	//Nomore copying. //jQuery('#add-ese-tab').on("click", copy_ese_tab );
+	jQuery('#add-ese-tab').on("click", create_ese_tab );
+	
+	//remove ese tabs
+	jQuery('.remove_ese_tab').on("click", remove_ese_tab );
 	
 	//add new ea tab
 	jQuery('a.add_ea_button').on("click", add_empty_ea_tab);
@@ -88,21 +95,31 @@ function clickListen(){
 	//TODO: are we clearing anything?
 	jQuery('.other_populations_textenable').on("click", other_populations_textarea_enable);
 	
-} 
+	//show/hide variables textarea if 'adjusted'/'crude' is selected: this is an EA thing, but Mel is sorting that listener out
+	jQuery("input[name$='_result_type']").on("click", show_adjusted_variables );
+	
+	//if other indicators added/destroyed/changed, refactor indicators on ea tabs
+	jQuery("[id^='other_intervention_indicators']").on( "change", other_indicators_to_dropdown );
+		
+	//what if a click on the Results tab triggers a one-time ea_clickListen (assuming multiselects are in place by then? Can we assume that?)
+	//jQuery('label.results_tab_label').on( "click", ea_clickListen );
+	
+}
 
 function ea_clickListen(){
-	//show/hide variables textarea if 'adjusted'/'crude' is selected
-	jQuery("input[name$='_result_type']").on("click", show_adjusted_variables );
 
 	//initialize intervention indicator limiter 
-	/*var num_current_tabs = jQuery("#effect_association_tabs ul li").length;
+	var num_current_tabs = jQuery("#effect_association_tabs ul li").length;
 	for ( var tabCounter = 1; tabCounter <= num_current_tabs; tabCounter++ ) {
 		//our current ea indicator tab
 		intervention_indicator_limiter( jQuery('#ea_' + tabCounter + '_result_indicator') );
 	} 
 	//update our template, as well
-	intervention_indicator_limiter( jQuery('#ea_template_result_indicator') );
-	*/
+	//intervention_indicator_limiter( jQuery('#ea_template_result_indicator') );
+	
+	//TODO: test if incoming object/trigger is this
+	//jQuery('label.results_tab_label').off( "click", ea_clickListen );
+
 }
 
 
@@ -113,7 +130,6 @@ function setup_multiselect() {
 	//console.log( ms_id_array );
 	jQuery( function(){
 
-		
 		jQuery(".general-multiselect").multiselect({
 			header: true,
 			position: {my: 'left bottom', at: 'left top'},
@@ -129,9 +145,16 @@ function setup_multiselect() {
 			header: true,
 			position: {my: 'left bottom', at: 'left top'},
 			selectedText: '# of # checked',
+			beforeopen: function(event, ui){
+				//if we're on the indicators multiselect
+				//if( jQuery(this).attr('id')
+			//	console.log( this );
+				//intervention_indicator_limiter( jQuery(this ) );
+			},
 			//selectedList: 4, 
 			close: function( event, ui ){
 				//multiselect_listener( jQuery(this) );
+				//console.log( this );
 			}
 		}); 
 		
@@ -315,44 +338,131 @@ function ea_tab_toggle(){
 	
 }
 
+//show additional indicator fields (up to 10, numbered weird because legacy)
+function next_indicator_field(){
+
+	jQuery(this).hide();
+	
+	var current_parent_tr = jQuery(this).parents('tr');
+	var current_other_ind = current_parent_tr.find('.other_indicator').attr('data-which_other');
+	//console.log( current_other_ind );
+	
+	//what's next?
+	if( parseInt( current_other_ind ) < 10 ){
+	
+		var next_ind = parseInt( current_other_ind ) + 1;
+		
+		var new_tr = '<tr class="additional_indicators"><td></td><td><label>Other Intervention Indicator ' + next_ind + ':</label></td>';
+		new_tr += '<td><input type="text" id="other_intervention_indicators' + next_ind +'" class="studies_table other_indicator" data-which_other="' + next_ind + '"></input></td>';
+		new_tr += '<td><a class="show_indicator_field button">+</a></td></tr>';
+		
+		//insert new tr after parent tr
+		jQuery( new_tr ).insertAfter( current_parent_tr );
+	}
+	
+	//reset the listeners
+	jQuery('.show_indicator_field').off("click", next_indicator_field );
+	jQuery('.show_indicator_field').on("click", next_indicator_field );
+	
+	//if other indicators added/destroyed/changed, refactor indicators on ea tabs
+	jQuery("[id^='other_intervention_indicators']").off( "change", other_indicators_to_dropdown );
+	jQuery("[id^='other_intervention_indicators']").on( "change", other_indicators_to_dropdown );
+	
+}
+
+//other indicators created/destroyed requires a re-factor of ea tab indicators
+function other_indicators_to_dropdown(){
+
+	//how many ea tabs do we have?
+	var num_current_tabs = jQuery("#effect_association_tabs ul li").length;
+	
+	for ( var tabCounter = 1; tabCounter <= num_current_tabs; tabCounter++ ) {
+		//our current ea indicator tab
+		intervention_indicator_limiter( jQuery('#ea_' + tabCounter + '_result_indicator') );
+	} 
+	//update our template, as well
+	intervention_indicator_limiter( jQuery('#ea_template_result_indicator') );
+
+
+}
 
 //limit options for intervention components for ea tabs (based on #intervention_indicators)
 function intervention_indicator_limiter( incoming ){
 
 	//this should be incoming..
-	//var which_ea_select = jQuery('#ea_template_result_indicator');
 	var which_ea_select = incoming;
 	
 	//on the intervention tab - this is the original 
 	var original_select = jQuery('#intervention_indicators').multiselect('getChecked');
+	
+	//get the selected on the EA results subtab (EA tab)
+	var _selectSelected = which_ea_select.multiselect('getChecked');
+	selected_array = [];
+	
+	//get the 'other_indicators' hidden value on this ea tab (to be parsed)
+	var selected_other_ind_value = which_ea_select.parents('.one_ea_tab').find('.other_indicators').val();
+	var selected_other_ind_array = selected_other_ind_value.split(',');
 
+	
+	//make array for selected options
+	_selectSelected.each( function() {
+		valHolder = jQuery(this).val();
+		selected_array.push(valHolder);
+	});
+	
+	
 	var _ea_options = which_ea_select.find('option');
 
 	var _values = [];
-
 	for ( var i=0; i < original_select.length; i++ ) {
-		_values.push(original_select[i].value);
+		_values.push( original_select[i].value );
 	}
 
 	//remove all options from ea_option array
-	for ( var i=_ea_options.length-1; i >= 0; i-- ) {
-		if (_values.indexOf(_ea_options[i].value) == -1) {
-			_ea_options[i].remove();
-		}
-	}
+	which_ea_select.find('option').remove();
 
-	_ea_values=[];
-	for (var i=0; i < _ea_options.length; i++) {
+
+	//seriously, Billy, USE A COMMENT ONCE IN A WHILE WHAT ARE YOU DOING??
+	/*_ea_values=[];
+	for ( var i=0; i < _ea_options.length; i++ ) {
 		_ea_values.push(_ea_options[i].value);
-	}
+	}*/
 
-	//populate with the selected items from intervention_outcomes_assessed multiselect
+	//populate with the selected items from intervention_outcomes_assessed multiselect, selecting if already selected
 	for (var i=0; i < original_select.length; i++) {
-		if (_ea_values.indexOf( original_select[i].value ) == -1) {
+		//if ( _ea_values.indexOf( original_select[i].value ) == -1) {
+		if( jQuery.inArray( original_select[i].value, selected_array ) != "-1" ) {
+			which_ea_select.append('<option value="' + original_select[i].value +'" selected="selected">' + original_select[i].title + "</option>");
+		} else {
 			which_ea_select.append('<option value="' + original_select[i].value +'">' + original_select[i].title + "</option>");
 		}
 	}
+	
+	//populate ALSO with any 'other' indicators (added in Intervention/Partnerships)
+	var other_indicators = jQuery('input.other_indicator');
+	
+	jQuery.each( other_indicators, function(){
 
+		//if we HAVE a value
+		if( jQuery(this).val().length > 0 ){  
+			//append to indicators on ea tabs
+			if( jQuery(this).attr("data-which_other") == 1 ){
+				//legacy id for first indicator
+				var id_value = 'other_intervention_indicators';
+			} else {
+				var id_value = 'other_intervention_indicators' + jQuery(this).attr("data-which_other");
+			}
+			
+			if( jQuery.inArray( id_value, selected_other_ind_array ) != "-1" ){
+				which_ea_select.append('<option class="other_indicator" value="' + id_value + '" selected="selected">' + jQuery(this).val() + "</option>");
+			} else {
+				which_ea_select.append('<option class="other_indicator" value="' + id_value + '">' + jQuery(this).val() + "</option>");
+			}
+		
+		}
+	});
+	
+	//refresh this multiselect to show changed options
 	try { 
 		which_ea_select.multiselect('refresh');
 	} catch(e){
@@ -749,6 +859,7 @@ function get_current_study_info(){
 				
 					//do we have an element div id w this index?  
 					selector_obj = jQuery("#" + index );
+					//console.log( selector_obj );
 					selector_obj_by_name = jQuery("input[name='" + index + "']");
 					
 					if( selector_obj.length > 0 ){
@@ -926,11 +1037,17 @@ function save_study(){
 	var usrmsg = jQuery('.basic_info_messages .usr-msg');
 	var usrmsgshell = jQuery('.basic_info_messages');
 	
-	//form metsdata
+	//form metadata
 	var num_ea_tabs = jQuery("#effect_association_tabs ul li").length;
 	var last_tab = jQuery('.subpops_tab').last().attr('id').split('-')[0];
 	var last_tab_num = last_tab.replace('ese', '');
 	var num_ese_tabs = parseInt( last_tab_num );
+	var num_other_ind = 0;
+	jQuery.each( jQuery('input.other_indicator'), function(){
+		if ( jQuery(this).val() != "" ){
+			num_other_ind++;
+		}
+	}); //.length;
 	
 	//form data
 	var studies_table_data = jQuery('.studies_table');
@@ -939,6 +1056,7 @@ function save_study(){
 	var pops_table_vals = {};
 	var ea_table_data = jQuery('.ea_table').not("[id^=ea_template]"); //ignore our ea template (hidden and from which we get/copy our ea tabs)
 	var ea_table_vals = {};
+	var ea_table_other_indicators = "";  //will be a serialized array of which other indicator ids are selected
 	var code_table_data = jQuery(".multiselect"); //multiselects all go to code results table
 	var checked_holder = {};
 	var checked_holder_vals = []; //holds multiselect vals while iterating
@@ -992,19 +1110,61 @@ function save_study(){
 		
 	});
 	
+	var is_indicator_multi = false;
+	var comma_delimited_ea_vals = "";
+	
 	jQuery.each( code_table_data, function( index, element ){
 	
 		checked_holder_vals = []; //clear our temp checked vals
 		index_name = jQuery(this).attr("id");
-		//multiselect returns object array of those checked
-		checked_holder = jQuery(this).multiselect("getChecked");
-		jQuery.each( checked_holder, function(  ){
-			checked_holder_vals.push( jQuery(this).val() );
+		var which_index = jQuery(this);
 		
+		//exception - other indicators should be saved in EA table, special case
+		if( which_index.is('[id$="_result_indicator"]') ){
+			is_indicator_multi = true;
+			comma_delimited_ea_vals = ""; //reset string that will hold vals for ea
+			//which ese tab are we on?
+			var which_ea = which_index.parents('.one_ea_tab').attr('data-which_tab_num');
+		}
+		
+		//multiselect returns object array of those checked
+		checked_holder = which_index.multiselect("getChecked");
+		
+		//cycle through checked values and see which have been selected
+		jQuery.each( checked_holder, function(  ){
+		
+			if( is_indicator_multi ) {
+				//is this value an 'other indicator'?
+				var found_index = jQuery(this).val().indexOf( 'other_intervention_indicators' );
+				if( found_index != -1 ){ //we have a value starting with 'other_intervention_indicators' in checked vals
+					//move this value to comma_delimited_ea_vals
+					comma_delimited_ea_vals += "," + jQuery(this).val();
+					//ea_table_vals[ 'other_indicators' ] = comma_delimited_ea_vals;
+					
+					//return true; //skip to next jQuery.each iteration
+				} else {
+					checked_holder_vals.push( jQuery(this).val() );
+				}
+			} else {
+				//not in indicator multi
+				checked_holder_vals.push( jQuery(this).val() );
+			}
+			
 		});
+		
 		code_table_vals[ index_name ] = checked_holder_vals;
+		
+		//append comma-delimted string to ea_table_vals
+		if( is_indicator_multi ){
+		console.log( comma_delimited_ea_vals );
+			ea_table_vals[ 'ea_' + which_ea + '_other_indicators' ] = comma_delimited_ea_vals;
+		}
+		
+		//reset indicator multi flag
+		is_indicator_multi = false;
+		
 	});
-	//console.log( code_table_vals);
+	console.log( code_table_vals);
 
 	//ajax data
 	var ajax_action = 'save_study_data';
@@ -1014,6 +1174,7 @@ function save_study(){
 		'transtria_nonce' : transtria_ajax.ajax_nonce,
 		'num_ea_tabs' : num_ea_tabs,
 		'num_ese_tabs' : num_ese_tabs,
+		'num_other_ind' : num_other_ind,
 		'studies_table_vals' : studies_table_vals,
 		'population_table_vals' : pops_table_vals,
 		'ea_table_vals' : ea_table_vals,
@@ -1348,7 +1509,7 @@ function strategy_limit_results( ){
 }
 	
 
-//when 'add ese' is clicked, copy original ESE tab 
+//when 'add ese' is clicked, copy original ESE tab - false, this has changed 15Sept2015 (create, don't copy!
 function copy_ese_tab(){
 
 	var new_tab_id = 0;
@@ -1488,6 +1649,7 @@ function copy_ese_tab(){
 	});
 	
 	//other populations textarea listen
+	new_ese_copy.find('.other_populations_textenable').off("click", other_populations_textarea_enable);
 	new_ese_copy.find('.other_populations_textenable').on("click", other_populations_textarea_enable);
 	
 		
@@ -1527,6 +1689,342 @@ function copy_ese_tab(){
 	}); 
 
 }
+
+function create_ese_tab(){
+
+	var new_tab_id = 0;
+	var last_tab = jQuery('.subpops_tab').last().attr('id');
+	var last_tab_arr = last_tab.split('-');
+	var lastChar = last_tab_arr[0].substr(last_tab_arr[0].length - 1);
+	if (!isNaN(lastChar)) 
+	{
+		new_tab_id = Number(lastChar) + 1;
+	}
+	
+	if( new_tab_id > 9 ){
+		console.log('max tabs reached!');
+		return;
+	}
+	
+	//add a new tab to the pops section
+	jQuery('#sub_pops_tabs').append("<div id='ese" + new_tab_id + "-tab' class='subpops_tab'><label class='subpops_tab_label' for='ese" + new_tab_id + "-tab' data-whichpop='ese" + new_tab_id + "'>ese" + new_tab_id + "</label></div>");
+	
+	//destroy the multiselects before we clone
+	try {
+		jQuery('.ese_copy_multiselect').multiselect("destroy");
+	} catch( err ) {
+		console.log( "could not destroy ese_copy_multiselect");
+	}
+	
+	//we will need to copy the main ese tab
+	var new_ese_copy = jQuery('.ese_content').clone(true,true);
+	
+	//clear all inputs for that tab
+	new_ese_copy.find('input').val("");
+	new_ese_copy.find('input:radio').prop('checked', false);
+	new_ese_copy.find('input:checkbox').prop('checked', false);
+	
+	var save_study_button_html = jQuery('#population_tabs .button.save_study');
+	
+	
+	
+	//var inits
+	var new_pop_type = "";
+	var old_id = "";
+	var new_id = "";
+	var old_name = "";
+	var new_name = "";
+	
+	//what prepend do we need?  get current population type
+	new_pop_type = "ese" + new_tab_id;
+	
+	//change current pop type
+	new_ese_copy.find(".population_type").val( new_pop_type );
+	
+	//change subtitle
+	new_ese_copy.find("td.inner_table_header").html("<strong>Evaluation Sample - EXPOSED: " + new_tab_id + "</strong>");
+	
+	//change subtab class
+	new_ese_copy.removeClass("ese_content");
+	new_ese_copy.addClass( new_pop_type + "_content");
+	
+	//change all the div ids that begin w ese
+	var all_ese_ids = new_ese_copy.find("[id^=ese]");
+	var all_ese_names = new_ese_copy.find("[name^=ese]");
+	//var all_ese_multis = new_ese_copy.find(".multiselect");
+	
+	//go through each div in the clone and update the id
+	jQuery.each( all_ese_ids, function() {
+		//get old id
+		old_id = jQuery(this).attr("id");
+		//get first 3 digits (hint: it'll be 'ese' every time.  Why are we substringing, Mel?)
+		old_id = old_id.substring(3); 
+		
+		//get ourselves a new id!
+		new_id = new_pop_type + old_id;
+		
+		jQuery(this).attr("id", new_id);
+	});
+	
+	//go through each name in the clone and update the name
+	jQuery.each( all_ese_names, function() {
+		//get old id
+		old_name = jQuery(this).attr("name");
+		//get first 3 digits (hint: it'll be 'ese' every time.  Why are we substringing, Mel?)
+		old_name = old_name.substring(3); 
+		
+		//get ourselves a new id!
+		new_name = new_pop_type + old_name;
+		
+		jQuery(this).attr("name", new_name);
+	});
+	
+	//other populations textarea listen
+	new_ese_copy.find('.other_populations_textenable').off("click", other_populations_textarea_enable);
+	new_ese_copy.find('.other_populations_textenable').on("click", other_populations_textarea_enable);
+	
+	//show remove tab button for this tab
+	var remove_button = new_ese_copy.find(".remove_ese_tab");
+	remove_button.removeClass("noshow");
+	
+	
+	//append to population div id="populations_Tabs
+	new_ese_copy.appendTo( jQuery("#population_tabs") );
+	//new_ese_copy.insertBefore( save_study_button_html );
+	
+	//remove old 'save study' button and re-place
+	save_study_button_html.remove();
+	save_study_button_html.appendTo( jQuery("#population_tabs") );
+	
+	//reattach click listeners to pops tabs
+	var which_content = new_pop_type + '_content';
+	
+	jQuery('#sub_pops_tabs label.subpops_tab_label[data-whichpop="' + new_pop_type + '"]').on("click", function() {
+	
+		//hide all subpops content
+		jQuery('.subpops_content').hide();
+		
+		//add selected active class after removing it from all
+		jQuery('label.subpops_tab_label').removeClass('active');
+		jQuery(this).addClass('active');
+
+		jQuery('.subpops_content.' + which_content).show();
+		
+	});
+	
+	
+	//recreate ese multiselects
+	jQuery(".ese_copy_multiselect").multiselect({
+		header: true,
+		position: {my: 'left bottom', at: 'left top'},
+		selectedText: '# of # checked',
+		//selectedList: 4, 
+		close: function( event, ui ){
+			//multiselect_listener( jQuery(this) );
+		}
+	}); 
+
+}
+
+//when clicking 'delete ese tab', this is what happens
+function remove_ese_tab(){
+	//which tab are we removing?
+	var tab_div = jQuery(this).parents('.subpops_content');
+	var which_tab = tab_div.find('input.population_type').val();
+	
+	//console.log( which_tab);
+	
+	//remove the tab and the header tab
+	jQuery('.subpops_content.' + which_tab + '_content').remove();
+	jQuery('#' + which_tab + '-tab').remove();
+	
+	//hmm, pick a tab to show instead of this non-tab - trigger click
+	jQuery('#sub_pops_tabs label.subpops_tab_label[data-whichpop="tp"]').trigger("click");	
+	
+	//renumber all the ese tabs, oh joy
+	renumber_ese_tabs();
+
+}
+
+//renumber ese tabs; useful when middle tabs are deleted
+function renumber_ese_tabs(){
+
+	//determine if any ese tabs are NOT in a sequence
+	//get highest ese tab number:
+	var last_tab = jQuery('.subpops_tab').last().attr('id');
+	var last_tab_arr = last_tab.split('-');
+	var lastChar = last_tab_arr[0].substr(last_tab_arr[0].length - 1); //this is it
+	
+	if ( !isNaN(lastChar) ) {
+		var last_tab_num = parseInt( lastChar );
+	} else { //we don't have any ese tabs (since they are last and will always end in a number)
+		return; //get out.  just GET OUT.
+	}
+	
+	var ese_gaps = []; //to hold ese number gaps
+	var actual_ese_tabs = [];
+	
+	//first run - do we have gaps?
+	for( var i = 0; i <= last_tab_num; i++ ){
+		//where are there gaps in our subpops_content?
+		if( jQuery('#population_tabs .subpops_content.ese' + i + '_content').length <=0 ){
+			ese_gaps.push( i );
+		} else {
+			actual_ese_tabs.push( i );
+		}
+	}
+	
+	//how to renumber, knowing the gaps?
+	console.log( ese_gaps );
+	console.log( actual_ese_tabs );
+	
+	//while loop to re-assess and close all the gaps
+	while( ese_gaps.length > 0 ){
+		
+		//find which actual ese_tab is next highest from ese_gaps[0]
+		var which_to_move_down;
+		var this_ese_gap = ese_gaps[0];
+		
+		//get the next highest actual_ese_tab
+		jQuery.each( actual_ese_tabs, function( index, value ) {
+			console.log( value );
+			if( value > this_ese_gap ){
+				which_to_move_down = this;
+				return false; //break each loop
+			}
+		});
+		
+		//reindex the first gap in the ese_gap array		
+		if( !( isNaN( which_to_move_down ) ) ){
+			reindex_ese_tab( '.ese' + which_to_move_down + '_content', this_ese_gap, which_to_move_down );
+		}
+		
+		//reset our last tab number, etc
+		last_tab = jQuery('.subpops_tab').last().attr('id');
+		last_tab_arr = last_tab.split('-');
+		lastChar = last_tab_arr[0].substr(last_tab_arr[0].length - 1); //this is it
+	
+		if ( !isNaN(lastChar) ) {
+			last_tab_num = parseInt( lastChar );
+		} else { //we don't have any ese tabs (since they are last and will always end in a number)
+			return; //get out.  just GET OUT.
+		}
+	
+		//clear existing ese_gaps and actual_tabs arrays
+		ese_gaps = [];
+		actual_ese_tabs = [];
+		
+		//re-assess the gaps and actual tabs
+		for( var i = 0; i <= last_tab_num; i++ ){
+			//where are there gaps in our subpops_content?
+			if( jQuery('#population_tabs .subpops_content.ese' + i + '_content').length <=0 ){
+				ese_gaps.push( i );
+			} else {
+				actual_ese_tabs.push( i );
+			}
+		}
+		
+	}
+
+}
+
+
+//function to re-index an ese tab, given a tab div and a number
+//	which_div is flat (not a jQuery object)
+function reindex_ese_tab( which_div, new_index, old_index ){
+
+	//old div into object (for id-changing goodness)
+	which_div_obj = jQuery( which_div );
+	
+	//destroy the multiselects before we change things
+	try {
+		jQuery( which_div + ' .ese_copy_multiselect').multiselect("destroy");
+	} catch( err ) {
+		console.log( "could not destroy ese_copy_multiselect");
+	}
+	
+	//what prepend do we need?  get current population type
+	new_pop_type = "ese" + new_index;
+	
+	//change subpops tab label, etc 
+	var old_ese_tab = jQuery('#sub_pops_tabs').find('#ese' + old_index + '-tab');
+	old_ese_tab.find('label').attr('data-whichpop', new_pop_type);
+	old_ese_tab.find('label').attr('for', new_pop_type);
+	old_ese_tab.find('label').html( new_pop_type );
+	old_ese_tab.attr("id", new_pop_type + '-tab');
+	
+	//change current pop type
+	which_div_obj.find(".population_type").val( new_pop_type );
+	
+	//change subtitle
+	which_div_obj.find("td.inner_table_header").html("<strong>Evaluation Sample - EXPOSED: " + new_index + "</strong>");
+	
+	//change subpops content class
+	which_div_obj.removeClass("ese" + old_index + "_content");
+	which_div_obj.addClass( new_pop_type + "_content");
+	
+	//change all the div ids that begin w ese
+	var all_ese_ids = which_div_obj.find("[id^=ese]");
+	var all_ese_names = which_div_obj.find("[name^=ese]");
+	
+	//go through each div in the clone and update the id
+	jQuery.each( all_ese_ids, function() {
+		//get old id
+		old_id = jQuery(this).attr("id");
+		//get first 4 digits (hint: it'll be 'ese#' every time)
+		old_id = old_id.substring(4); 
+		
+		//get ourselves a new id!
+		new_id = new_pop_type + old_id;
+		
+		jQuery(this).attr("id", new_id);
+	});
+	
+	//go through each name in the clone and update the name
+	jQuery.each( all_ese_names, function() {
+		//get old id
+		old_name = jQuery(this).attr("name");
+		//get first 3 digits (hint: it'll be 'ese#' every time)
+		old_name = old_name.substring(4); 
+		
+		//get ourselves a new name and replace!
+		new_name = new_pop_type + old_name;
+		jQuery(this).attr("name", new_name);
+	});
+	
+	//recreate ese multiselects in new tab
+	jQuery( which_div + " .ese_copy_multiselect").multiselect({
+		header: true,
+		position: {my: 'left bottom', at: 'left top'},
+		selectedText: '# of # checked',
+		//selectedList: 4, 
+		close: function( event, ui ){
+			//multiselect_listener( jQuery(this) );
+		}
+	}); 
+
+	//enable listeners
+	//other populations textarea listen ?
+	which_div_obj.find('.other_populations_textenable').off("click", other_populations_textarea_enable);
+	which_div_obj.find('.other_populations_textenable').on("click", other_populations_textarea_enable);
+	
+	//reattach click listeners to pops tabs
+	var which_content = new_pop_type + '_content';
+	
+	jQuery('#sub_pops_tabs label.subpops_tab_label[data-whichpop="' + new_pop_type + '"]').on("click", function() {
+		//hide all subpops content
+		jQuery('.subpops_content').hide();
+		
+		//add selected active class after removing it from all
+		jQuery('label.subpops_tab_label').removeClass('active');
+		jQuery(this).addClass('active');
+
+		jQuery('.subpops_content.' + which_content).show();
+		
+	});
+	
+}
+
 
 //when 'add ese' is clicked, copy whichever ea tab is selected
 function copy_ea_tab(){
@@ -1947,7 +2445,7 @@ jQuery( document ).ready(function() {
 	clickListen();
 	
 	//initialize ability status limiter
-	ea_clickListen();
+	//ea_clickListen();
 
 	//in case we have an endnoteid param in the url, get the citation data
 	get_citation_data();

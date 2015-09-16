@@ -580,6 +580,7 @@ class CC_Transtria_Extras {
 		$study_data['single'] = cc_transtria_get_single_study_data( $this_study_id );
 		$study_data['population_single'] = cc_transtria_get_pops_study_data_single( $this_study_id );
 		$study_data['num_ea_tabs'] = cc_transtria_get_num_ea_tabs_for_study( $this_study_id );
+		$study_data['num_other_indicators'] = cc_transtria_get_num_other_ind_for_study( $this_study_id );
 		$study_data['ea'] = cc_transtria_get_ea_tab_data_for_study( $this_study_id );
 		$study_data['multiple'] = cc_transtria_get_study_data_multiple( $this_study_id );
 		
@@ -705,9 +706,10 @@ class CC_Transtria_Extras {
 		
 		$num_ese_tabs = $_POST['num_ese_tabs'];
 		$num_ea_tabs = $_POST['num_ea_tabs'];
+		$num_other_ind = $_POST['num_other_ind'];
 		
 		//update metadata table
-		$meta_success = cc_transtria_save_to_metadata_table( $this_study_id, $num_ese_tabs, $num_ea_tabs );
+		$meta_success = cc_transtria_save_to_metadata_table( $this_study_id, $num_ese_tabs, $num_ea_tabs, $num_other_ind );
 		
 		//convert to db field names
 		$converted_to_db_fields = cc_transtria_match_div_ids_to_studies_columns( $studies_data, true );
