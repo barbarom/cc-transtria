@@ -382,7 +382,7 @@ class CC_Transtria_Extras {
 			
 			//wp_enqueue_script( $this->plugin_slug . 'dynamic_page_components', plugins_url( 'js/dynamic_components.js', __FILE__ ), array( 'jquery' ), '1.1' );
 			//wp_enqueue_script( $this->plugin_slug . 'transtria_basic_js', plugins_url( 'js/transtria_basic.js', __FILE__ ), array( 'jquery' ), '1.1' );
-			wp_enqueue_script( $this->plugin_slug . 'transtria_revamp_js', plugins_url( 'js/transtria_revamp.js', __FILE__ ), array( 'jquery' ), '1.0' );
+			wp_enqueue_script( $this->plugin_slug . 'transtria_revamp_js', plugins_url( 'js/transtria_revamp.js', __FILE__ ), array( 'jquery' ), '1.1' );
 			
 			if( cc_transtria_on_assignments_screen() ){
 				wp_enqueue_script( $this->plugin_slug . 'transtria_revamp_assignments_js', plugins_url( 'js/transtria_revamp_assignments.js', __FILE__ ), array( 'jquery' ), '1.0' );
@@ -395,7 +395,9 @@ class CC_Transtria_Extras {
 					'ajax_url' => admin_url( 'admin-ajax.php' ),
 					'ajax_nonce' => wp_create_nonce( 'cc_transtria_ajax_nonce' ),
 					'study_home' => cc_transtria_get_home_permalink(),
-					'all_studies' => cc_transtria_get_study_ids()
+					'all_studies' => cc_transtria_get_study_ids(),
+					'measures_w_text' => cc_transtria_measures_w_extra_text(),
+					'measures_w_text_short' => cc_transtria_measures_w_extra_text( false )
 				)
 			);
 			
@@ -581,6 +583,7 @@ class CC_Transtria_Extras {
 		$study_data['population_single'] = cc_transtria_get_pops_study_data_single( $this_study_id );
 		$study_data['num_ea_tabs'] = cc_transtria_get_num_ea_tabs_for_study( $this_study_id );
 		$study_data['num_other_indicators'] = cc_transtria_get_num_other_ind_for_study( $this_study_id );
+		$study_data['num_other_outcomes'] = cc_transtria_get_num_other_ind_for_study( $this_study_id );
 		$study_data['ea'] = cc_transtria_get_ea_tab_data_for_study( $this_study_id );
 		$study_data['multiple'] = cc_transtria_get_study_data_multiple( $this_study_id );
 		
@@ -707,9 +710,10 @@ class CC_Transtria_Extras {
 		$num_ese_tabs = $_POST['num_ese_tabs'];
 		$num_ea_tabs = $_POST['num_ea_tabs'];
 		$num_other_ind = $_POST['num_other_ind'];
+		$num_other_out = $_POST['num_other_out'];
 		
 		//update metadata table
-		$meta_success = cc_transtria_save_to_metadata_table( $this_study_id, $num_ese_tabs, $num_ea_tabs, $num_other_ind );
+		$meta_success = cc_transtria_save_to_metadata_table( $this_study_id, $num_ese_tabs, $num_ea_tabs, $num_other_ind, $num_other_out );
 		
 		//convert to db field names
 		$converted_to_db_fields = cc_transtria_match_div_ids_to_studies_columns( $studies_data, true );

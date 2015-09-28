@@ -24,9 +24,9 @@ function cc_transtria_render_results_tab( $field_data ){
 	
 	//options for dropdowns
 	$dd_multiple_options_ea = $field_data['dd_multiple_options_ea'];
+	
 	//data for ea tabs
 	//$ea_tab_data = $field_data['ea_tab_data'];
-	//var_dump( $num_ea_tabs );
 	
 ?>
 
@@ -271,7 +271,10 @@ function cc_transtria_render_results_tab( $field_data ){
  * 
  */
 function cc_transtria_render_ea_tabs( $num_ea_tab, $dd_multiple_options_ea ){
-
+	
+	//measures that have 10 additional textbox options
+	$measures_w_text = cc_transtria_measures_w_extra_text();
+	
 
 ?>
 	<div id="effect_association_tab_<?php echo $num_ea_tab; ?>" class="one_ea_tab <?php if( $num_ea_tab != "1" ){ echo 'noshow'; } ?>" data-which_tab_num="<?php echo $num_ea_tab; ?>">
@@ -345,6 +348,18 @@ function cc_transtria_render_ea_tabs( $num_ea_tab, $dd_multiple_options_ea ){
 					</select></td>
 				</tr>
 
+				<tr>
+					<td><label>Result reference population:</label></td>
+					<td colspan="3"><select id="ea_<?php echo $num_ea_tab; ?>_result_reference_population" class="ea_table">
+						<option value="">---Select---</option>
+						<?php //$dd_multiple_options_ea are indexed by the general id
+						foreach( $dd_multiple_options_ea['ea_result_reference_population'] as $k => $v ){
+							echo '<option value="' . $k . '">' . $v->descr . '</option>';
+						
+						} ?>
+					</select></td>
+				</tr>
+				
 				<tr>
 					<td><label>Result Subpopulation:</label>
 					</td>
@@ -429,7 +444,9 @@ function cc_transtria_render_ea_tabs( $num_ea_tab, $dd_multiple_options_ea ){
 				</tr>
 
 				<tr>
-					<td><label>Outcome Assessed:</label></td>
+					<td><label>Outcome Assessed:</label>
+						<input type="text" id="ea_<?php echo $num_ea_tab; ?>_other_outcomes" class="ea_table other_outcomes" hidden>
+					</td>
 					<td>
 						<select id="ea_<?php echo $num_ea_tab; ?>_result_outcome_accessed" class="ea_multiselect multiselect code_results_table" multiple="multiple">
 						<?php //$dd_multiple_options_ea are indexed by the general id
@@ -460,7 +477,21 @@ function cc_transtria_render_ea_tabs( $num_ea_tab, $dd_multiple_options_ea ){
 						<input id="ea_<?php echo $num_ea_tab; ?>_result_measures_other" class="ea_table" type="text"></input>
 					</td>
 				</tr>
-
+				
+				<?php //render textboxes for each special measure (that needs 10 additional textboxes), these are shown in js
+				foreach( $measures_w_text as $value => $measure ){  ?>
+				
+					<tr class='measures_textbox_tr' data-measures_val='<?php echo $value; ?>'>
+						<td></td>
+						<td class='measures_textbox_name'><?php echo $measure['long_name']; ?></td>
+						<td colspan='2' class='measures_textbox' data-measures_number='1'>
+							<input id="ea_<?php echo $num_ea_tab . '_' . $measure['short_name'] . '_measures'; ?>" name="ea_<?php echo $num_ea_tab . '_' . $measure['short_name'] . '_measures'; ?>" type="text" class="ea_table" data-which_measure='1' />
+						</td>
+			
+					</tr>
+				
+				<?php }  ?>
+				
 				<tr>
 					<td><label>Indicator</label>
 						<input type="text" id="ea_<?php echo $num_ea_tab; ?>_other_indicators" class="ea_table other_indicators" hidden>
@@ -500,12 +531,21 @@ function cc_transtria_render_ea_tabs( $num_ea_tab, $dd_multiple_options_ea ){
 				</tr>
 
 				<tr>
-					<td><label>Significant?:</label></td>
+					<td><label>Significant with a 95% Confidence Interval or P-Value &lt; 0.05?</label></td>
 					<td><span id="ea_<?php echo $num_ea_tab; ?>_result_significant">
 						<input type="radio" class="ea_table" value="Y" name="ea_<?php echo $num_ea_tab; ?>_result_significant">Yes
 						<input type="radio" class="ea_table" value="N" name="ea_<?php echo $num_ea_tab; ?>_result_significant">No
 					</span></td>
 				</tr>
+				
+				<tr>
+					<td><label>Approaching Significance with a 90% Confidence Interval or P-Value &lt; 0.10?</label></td>
+					<td><span id="ea_<?php echo $num_ea_tab; ?>_result_approaching_significant">
+						<input type="radio" class="ea_table" value="Y" name="ea_<?php echo $num_ea_tab; ?>_result_approaching_significant">Yes
+						<input type="radio" class="ea_table" value="N" name="ea_<?php echo $num_ea_tab; ?>_result_approaching_significant">No
+					</span></td>
+				</tr>
+				 
 				
 			</tbody>
 		</table>

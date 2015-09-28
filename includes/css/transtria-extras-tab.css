@@ -241,6 +241,11 @@ form#study_form a.save_study {
     width: 200px;
 }
 
+form#study_form .measures_textbox_tr{
+	display:none;
+
+}
+
 
 /** BEGIN UI STYLINGS **/
 

@@ -301,7 +301,8 @@ function cc_transtria_get_multiple_dropdown_ids_ea(){
 	$dd_ids = array(
 		"ea_duration" => "Duration", //"%s_duration" % _prefix, "%s_duration"
 		"ea_result_statistical_model" => "StatisticalModel", //"%s_result_statistical_model" % _prefix, "statistical_model"
-		"ea_result_evaluation_population" => "Results Populations", //"%s_result_evaluation_population" % _prefix, "%s Results Populations"
+		"ea_result_evaluation_population" => "ea_1 Results Populations", //"%s_result_evaluation_population" % _prefix, "%s Results Populations"
+		"ea_result_reference_population" => "Results Reference Populations", //"%s_result_evaluation_population" % _prefix, "%s Results Populations"
 		"ea_result_subpopulations" => "ea_1 Results SubPopulations", //"%s_result_subpopulations" % _prefix, "%s Results SubPopulations"
 		"ea_result_indicator_direction"=> "Results Indicator Direction", //"%s_result_indicator_direction" % _prefix, "indicator_direction"
 		"ea_result_outcome_direction" => "Results Outcome Direction", //"%s_result_outcome_direction" % _prefix, "outcome_direction"
@@ -475,7 +476,6 @@ function cc_transtria_match_div_ids_to_studies_columns( $study_labels = null, $t
 		//duration_notreported //on ea tabs
 		'indicators_notreported' => 'indicators_notreported',
 		'other_intervention_location' => 'other_intervention_location',
-		'other_intervention_outcomes_assessed' => 'other_intervention_outcomes_assessed',
 		'locationintervention_notreported' => 'locationintervention_notreported',
 		
 		'alloutcomesassessed_notreported' => 'alloutcomesassessed_notreported',
@@ -569,7 +569,17 @@ function cc_transtria_match_div_ids_to_studies_columns( $study_labels = null, $t
 		'other_intervention_indicators7' => 'other_intervention_indicators7',
 		'other_intervention_indicators8' => 'other_intervention_indicators8',
 		'other_intervention_indicators9' => 'other_intervention_indicators9',
-		'other_intervention_indicators10' => 'other_intervention_indicators10'
+		'other_intervention_indicators10' => 'other_intervention_indicators10',
+		'other_intervention_outcomes_assessed' => 'other_intervention_outcomes_assessed',
+		'other_intervention_outcomes_assessed2' => 'other_intervention_outcomes_assessed2',
+		'other_intervention_outcomes_assessed3' => 'other_intervention_outcomes_assessed3',
+		'other_intervention_outcomes_assessed4' => 'other_intervention_outcomes_assessed4',
+		'other_intervention_outcomes_assessed5' => 'other_intervention_outcomes_assessed5',
+		'other_intervention_outcomes_assessed6' => 'other_intervention_outcomes_assessed6',
+		'other_intervention_outcomes_assessed7' => 'other_intervention_outcomes_assessed7',
+		'other_intervention_outcomes_assessed8' => 'other_intervention_outcomes_assessed8',
+		'other_intervention_outcomes_assessed9' => 'other_intervention_outcomes_assessed9',
+		'other_intervention_outcomes_assessed10' => 'other_intervention_outcomes_assessed10',
 	
 	);
 	
@@ -904,7 +914,7 @@ function cc_transtria_match_div_ids_to_pops_columns_single( $which_pop, $study_l
 }
 
 /**
- * function to relate div ids and study id columns
+ * function to relate div ids and study id columns for SINGLE-select dropdowns
  *
  * @param array
  * @return array
@@ -925,6 +935,7 @@ function cc_transtria_match_div_ids_to_ea_columns_single( $which_ea, $study_labe
 		'result_type' => $which_ea . '_result_type',
 		'results_variables' => $which_ea . '_results_variables',
 		'statistical_model' => $which_ea . '_result_statistical_model',
+		'result_reference_population' => $which_ea . '_result_reference_population',
 		'result_subpopulation' => $which_ea . '_result_subpopulationYN',
 		'result_subpopulation_text' => 'result_subpopulation_text', //?
 		'indicator_direction' => $which_ea . '_result_indicator_direction',
@@ -942,6 +953,7 @@ function cc_transtria_match_div_ids_to_ea_columns_single( $which_ea, $study_labe
 		'statistical_measure_CI1' => $which_ea . '_statistical_measure_ci_value1',
 		'statistical_measure_CI2' => $which_ea . '_statistical_measure_ci_value2',
 		'significant' => $which_ea . '_result_significant',
+		'approaching_significant' => $which_ea . '_result_approaching_significant',
 		//these aren't used, but don't want them to trip up the rest of the form, so prepending w/ current ea#
 		'effect_association_type1' => $which_ea . '_effect_association_type1',
 		'effect_association_type2' => $which_ea . 'effect_association_type2',
@@ -952,7 +964,15 @@ function cc_transtria_match_div_ids_to_ea_columns_single( $which_ea, $study_labe
 		'result_population' => $which_ea . 'result_population',
 		'result_subpopulation_text' => $which_ea . 'result_subpopulation_text',
 		'statistical_measure_p_value' => $which_ea . 'statistical_measure_p_value',
-		'other_indicators' => $which_ea . '_other_indicators'
+		'other_indicators' => $which_ea . '_other_indicators',
+		'other_outcomes' => $which_ea . '_other_outcomes',
+		'leisure_time_measures' => $which_ea . '_leisure_time_measures',
+		'active_transportation_measures' => $which_ea . '_active_transportation_measures',
+		'fitness_scores_measures' => $which_ea . '_fitness_scores_measures',
+		'consumption_vitamins_measures' => $which_ea . '_consumption_vitamins_measures',
+		'consumption_minerals_measures' => $which_ea . '_consumption_minerals_measures',
+		'consumption_fruits_measures' => $which_ea . '_consumption_fruits_measures',
+		'consumption_vegetables_measures' => $which_ea . '_consumption_vegetables_measures',
 
 	);
 	
@@ -1006,7 +1026,54 @@ function cc_transtria_match_div_ids_to_ea_columns_single( $which_ea, $study_labe
 	}
 }
 
+/**
+ * Returns list of values (array of 2-character entries) of measures that require 10 extra text boxes upon selection
+ *
+ * @param string. Short or long array option
+ * @return array
+ *
+ */
+function cc_transtria_measures_w_extra_text( $long = true ){
 
+	$measure_values = array(
+		33 => array( 
+			'short_name' => 'leisure_time', 
+			'long_name' => 'Leisure Time Physical Activity'
+		),			
+		38 => array( 
+			'short_name' => 'active_transportation', 
+			'long_name' => 'Active Transportation'
+		),
+		55 => array( 
+			'short_name' => 'fitness_scores', 
+			'long_name' => 'Fitness Scores'
+		),
+		75 => array( 
+			'short_name' => 'consumption_vitamins', 
+			'long_name' => 'Consumption of Vitamins'
+		),
+		76 => array( 
+			'short_name' => 'consumption_minerals', 
+			'long_name' => 'Consumption of Minerals'
+		),
+		77 => array( 
+			'short_name' => 'consumption_fruits', 
+			'long_name' => 'Consumption of Fruits'
+		),
+		78 => array( 
+			'short_name' => 'consumption_vegetables', 
+			'long_name' => 'Consumption of Vegetables'
+		)
+	);
+	
+	if( $long ){
+		return $measure_values;
+	} else { //only return index
+		return array_keys( $measure_values );
+	}
+
+}
+ 
 
 
 /**

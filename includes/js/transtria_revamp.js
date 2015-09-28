@@ -21,6 +21,9 @@ function clickListen(){
 	//show next indicator field
 	jQuery('.show_indicator_field').on("click", next_indicator_field );
 	
+	//show next indicator field
+	jQuery('.show_outcomes_field').on("click", next_outcomes_assessed_field );
+	
 	//load in selected study
 	jQuery("a#load_this_study").on("click", load_selected_study );
 	
@@ -100,9 +103,15 @@ function clickListen(){
 	
 	//if other indicators added/destroyed/changed, refactor indicators on ea tabs
 	jQuery("[id^='other_intervention_indicators']").on( "change", other_indicators_to_dropdown );
+	
+	//if outcomes assessed added/destroyed/changed, refactor indicators on ea tabs
+	jQuery("[id^='other_intervention_outcomes_assessed']").on( "change", other_outcomes_assessed_to_dropdown );
 		
 	//what if a click on the Results tab triggers a one-time ea_clickListen (assuming multiselects are in place by then? Can we assume that?)
 	//jQuery('label.results_tab_label').on( "click", ea_clickListen );
+	
+	//certain measures have up to 10 text boxes associated with them
+	jQuery("[id$='_result_measures']").on( "change", measures_extra_textboxes );
 	
 }
 
@@ -370,6 +379,38 @@ function next_indicator_field(){
 	
 }
 
+//show additional indicator fields (up to 10, numbered weird because legacy)
+function next_outcomes_assessed_field(){
+
+	jQuery(this).hide();
+	
+	var current_parent_tr = jQuery(this).parents('tr');
+	var current_other_ind = current_parent_tr.find('.other_outcome').attr('data-which_other');
+	//console.log( current_other_ind );
+	
+	//what's next?
+	if( parseInt( current_other_ind ) < 10 ){
+	
+		var next_ind = parseInt( current_other_ind ) + 1;
+		
+		var new_tr = '<tr class="additional_outcomes"><td></td><td><label>Other Outcomes Assessed ' + next_ind + ':</label></td>';
+		new_tr += '<td><input type="text" id="other_intervention_outcomes_assessed' + next_ind +'" class="studies_table other_outcome" data-which_other="' + next_ind + '"></input></td>';
+		new_tr += '<td><a class="show_outcomes_field button">+</a></td></tr>';
+		
+		//insert new tr after parent tr
+		jQuery( new_tr ).insertAfter( current_parent_tr );
+	}
+	
+	//reset the listeners
+	jQuery('.show_outcomes_field').off("click", next_outcomes_assessed_field );
+	jQuery('.show_outcomes_field').on("click", next_outcomes_assessed_field );
+	
+	//if other indicators added/destroyed/changed, refactor indicators on ea tabs
+	jQuery("[id^='other_intervention_outcomes_assessed']").off( "change", other_outcomes_assessed_to_dropdown );
+	jQuery("[id^='other_intervention_outcomes_assessed']").on( "change", other_outcomes_assessed_to_dropdown );
+	
+}
+
 //other indicators created/destroyed requires a re-factor of ea tab indicators
 function other_indicators_to_dropdown(){
 
@@ -383,6 +424,19 @@ function other_indicators_to_dropdown(){
 	//update our template, as well
 	intervention_indicator_limiter( jQuery('#ea_template_result_indicator') );
 
+}
+
+function other_outcomes_assessed_to_dropdown(){
+
+	//how many ea tabs do we have?
+	var num_current_tabs = jQuery("#effect_association_tabs ul li").length;
+	
+	for ( var tabCounter = 1; tabCounter <= num_current_tabs; tabCounter++ ) {
+		//our current ea indicator tab
+		outcomes_assessed_limiter( jQuery('#ea_' + tabCounter + '_result_outcome_accessed') );
+	} 
+	//update our template, as well
+	outcomes_assessed_limiter( jQuery('#ea_template_result_outcome_accessed') );
 
 }
 
@@ -480,6 +534,20 @@ function outcomes_assessed_limiter( incoming ){
 	//on the intervention tab - this is the original 
 	var original_select = jQuery('#intervention_outcomes_assessed').multiselect('getChecked');
 
+	//get the selected on the EA results subtab (EA tab)
+	var _selectSelected = which_ea_select.multiselect('getChecked');
+	selected_array = [];
+	
+	//get the 'other_outcomes_assessed' hidden value on this ea tab (to be parsed)
+	var selected_other_out_value = which_ea_select.parents('.one_ea_tab').find('.other_outcomes').val();
+	var selected_other_out_array = selected_other_out_value.split(',');
+	
+	//make array for selected options
+	_selectSelected.each( function() {
+		valHolder = jQuery(this).val();
+		selected_array.push(valHolder);
+	});
+	
 	var _ea_options = which_ea_select.find('option');
 
 	var _values = [];
@@ -489,12 +557,50 @@ function outcomes_assessed_limiter( incoming ){
 	}
 
 	//remove all options from ea_option array
-	for ( var i=_ea_options.length-1; i >= 0; i-- ) {
+	which_ea_select.find('option').remove();
+	
+	//remove all options from ea_option array
+	/*for ( var i=_ea_options.length-1; i >= 0; i-- ) {
 		if (_values.indexOf(_ea_options[i].value) == -1) {
 			_ea_options[i].remove();
 		}
+	} */
+	
+	//populate with the selected items from intervention_outcomes_assessed multiselect, selecting if already selected
+	for (var i=0; i < original_select.length; i++) {
+		//if ( _ea_values.indexOf( original_select[i].value ) == -1) {
+		if( jQuery.inArray( original_select[i].value, selected_array ) != "-1" ) {
+			which_ea_select.append('<option value="' + original_select[i].value +'" selected="selected">' + original_select[i].title + "</option>");
+		} else {
+			which_ea_select.append('<option value="' + original_select[i].value +'">' + original_select[i].title + "</option>");
+		}
 	}
+	
+	//populate ALSO with any 'other' indicators (added in Intervention/Partnerships)
+	var other_outcomes = jQuery('input.other_outcome');
+	
+	jQuery.each( other_outcomes, function(){
 
+		//if we HAVE a value
+		if( jQuery(this).val().length > 0 ){  
+			//append to indicators on ea tabs
+			if( jQuery(this).attr("data-which_other") == 1 ){
+				//legacy id for first indicator
+				var id_value = 'other_intervention_outcomes_assessed';
+			} else {
+				var id_value = 'other_intervention_outcomes_assessed' + jQuery(this).attr("data-which_other");
+			}
+			
+			if( jQuery.inArray( id_value, selected_other_out_array ) != "-1" ){
+				which_ea_select.append('<option class="other_outcome" value="' + id_value + '" selected="selected">' + jQuery(this).val() + "</option>");
+			} else {
+				which_ea_select.append('<option class="other_outcome" value="' + id_value + '">' + jQuery(this).val() + "</option>");
+			}
+		
+		}
+	});
+	
+	/*
 	_ea_values=[];
 	for (var i=0; i < _ea_options.length; i++) {
 		_ea_values.push(_ea_options[i].value);
@@ -506,7 +612,9 @@ function outcomes_assessed_limiter( incoming ){
 			which_ea_select.append('<option value="' + original_select[i].value +'">' + original_select[i].title + "</option>");
 		}
 	}
+	*/
 
+	//refresh our dropdown
 	try { 
 		which_ea_select.multiselect('refresh');
 	} catch(e){
@@ -856,7 +964,7 @@ function get_current_study_info(){
 			jQuery.each( ea_meat, function( ea_num, ea_data) {
 				
 				jQuery.each( ea_data, function( index, element ){
-				
+					
 					//do we have an element div id w this index?  
 					selector_obj = jQuery("#" + index );
 					//console.log( selector_obj );
@@ -1001,6 +1109,7 @@ function get_current_study_info(){
 			jQuery('.other_populations_textenable').off("click", other_populations_textarea_enable);
 			jQuery('.other_populations_textenable').on("click", other_populations_textarea_enable);
 			
+			check_measures_selected();
 			
 		}).always(function() {
 			//regardless of outcome, hide spinny
@@ -1043,11 +1152,20 @@ function save_study(){
 	var last_tab_num = last_tab.replace('ese', '');
 	var num_ese_tabs = parseInt( last_tab_num );
 	var num_other_ind = 0;
+	//other indicators
 	jQuery.each( jQuery('input.other_indicator'), function(){
 		if ( jQuery(this).val() != "" ){
 			num_other_ind++;
 		}
 	}); //.length;
+	//other outcomes
+	var num_other_out = 0;
+	jQuery.each( jQuery('input.other_outcome'), function(){
+		if ( jQuery(this).val() != "" ){
+			num_other_out++;
+		}
+	}); //.length;
+	
 	
 	//form data
 	var studies_table_data = jQuery('.studies_table');
@@ -1057,6 +1175,7 @@ function save_study(){
 	var ea_table_data = jQuery('.ea_table').not("[id^=ea_template]"); //ignore our ea template (hidden and from which we get/copy our ea tabs)
 	var ea_table_vals = {};
 	var ea_table_other_indicators = "";  //will be a serialized array of which other indicator ids are selected
+	var ea_table_other_outcomes = "";  //will be a serialized array of which other indicator ids are selected
 	var code_table_data = jQuery(".multiselect"); //multiselects all go to code results table
 	var checked_holder = {};
 	var checked_holder_vals = []; //holds multiselect vals while iterating
@@ -1111,7 +1230,9 @@ function save_study(){
 	});
 	
 	var is_indicator_multi = false;
+	var is_outcome_multi = false;
 	var comma_delimited_ea_vals = "";
+	var comma_delimited_outcome_ea_vals = "";
 	
 	jQuery.each( code_table_data, function( index, element ){
 	
@@ -1119,10 +1240,18 @@ function save_study(){
 		index_name = jQuery(this).attr("id");
 		var which_index = jQuery(this);
 		
-		//exception - other indicators should be saved in EA table, special case
+		//exception 1 - other indicators should be saved in EA table, special case
 		if( which_index.is('[id$="_result_indicator"]') ){
 			is_indicator_multi = true;
 			comma_delimited_ea_vals = ""; //reset string that will hold vals for ea
+			//which ese tab are we on?
+			var which_ea = which_index.parents('.one_ea_tab').attr('data-which_tab_num');
+		}
+		
+		//exception 2 - other indicators should be saved in EA table, special case
+		if( which_index.is('[id$="_result_outcome_accessed"]') ){
+			is_outcome_multi = true;
+			comma_delimited_outcome_ea_vals = ""; //reset string that will hold vals for ea
 			//which ese tab are we on?
 			var which_ea = which_index.parents('.one_ea_tab').attr('data-which_tab_num');
 		}
@@ -1145,6 +1274,18 @@ function save_study(){
 				} else {
 					checked_holder_vals.push( jQuery(this).val() );
 				}
+			} else if ( is_outcome_multi ) {
+				//is this value an 'other indicator'?
+				var found_index = jQuery(this).val().indexOf( 'other_intervention_outcomes_assessed' );
+				if( found_index != -1 ){ //we have a value starting with 'other_intervention_indicators' in checked vals
+					//move this value to comma_delimited_ea_vals
+					comma_delimited_outcome_ea_vals += "," + jQuery(this).val();
+					//ea_table_vals[ 'other_indicators' ] = comma_delimited_ea_vals;
+					
+					//return true; //skip to next jQuery.each iteration
+				} else {
+					checked_holder_vals.push( jQuery(this).val() );
+				}			
 			} else {
 				//not in indicator multi
 				checked_holder_vals.push( jQuery(this).val() );
@@ -1156,12 +1297,16 @@ function save_study(){
 		
 		//append comma-delimted string to ea_table_vals
 		if( is_indicator_multi ){
-		console.log( comma_delimited_ea_vals );
+			//console.log( comma_delimited_ea_vals );
 			ea_table_vals[ 'ea_' + which_ea + '_other_indicators' ] = comma_delimited_ea_vals;
+		} else if( is_outcome_multi ){
+			//console.log( comma_delimited_ea_vals );
+			ea_table_vals[ 'ea_' + which_ea + '_other_outcomes' ] = comma_delimited_outcome_ea_vals;
 		}
 		
 		//reset indicator multi flag
 		is_indicator_multi = false;
+		is_outcome_multi = false;
 		
 	});
 	console.log( code_table_vals);
@@ -1175,6 +1320,7 @@ function save_study(){
 		'num_ea_tabs' : num_ea_tabs,
 		'num_ese_tabs' : num_ese_tabs,
 		'num_other_ind' : num_other_ind,
+		'num_other_out' : num_other_out,
 		'studies_table_vals' : studies_table_vals,
 		'population_table_vals' : pops_table_vals,
 		'ea_table_vals' : ea_table_vals,
@@ -2413,6 +2559,37 @@ function other_populations_textarea_enable(){
 	jQuery.each( other_pops_textarea, function(){
 		jQuery(this).prop('disabled', !is_checked); 
 	});
+
+}
+
+//shows/hides measures extra textboxes (based on values in transtria_ajax.measures_w_text, derived from php function)
+function measures_extra_textboxes(){
+
+	var checked_objs = jQuery(this).multiselect('getChecked');
+	var value = 0;
+	
+	//get parent of this multiselect
+	var which_multi = jQuery(this);
+	
+	jQuery.each( checked_objs, function( i, v ){
+	
+		if( jQuery.inArray( parseInt( jQuery(v).val() ), transtria_ajax.measures_w_text_short ) !== -1 ){
+			//if we have a match here, display the corresponding text boxes
+			jQuery( which_multi ).parents('.one_ea_tab').find(".measures_textbox_tr[data-measures_val='" + jQuery(v).val() + "']").show();
+		
+		} 
+	});
+}
+
+//init measures boxes on study load
+function check_measures_selected(){
+
+	//hide all extra textboxes, if showing
+	jQuery('.measures_textbox_tr').hide();
+
+	var measures_dds = jQuery("[id$='_result_measures']");
+	
+	jQuery.each( measures_dds, measures_extra_textboxes );
 
 }
 

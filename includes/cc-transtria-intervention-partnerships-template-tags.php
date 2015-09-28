@@ -338,7 +338,7 @@ function cc_transtria_render_intervention_partnerships_tab( $field_data ){
 
 		<tr>
 			<td><label>All outcomes assessed:</label></td>
-			<td><span>
+			<td colspan="3"><span>
 				<select id="intervention_outcomes_assessed" multiple="multiple" class="multiselect general-multiselect">
 					<?php //populate the dropdown
 					foreach( $intervention_singletons['intervention_outcomes_assessed'] as $k => $v ){
@@ -347,9 +347,35 @@ function cc_transtria_render_intervention_partnerships_tab( $field_data ){
 					} ?>
 				</select>
 			</span></td>
-			<td><label>Other:</label></td>
-			<td><input type="text" id="other_intervention_outcomes_assessed" class="studies_table"></input></td>
+			<!--<td><label>Other:</label></td>
+			<td><input type="text" id="other_intervention_outcomes_assessed" class="studies_table"></input></td>-->
 		</tr>
+		
+		<tr class="additional_outcomes">
+			<td></td>
+			<td><label>Other Outcomes Assessed 1:</label></td>
+			<td><input type="text" id="other_intervention_outcomes_assessed" class="studies_table other_outcome" data-which_other="1"></input></td>
+			<td><a class="show_outcomes_field button <?php if( $field_data['num_other_outcomes'] > 1 ){ echo 'noshow'; } ?>">+</a></td>
+		</tr>
+		
+		<?php //if we have other intervention indicators saved, load them
+		if( $field_data['num_other_outcomes'] > 1 ){
+			for( $i = 2; $i <=10; $i++ ){
+				if( $field_data['num_other_outcomes'] < $i ){
+					break;
+				} else {
+					//draw shell for other indicators
+					echo '<tr class="additional_outcomes"><td></td><td><label>Other Outcomes Assessed ' . $i . ':</label></td>';
+					echo '<td><input type="text" id="other_intervention_outcomes_assessed' . $i .'" class="studies_table other_outcome" data-which_other="' . $i . '"></input></td>';
+					echo '<td><a class="show_outcomes_field button ';
+					if( $field_data['num_other_outcomes'] != $i ) { echo 'noshow'; }
+					echo '">+</a></td></tr>';
+									
+				}
+			
+			} 
+		} ?>
+
 
 		<tr class="not-reported">
 			<td class="not-reported"><label>All outcomes assessed not reported</label></td>

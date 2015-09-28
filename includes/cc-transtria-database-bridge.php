@@ -86,7 +86,7 @@ function cc_transtria_get_single_study_data( $study_id = null ){
  * @param int, int. 
  * @return string. Error message?
  */
-function cc_transtria_save_to_metadata_table( $study_id, $num_ese_tab, $num_ea_tab, $num_other_ind ){
+function cc_transtria_save_to_metadata_table( $study_id, $num_ese_tab, $num_ea_tab, $num_other_ind, $num_other_out ){
 	
 	global $wpdb;
 	
@@ -110,11 +110,16 @@ function cc_transtria_save_to_metadata_table( $study_id, $num_ese_tab, $num_ea_t
 		$other_ind_to_db = (int)$num_other_ind;  //0-indexed on form, 1-indexed in db.
 	} 
 	
+	if( !is_null( $num_other_out ) && ( $num_other_out != "" ) ){
+		$other_out_to_db = (int)$num_other_out;  //0-indexed on form, 1-indexed in db.
+	} 
+	
+	
 	//$error_array[] = '$ese_tabs_to_db: ' . $ese_tabs_to_db;
 	//$error_array[] = '$ea_tabs_to_db: ' . $ea_tabs_to_db;
 
 	//not working...? : wpdb->replace will Replace a row in a table if it exists or insert a new row in a table if the row did not already exist. 		
-	//replace ese tab count
+	//ese tabCount: replace ese tab count
 	$ese_table_row_name = "ese tabCount";
 	
 	//first, delete old rows
@@ -147,7 +152,7 @@ function cc_transtria_save_to_metadata_table( $study_id, $num_ese_tab, $num_ea_t
 	}
 	
 			
-	//replace ea tab count
+	//ea tabCount: replace ea tab count
 	$ea_table_row_name = "ea tabCount";
 	//first, delete old rows
 	$ea_del_num_row = $wpdb->delete( 
@@ -179,7 +184,7 @@ function cc_transtria_save_to_metadata_table( $study_id, $num_ese_tab, $num_ea_t
 	}
 
 	
-	//replace 'other indicator count' count
+	//indicatorNum: replace 'other indicator count' count
 	$other_ind_row_name = "indicatorNum";
 	//first, delete old rows
 	$other_ind_del_num_row = $wpdb->delete( 
@@ -206,10 +211,42 @@ function cc_transtria_save_to_metadata_table( $study_id, $num_ese_tab, $num_ea_t
 	
 	if( $other_ind_num_row === false ){
 		$error_array[] = "Error: other_ind_num_row could not be inserted in metadata table in db, study_id: " . $study_id .', other ind num: ' . $other_ind_to_db;
-	}else {
+	} else {
 		$error_array[] = "Num other ind rows updated: " . $other_ind_num_row . ", study_id: " . $study_id;	
 	}
 	
+	
+	//outcomeNum: update number of other outcomes created  
+	//replace 'other indicator count' count
+	$other_out_row_name = "outcomeNum";
+	//first, delete old rows
+	$other_out_del_num_row = $wpdb->delete( 
+		$wpdb->transtria_metadata, 
+		array( 
+			'StudyID' => (int)$study_id,
+			'variablename' => $other_out_row_name
+		)
+	);
+	
+	$other_out_num_row = $wpdb->insert( 
+		$wpdb->transtria_metadata, 
+		array( 
+			'StudyID' => (int)$study_id,
+			'variablename' => $other_out_row_name,
+			'value' => (int)$other_out_to_db
+		),
+		array( 
+			'%d',
+			'%s',
+			'%d'
+		) 
+	);
+	
+	if( $other_out_num_row === false ){
+		$error_array[] = "Error: other_out_num_row could not be inserted in metadata table in db, study_id: " . $study_id .', other out num: ' . $other_out_to_db;
+	} else {
+		$error_array[] = "Num other out rows updated: " . $other_out_num_row . ", study_id: " . $study_id;	
+	}
 	
 	
 	return $error_array;
@@ -511,7 +548,7 @@ function cc_transtria_save_to_ea_table_raw( $studies_data, $study_id, $new_study
 			);
 			
 			if( $ea_num_row === false ){
-				$error_array[] = "Error: new ea data could not be inserted to db for ea seq " . $which_ea_tab_num . " and existing study id";
+				$error_array[] = "Error: new ea data could not be inserted to db for ea seq " . $which_ea_tab_num . " and existing study id, index val: " . $index_val;
 			} else {
 				$error_array[] = $which_ea_tab_num . ": " . $ea_num_row; //should be 1
 			}
@@ -1399,6 +1436,40 @@ function cc_transtria_get_num_other_ind_for_study( $study_id ){
 	$ind_count = intval( $ind_count[0]['value'] ); 
 
 	return $ind_count;
+
+}
+
+/**
+ * Gets num other outcomes given a study id
+ *
+ * @param int. Study ID
+ * @return int. Number of rows updated
+ */
+function cc_transtria_get_num_other_out_for_study( $study_id ){
+
+	if( empty( $study_id ) ) {
+		return 0;
+	}
+	
+	global $wpdb;
+	
+	$which_ea_tabs;
+	
+	//how many ea tabs do we have?
+	$meta_sql = $wpdb->prepare( 
+		"
+		SELECT      value
+		FROM        $wpdb->transtria_metadata
+		WHERE		StudyID = %d
+		AND 		variablename = 'outcomeNum'
+		",
+		$study_id
+	); 
+	
+	$out_count = $wpdb->get_results( $meta_sql, ARRAY_A );
+	$out_count = intval( $out_count[0]['value'] ); 
+
+	return $out_count;
 
 }
 

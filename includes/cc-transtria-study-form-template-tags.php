@@ -41,7 +41,7 @@ function cc_transtria_render_form(){
 	$dd_multiple_options_pops = cc_transtria_get_multiple_dropdown_options_populations( $this_study_id ); //all options for pops sub tabs
 	$field_data['num_ea_tabs'] = cc_transtria_get_num_ea_tabs_for_study( $this_study_id );
 	$field_data['num_other_indicators'] = cc_transtria_get_num_other_ind_for_study( $this_study_id );
-	
+	$field_data['num_other_outcomes'] = cc_transtria_get_num_other_out_for_study( $this_study_id );
 	
 	//these are separate because of legacy code automatically saving 100 ea tabs even if there AREN't 100. #stupidstupidstupid
 	//$field_data['ea_tab_data'] = cc_transtria_get_ea_tab_data_for_study( $this_study_id, $field_data['num_ea_tabs'] );
