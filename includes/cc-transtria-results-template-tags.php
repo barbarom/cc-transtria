@@ -492,7 +492,8 @@ function cc_transtria_render_ea_tabs( $num_ea_tab, $dd_multiple_options_ea ){
 				
 				<?php }  ?>
 				
-				<tr>
+				<div style="border:1px solid black">
+				<tr class="ea_indicator">
 					<td><label>Indicator</label>
 						<input type="text" id="ea_<?php echo $num_ea_tab; ?>_other_indicators" class="ea_table other_indicators" hidden>
 					</td>
@@ -501,10 +502,10 @@ function cc_transtria_render_ea_tabs( $num_ea_tab, $dd_multiple_options_ea ){
 						foreach( $dd_multiple_options_ea['ea_result_indicator'] as $k => $v ){
 							echo '<option value="' . $k . '">' . $v->descr . '</option>';
 						
-						} ?>					
-					
+						} ?>
 					</select></td>
 				</tr>
+				</div>
 
 				<tr>
 					<td><label>Method of Accessing Significance:</label></td>

@@ -113,6 +113,11 @@ function clickListen(){
 	//certain measures have up to 10 text boxes associated with them
 	jQuery("[id$='_result_measures']").on( "change", measures_extra_textboxes );
 	
+	
+	jQuery("[id$='_result_indicator']").on( "change", function(){
+		ea_indicators_add_strategies_directions( jQuery(this) );
+	});
+	
 }
 
 function ea_clickListen(){
@@ -122,6 +127,8 @@ function ea_clickListen(){
 	for ( var tabCounter = 1; tabCounter <= num_current_tabs; tabCounter++ ) {
 		//our current ea indicator tab
 		intervention_indicator_limiter( jQuery('#ea_' + tabCounter + '_result_indicator') );
+		ea_indicators_add_strategies_directions( jQuery('#ea_' + tabCounter + '_result_indicator') );
+		
 	} 
 	//update our template, as well
 	//intervention_indicator_limiter( jQuery('#ea_template_result_indicator') );
@@ -197,10 +204,12 @@ function setup_multiselect() {
 				for ( var tabCounter = 1; tabCounter <= num_current_tabs; tabCounter++ ) {
 					//our current ea indicator tab
 					intervention_indicator_limiter( jQuery('#ea_' + tabCounter + '_result_indicator') );
+					ea_indicators_add_strategies_directions( jQuery('#ea_' + tabCounter + '_result_indicator') );
 				} 
 				//update our template, as well
 				intervention_indicator_limiter( jQuery('#ea_template_result_indicator') );
 				outcomes_assessed_limiter( jQuery('#ea_template_outcome_accessed') );
+				//ea_indicators_add_strategies_directions( jQuery('#ea_template_result_indicator') );
            }
 		});
 
@@ -1072,11 +1081,15 @@ function get_current_study_info(){
 				//our current ea indicator tab
 				intervention_indicator_limiter( jQuery('#ea_' + tabCounter + '_result_indicator') );
 				outcomes_assessed_limiter( jQuery('#ea_' + tabCounter + '_result_outcome_accessed') );
+				
+				//make sure strategies and directions are added: TODO: this!
+				ea_indicators_add_strategies_directions( jQuery('#ea_' + tabCounter + '_result_indicator') );
 			} 
 			
 			//update our template, as well
 			intervention_indicator_limiter( jQuery('#ea_template_result_indicator') );
 			outcomes_assessed_limiter( jQuery('#ea_template_result_outcome_accessed') );
+			
 			
 			//listen to Result Type radio (and show variables textarea if adjusted is selected on any)
 			jQuery("input[name$='_result_type']").on("click", show_adjusted_variables );
@@ -1092,6 +1105,9 @@ function get_current_study_info(){
 			ese_hr_subpops_show();
 			ipe_hr_subpops_show();
 			confounder_type_show();
+			
+			//add direction and up to 5 strategies on each EA tab for EACH indicator
+			ea_indicators_add_strategies_directions( jQuery('#ea_template_result_indicator') );
 			
 			//add click/select listeners to 'not reported' checkboxes and corresponding radios
 			var not_reported_checkboxes = jQuery('form#study_form .not_reported_clear');
@@ -2593,12 +2609,59 @@ function check_measures_selected(){
 
 }
 
-
 //helper function to get URL param
 function getURLParameter(name) {
 	return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null
 }
 
+//for each indicator selected on an EA tab, show/render up to 5 selectable strategies for each + 1 direction
+function ea_indicators_add_strategies_directions( incoming ){
+
+	//jQuery(this) is the indicator dropdown?
+	var which_indicators = incoming.multiselect("getChecked");
+	var which_ea_tab = incoming.parents('.one_ea_tab').attr("data-which_tab_num");
+	var which_tr_parent = incoming.parents('tr.ea_indicator');  //to add trs after this one
+	
+	//clone strategy dropdown (even if hidden later); will need to change id later
+	var new_strategy = jQuery("#ea_template_result_strategy").clone( true );
+	new_strategy.removeClass("ea_table");
+	new_strategy.addClass("special_table"); //will let the handler know that it is special
+	
+	var new_id = "";
+	
+	//console.log( which_ea_tab ); //works, wow!
+	var txt = ""; //to hold html
+	
+	//for each indicator, 
+	jQuery.each( which_indicators, function( i, v ){
+		//value = jQuery(v).val() // this can be int if in list, otherwise will be string
+		console.log( v );
+		//console.log( jQuery(v).val() );
+		
+		for( var i = 1; i < 6; i++ ){
+		
+			txt += "<tr class='indicator_strategy'><td></td>"
+			txt += "<td><label>" + jQuery(v).attr("title") + ": Strategy " + i + "</label></td>";
+			
+			//Add 5 strategy dropdowns with same..name?  //TODO: what's the best id to handle this special case?
+			new_id = "ea_" + which_ea_tab + "_result_strategy" + jQuery(v).val();
+			new_strategy.attr( "id", new_id );
+			
+			//add one direction indicator
+			jQuery( txt ).append( new_strategy );
+			
+			txt += "<td></td></tr>";
+			
+		}
+		
+	});
+	console.log( which_tr_parent );
+	//add html to page
+	which_tr_parent.after( txt );
+		
+	//clear html holder
+	txt = "";
+}
 
 
 
