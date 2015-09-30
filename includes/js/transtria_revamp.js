@@ -837,20 +837,17 @@ function get_current_study_info(){
 				
 			}
 		}).success( function( data ) {
-			//console.log('success: ' + data);
-			
-			
+		
 			//TODO: send message if empty (directing user to add priority page?)
 			if( data == "0" || data == 0 )  {
-				//console.log('what');=
 				return;
-			} else {
+			} 
 			
-			}
 			var post_meat = data['single']; // = JSON.parse(data);
 			var pops_meat = data['population_single'];
 			var ea_meat = data['ea'];
 			var multi_meat = data['multiple'];
+			var special_meat = data['special_data'];
 			//console.log( multi_meat);	
 			
 			//add a ea tab shell for all the incoming ea tabs - should have been added in php already
@@ -1066,17 +1063,6 @@ function get_current_study_info(){
 				
 			});
 			
-			//TODO: handle the special jQuery("#ea_1_indicator_strategies_directions").val()
-			//hidden jQuery("[id$=_indicator_strategies_directions]") fields contain incoming values to be parsed
-			var ea_strategies_directions = jQuery("[id$=_indicator_strategies_directions]");
-			jQuery.each( ea_strategies_directions, function( i,v ) {
-			
-				
-				console.log( i );
-				console.log( v );
-			
-			});
-			
 			//now handle the incoming multiple data
 			jQuery.each( multi_meat, function(index, element) {
 				
@@ -1093,6 +1079,10 @@ function get_current_study_info(){
 			});
 			
 		}).complete( function(data){
+		
+		//have to handle the special data after everything else is loaded. Probs could do this in success after multi_meat gets processed
+			var special_meat = data.responseJSON.special_data;
+			
 			//we're done!  Tell the user
 			spinny.css("display", "none");
 			usrmsg.html("Study ID " + this_study_id + " loaded successfully!" );
@@ -1124,7 +1114,7 @@ function get_current_study_info(){
 				intervention_indicator_limiter( jQuery('#ea_' + tabCounter + '_result_indicator') );
 				outcomes_assessed_limiter( jQuery('#ea_' + tabCounter + '_result_outcome_accessed') );
 				
-				//make sure strategies and directions are added: TODO: this!
+				//make sure strategies and directions are added - //we now do this later
 				ea_indicators_add_strategies_directions( jQuery('#ea_' + tabCounter + '_result_indicator') );
 			} 
 			
@@ -1132,6 +1122,35 @@ function get_current_study_info(){
 			intervention_indicator_limiter( jQuery('#ea_template_result_indicator') );
 			outcomes_assessed_limiter( jQuery('#ea_template_result_outcome_accessed') );
 			
+			
+			//TODO: handle the special data (parse and put into strategy/direction drop downs
+			jQuery.each( special_meat, function( ea_tab, v ) { //i = ea tab num, v = data
+			
+				//TODO: populate the strategies and directions for each ea tab
+				//console.log( ea_tab );
+				//console.log( v );
+				if( v.indicators != undefined ){
+					jQuery.each( v.indicators, function( ind_num, details ) {
+						
+						if( details.direction != undefined ){
+							//find dropdown for direction, update value
+							jQuery('.result_direction[data-this_ea_tab="' + ea_tab + '"][data-strategy_value="' + ind_num + '"]').val( details.direction );
+							
+						} 
+						if( details.strategies != undefined ){
+							jQuery.each( details.strategies, function( strategy_num, strategy_val ){
+								//console.log( strategy_val );
+								//find strategy dropdown, update value
+								jQuery('[data-this_ea_tab="' + ea_tab + '"][data-strategy_value="' + ind_num + '"][data-strategy_num="' + strategy_num + '"]').val(strategy_val);
+							});
+						}
+						//find the jQuery select obj with the ea_tab, data-strategy_value (indicator num, needs to be refactored), data-strategy_num
+						//console.log( details );
+					
+					});
+				}
+			
+			});
 			
 			//listen to Result Type radio (and show variables textarea if adjusted is selected on any)
 			jQuery("input[name$='_result_type']").on("click", show_adjusted_variables );
