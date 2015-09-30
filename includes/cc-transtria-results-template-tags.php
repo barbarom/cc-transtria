@@ -381,7 +381,7 @@ function cc_transtria_render_ea_tabs( $num_ea_tab, $dd_multiple_options_ea ){
 					</td>
 				</tr>
 
-				<tr>
+				<tr hidden="hidden"><!--keep around for cloning-->
 					<td><label>Indicator Direction:</label></td>
 					<td colspan="3"><select id="ea_<?php echo $num_ea_tab; ?>_result_indicator_direction" class="ea_table">
 						<option value="">---Select---</option>

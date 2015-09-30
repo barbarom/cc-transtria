@@ -2620,40 +2620,54 @@ function ea_indicators_add_strategies_directions( incoming ){
 
 	//jQuery(this) is the indicator dropdown?
 	var which_indicators = incoming.multiselect("getChecked");
+	console.log( which_indicators );
 	var which_ea_tab = incoming.parents('.one_ea_tab').attr("data-which_tab_num"); //what EA tab are we on?
 	var which_tr_parent = incoming.parents('tr.ea_indicator');  //to add strategy/direction trs after this one
 
-	//clone strategy dropdown (even if hidden later); will need to change id later
+	//clone strategy and direction dropdowns (even if hidden later); will need to change id later
 	var new_strategy = jQuery("#ea_template_result_strategy").clone( true );
-	new_strategy.removeClass("ea_table");
+	var new_direction = jQuery("#ea_template_result_indicator_direction").clone( true );
+	new_strategy.removeClass("ea_table"); //we're not saving to the ea_table w this
+	new_direction.removeClass("ea_table");
 	new_strategy.addClass("result_strategy"); //to update the options w the original Strategy dropdown
-	new_strategy.addClass("special_table"); //will let the handler know that it is special
+	new_strategy.addClass("special_table"); //will let the save handler know that it is special
+	new_direction.addClass("special_table"); //will let the save handler know that it is special
 	
 	var new_id = "";
 	var txt = ""; //to hold html
 	var strategy_vals = []; //to hold all strategy values selected
+	var strategy_value = 0;
 	
-	//for each indicator, 
+	//for each indicator, get strategy value, put into array
 	jQuery.each( which_indicators, function( i, v ){
-		//value = jQuery(v).val() // this can be int if in list, otherwise will be string
+	
+		//strategy option values will be associated w new strategy and direction dropdowns
+		strategy_value = jQuery(v).val(); //number of option
+		strategy_vals.push( strategy_value );
+		
+	});
+	
+	//for each indicator, compare list of strategy values against existing and create/destroy as needed
+	jQuery.each( which_indicators, function( i, v ){
+		//value = jQuery(v).val() // this can be int or string
 		//console.log( v );
 		
-		var strategy_value = jQuery(v).val(); //number of option
-		strategy_vals.push( strategy_value );
+		strategy_value = jQuery(v).val();
 		
 		//do we already have the addtnl Strategies and Direction for this indicator?
 		var existing_strategy = jQuery("#effect_association_tab_" + which_ea_tab).find('[data-strategy_value="' + strategy_value + '"]');
+		var existing_direction = jQuery("#effect_association_tab_" + which_ea_tab).find('[data-direction_value="' + strategy_value + '"]');
 		//console.log( existing_strategy );
 		
-		//if the current indicator does not have strategies in it, add html for it
+		//if the current indicator does not have strategies in it (5), add html for it
 		if( existing_strategy.length <= 0 ){
 			for( var i = 1; i < 6; i++ ){
 			
 				txt += "<tr class='indicator_strategy' data-strategy_value='" + strategy_value + "'><td></td>"
 				txt += "<td colspan='2'><label><strong>" + jQuery(v).attr("title") + ": Strategy " + i + "</strong></label></td>";
 				
-				//Add 5 strategy dropdowns with same..name?  //TODO: what's the best id to handle this special case?
-				new_id = "ea_" + which_ea_tab + "_result_strategy" + strategy_value;
+				//Add 5 strategy dropdowns with same..name?
+				new_id = "ea_" + which_ea_tab + "_result_strategy_" + strategy_value;
 				new_strategy.attr( "id", new_id );
 				//new_strategy.attr("data-strategy_value", jQuery(v).val() );
 				
@@ -2666,15 +2680,35 @@ function ea_indicators_add_strategies_directions( incoming ){
 			}
 		}
 		
+		//if the current indicator does not have a direction (1), add html for it
+		if( existing_direction.length <= 0 ){
+			
+			txt += "<tr class='indicator_direction' data-direction_value='" + strategy_value + "'><td></td>"
+			txt += "<td colspan='2'><label><strong>" + jQuery(v).attr("title") + ": Direction</strong></label></td>";
+			
+			//Add 1 direction dropdown with same..name?  
+			new_id = "ea_" + which_ea_tab + "_result_direction_" + strategy_value;
+			new_direction.attr( "id", new_id );
+			//new_strategy.attr("data-strategy_value", jQuery(v).val() );
+			
+			var direction_html = jQuery('<div>').append( new_direction ).clone( true ).remove().html();
+			
+			//jQuery( txt ).append( new_strategy );
+			txt += "<td>" + direction_html + "</td>";
+			txt += "<td></td></tr>";
+				
+		}
+		
 	});
 	console.log( strategy_vals );
-	//remove indicator strategy trs that are NOT in the 'list' of curernt indicators for this EA
+	//remove indicator strategy and direction trs that are NOT in the 'list' of curernt indicators for this EA
 	var all_existing_strategies = jQuery('#effect_association_tab_' + which_ea_tab + ' tr.indicator_strategy');
+	var all_existing_directions = jQuery('#effect_association_tab_' + which_ea_tab + ' tr.indicator_direction');
+	
 	var this_strategy_num = 0;
 	jQuery.each( all_existing_strategies, function( i, v ){
 		this_strategy_num = jQuery(v).attr("data-strategy_value"); //could be int or string
-		//console.log( this_strategy_num );
-		//console.log( strategy_vals );
+
 		//if we have no indicator selected with this strategy number, remove the strategy
 		if( jQuery.inArray( this_strategy_num, strategy_vals ) == -1 ){ //we have no indicator of this strategy number
 			jQuery('#effect_association_tab_' + which_ea_tab + ' tr.indicator_strategy[data-strategy_value="' + this_strategy_num + '"]').remove();
@@ -2682,14 +2716,19 @@ function ea_indicators_add_strategies_directions( incoming ){
 			all_existing_strategies = jQuery('#effect_association_tab_' + which_ea_tab + ' tr.indicator_strategy')
 		}
 		
-		//console.log( i );
-		//console.log( v );
-		
 	});
 	
-	
-	//TODO: add one direction indicator
-	
+	jQuery.each( all_existing_directions, function( i, v ){
+		this_strategy_num = jQuery(v).attr("data-strategy_value"); //could be int or string
+
+		//if we have no indicator selected with this strategy number, remove the strategy
+		if( jQuery.inArray( this_strategy_num, strategy_vals ) == -1 ){ //we have no indicator of this strategy number
+			jQuery('#effect_association_tab_' + which_ea_tab + ' tr.indicator_direction[data-strategy_value="' + this_strategy_num + '"]').remove();
+			//update our direction div list
+			all_existing_directions = jQuery('#effect_association_tab_' + which_ea_tab + ' tr.indicator_direction')
+		}
+	});
+
 	//add html to page
 	which_tr_parent.after( txt );
 		
