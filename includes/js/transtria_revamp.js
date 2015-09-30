@@ -1224,6 +1224,7 @@ function save_study(){
 	var checked_holder_vals = []; //holds multiselect vals while iterating
 	var code_table_vals = {};
 	var special_table_data = jQuery('.special_table'); //data that doesn't fit the existing paradigms.
+	var special_vals = {};
 	
 	var index_name = "";
 	
@@ -1354,7 +1355,7 @@ function save_study(){
 		is_outcome_multi = false;
 		
 	});
-	console.log( code_table_vals);
+	//console.log( code_table_vals);
 
 	
 	var result_strategy_obj = {};  //array ( option_num => { 1 => strategy num, 2=> strategy_num }, option_num...  );
@@ -1380,15 +1381,13 @@ function save_study(){
 	
 	*/
 	var result_direction_obj = {};  //array ( option_num => { 1 => strategy num, 2=> strategy_num }, option_num...  );
+	
+	
 	//instatiate objs for each ea tab
 	for( var ea=1; ea <= num_ea_tabs; ea++ ){
 		result_strategy_obj[ea] = {};
 		result_strategy_obj[ea].indicators = {};
 	}
-	
-	var strategies_holder = {};
-	strategies_holder.strategies = {};  //objects within objects
-	strategies_holder.direction = {};  //objects within objects
 	
 	//cycle through and massage 'special' data as needed
 	jQuery.each( special_table_data, function( index, element ){
@@ -1410,19 +1409,19 @@ function save_study(){
 				this_strategy_num = jQuery( element ).attr("data-strategy_num");
 				this_strategy_value = jQuery( element ).val();
 				
-				//clear strategies holder
-				//strategies_holder.strategies = {};
+				//test to see if we have this indicator number yet defined in this result_strategy_object level; if not, define
+				if( result_strategy_obj[ this_ea_tab ]['indicators'][ this_ind_num ] == undefined ){
+					result_strategy_obj[ this_ea_tab ]['indicators'][ this_ind_num ] = {};
+				}
 				
-				//populate the result_strategy_holder object
-				strategies_holder['strategies'][this_strategy_num] = this_strategy_value;
+				//test to see if we have 'strategies' defined in this result_strategy_object level; if not, define
+				if( result_strategy_obj[ this_ea_tab ]['indicators'][ this_ind_num ]['strategies'] == undefined ){
+					result_strategy_obj[ this_ea_tab ]['indicators'][ this_ind_num ]['strategies'] = {};
+				}
 				
-				console.log( strategies_holder );
-				//result_strategy_obj[ this_ea_tab ]['indicators'][ this_ind_num ] = strategies_holder; 
-				//result_strategy_obj[ this_ea_tab ]['indicators'][ this_ind_num ] = jQuery.extend(true, {}, strategies_holder );
-				//trying to copy the object, not just refer to it
-				result_strategy_obj[ this_ea_tab ]['indicators'][ this_ind_num ] = JSON.parse( JSON.stringify( strategies_holder ) );
-				
-				strategies_holder['strategies'][this_strategy_num] = "";
+				//add on to result_strategy_obj
+				result_strategy_obj[ this_ea_tab ]['indicators'][ this_ind_num ]['strategies'][this_strategy_num] = this_strategy_value;
+
 			}
 		
 		} else if( ( num_ea_tabs > 0 ) && ( jQuery(element).hasClass('result_direction') ) ){
@@ -1433,27 +1432,30 @@ function save_study(){
 				this_ind_num = jQuery( element ).attr("data-strategy_value");
 				this_direction_value = jQuery( element ).val();
 				
-				//clear strategies holder
-				//strategies_holder.direction = {};
+				//test to see if we have this indicator number yet defined in this result_strategy_object level; if not, define
+				if( result_strategy_obj[ this_ea_tab ]['indicators'][ this_ind_num ] == undefined ){
+					result_strategy_obj[ this_ea_tab ]['indicators'][ this_ind_num ] = {};
+				}
 				
-				//populate the result_strategy_holder object w/ direction
-				strategies_holder['direction'] = this_direction_value;
+				//test to see if we have 'direction' defined in this result_strategy_object level; if not, define
+				if( result_strategy_obj[ this_ea_tab ]['indicators'][ this_ind_num ]['direction'] == undefined ){
+					result_strategy_obj[ this_ea_tab ]['indicators'][ this_ind_num ]['direction'] = {};
+				}
 				
-				//result_strategy_obj[ this_ea_tab ]['indicators'][ this_ind_num ] = strategies_holder; 
-				result_strategy_obj[ this_ea_tab ]['indicators'][ this_ind_num ] = jQuery.extend(true, {}, strategies_holder);
+				result_strategy_obj[ this_ea_tab ]['indicators'][ this_ind_num ]['direction'] = this_direction_value;
 		
-				strategies_holder['direction'] = "";
 			}
 		
 		}
 		
 		//append result_strategy_obj result to ea_table_vals[ 'indicator_strategies ]
+		
 		//append result_direction_obj result to ea_table_vals[ 'indicator_directions ]
 	
 	});
 	
-	console.log( result_strategy_obj );
-	
+	special_vals = result_strategy_obj;
+	//console.log( result_strategy_obj );
 	
 	
 	//ajax data
@@ -1469,7 +1471,8 @@ function save_study(){
 		'studies_table_vals' : studies_table_vals,
 		'population_table_vals' : pops_table_vals,
 		'ea_table_vals' : ea_table_vals,
-		'code_table_vals' : code_table_vals
+		'code_table_vals' : code_table_vals,
+		'special_vals' : special_vals
 	};
 	
 

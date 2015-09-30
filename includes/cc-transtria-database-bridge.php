@@ -686,8 +686,54 @@ function cc_transtria_save_to_code_results( $studies_data, $study_id ){
 
 }
 
+/**
+ * Saves 'special' data that exists outside of previous paradigms (and therefore needs special handling)
+ *
+ * @param array, int.  Data, Study ID.
+ * @return string. Error message.
+ */
+function cc_transtria_save_special_data( $studies_data, $study_id ){
+
+	global $wpdb;
+	$return_info = array(); //just a holder for now
+	$cerealized = array();
+	
+	//first, parse what's coming in.  As of now, we've got arrays indexed by EA tabs
+	foreach( $studies_data as $ea_tab => $data ){
+	
+		$return_info[ $ea_tab ] = $data; //temp
+		
+		//serialize since we are putting into single field in ea_table
+		$cerealized[ $ea_tab ] = serialize( $data );
+	
+	}
+	
+	//put into database - ea_table: indicator_strategies_directions
+	foreach( $cerealized as $ea_tab => $string ){
+	
+		$data = array( 
+			'indicator_strategies_directions' => $string 
+		);
+		
+		$where = array( 
+			'StudyID' => $study_id,	
+			'seq' => $ea_tab
+		);
+
+		$result = $wpdb->update( $wpdb->transtria_effect_association, $data, $where, $format = null, $where_format = null );
+		
+		$error_array[ $i ] = $result;
+	
+	}
+	
+	return $error_array;
 
 
+
+}
+
+
+/******* get multiple data *******/
 
 /**
  * Returns array of all multiple data for a study

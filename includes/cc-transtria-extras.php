@@ -707,6 +707,9 @@ class CC_Transtria_Extras {
 		$ea_data = $_POST['ea_table_vals'];
 		$code_results_data = $_POST['code_table_vals'];
 		
+		//these need to be handles differently, depending on what they are.  New paradigms, yaay!
+		$special_data = $_POST['special_vals'];
+		
 		$num_ese_tabs = $_POST['num_ese_tabs'];
 		$num_ea_tabs = $_POST['num_ea_tabs'];
 		$num_other_ind = $_POST['num_other_ind'];
@@ -735,11 +738,18 @@ class CC_Transtria_Extras {
 			$code_results_success = 'no multis selected';
 		}
 		
+		if( !empty( $special_data ) ){
+			$special_results_success = cc_transtria_save_special_data( $special_data, $this_study_id );
+		} else {
+			$special_results_success = 'no special selected';
+		}
+		
 		$data['studies_test'] = $studies_success;
 		$data['pops_success'] = $pops_success;
 		$data['meta_success'] = $meta_success;
 		$data['ea_success'] = $ea_success;
 		$data['code_results_success'] = $code_results_success;
+		$data['special_results_success'] = $special_results_success;
 		
 		//echo json_encode( $study_data['single'] );
 		echo json_encode( $data );
