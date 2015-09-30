@@ -414,7 +414,7 @@ function cc_transtria_render_ea_tabs( $num_ea_tab, $dd_multiple_options_ea ){
 
 				<tr>
 					<td><label>Result Strategy:</label></td>
-					<td colspan="3"><select id="ea_<?php echo $num_ea_tab; ?>_result_strategy" class="ea_table">
+					<td colspan="3"><select id="ea_<?php echo $num_ea_tab; ?>_result_strategy" class="ea_table result_strategy" data-strategy_value="">
 						<option value="">---Select---</option>
 						<?php //$dd_multiple_options_ea are indexed by the general id
 						foreach( $dd_multiple_options_ea['ea_result_strategy'] as $k => $v ){
@@ -492,7 +492,6 @@ function cc_transtria_render_ea_tabs( $num_ea_tab, $dd_multiple_options_ea ){
 				
 				<?php }  ?>
 				
-				<div style="border:1px solid black">
 				<tr class="ea_indicator">
 					<td><label>Indicator</label>
 						<input type="text" id="ea_<?php echo $num_ea_tab; ?>_other_indicators" class="ea_table other_indicators" hidden>
@@ -505,8 +504,7 @@ function cc_transtria_render_ea_tabs( $num_ea_tab, $dd_multiple_options_ea ){
 						} ?>
 					</select></td>
 				</tr>
-				</div>
-
+				
 				<tr>
 					<td><label>Method of Accessing Significance:</label></td>
 					<td><select id="ea_<?php echo $num_ea_tab; ?>_result_statistical_measure" class="ea_table">

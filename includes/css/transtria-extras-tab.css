@@ -246,6 +246,10 @@ form#study_form .measures_textbox_tr{
 
 }
 
+form#study_form tr.indicator_strategy{
+	background-color:#ffffcc
+}
+
 
 /** BEGIN UI STYLINGS **/
 
