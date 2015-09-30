@@ -2655,8 +2655,8 @@ function ea_indicators_add_strategies_directions( incoming ){
 		strategy_value = jQuery(v).val();
 		
 		//do we already have the addtnl Strategies and Direction for this indicator?
-		var existing_strategy = jQuery("#effect_association_tab_" + which_ea_tab).find('[data-strategy_value="' + strategy_value + '"]');
-		var existing_direction = jQuery("#effect_association_tab_" + which_ea_tab).find('[data-direction_value="' + strategy_value + '"]');
+		var existing_strategy = jQuery("#effect_association_tab_" + which_ea_tab).find('tr.indicator_strategy[data-strategy_value="' + strategy_value + '"]');
+		var existing_direction = jQuery("#effect_association_tab_" + which_ea_tab).find('tr.indicator_direction[data-direction_value="' + strategy_value + '"]');
 		//console.log( existing_strategy );
 		
 		//if the current indicator does not have strategies in it (5), add html for it
@@ -2669,7 +2669,7 @@ function ea_indicators_add_strategies_directions( incoming ){
 				//Add 5 strategy dropdowns with same..name?
 				new_id = "ea_" + which_ea_tab + "_result_strategy_" + strategy_value;
 				new_strategy.attr( "id", new_id );
-				//new_strategy.attr("data-strategy_value", jQuery(v).val() );
+				new_strategy.attr("data-strategy_value", strategy_value );
 				
 				var strategy_html = jQuery('<div>').append( new_strategy ).clone( true ).remove().html();
 				
@@ -2689,7 +2689,7 @@ function ea_indicators_add_strategies_directions( incoming ){
 			//Add 1 direction dropdown with same..name?  
 			new_id = "ea_" + which_ea_tab + "_result_direction_" + strategy_value;
 			new_direction.attr( "id", new_id );
-			//new_strategy.attr("data-strategy_value", jQuery(v).val() );
+			new_direction.attr("data-strategy_value", strategy_value );
 			
 			var direction_html = jQuery('<div>').append( new_direction ).clone( true ).remove().html();
 			
@@ -2719,11 +2719,11 @@ function ea_indicators_add_strategies_directions( incoming ){
 	});
 	
 	jQuery.each( all_existing_directions, function( i, v ){
-		this_strategy_num = jQuery(v).attr("data-strategy_value"); //could be int or string
+		this_strategy_num = jQuery(v).attr("data-direction_value"); //could be int or string
 
 		//if we have no indicator selected with this strategy number, remove the strategy
 		if( jQuery.inArray( this_strategy_num, strategy_vals ) == -1 ){ //we have no indicator of this strategy number
-			jQuery('#effect_association_tab_' + which_ea_tab + ' tr.indicator_direction[data-strategy_value="' + this_strategy_num + '"]').remove();
+			jQuery('#effect_association_tab_' + which_ea_tab + ' tr.indicator_direction[data-direction_value="' + this_strategy_num + '"]').remove();
 			//update our direction div list
 			all_existing_directions = jQuery('#effect_association_tab_' + which_ea_tab + ' tr.indicator_direction')
 		}
