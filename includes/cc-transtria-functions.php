@@ -972,7 +972,8 @@ function cc_transtria_match_div_ids_to_ea_columns_single( $which_ea, $study_labe
 		'consumption_vitamins_measures' => $which_ea . '_consumption_vitamins_measures',
 		'consumption_minerals_measures' => $which_ea . '_consumption_minerals_measures',
 		'consumption_fruits_measures' => $which_ea . '_consumption_fruits_measures',
-		'consumption_vegetables_measures' => $which_ea . '_consumption_vegetables_measures',
+		'consumption_vegetables_measures' => $which_ea . '_consumption_vegetables_measures'
+		//'indicator_strategies_directions' => $which_ea . '_indicator_strategies_directions'
 
 	);
 	

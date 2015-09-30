@@ -1066,6 +1066,16 @@ function get_current_study_info(){
 				
 			});
 			
+			//TODO: handle the special jQuery("#ea_1_indicator_strategies_directions").val()
+			//hidden jQuery("[id$=_indicator_strategies_directions]") fields contain incoming values to be parsed
+			var ea_strategies_directions = jQuery("[id$=_indicator_strategies_directions]");
+			jQuery.each( ea_strategies_directions, function( i,v ) {
+			
+				
+				console.log( i );
+				console.log( v );
+			
+			});
 			
 			//now handle the incoming multiple data
 			jQuery.each( multi_meat, function(index, element) {

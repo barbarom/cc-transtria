@@ -45,7 +45,7 @@ function cc_transtria_render_form(){
 	
 	//these are separate because of legacy code automatically saving 100 ea tabs even if there AREN't 100. #stupidstupidstupid
 	//$field_data['ea_tab_data'] = cc_transtria_get_ea_tab_data_for_study( $this_study_id, $field_data['num_ea_tabs'] );
-	$ea_data = cc_transtria_get_ea_tab_data_for_study( $this_study_id );
+	//$ea_data = cc_transtria_get_ea_tab_data_for_study( $this_study_id );
 	//var_dump( $ea_data );
 	//var_dump( $pops_data_multiple );
 	

@@ -81,6 +81,37 @@ function cc_transtria_get_single_study_data( $study_id = null ){
 }
 
 /**
+ * Returns 'special data'
+ *
+ */
+function cc_transtria_get_special_data( $study_id = null ){
+
+	global $wpdb;
+	
+	//TODO, use wp->prepare
+	$question_sql = 
+		"
+		SELECT seq, indicator_strategies_directions
+		FROM $wpdb->transtria_effect_association
+		WHERE `StudyID` = $study_id
+		";
+		
+	$form_rows = $wpdb->get_results( $question_sql, OBJECT );
+	$return_info = array();
+	
+	//unserialize the data
+	foreach( $form_rows as $form_row ){
+		
+		$return_info[ $form_row->seq ] = unserialize( $form_row->indicator_strategies_directions );
+	}
+	
+	return $return_info;
+
+
+}
+
+
+/**
  * Saves ea/ese tab number to metadata table
  * 
  * @param int, int. 
@@ -727,8 +758,6 @@ function cc_transtria_save_special_data( $studies_data, $study_id ){
 	}
 	
 	return $error_array;
-
-
 
 }
 

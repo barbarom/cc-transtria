@@ -586,6 +586,7 @@ class CC_Transtria_Extras {
 		$study_data['num_other_outcomes'] = cc_transtria_get_num_other_ind_for_study( $this_study_id );
 		$study_data['ea'] = cc_transtria_get_ea_tab_data_for_study( $this_study_id );
 		$study_data['multiple'] = cc_transtria_get_study_data_multiple( $this_study_id );
+		$study_data['special_data'] = cc_transtria_get_special_data( $this_study_id );
 		
 		//can we put these all into a flat array?
 		$study_data_flat = $study_data['single'];
