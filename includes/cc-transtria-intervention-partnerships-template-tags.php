@@ -23,7 +23,7 @@ function cc_transtria_render_intervention_partnerships_tab( $field_data ){
 
 ?>
 
-	<table>
+	<table class="height_div">
 		<tr>
 			<td colspan="4" class="inner_table_header"><strong>Intervention Setting</strong></td>
 		</tr>

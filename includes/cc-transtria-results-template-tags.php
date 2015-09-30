@@ -30,7 +30,7 @@ function cc_transtria_render_results_tab( $field_data ){
 	
 ?>
 
-	<table id="results_table" class="nobottomborder">
+	<table id="results_table" class="nobottomborder height_div">
 		<tr>
 			<td colspan="4" class="inner_table_header"><strong>Results</strong></td>
 		</tr>
@@ -384,7 +384,7 @@ function cc_transtria_render_ea_tabs( $num_ea_tab, $dd_multiple_options_ea ){
 				<tr hidden="hidden"><!--keep around for cloning-->
 					<td><label>Indicator Direction:</label></td>
 					<td colspan="3"><select id="ea_<?php echo $num_ea_tab; ?>_result_indicator_direction" class="ea_table">
-						<option value="">---Select---</option>
+						<option value="-1">---Select---</option>
 						<?php //$dd_multiple_options_ea are indexed by the general id
 						foreach( $dd_multiple_options_ea['ea_result_indicator_direction'] as $k => $v ){
 							echo '<option value="' . $k . '">' . $v->descr . '</option>';
@@ -397,7 +397,7 @@ function cc_transtria_render_ea_tabs( $num_ea_tab, $dd_multiple_options_ea ){
 				<tr>
 					<td><label>Outcome Direction:</label></td>
 					<td colspan="3"><select id="ea_<?php echo $num_ea_tab; ?>_result_outcome_direction" class="ea_table">
-						<option value="">---Select---</option>
+						<option value="-1">---Select---</option>
 						<?php //$dd_multiple_options_ea are indexed by the general id
 						foreach( $dd_multiple_options_ea['ea_result_outcome_direction'] as $k => $v ){
 							echo '<option value="' . $k . '">' . $v->descr . '</option>';
@@ -415,7 +415,7 @@ function cc_transtria_render_ea_tabs( $num_ea_tab, $dd_multiple_options_ea ){
 				<tr>
 					<td><label>Result Strategy:</label></td>
 					<td colspan="3"><select id="ea_<?php echo $num_ea_tab; ?>_result_strategy" class="ea_table result_strategy" data-strategy_value="">
-						<option value="">---Select---</option>
+						<option value="-1">---Select---</option>
 						<?php //$dd_multiple_options_ea are indexed by the general id
 						foreach( $dd_multiple_options_ea['ea_result_strategy'] as $k => $v ){
 							echo '<option value="' . $k . '">' . $v->descr . '</option>';

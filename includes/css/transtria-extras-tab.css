@@ -32,13 +32,13 @@ textarea{
 
 
 /* START TABS CSS */
-.tabs {
+.tabs, #main_tabs {
   position: relative;   
   min-height: 3000px; /* This part sucks */
   clear: both;
   margin: 25px 0;
 }
-.tab, .subpops_tab, #citation_tabs ul li {
+.tab, .subpops_tab, #citation_tabs ul li , .main_tab{
   float: left;
 }
 
@@ -59,16 +59,18 @@ textarea{
     width: 100%;
 }
 #sub_pops_tabs,
-#citation_tabs ul {
+#citation_tabs ul.
+#main_tabs {
 	width:100%;
 }
 .tab label.primary_tab_label,
+#main_tabs label.main_tab_label,
 #sub_pops_tabs label.subpops_tab_label,
 #sub_pops_tabs label.ese_add_tab_label,
 #citation_tabs ul li,
 #effect_association_tabs ul li label{
   background: #eee; 
-  padding: 10px; 
+  padding: 10px 10px 12px; 
   border: 1px solid #ccc; 
   margin-left: -1px; 
   position: relative;
@@ -78,7 +80,8 @@ textarea{
   text-transform:uppercase;
   cursor:pointer;
 }
-.tab label.primary_tab_label{
+.tab label.primary_tab_label,
+#main_tabs label.main_tab_label{
 	font-size:1.2em;
 }
 #citation_tabs ul li,
@@ -91,6 +94,7 @@ textarea{
 #effect_association_tabs ul li label{
 	cursor:pointer;
 }
+#main_tabs label.main_tab_label.active,
 #sub_pops_tabs label.subpops_tab_label.active,
 #citation_tabs ul li.active,
 #effect_association_tabs label.ea_tab_label.active {
@@ -109,9 +113,9 @@ textarea{
 
 
 
-.content {
+.content, .main_content {
   position: absolute;
-  top: 36px;
+  top: 38px;
   left: 0;
   background: white;
   right: 0;

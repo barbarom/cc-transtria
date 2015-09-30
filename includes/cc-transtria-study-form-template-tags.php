@@ -110,13 +110,12 @@ function cc_transtria_render_form(){
 	
 
 	
-	<div class="tabs">
+	<div id="main_tabs">
 		
-	   <div class="tab primary_tab">
-		   <input type="radio" id="tab-1" name="tab-group-1" class="noshow" checked>
-		   <label for="tab-1" class="primary_tab_label">Basic Info</label>
+		<div id="basic_tab" class="main_tab">
+		<label for="basic_tab" class="main_tab_label active" data-whichmaintab="basic_form">Basic Info</label>
        
-		   <div id="basic_form_content" class="content">
+			<div id="basic_form_content" class="content main_content height_div">
 				<table id="citation_table" class="nobottomborder">
 					<tr>
 						<td class="citation_button" colspan="2">
@@ -505,38 +504,35 @@ function cc_transtria_render_form(){
 		   </div> 
 	   </div>
     
-	   <div class="tab primary_tab">
-		   <input type="radio" id="tab-2" name="tab-group-1" class="noshow">
-		   <label for="tab-2" class="primary_tab_label">Population</label>
-		   
-		   <div id="population_content" class="content">
-			   <?php 
+		<div id="population_tab" class="main_tab">
+		<label for="population_tab" class="main_tab_label" data-whichmaintab="population">Population</label>
+
+			<div id="population_content" class="content main_content noshow height_div">
+				<?php 
 				//render pops tab in all its glory
 				cc_transtria_render_populations_tab( $field_data ); ?>
-		   </div> 
-	   </div>
+			</div> 
+		</div>
 		
-		<div class="tab primary_tab">
-		   <input type="radio" id="tab-3" name="tab-group-1" class="noshow">
-		   <label for="tab-3" class="primary_tab_label">Intervention/Partnerships</label>
+		<div id="intervention_tab" class="main_tab">
+		<label for="intervention_tab" class="main_tab_label" data-whichmaintab="intervention">Intervention/Partnerships</label>
 		 
-		   <div id="intervention_content" class="content">
+		   <div id="intervention_content" class="content main_content noshow">
 			   <?php 
 				
 				cc_transtria_render_intervention_partnerships_tab( $field_data ); ?>
 		   </div> 
-	   </div>
+		</div>
 
-		<div class="tab primary_tab">
-		   <input type="radio" id="tab-4" name="tab-group-1" class="noshow">
-		   <label for="tab-4" class="primary_tab_label results_tab_label">Results</label>
+		<div id="results_tab" class="main_tab">
+		<label for="results_tab" class="main_tab_label results_tab_label" data-whichmaintab="results">Results</label>
 		 
-		   <div id="results_content" class="content">
+			<div id="results_content" class="content main_content noshow">
 			   <?php
 			   
 			   cc_transtria_render_results_tab( $field_data ); ?>
-		   </div> 
-	   </div>   
+			</div> 
+		</div>   
 	</div>	
 	
 	

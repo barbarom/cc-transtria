@@ -3,6 +3,9 @@
 
 function clickListen(){
 
+	//when clicking on the main tabs..
+	jQuery('#main_tabs label.main_tab_label').on("click", main_tabber ); 
+	
 	//when clicking on the subpopulations tabs..
 	jQuery('#sub_pops_tabs label.subpops_tab_label').on("click", sub_pops_tabber ); 
 	
@@ -120,6 +123,7 @@ function clickListen(){
 	
 }
 
+//hmm, not using?
 function ea_clickListen(){
 
 	//initialize intervention indicator limiter 
@@ -303,6 +307,29 @@ function setup_multiselect() {
 		
 */
 }
+
+//sets up main tabs
+function main_tabber( ){
+	
+	//console.log( jQuery(this) ); //looks at label
+	var incoming = jQuery(this);
+	
+	//hide all subpops content
+	//jQuery('.main_content').hide();
+	jQuery('.main_content').addClass('noshow');
+	
+	var which_pop = incoming.data("whichmaintab");
+	var which_content = which_pop + '_content';
+	
+	//add selected class
+	jQuery('label.main_tab_label').removeClass('active');
+	incoming.addClass('active');
+
+	jQuery("#" + which_content + '.main_content').removeClass('noshow');
+
+	//adjust the height of what we are seeing
+	adjust_form_height();
+};
 
 //sets up tabs for subpops 
 function sub_pops_tabber( ){
@@ -1184,9 +1211,9 @@ function save_study(){
 	
 	
 	//form data
-	var studies_table_data = jQuery('.studies_table');
+	var studies_table_data = jQuery('.studies_table'); //data that goes into the study table in the db
 	var studies_table_vals = {};
-	var population_table_data = jQuery('.population_table');
+	var population_table_data = jQuery('.population_table'); //data that goes into the population table in the db
 	var pops_table_vals = {};
 	var ea_table_data = jQuery('.ea_table').not("[id^=ea_template]"); //ignore our ea template (hidden and from which we get/copy our ea tabs)
 	var ea_table_vals = {};
@@ -1196,6 +1223,8 @@ function save_study(){
 	var checked_holder = {};
 	var checked_holder_vals = []; //holds multiselect vals while iterating
 	var code_table_vals = {};
+	var special_table_data = jQuery('.special_table'); //data that doesn't fit the existing paradigms.
+	
 	var index_name = "";
 	
 	jQuery.each( studies_table_data, function( index, element ){
@@ -1327,6 +1356,106 @@ function save_study(){
 	});
 	console.log( code_table_vals);
 
+	
+	var result_strategy_obj = {};  //array ( option_num => { 1 => strategy num, 2=> strategy_num }, option_num...  );
+	/*
+		array(
+			[ea_tab_num] => array(
+				'indicators' => array(
+					ind1 => array (
+						'strategies' => array(
+							1 => strategy_num,
+							2 => strategy_num2
+							...
+							5 => strategy_num5
+						),
+						'direction' => int
+					),
+					ind2 => array(
+						...
+					),...
+				)
+			),
+			[ea_tab_num_next] => ...
+	
+	*/
+	var result_direction_obj = {};  //array ( option_num => { 1 => strategy num, 2=> strategy_num }, option_num...  );
+	//instatiate objs for each ea tab
+	for( var ea=1; ea <= num_ea_tabs; ea++ ){
+		result_strategy_obj[ea] = {};
+		result_strategy_obj[ea].indicators = {};
+	}
+	
+	var strategies_holder = {};
+	strategies_holder.strategies = {};  //objects within objects
+	strategies_holder.direction = {};  //objects within objects
+	
+	//cycle through and massage 'special' data as needed
+	jQuery.each( special_table_data, function( index, element ){
+	
+		//these are either of class .result_strategy or .result_direction
+		//console.log( jQuery(element ) );
+		var this_ea_tab = 0;
+		var this_ind_num = 0; //[data-strategy_value] //TODO: refactor!
+		var this_strategy_num = 0;
+		var this_strategy_value = 0;
+		var this_direction_value = 0;
+		
+		if( ( num_ea_tabs > 0 ) && ( jQuery(element).hasClass('result_strategy') ) ){
+			//console.log(  jQuery( element ).val()  );
+			if( jQuery( element ).val() != "-1" ){ //if we've actually selected something
+				//put in result_strategy_obj{}
+				this_ea_tab = jQuery( element ).attr("data-this_ea_tab");
+				this_ind_num = jQuery( element ).attr("data-strategy_value");
+				this_strategy_num = jQuery( element ).attr("data-strategy_num");
+				this_strategy_value = jQuery( element ).val();
+				
+				//clear strategies holder
+				//strategies_holder.strategies = {};
+				
+				//populate the result_strategy_holder object
+				strategies_holder['strategies'][this_strategy_num] = this_strategy_value;
+				
+				console.log( strategies_holder );
+				//result_strategy_obj[ this_ea_tab ]['indicators'][ this_ind_num ] = strategies_holder; 
+				//result_strategy_obj[ this_ea_tab ]['indicators'][ this_ind_num ] = jQuery.extend(true, {}, strategies_holder );
+				//trying to copy the object, not just refer to it
+				result_strategy_obj[ this_ea_tab ]['indicators'][ this_ind_num ] = JSON.parse( JSON.stringify( strategies_holder ) );
+				
+				strategies_holder['strategies'][this_strategy_num] = "";
+			}
+		
+		} else if( ( num_ea_tabs > 0 ) && ( jQuery(element).hasClass('result_direction') ) ){
+			
+			if( jQuery( element ).val() != "-1" ){ //if we've actually selected something
+				//put in result_strategy_obj{}
+				this_ea_tab = jQuery( element ).attr("data-this_ea_tab");
+				this_ind_num = jQuery( element ).attr("data-strategy_value");
+				this_direction_value = jQuery( element ).val();
+				
+				//clear strategies holder
+				//strategies_holder.direction = {};
+				
+				//populate the result_strategy_holder object w/ direction
+				strategies_holder['direction'] = this_direction_value;
+				
+				//result_strategy_obj[ this_ea_tab ]['indicators'][ this_ind_num ] = strategies_holder; 
+				result_strategy_obj[ this_ea_tab ]['indicators'][ this_ind_num ] = jQuery.extend(true, {}, strategies_holder);
+		
+				strategies_holder['direction'] = "";
+			}
+		
+		}
+		
+		//append result_strategy_obj result to ea_table_vals[ 'indicator_strategies ]
+		//append result_direction_obj result to ea_table_vals[ 'indicator_directions ]
+	
+	});
+	
+	console.log( result_strategy_obj );
+	
+	
+	
 	//ajax data
 	var ajax_action = 'save_study_data';
 	var ajax_data = {
@@ -1656,7 +1785,7 @@ function strategy_limit_results( ){
 
 		//ad a -- Select Option -- option
 		result.append(
-		  jQuery('<option></option>').val( "-1 ").html("---Select---")
+		  jQuery('<option></option>').val( "-1").html("---Select---")
 	   );
 		   
 		//iterate for each value
@@ -2610,17 +2739,12 @@ function check_measures_selected(){
 
 }
 
-//helper function to get URL param
-function getURLParameter(name) {
-	return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null
-}
-
 //for each indicator selected on an EA tab, show/render up to 5 selectable strategies for each + 1 direction
 function ea_indicators_add_strategies_directions( incoming ){
 
 	//jQuery(this) is the indicator dropdown?
 	var which_indicators = incoming.multiselect("getChecked");
-	console.log( which_indicators );
+	//console.log( which_indicators );
 	var which_ea_tab = incoming.parents('.one_ea_tab').attr("data-which_tab_num"); //what EA tab are we on?
 	var which_tr_parent = incoming.parents('tr.ea_indicator');  //to add strategy/direction trs after this one
 
@@ -2631,6 +2755,7 @@ function ea_indicators_add_strategies_directions( incoming ){
 	new_direction.removeClass("ea_table");
 	new_strategy.addClass("result_strategy"); //to update the options w the original Strategy dropdown
 	new_strategy.addClass("special_table"); //will let the save handler know that it is special
+	new_direction.addClass("result_direction"); //will let the save handler know that it is special
 	new_direction.addClass("special_table"); //will let the save handler know that it is special
 	
 	var new_id = "";
@@ -2670,6 +2795,8 @@ function ea_indicators_add_strategies_directions( incoming ){
 				new_id = "ea_" + which_ea_tab + "_result_strategy_" + strategy_value;
 				new_strategy.attr( "id", new_id );
 				new_strategy.attr("data-strategy_value", strategy_value );
+				new_strategy.attr("data-strategy_num", i );
+				new_strategy.attr("data-this_ea_tab", which_ea_tab );
 				
 				var strategy_html = jQuery('<div>').append( new_strategy ).clone( true ).remove().html();
 				
@@ -2690,6 +2817,7 @@ function ea_indicators_add_strategies_directions( incoming ){
 			new_id = "ea_" + which_ea_tab + "_result_direction_" + strategy_value;
 			new_direction.attr( "id", new_id );
 			new_direction.attr("data-strategy_value", strategy_value );
+			new_direction.attr("data-this_ea_tab", which_ea_tab );
 			
 			var direction_html = jQuery('<div>').append( new_direction ).clone( true ).remove().html();
 			
@@ -2700,7 +2828,7 @@ function ea_indicators_add_strategies_directions( incoming ){
 		}
 		
 	});
-	console.log( strategy_vals );
+	//console.log( strategy_vals );
 	//remove indicator strategy and direction trs that are NOT in the 'list' of curernt indicators for this EA
 	var all_existing_strategies = jQuery('#effect_association_tab_' + which_ea_tab + ' tr.indicator_strategy');
 	var all_existing_directions = jQuery('#effect_association_tab_' + which_ea_tab + ' tr.indicator_direction');
@@ -2734,8 +2862,30 @@ function ea_indicators_add_strategies_directions( incoming ){
 		
 	//clear html holder
 	txt = "";
+	
+	//adjust height of page
+	adjust_form_height();
 }
 
+
+
+//adjust page height to largest div (of a few contenders)
+function adjust_form_height(){
+
+	//which tab is visible? (what of .main_tab also has class active?
+	var which_active = jQuery('.main_tab_label.active').parent('.main_tab').find('.height_div');
+	
+	//console.log( which_active.height() );
+	var new_height = which_active.height() + 200;
+	jQuery('#main_tabs').css("height", new_height );
+	
+	
+}
+
+//helper function to get URL param
+function getURLParameter(name) {
+	return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null
+}
 
 
 //On page load...
