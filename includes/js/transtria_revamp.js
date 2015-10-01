@@ -211,7 +211,7 @@ function setup_multiselect() {
 				} 
 				//update our template, as well
 				intervention_indicator_limiter( jQuery('#ea_template_result_indicator') );
-				outcomes_assessed_limiter( jQuery('#ea_template_outcome_accessed') );
+				outcomes_assessed_limiter( jQuery('#ea_template_result_outcome_accessed') );
 				//ea_indicators_add_strategies_directions( jQuery('#ea_template_result_indicator') );
            }
 		});
@@ -225,7 +225,7 @@ function setup_multiselect() {
 					outcomes_assessed_limiter( jQuery('#ea_' + tabCounter + '_result_outcome_accessed') );
 				} 
 				//update our template, as well
-				outcomes_assessed_limiter( jQuery('#ea_template_outcome_accessed') );
+				outcomes_assessed_limiter( jQuery('#ea_template_result_outcome_accessed') );
            }
 		});
 		
