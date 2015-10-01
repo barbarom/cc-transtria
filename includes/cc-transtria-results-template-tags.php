@@ -360,6 +360,11 @@ function cc_transtria_render_ea_tabs( $num_ea_tab, $dd_multiple_options_ea ){
 					</select></td>
 				</tr>
 				
+				<tr class="not-reported">
+					<td class="not-reported"><label>Result Reference Population not reported</label></td>
+					<td colspan="3"><input id="ea_<?php echo $num_ea_tab; ?>_result_reference_population_notreported" class="ea_table" type="checkbox"></input></td>
+				</tr>
+				
 				<tr>
 					<td><label>Result Subpopulation:</label>
 					</td>

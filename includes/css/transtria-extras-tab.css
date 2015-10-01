@@ -257,6 +257,10 @@ form#study_form tr.indicator_direction{
 	background-color:#ccffff
 }
 
+form#study_form select#EndNoteID option{
+	max-width:900px;
+}
+
 /** BEGIN UI STYLINGS **/
 
 

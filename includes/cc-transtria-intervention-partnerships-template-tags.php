@@ -37,7 +37,7 @@ function cc_transtria_render_intervention_partnerships_tab( $field_data ){
 
 		<tr class="not-reported">
 			<td class="not-reported"><label>Domestic/Intl Setting Not Reported</label></td>
-			<td colspan="3"><input id="domeesticintlsetting_notreported" class="studies_table" type="checkbox"></td>
+			<td colspan="3"><input id="domesticintlsetting_notreported" class="studies_table" type="checkbox"></td>
 		</tr>
 
 

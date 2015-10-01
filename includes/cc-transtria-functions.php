@@ -448,6 +448,7 @@ function cc_transtria_match_div_ids_to_studies_columns( $study_labels = null, $t
 		//representativeness
 		'domestic_setting' => 'DomesticSetting',
 		'international_setting' => 'InternationalSetting',
+		'domesticintlsetting_notreported' => 'domesticintlsetting_notreported',
 		//setting_types //is this used? Mel thinks this is multi, so no
 		'other_setting_type' => 'other_setting_type',
 		//partner_discipline //is this used? Mel thinks this is multi, so no
@@ -936,6 +937,7 @@ function cc_transtria_match_div_ids_to_ea_columns_single( $which_ea, $study_labe
 		'results_variables' => $which_ea . '_results_variables',
 		'statistical_model' => $which_ea . '_result_statistical_model',
 		'result_reference_population' => $which_ea . '_result_reference_population',
+		'result_reference_population_notreported' => $which_ea . '_result_reference_population_notreported',
 		'result_subpopulation' => $which_ea . '_result_subpopulationYN',
 		'result_subpopulation_text' => 'result_subpopulation_text', //?
 		'indicator_direction' => $which_ea . '_result_indicator_direction',

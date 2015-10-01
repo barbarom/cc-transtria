@@ -322,10 +322,9 @@ function cc_transtria_render_form(){
 					<tr>
 						<td>Grant or Contract #:
 						</td>
-						<td>
+						<td colspan="2">
 							<textarea id="grantcontractnumber" class="studies_table" type="text"></textarea>
-						</td>
-						<td></td>					
+						</td>					
 					</tr>				
 					<tr>
 						<td class="not-reported"><label>Grant or Contract # not reported:</label></td>
