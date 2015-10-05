@@ -382,7 +382,7 @@ class CC_Transtria_Extras {
 			
 			//wp_enqueue_script( $this->plugin_slug . 'dynamic_page_components', plugins_url( 'js/dynamic_components.js', __FILE__ ), array( 'jquery' ), '1.1' );
 			//wp_enqueue_script( $this->plugin_slug . 'transtria_basic_js', plugins_url( 'js/transtria_basic.js', __FILE__ ), array( 'jquery' ), '1.1' );
-			wp_enqueue_script( $this->plugin_slug . 'transtria_revamp_js', plugins_url( 'js/transtria_revamp.js', __FILE__ ), array( 'jquery' ), '1.2' );
+			wp_enqueue_script( $this->plugin_slug . 'transtria_revamp_js', plugins_url( 'js/transtria_revamp.js', __FILE__ ), array( 'jquery' ), '1.3' );
 			
 			if( cc_transtria_on_assignments_screen() ){
 				wp_enqueue_script( $this->plugin_slug . 'transtria_revamp_assignments_js', plugins_url( 'js/transtria_revamp_assignments.js', __FILE__ ), array( 'jquery' ), '1.0' );
@@ -745,7 +745,7 @@ class CC_Transtria_Extras {
 			$special_results_success = 'no special selected';
 		}
 		
-		$data['studies_test'] = $studies_success;
+		$data['studies_success'] = $studies_success;
 		$data['pops_success'] = $pops_success;
 		$data['meta_success'] = $meta_success;
 		$data['ea_success'] = $ea_success;

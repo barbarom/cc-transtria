@@ -64,12 +64,20 @@ function clickListen(){
 	jQuery("[name='ipe_applicability_hr_pops']").on("change", function(){
 		ipe_hr_subpops_show();
 	});
+	jQuery("#ipe_applicabilityhrpops_notreported").on("change", function(){
+		ipe_hr_subpops_show();
+	});
 
 	//ESE oversampling question shows HR subpops select
-	ese_hr_subpops_show();
-	jQuery("[name='ese_oversampling']").on("change", function(){
-		ese_hr_subpops_show();
-	});
+	//ese_hr_subpops_show();
+	//jQuery("[name='ese_oversampling']").on("change", function(){
+	jQuery("[name$='_oversampling']").on("change", ese_hr_subpops_show );
+	jQuery("[id$='_oversampling_notreported']").on("change", ese_hr_subpops_show );
+	jQuery("[name$='_oversampling']").trigger("change" );
+	jQuery("[id$='_oversampling_notreported']").trigger("change" );
+	
+	//if this 'not reported' is also jQuery('ese_oversampling_notreported') or jQuery('[name="ipe_applicability_hr_pops"]')
+	//jQuery('[name="ese_oversampling_notreported"]').on("click", ese_hr_subpops_show);
 
 	//Limit strategies on EA/results tab based on ones selected on intervention
 	jQuery("#strategies").on("change", function(){
@@ -1103,7 +1111,11 @@ function get_current_study_info(){
 			
 			//field-specific limits
 			strategy_limit_results();
-			ese_hr_subpops_show();
+			
+			//ese_hr_subpops_show();
+			jQuery("[name$='_oversampling']").trigger("change");
+			jQuery("[id$='_oversampling_notreported']").trigger("change");
+
 			ipe_hr_subpops_show();
 			confounder_type_show();
 			
@@ -1527,19 +1539,50 @@ function save_study(){
 		
 		usrmsg.html("Saving Study, ID: " + data['study_id'] );
 		
-		
 		//TODO: send message if empty (directing user to add priority page?)
 		if( data == "0" || data == 0 )  {
 			//console.log('what');=
 			return;
 		} else {
-		
+			
 		}
 		//var post_meat = data['single']; // = JSON.parse(data);
 	}).complete( function( data ) {
 		spinny.hide();
 		//console.log( data );
-		if( ( data.responseJSON["study_id"] > 0 ) && ( data.responseJSON["study_id"] != null ) && ( data.responseJSON["study_id"] != undefined ) ){
+		//console.log( data );
+			//error messages!
+		var error_message = "";
+		if( data.responseJSON.studies_success.toString().substr(0,5).toLowerCase() == "error" ){
+			error_message = data.responseJSON.studies_success.toString() + "\r\n";
+		}
+		//metadata table
+		if( data.responseJSON.meta_success.toString().substr(0,5).toLowerCase() == "error" ){
+			error_message += data.responseJSON.meta_success.toString() + "\r\n";
+		}
+		//ea table
+		if( data.responseJSON.ea_success.toString().substr(0,5).toLowerCase() == "error" ){
+			error_message += data.responseJSON.ea_success.toString() + "\r\n";
+		}
+		//code results table (multiple selects)
+		if( data.responseJSON.code_results_success.toString().substr(0,5).toLowerCase() == "error" ){
+			error_message += data.responseJSON.code_results_success.toString() + "\r\n";
+		}
+		//special things table (EA tab Strategies/Directions)
+		if( data.responseJSON.special_results_success.toString().substr(0,5).toLowerCase() == "error" ){
+			error_message += data.responseJSON.special_results_success.toString() + "\r\n";
+		}
+		//Populations table errors: TODO - this!
+		if( data.responseJSON.pops_success.toString().substr(0,5).toLowerCase() == "error" ){
+			error_message += data.responseJSON.pops_success.toString() + "\r\n";
+		}
+		
+		//display error message
+		//usrmsg.html("Saving Study, ID: " + data['study_id'] );
+		
+		//if we get back a valid study_id and NO error message
+		if( ( data.responseJSON["study_id"] > 0 ) && ( data.responseJSON["study_id"] != null ) && ( data.responseJSON["study_id"] != undefined )
+			&& ( error_message.length <= 0 ) ){
 			usrmsg.html("Study ID " + data.responseJSON["study_id"] + " saved successfully!" );
 			usrmsgshell.fadeOut( 6000 );
 			
@@ -1551,7 +1594,8 @@ function save_study(){
 			jQuery("select#studyid").val( data.responseJSON["study_id"] );
 			
 		} else { 
-			usrmsg.html("Problem occured while saving. <br /> Report: " + data.responseJSON );
+			//usrmsg.html("Problem occured while saving. <br /> Report: " + data.responseJSON );
+			usrmsg.html("Problem occured while saving. If you need help, please contact CARES with the following - <br /> Report: " + error_message );
 			jQuery("#this_study_id").val("");
 		}
 		
@@ -1774,19 +1818,31 @@ function confounder_type_show(){
 
 //show/hide HR subpopulations on IPE tabs based on applicability to HR sub pops question
 function ipe_hr_subpops_show(){
+	//if the IPE HR radio is 'Y', show the HR Subpopulations dropdown, else don't.
 	if( jQuery("[name='ipe_applicability_hr_pops']:checked").val() == "Y" ){
 		jQuery("tr.ipe_hr_subpopulations").show();
 	} else {
 		jQuery("tr.ipe_hr_subpopulations").hide();
 	}
+	
+	//BUT, if the 'ipe_applicabilityhrpops_notreported' checkbox is checked, hide the HR subpopulations
+	if( jQuery("#ipe_applicabilityhrpops_notreported").is(":checked") ){
+		jQuery("tr.ipe_hr_subpopulations").hide();
+	}
 } 
 
-//show/hide HR subpopulations on ESE tab based on oversampling question
+//show/hide HR subpopulations on ESE tab based on 'Oversampling' radio OR 'Oversampling not reported' checkbox (ESE only)
 function ese_hr_subpops_show(){
-	if( jQuery("[name='ese_oversampling']:checked").val() == "Y" ){
-		jQuery("tr.ese_hr_subpopulations").show();
-	} else {
-		jQuery("tr.ese_hr_subpopulations").hide();
+	var index_of_under = jQuery(this).attr("name").indexOf("_");
+	
+	if( index_of_under != -1 ){
+		//which ese?
+		var starts_with = jQuery(this).attr("name").substr( 0, index_of_under );
+		if( jQuery("[name='" + starts_with + "_oversampling']:checked").val() == "Y" ){
+			jQuery("tr." + starts_with + "_hr_subpopulations").show();
+		} else {
+			jQuery("tr." + starts_with + "_hr_subpopulations").hide();
+		}
 	}
 }
 
@@ -2697,6 +2753,7 @@ function uncheck_not_reported_related_fields(){
 			jQuery(this).prop('checked', false); 
 		});
 	}
+	
 }
 
 //function to uncheck 'not reported' when a corresponding radio is selected
@@ -2946,6 +3003,9 @@ jQuery( document ).ready(function() {
 	get_citation_data();
 	//initialize message on results page and then add change listener to stop time inputs
 	//stop_time_validate();
+	
+	//initialize the ability status percent fields
+	ability_status_initialize();
 	
 	/*
 	jQuery.validator.setDefaults({

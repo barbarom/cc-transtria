@@ -254,39 +254,41 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 				<td colspan="3"><input id="<?php echo $which_pop; ?>_generalpopulation_notreported" class="population_table not_reported_clear" type="checkbox"></td>
 			</tr>
 
-		<?php if( $which_pop == 'ese' ){ ?>
+		<?php 
+			$which_pop_start = substr( $which_pop, 0, 3 );
+			if( $which_pop_start == 'ese' ){ ?>
 
 			<tr>
 				<td><label>Representativeness?</label></td>
-				<td colspan="4"><span id="ese_representativeness-holder">
-					<input type="radio" value="Y" name="ese_representativeness" class="population_table" data-notreported_id="ese_representativeness_notreported">Yes (no statistical differences from target or intervention-exposed populations reported)
+				<td colspan="4"><span id="<?php echo $which_pop; ?>_representativeness-holder">
+					<input type="radio" value="Y" name="<?php echo $which_pop; ?>_representativeness" class="population_table" data-notreported_id="<?php echo $which_pop; ?>_representativeness_notreported">Yes (no statistical differences from target or intervention-exposed populations reported)
 					<br />
-					<input type="radio" value="N" name="ese_representativeness" class="population_table" data-notreported_id="ese_representativeness_notreported">No (statistical differences from target or intervention-exposed populations reported)
+					<input type="radio" value="N" name="<?php echo $which_pop; ?>_representativeness" class="population_table" data-notreported_id="<?php echo $which_pop; ?>_representativeness_notreported">No (statistical differences from target or intervention-exposed populations reported)
 				</span></td>
 			</tr>
 			<tr class="not-reported">
 				<td class="not-reported"><label>Representativeness not reported</label></td>
-				<td colspan="3"><input id="ese_representativeness_notreported" class="population_table not_reported_clear" type="checkbox"></td>
+				<td colspan="3"><input id="<?php echo $which_pop; ?>_representativeness_notreported" class="population_table not_reported_clear" type="checkbox"></td>
 			</tr>
 
 
 			<tr>
 				<td><label>Oversampling?</label></td>
-				<td colspan="4"><span id="ese_oversampling-holder">
-					<input type="radio" value="Y" name="ese_oversampling" class="population_table" data-notreported_id="ese_oversampling_notreported">Yes
-					<input type="radio" value="N" name="ese_oversampling" class="population_table" data-notreported_id="ese_oversampling_notreported">No
+				<td colspan="4"><span id="<?php echo $which_pop; ?>_oversampling-holder">
+					<input type="radio" value="Y" name="<?php echo $which_pop; ?>_oversampling" class="population_table" data-notreported_id="<?php echo $which_pop; ?>_oversampling_notreported">Yes
+					<input type="radio" value="N" name="<?php echo $which_pop; ?>_oversampling" class="population_table" data-notreported_id="<?php echo $which_pop; ?>_oversampling_notreported">No
 				</span></td>
 			</tr>
 			<tr class="not-reported">
 				<td class="not-reported"><label>Oversampling not reported</label></td>
-				<td colspan="3"><input id="ese_oversampling_notreported" class="population_table not_reported_clear" type="checkbox"></td>
+				<td colspan="3"><input id="<?php echo $which_pop; ?>_oversampling_notreported" name="<?php echo $which_pop; ?>_oversampling_notreported" class="population_table not_reported_clear" type="checkbox"></td>
 			</tr>
 
 
 			<tr class="<?php echo $which_pop; ?>_hr_subpopulations">
 				<td><label>Identify the HR subpopulations</label></td>
 				<td colspan="3"><span>
-					<select id="ese_hr_subpopulations" class="general-multiselect multiselect ese_copy_multiselect" multiple="multiple">
+					<select id="<?php echo $which_pop; ?>_hr_subpopulations" class="general-multiselect multiselect ese_copy_multiselect" multiple="multiple">
 						<?php 
 							foreach( $dd_multiple_options_pops[ 'ese_hr_subpopulations' ] as $k => $v ){
 							echo '<option value="' . $k . '">' . $v->descr . '</option>';

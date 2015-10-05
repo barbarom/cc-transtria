@@ -348,7 +348,7 @@ function cc_transtria_save_to_studies_table( $studies_data, $study_id, $new_stud
 			return "Error: new study data could not be added to db for new study";
 		} else {
 			//var_dump( $studies_data );
-			return $num_study_rows_updated; //should be 1
+			return $num_study_rows_updated; //should be 1 (or 0 if nothing actually updated/error. Not super-useful.)
 		}
 	}
 
@@ -753,7 +753,11 @@ function cc_transtria_save_special_data( $studies_data, $study_id ){
 
 		$result = $wpdb->update( $wpdb->transtria_effect_association, $data, $where, $format = null, $where_format = null );
 		
-		$error_array[ $i ] = $result;
+		if( $result === false ){
+			$error_array[ $ea_tab ] = "Error: having trouble saving EA tab-specific Strategies/Directions, EA tab: " . $ea_tab;
+		} else {
+			$error_array[ $ea_tab ] = $result;
+		}
 	
 	}
 	

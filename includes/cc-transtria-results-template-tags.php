@@ -412,7 +412,7 @@ function cc_transtria_render_ea_tabs( $num_ea_tab, $dd_multiple_options_ea ){
 					</select></td>
 				</tr>
 
-				<tr>
+				<!--<tr>
 					<td><label>Effect/Association direction:</label></td>
 					<td colspan="3"><input id="ea_<?php echo $num_ea_tab; ?>_result_effect_association_direction" class="ea_table" readonly></input></td>
 				</tr>
@@ -429,7 +429,7 @@ function cc_transtria_render_ea_tabs( $num_ea_tab, $dd_multiple_options_ea ){
 					
 					</select>
 					</td>
-				</tr>
+				</tr>-->
 
 				<tr>
 					<td><label>Outcome type:</label></td>
