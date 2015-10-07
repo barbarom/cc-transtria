@@ -51,6 +51,9 @@ function cc_transtria_get_group_id(){
         case 'http://dev.communitycommons.org':
             $group_id = 5321; //TODO
             break;
+        case 'http://www.communitycommons.org':
+            $group_id = 697; //TODO
+            break;
         case 'http://staging.communitycommons.org':
             $group_id = 587; //TODO
             break;
