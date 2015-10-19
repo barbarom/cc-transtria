@@ -803,7 +803,7 @@ function get_phase_by_endnoteid( which_endnoteid ){
 }
 
 
-//get current study info via ajax
+//get current study info via ajax. TODO: rename this and next functions to make sense!
 function get_current_study_info(){
 
 	//what's the study id in the url?
@@ -1498,7 +1498,6 @@ function save_study(){
 	special_vals = result_strategy_obj;
 	//console.log( result_strategy_obj );
 	
-	
 	//ajax data
 	var ajax_action = 'save_study_data';
 	var ajax_data = {
@@ -1516,7 +1515,6 @@ function save_study(){
 		'special_vals' : special_vals
 	};
 	
-
 	//Save study data
 	jQuery.ajax({
 		url: transtria_ajax.ajax_url, 
