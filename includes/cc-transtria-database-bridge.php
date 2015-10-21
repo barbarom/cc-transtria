@@ -1,6 +1,6 @@
 <?php
 /**
- * CC Transtria Extras
+ * CC Transtria Extras - Database Bridge
  *
  * @package   CC Transtria Extras
  * @author    CARES staff

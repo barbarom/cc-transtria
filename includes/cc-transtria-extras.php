@@ -93,12 +93,11 @@ class CC_Transtria_Extras {
 		// add_action('bp_group_request_membership_content', array( $this, 'print_grantee_list' ) );
 		// add_filter( 'groups_member_comments_before_save', array( $this, 'append_grantee_comment' ), 25, 2 );
 
-		// Add "aha" as an interest if the registration originates from an AHA page
 		// Filters array provided by registration_form_interest_query_string
 		// @returns array with new element (or not)
 		add_filter( 'registration_form_interest_query_string', array( $this, 'add_registration_interest_parameter' ), 12, 1 );
 
-		// Registration form additions - These all rely on ?aha=1 being appended to the register url.
+		// Registration form additions 
 		add_action( 'bp_before_account_details_fields', array( $this, 'registration_form_intro_text' ), 60 );
 		add_action( 'bp_before_registration_submit_buttons', array( $this, 'registration_section_output' ), 60 );
 		add_action( 'bp_core_signup_user', array( $this, 'registration_extras_processing'), 71, 1 );
@@ -133,6 +132,9 @@ class CC_Transtria_Extras {
 		add_action( 'wp_ajax_save_assignments' , array( $this, 'save_assignments' ) );
 		
 		add_action( 'wp_ajax_create_evaluation_sample_div' , array( $this, 'create_evaluation_sample_div' ) );		
+		
+		//get things for analysis tab
+		add_action( 'wp_ajax_get_study_ids_by_group' , array( $this, 'get_study_ids_by_group' ) );
 
 	}
 
@@ -323,12 +325,6 @@ class CC_Transtria_Extras {
 	 */
 	public function enqueue_styles() {
 
-	
-		//if ( cc_transtria_is_component() ) {
-			//wp_enqueue_style( $this->plugin_slug . '-plugin-styles', plugins_url( 'css/transtria-extras-tab.css', __FILE__ ), array(), '1.38' );
-			//wp_enqueue_style( 'jquery-ui', plugins_url( 'css/jquery-ui.css', __FILE__ ), array(), '1.00' );
-		//}
-
 		if ( cc_transtria_is_component() ) {
 			wp_enqueue_style( 'transtria-extras-tab', plugins_url( 'css/transtria-extras-tab.css', __FILE__ ), array(), '1.02' );
 			wp_enqueue_style( 'components', plugins_url( 'css/components.css', __FILE__ ), array(), '1.01' );
@@ -339,12 +335,6 @@ class CC_Transtria_Extras {
 			//wp_enqueue_style( $this->plugin_slug . '-plugin-styles', plugins_url( 'css/jquery.ptTimeSelect.css', __FILE__ ), array(), '1.01' );
 		}
 
-		
-		/*
-		if ( cc_aha_on_reports_screen() ){
-			wp_enqueue_style('jquery-multiselect-css', plugins_url( 'css/jquery.multiselect.css', __FILE__ ), array(), '1.0' );
-		}
-		*/
 	}
 
 	public function enqueue_registration_styles() {
@@ -388,6 +378,10 @@ class CC_Transtria_Extras {
 				wp_enqueue_script( $this->plugin_slug . 'transtria_revamp_assignments_js', plugins_url( 'js/transtria_revamp_assignments.js', __FILE__ ), array( 'jquery' ), '1.0' );
 			}
 			
+			if( cc_transtria_on_analysis_screen() ){
+				wp_enqueue_script( $this->plugin_slug . 'transtria_revamp_analysis_js', plugins_url( 'js/transtria_revamp_analysis.js', __FILE__ ), array( 'jquery' ), '1.0' );
+			}
+			
 			wp_localize_script( 
 				$this->plugin_slug . 'transtria_revamp_js', 
 				'transtria_ajax',
@@ -404,31 +398,6 @@ class CC_Transtria_Extras {
 			wp_enqueue_script( $this->plugin_slug . '-js-vars' );
 		}
 
-		/*
-		//Tab-specific enqueueing
-		if ( cc_aha_on_analysis_screen() ) {
-			wp_enqueue_script( 'jquery-knob', plugins_url( 'js/jquery.knob.min.js', __FILE__ ), array( 'jquery' ), self::VERSION );
-		}
-		
-		if ( cc_aha_on_report_card_screen() || cc_aha_on_report_card_sub_screen() ) {
-			wp_enqueue_script( 'tablesorter', plugins_url( 'js/jquery.tablesorter.min.js', __FILE__ ), array( 'jquery' ), self::VERSION );
-			wp_enqueue_script( 'tablesorter-widgets', plugins_url( 'js/jquery.tablesorter.widgets.js', __FILE__ ), array( 'jquery' ), self::VERSION );
-			wp_enqueue_script( 'jquery-metadata', plugins_url( 'js/jquery.metadata.js', __FILE__ ), array( 'jquery' ), self::VERSION );
-			wp_enqueue_script( 'reportcard-js', plugins_url( 'js/reportcard.js', __FILE__ ), array( 'jquery' ), '1.2' );
-		}
-		
-		if ( cc_aha_on_revenue_report_card_screen() || cc_aha_on_revenue_report_card_sub_screen() ) {
-			wp_enqueue_script( 'tablesorter', plugins_url( 'js/jquery.tablesorter.min.js', __FILE__ ), array( 'jquery' ), self::VERSION );
-			wp_enqueue_script( 'tablesorter-widgets', plugins_url( 'js/jquery.tablesorter.widgets.js', __FILE__ ), array( 'jquery' ), self::VERSION );
-			wp_enqueue_script( 'jquery-metadata', plugins_url( 'js/jquery.metadata.js', __FILE__ ), array( 'jquery' ), self::VERSION );
-			wp_enqueue_script( 'reportcard-js', plugins_url( 'js/revenuereportcard.js', __FILE__ ), array( 'jquery' ), '1.2' );
-		}
-		
-		if (cc_aha_on_action_planning_screen()) {
-			wp_enqueue_script( 'actionplanning-js', plugins_url( 'js/actionplanning.js', __FILE__ ), array( 'jquery' ), '1.6' );
-		}
-		
-		*/
 	}
 
 	/**
@@ -439,8 +408,8 @@ class CC_Transtria_Extras {
 	// 
 	public function print_descriptive_text() {
 		//If this isn't the AHA group or the registration page, don't bother.
-		if ( ! cc_aha_is_aha_group() &&
-		! ( bp_is_register_page() && ( isset( $_GET['aha'] ) && $_GET['aha'] ) ) )
+		if ( ! cc_transtria_is_transtria_group() &&
+		! ( bp_is_register_page() && ( isset( $_GET['transtria'] ) && $_GET['transtria'] ) ) )
 			return false;
 
 		// echo '<p class="description">The Robert Wood Johnson Foundation is offering access to the Childhood Obesity GIS collaborative group space to all current Childhood Obesity grantees free of charge. Within this space you can create maps, reports and documents collaboratively on the Commons. If you are interested in accessing this collaborative space, select your grant name from the list below. We&rsquo;ll respond with access within 24 hours.</p>';
@@ -448,7 +417,7 @@ class CC_Transtria_Extras {
 
 	// Registration form additions
 	function registration_form_intro_text() {
-	  if ( isset( $_GET['aha'] ) && $_GET['aha'] ) :
+	  if ( isset( $_GET['transtria'] ) && $_GET['transtria'] ) :
 	  ?>
 	    <p class="">
 		  If you are already a Community Commons member, simply visit the <a href="<?php 
@@ -462,7 +431,7 @@ class CC_Transtria_Extras {
 	function registration_section_output() {
 	  if ( isset( $_GET['aha'] ) && $_GET['aha'] ) :
 	  ?>
-	    <div id="aha-interest-opt-in" class="register-section checkbox">
+	    <div id="transtria-interest-opt-in" class="register-section checkbox">
 		    <?php  $avatar = bp_core_fetch_avatar( array(
 				'item_id' => cc_transtria_get_group_id(),
 				'object'  => 'group',
@@ -475,7 +444,7 @@ class CC_Transtria_Extras {
 
    	      <?php $this->print_descriptive_text(); ?>
 	      
-	      <label><input type="checkbox" name="aha_interest_group" id="aha_interest_group" value="agreed" <?php $this->determine_checked_status_default_is_checked( 'aha_interest_group' ); ?> /> Yes, I’d like to request membership in the group.</label>
+	      <label><input type="checkbox" name="transtria_interest_group" id="transtria_interest_group" value="agreed" <?php $this->determine_checked_status_default_is_checked( 'transtria_interest_group' ); ?> /> Yes, I’d like to request membership in the group.</label>
 
 	      <label for="group-request-membership-comments">Comments for the group admin (optional)</label>
 	      <textarea name="group-request-membership-comments" id="group-request-membership-comments"><?php 
@@ -489,7 +458,7 @@ class CC_Transtria_Extras {
 	}
 
 	function loggedin_register_page_redirect_to( $redirect_to ) {
-	  	if ( isset( $_GET['aha'] ) && $_GET['aha'] ) {
+	  	if ( isset( $_GET['transtria'] ) && $_GET['transtria'] ) {
 	  		$redirect_to = bp_get_group_permalink( groups_get_group( array( 'group_id' => cc_transtria_get_group_id() ) ) );
 	  	}
 
@@ -501,16 +470,8 @@ class CC_Transtria_Extras {
 	*/
 	function approve_member_requests( $user_id, $admins, $group_id, $membership_id ) {
 
-		// For the AHA group, accept requests that come from members with @heart.org email addresses
 		if ( cc_transtria_get_group_id() == $group_id ) {
 
-			$requestor = get_userdata( $user_id );
-	        $email_parts = explode('@', $requestor->user_email);
-	        if ( $email_parts[1] == 'heart.org' ) {
-       			groups_accept_membership_request( $membership_id, $user_id, $group_id );
-       			// TODO: This message gets overwritten at bp-groups-screens L 522. Not sure if that's beatable.
-       			bp_core_add_message( __( 'Your membership request has been approved.', 'cc-aha-extras' ) );
-	        }
 		}
 
 	}
@@ -521,7 +482,7 @@ class CC_Transtria_Extras {
 	*/
 	public function registration_extras_processing( $user_id ) {
 	  
-	  if ( isset( $_POST['aha_interest_group'] ) ) {
+	  if ( isset( $_POST['trantria_interest_group'] ) ) {
 	  	// Create the group request
 	  	$request = groups_send_membership_request( $user_id, cc_transtria_get_group_id() );
 	  }
@@ -548,13 +509,13 @@ class CC_Transtria_Extras {
 	}
 
 	/**
-	 * Changes the label of the "Create New Report" button on the AHA page, since it will go to a different report
+	 * Changes the label of the "Create New Report" button on the transtria page, since it will go to a different report
 	 *
 	 * @since    1.0.0
 	 */
 	public function change_group_create_report_label( $label, $group_id ) {
 
-		if ( cc_aha_is_aha_group( $group_id ) ) {
+		if ( cc_transtria_is_transtria_group( $group_id ) ) {
 			$label = 'Create a Transtria Report'; 
 		}
 
@@ -760,8 +721,6 @@ class CC_Transtria_Extras {
 	}
 	
 	
-	
-	
 	public function create_evaluation_sample_div(){
 	
 		// Is the nonce good?
@@ -775,6 +734,27 @@ class CC_Transtria_Extras {
 		die();
 	
 	}		
+	
+	//ajax get all study ids in a study group
+	public function get_study_ids_by_group(){
+		// Is the nonce good?
+		if ( ! check_ajax_referer( 'cc_transtria_ajax_nonce', 'transtria_nonce' ) ) {
+			return false;
+		}
+		
+		$study_group = $_POST["this_study_group"];
+		
+		$study_id_array = get_study_ids_in_study_group( $study_group );
+		$dyad_list = get_unique_dyads_for_study_group( $study_group );
+		
+		$setting_dyad_test = set_unique_dyads_for_study( 346 );
+		
+		//echo json_encode( $study_id_array );
+		echo json_encode( $setting_dyad_test );
+		
+		die();
+	
+	}
 	
 	
 } // End class

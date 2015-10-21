@@ -136,17 +136,6 @@ function cc_transtria_on_assignments_screen(){
     }
 }
 function cc_transtria_on_analysis_screen( $section = null ){
-    // If we're checking for a specific subsection, check for it.
-    // if ( $section && in_array( $section, array(  cc_transtria_get_analysis_slug(), cc_transtria_get_analysis_revenue_slug() ) ) ) {
-
-        // if ( cc_transtria_is_component() && bp_is_action_variable( cc_transtria_get_analysis_slug(), 0 ) && bp_is_action_variable( $section, 2 ) ){
-            // return true;
-        // } else {
-            // return false;
-        // }
-
-    // }
-
    if ( cc_transtria_is_component() && bp_is_action_variable( cc_transtria_get_analysis_slug(), 0 ) ){
         return true;
     } else {

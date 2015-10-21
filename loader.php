@@ -26,16 +26,21 @@ function cc_transtria_class_init(){
 	// Get the class fired up
 	// Helper and utility functions
 	require_once( dirname( __FILE__ ) . '/includes/cc-transtria-functions.php' );
+	require_once( dirname( __FILE__ ) . '/includes/cc-transtria-analysis-functions.php' );
+	
 	// Template-y functions
 	require_once( dirname( __FILE__ ) . '/includes/cc-transtria-template-tags.php' );
 
 	// Database helper functions
 	require_once( dirname( __FILE__ ) . '/includes/cc-transtria-database-bridge.php' );
+	require_once( dirname( __FILE__ ) . '/includes/cc-transtria-analysis-database-bridge.php' );
+	
 	// Study Form template functions, pops tab, intervention_partnerships, results
 	require_once( dirname( __FILE__ ) . '/includes/cc-transtria-study-form-template-tags.php' );	
 	require_once( dirname( __FILE__ ) . '/includes/cc-transtria-populations-template-tags.php' );	
 	require_once( dirname( __FILE__ ) . '/includes/cc-transtria-intervention-partnerships-template-tags.php' );	
 	require_once( dirname( __FILE__ ) . '/includes/cc-transtria-results-template-tags.php' );		
+	
 	// Assignments template functions
 	require_once( dirname( __FILE__ ) . '/includes/cc-transtria-assignments-template-tags.php' );	
 	// Analysis template functions
@@ -61,6 +66,10 @@ function cc_transtria_class_init(){
     $wpdb->transtria_effect_association = $wpdb->prefix . 'transtria_effect_association';
     $wpdb->transtria_code_results = $wpdb->prefix . 'transtria_code_results';
     $wpdb->transtria_studygroupings = $wpdb->prefix . 'transtria_studygroupings';
+	
+	//write-to analysis tables
+	$wpdb->transtria_analysis_intermediate = $wpdb->prefix . 'transtria_analysis_intermediate';
+	$wpdb->transtria_analysis_final = $wpdb->prefix . 'transtria_analysis_final';
 	
 }
 add_action( 'bp_include', 'cc_transtria_class_init' );
