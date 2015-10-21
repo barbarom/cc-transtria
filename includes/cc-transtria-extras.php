@@ -744,13 +744,32 @@ class CC_Transtria_Extras {
 		
 		$study_group = $_POST["this_study_group"];
 		
-		$study_id_array = get_study_ids_in_study_group( $study_group );
-		$dyad_list = get_unique_dyads_for_study_group( $study_group );
+		$study_id_array = set_unique_dyads_for_study_group( 1289 );
 		
-		$setting_dyad_test = set_unique_dyads_for_study( 346 );
+		//$setting_dyad_test = get_unique_dyads_for_study( 346 );
 		
 		//echo json_encode( $study_id_array );
-		echo json_encode( $setting_dyad_test );
+		echo json_encode( $study_id_array );
+		
+		die();
+	
+	}
+	
+	//ajax run analysis
+	public function run_analysis(){
+		// Is the nonce good?
+		if ( ! check_ajax_referer( 'cc_transtria_ajax_nonce', 'transtria_nonce' ) ) {
+			return false;
+		}
+		
+		$study_group = $_POST["this_study_group"];
+		
+		$study_id_array = set_unique_dyads_for_study_group( $study_group );
+		
+		//$setting_dyad_test = get_unique_dyads_for_study( 346 );
+		
+		//echo json_encode( $study_id_array );
+		echo json_encode( $study_id_array );
 		
 		die();
 	

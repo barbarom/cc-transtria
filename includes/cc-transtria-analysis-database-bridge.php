@@ -35,34 +35,12 @@ function get_study_ids_in_study_group( $study_group_id ){
 }
 
 /**
- * Returns all Indicator-Measure dyads for EACH ea tab (seq) in a given study)
- *
- * @param int. Study ID.
- * @return array?
- */
-function get_unique_dyads_for_study( $study_id ){
-
-	//how many ea tabs?
-	$num_ea = cc_transtria_get_num_ea_tabs_for_study( $study_id );
-	
-	//for each ea tab in study, get IM dyads
-	
-	
-	//foreach
-
-
-
-
-}
-
-
-/**
- * Sets (or resets) all Indicator-Measure dyads for EACH ea tab (seq) in a given study
+ * Gets all Indicator-Measure dyads for EACH ea tab (seq) in a given study
  *
  * @param int. Study ID.
  * @return multivariable array. array( seq# => array( "ID" => study_id, "codetypeID" => int ,"result" => string/array ), seq#2...
  */
-function set_unique_dyads_for_study( $study_id ){
+function get_unique_dyads_for_study( $study_id ){
 
 	global $wpdb;
 	
@@ -84,14 +62,6 @@ function set_unique_dyads_for_study( $study_id ){
 	
 	}
 	
-	//remove all IM dyads w/ this study id form intermediate table
-	$intermediate_del_row = $wpdb->delete( 
-		$wpdb->transtria_analysis_intermediate, 
-		array( 
-			'StudyID' => (int)$study_id
-		)
-	);
-	
 	$all_indicators = array();
 	$all_measures = array();
 	$these_indicators = array();
@@ -111,7 +81,7 @@ function set_unique_dyads_for_study( $study_id ){
 	
 	}
 	
-	return $all_indicators;
+	return array( 'indicators' => $all_indicators, 'measures' => $all_measures );
 
 }
 
@@ -148,6 +118,113 @@ function get_unique_dyads_for_study_group( $study_group_id ){
 	}
 	
 	return $all_dyads;
+	
+}
+
+
+/**
+ * Sets all Indicator-Measure dyads for EACH ea tab (seq) in a given study GROUP
+ *
+ * @param int. Study ID.
+ * @return array?
+ */
+function set_unique_dyads_for_study_group( $study_group_id ){
+
+	global $wpdb;
+	
+	//get studies in this group
+	$study_ids = get_study_ids_in_study_group( $study_group_id );
+	$all_dyads = array();
+	$values_string = "";  //for the impending massive INSERT INTO statement..
+	$count = 1;
+	
+	//get all indicators/measures for each study
+	foreach( $study_ids as $study_id ){
+	
+		//Part I: remove all IM dyads w/ this study id form intermediate table
+		$intermediate_del_row = $wpdb->delete( 
+			$wpdb->transtria_analysis_intermediate, 
+			array( 
+				'StudyID' => (int)$study_id
+			)
+		);
+	
+		//get number of ea tabs
+		$num_ea = cc_transtria_get_num_ea_tabs_for_study( $study_id );
+		$this_im = get_unique_dyads_for_study( (int) $study_id[0] ); //array index = seq number (ea tab number)
+		$info_id = ""; //TODO: this...how, what?
+		
+		if( $num_ea > 0 ){ //if we even HAVE ea tabs
+			for( $i=1; $i <= $num_ea; $i++ ){ //$i = seq
+			
+				//start VALUES string
+				$values_start_string = "(" . $count . ", , " . (int) $study_id[0] . ", " . $i . ", ";
+				//end VALUES string
+				$values_end_string = " )";
+				
+				//go through each measure - should be one, might not be
+				foreach( $this_im[ "measures" ][$i] as $single_measure ){
+					
+					//for each measure, cycle through all indicators
+					foreach( $this_im[ "indicators" ][$i] as $single_ind ){
+							
+						//if we have something in the VALUES string already, prepend with comma
+						if( $values_string != "" ){
+							$values_string .= ",";
+						}
+						
+						//TODO: optimize this...for each...study? Can we make this wpdb statement more dynamical?
+						$metakey	= "Harriet's Adages";
+						$metavalue	= "WordPress' database interface is like Sunday Morning: Easy.";
+
+						$wpdb->query( $wpdb->prepare( 
+							"
+								INSERT INTO $wpdb->transtria_analysis_intermediate
+								( unique_id, info_id, StudyID, ea_seq_id, indicator, measure )
+								VALUES ( %d, %s, %d, %d, %s, %s )
+							", 
+							$count, 
+							$info_id,
+							$study_id[0],
+							$i,
+							$single_ind,
+							$single_measure 
+						) );
+						
+						
+						
+						//HERE, construct the VALUES statements!
+						$values_string .= $values_start_string;
+						
+						$values_string .= $single_ind . ", " . $single_measure;
+						
+						$values_string .= $values_end_string;
+						
+						//update the count
+						$count++;
+					
+					}
+				
+				}
+				
+			}
+		}
+	}
+	
+	
+	var_dump( $values_string );	
+	
+	
+	
+	
+	///// Update analysis intermediate table
+	
+	
+	//Now, insert things into intermediate table from $values_string above
+	
+
+	
+	
 	
 }
 
@@ -215,8 +292,7 @@ function get_indicators_for_studyid_seq( $study_id, $seq, $indicator_list ){
 	//go through all these indicators and MAKE SURE they are in the indicators_list (b/c lagacy data! Fun!)
 	foreach( $code_table_indicators as $indicators ){
 		if( array_key_exists( $indicators["result"], $indicator_list ) ){
-			//if this indicator shows on the intervention/partnership tab, allow it!
-			//array_push( $new_code_table_inds, array( $indicators["result"] => $indicator_list[ $indicators["result"] ] ) );
+			//if this indicator shows on the intervention/partnership tab, allow it! Bonus: indicators list has string descr of ind!
 			$new_code_table_inds[ $indicators["result"] ] = $indicator_list[ $indicators["result"] ];
 		
 		}
@@ -277,8 +353,7 @@ function get_measures_for_studyid_seq( $study_id, $seq ){
 
 	global $wpdb;
 	
-	//first, get all indicators set for this seq in the code table
-	//Part I. What's our code? codetype of form "ea_# Indicator"
+	//Part I: get all meaures set for this seq in the code table
 	$codename = "ea_" . $seq . " Measures";
 	
 	$codetype_sql = $wpdb->prepare( 
@@ -310,23 +385,44 @@ function get_measures_for_studyid_seq( $study_id, $seq ){
 		$study_id
 	);
 	
-	//code table indicators
+	//code table measures
 	$code_table_measures = $wpdb->get_results( $results_sql, ARRAY_A );
 	
-	var_dump( $results_sql );
-	$new_code_table_meaures = array();
+	//get all string descriptions of measures.  If special measures, add addtnl text to description
+	$all_measure_numbers_names = array();
+	$descr = "";
 	
-	//go through all these indicators and MAKE SURE they are in the indicators_list (b/c lagacy data! Fun!)
+	//special measures index
+	$special_measures_list = cc_transtria_measures_w_extra_text( false );
+	//var_dump( $special_measures_list );
 	foreach( $code_table_measures as $measures ){
-		/*if( array_key_exists( $indicators["result"], $indicator_list ) ){
-			$new_code_table_inds[ $indicators["result"] ] = $indicator_list[ $indicators["result"] ];
+		//for each "result", look it up and give it a name - "Meaures" is codetypeID = 
+		$descr = get_single_codetypeid_descr_by_value( 136, $measures[ "result" ] );
+		//var_dump( $measures[ "codetypeID" ] );
+		//var_dump( $descr );
 		
-		}*/
-		var_dump( $measures );
+		//Part II: if any of these measures is in the 'special measures' list, get textboxe(s) and treat EACH as separate measure
+		if( in_array( $measures[ "result" ], $special_measures_list ) ){
+			//get all measures in ea table (serialized), append to descr 
+			$special_measures_textbox = get_measures_textboxes_by_study_seq_value( $study_id, $seq, $measures[ "result" ] );
+						
+			//IF we have special measures with addtnl text, add that text to descr
+			if( ( $special_measures_textbox == "" ) || ( empty( $special_measures_textbox ) ) ){
+				//add like normal to the measures list
+				$all_measure_numbers_names[ $measures[ "result" ] ] = $descr;
+			} else {
+				//add text to descr
+				$all_measure_numbers_names[ $measures[ "result" ] ] =  $descr . ": " . $special_measures_textbox;
+			}
+			
+		} else {
+			//add this measure val and descr, as is, to the measures list.
+			$all_measure_numbers_names[ $measures[ "result" ] ] = $descr;
+		}
 		
 	}
 	
-	return $new_code_table_meaures;
+	return $all_measure_numbers_names;
 
 }
 
@@ -432,5 +528,70 @@ function get_single_field_value_study_table( $study_id, $field_name ){
 
 	return $study_val;
 
-	}
+}
+
+/**
+ * Returns lookup value for codetypeid and value
+ *
+ * @param int, string.
+ * @return string. Description of codetypeid value.
+ */
+function get_single_codetypeid_descr_by_value( $codetype_id, $value ){
+
+	global $wpdb;
+	
+	//what is the codetypeID (in codetype table) given a codetype string
+	$codetbl_sql = $wpdb->prepare( 
+		"
+		SELECT      descr
+		FROM        $wpdb->transtria_codetbl
+		WHERE		codetypeID = %d
+		AND 		value = %s
+		",
+		$codetype_id,
+		$value
+	); 
+	
+	//single codetype id returned
+	$codetbl_val = $wpdb->get_var( $codetbl_sql ); //get_var returns single var
+
+	//var_dump( $codetbl_sql );
+	
+	return $codetbl_val;
+
+}
+
+/**
+ * Returns measure text boxes, unserialized
+ *
+ * @param int, int, string. StudyID, seq number (ea tab number), Measure value ("Measures" = 136 in codetype_tbl.
+ * @return string (or array?)
+ */
+function get_measures_textboxes_by_study_seq_value( $study_id, $seq, $measure_val ){
+
+	global $wpdb;
+	
+	//get name of field
+	$all_measures_w_text = cc_transtria_measures_w_extra_text();
+	$field_name = $all_measures_w_text[ $measure_val ]['short_name'] . "_measures";
+	
+	//get field val
+
+	//what is the codetypeID (in codetype table) given a codetype string
+	$ea_sql = $wpdb->prepare( 
+		"
+		SELECT      $field_name
+		FROM        $wpdb->transtria_effect_association
+		WHERE		StudyID = %d
+		AND 		seq = %d
+		",
+		$study_id,
+		$seq
+	); 
+	
+	//single codetype id returned
+	$ea_field_val = $wpdb->get_var( $ea_sql ); //get_var returns single var
+	return $ea_field_val;
+
+}
 
