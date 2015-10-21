@@ -145,9 +145,21 @@ function set_unique_dyads_for_study_group( $study_group_id ){
 		$intermediate_del_row = $wpdb->delete( 
 			$wpdb->transtria_analysis_intermediate, 
 			array( 
-				'StudyID' => (int)$study_id
+				'StudyID' => (int)$study_id[0]
 			)
 		);
+		//var_dump( $study_id[0] );
+		//what's our highest index?
+		$index_sql = 
+			"
+			SELECT unique_id
+			FROM $wpdb->transtria_analysis_intermediate
+			ORDER BY unique_id DESC LIMIT 0, 1
+			"
+			;
+		
+		$highest_index = $wpdb->get_var( $index_sql );
+		$count = $highest_index;
 	
 		//get number of ea tabs
 		$num_ea = cc_transtria_get_num_ea_tabs_for_study( $study_id );
@@ -183,8 +195,8 @@ function set_unique_dyads_for_study_group( $study_group_id ){
 								( unique_id, info_id, StudyID, ea_seq_id, indicator, measure )
 								VALUES ( %d, %s, %d, %d, %s, %s )
 							", 
+							$count,
 							$count, 
-							$info_id,
 							$study_id[0],
 							$i,
 							$single_ind,
@@ -192,12 +204,9 @@ function set_unique_dyads_for_study_group( $study_group_id ){
 						) );
 						
 						
-						
 						//HERE, construct the VALUES statements!
 						$values_string .= $values_start_string;
-						
 						$values_string .= $single_ind . ", " . $single_measure;
-						
 						$values_string .= $values_end_string;
 						
 						//update the count
@@ -211,21 +220,8 @@ function set_unique_dyads_for_study_group( $study_group_id ){
 		}
 	}
 	
-	
 	var_dump( $values_string );	
-	
-	
-	
-	
-	///// Update analysis intermediate table
-	
-	
-	//Now, insert things into intermediate table from $values_string above
-	
-
-	
-	
-	
+	return $study_ids; 
 }
 
 

@@ -27,20 +27,35 @@ function cc_transtria_render_analysis_form(){
 			<span class="spinny"></span>
 		</div>
 		
-		<select id="StudyGroupingIDList" style="">
-		<?php
-			foreach( $study_group_ids as $key => $val ){
-				echo "<option value='" . (int)$val['EPNP_ID'] . "'>" . $val['EPNP_ID'] . "</option>";
-				
-			}
-		?>
-		</select>
+		<div id="analysis_choices">
+			<select id="StudyGroupingIDList" style="">
+				<option value="-1"> -- Select Study Group -- </option>
+			<?php
+				foreach( $study_group_ids as $key => $val ){
+					
+					echo "<option value='" . (int)$val['EPNP_ID'] . "'>" . $val['EPNP_ID'] . "</option>";
+					
+				}
+			?>
+			</select>
+			
+			<a id="get_studies_by_group" class="button">GET ANALYSIS FOR STUDY GROUP</a>
+			<a id="run_analysis" class="button">RE-RUN ANALYSIS FOR STUDY GROUP</a>
 		
-		<a id="get_studies_by_group" class="button">GET THE THINGS</a>
-		<a id="run_analysis" class="button">RE-RUN ANALYSIS, DISPLAY NEW THINGS</a>
+		</div>
 	
-		<br />
-	
-		ANALYSIS PAGE
+		<table id="intermediate_vars">
+		
+			<th>Study ID</th>
+			<th>Unique ID</th>
+			<th>Seq</th>
+			<th>Indicator</th>
+			<th>Measure</th>		
+		
+			<tr id="data_parent"></tr>
+		
+		</table>
+		
+		
 	<?php
 }

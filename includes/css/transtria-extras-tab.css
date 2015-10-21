@@ -143,7 +143,8 @@ textarea{
 
 
 .basic_info_messages,
-.assignments_messages{
+.assignments_messages,
+.analysis_messages{
 	width:100%;
 	margin-bottom:1em;
 	background-color:#ccffcc;
@@ -300,6 +301,21 @@ table#assignment-table th{
 	background-color:yellow;
 }
 
+
+/* Analysis Tab */
+#analysis_choices {
+	margin:2em 0;
+	border: 3px solid #ccc;
+	padding:2em 1em;
+}
+#analysis_choices .button{
+	font-size:1em;
+	font-weight:bold;
+}
+table#intermediate_vars{
+	margin:2em 0;
+
+}
 
 
 

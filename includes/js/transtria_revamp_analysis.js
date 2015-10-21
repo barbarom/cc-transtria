@@ -27,13 +27,20 @@ function get_studies_by_grouping(){
 	var usrmsg = jQuery('.analysis_messages .usr-msg');
 	var usrmsgshell = jQuery('.analysis_messages');
 	
+	//where to add table data after success
+	which_tr_parent = jQuery("table#intermediate_vars tr#data_parent");
+	
 	//ajax data
-	var ajax_action = 'get_study_ids_by_group';
+	var ajax_action = 'get_im_dyads_by_group';
 	var ajax_data = {
 		'action': ajax_action,
 		'transtria_nonce' : transtria_ajax.ajax_nonce,
 		'this_study_group' : this_study_group
 	};
+	
+	if( this_study_group == -1 ){
+		return;
+	}
 	
 	//ajax get the studies for this group
 	jQuery.ajax({
@@ -49,19 +56,42 @@ function get_studies_by_grouping(){
 		}
 	}).success( function( data ) {
 		
-		//var post_meat = JSON.parse( data );
-		//console.log('success: ' + data['pops_success']);
-		
-		//usrmsg.html("Saving Study, ID: " + data['study_id'] );
-		
-		//TODO: send message if empty (directing user to add priority page?)
-		if( data == "0" || data == 0 )  {
+			if( data == "0" || data == 0 )  {
 			//console.log('what');=
 			return;
 		} else {
+		
+			//draw table#intermediate_vars (4 cols)
+			var txt = "";
+			//for each study
+			jQuery.each( data, function (){
+				//for each row in intermediate table for this study
+				var this_study_data = jQuery( this );
+				jQuery.each( this_study_data, function(){
+					//console.log( this );
+					
+					txt += "<tr>";
+					txt += "<td>" + this.StudyID + "</td>";
+					txt += "<td>" + this.unique_id + "</td>";
+					txt += "<td>" + this.ea_seq_id + "</td>";
+					txt += "<td>" + this.indicator + "</td>";
+					txt += "<td>" + this.measure + "</td>";
+					
+					
+					
+					txt += "</tr>";
+				
+				});
+				//console.log( jQuery(this ) );
+			
+			});
+			
+			//add html to page
+			which_tr_parent.after( txt );
 			
 		}
-		//var post_meat = data['single']; // = JSON.parse(data);
+		
+		
 	}).complete( function( data ) {
 
 		console.log( data );
@@ -104,23 +134,22 @@ function run_analysis(){
 			
 		}
 	}).success( function( data ) {
-		
-		//var post_meat = JSON.parse( data );
-		//console.log('success: ' + data['pops_success']);
-		
-		//usrmsg.html("Saving Study, ID: " + data['study_id'] );
-		
-		//TODO: send message if empty (directing user to add priority page?)
+
 		if( data == "0" || data == 0 )  {
 			//console.log('what');=
 			return;
 		} else {
+			var parsed = JSON.parse( data );
+			console.log(parsed.responseText);
+			
+			//draw table#intermediate_vars (4 cols)
+			
 			
 		}
 		//var post_meat = data['single']; // = JSON.parse(data);
 	}).complete( function( data ) {
 
-		console.log( data );
+		//console.log( data );
 		usrmsgshell.fadeOut();
 		spinny.fadeOut();
 		
