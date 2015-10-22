@@ -53,10 +53,13 @@ function get_studies_by_grouping(){
 			usrmsgshell.fadeIn();
 			spinny.fadeIn();
 			
+			//clear taable
+			jQuery("table#intermediate_vars tr").not(".no_remove").remove();
+			
 		}
 	}).success( function( data ) {
 		
-			if( data == "0" || data == 0 )  {
+		if( data == "0" || data == 0 )  {
 			//console.log('what');=
 			return;
 		} else {
@@ -72,12 +75,10 @@ function get_studies_by_grouping(){
 					
 					txt += "<tr>";
 					txt += "<td>" + this.StudyID + "</td>";
-					txt += "<td>" + this.unique_id + "</td>";
-					txt += "<td>" + this.ea_seq_id + "</td>";
+					txt += "<td>" + this.info_id + "</td>";
+					//txt += "<td>" + this.ea_seq_id + "</td>"; //this info now embedded in info_id
 					txt += "<td>" + this.indicator + "</td>";
 					txt += "<td>" + this.measure + "</td>";
-					
-					
 					
 					txt += "</tr>";
 				

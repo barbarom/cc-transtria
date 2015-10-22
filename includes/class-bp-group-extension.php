@@ -45,9 +45,14 @@ class CC_Transtria_Extras_Extension extends BP_Group_Extension {
 			cc_transtria_render_assignments_form( bp_action_variable(1) );
 			
 
+        } else if ( cc_transtria_on_studygrouping_screen() ) {
+           
+			cc_transtria_render_studygrouping_page( bp_action_variable(1) );
+            
+            
         } else if ( cc_transtria_on_analysis_screen() ) {
            
-			cc_transtria_render_analysis_form( bp_action_variable(1) );
+			cc_transtria_render_analysis_page( bp_action_variable(1) );
             
             
         } 

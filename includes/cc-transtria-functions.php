@@ -80,6 +80,9 @@ function cc_transtria_get_assignments_slug(){
 function cc_transtria_get_quick_survey_summary_slug(){
     return 'quick-summary';
 }
+function cc_transtria_get_studygrouping_slug(){
+    return 'studygrouping';
+}
 function cc_transtria_get_analysis_slug(){
     return 'analysis';
 }
@@ -99,16 +102,13 @@ function cc_transtria_get_assignments_permalink( $group_id = false ) {
     $permalink = cc_transtria_get_home_permalink( $group_id ) . cc_transtria_get_assignments_slug() . '/';
     return apply_filters( "cc_transtria_assignments_permalink", $permalink, $group_id);
 }
+function cc_transtria_get_studygrouping_permalink( $section = false, $group_id = false ) {
+    $permalink = cc_transtria_get_home_permalink( $group_id ) . cc_transtria_get_studygrouping_slug() . '/';
+    return apply_filters( "cc_transtria_studygrouping_permalink", $permalink, $group_id);
+}
 function cc_transtria_get_analysis_permalink( $section = false, $group_id = false ) {
     $permalink = cc_transtria_get_home_permalink( $group_id ) . cc_transtria_get_analysis_slug() . '/';
     return apply_filters( "cc_transtria_analysis_permalink", $permalink, $group_id);
-
-    // If we've specified a section, build it, else assume health.
-    // Expects 'revenue' or 'health'
-    //$section_string = ( $section == 'revenue' ) ? cc_transtria_get_analysis_revenue_slug() . '/' : cc_transtria_get_analysis_health_slug() . '/';
-
-    // $permalink = cc_transtria_get_home_permalink() . cc_transtria_get_analysis_slug() . '/' . $metro_id_string . $section_string;
-    // return apply_filters( "cc_transtria_analysis_permalink", $permalink, $section, $metro_id);
 }
 
 
@@ -130,6 +130,13 @@ function cc_transtria_on_main_screen(){
 }
 function cc_transtria_on_assignments_screen(){
     if ( cc_transtria_is_component() && bp_is_action_variable( cc_transtria_get_assignments_slug(), 0 ) ){
+        return true;
+    } else {
+        return false;
+    }
+}
+function cc_transtria_on_studygrouping_screen( $section = null ){
+   if ( cc_transtria_is_component() && bp_is_action_variable( cc_transtria_get_studygrouping_slug(), 0 ) ){
         return true;
     } else {
         return false;

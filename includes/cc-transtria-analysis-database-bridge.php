@@ -160,6 +160,7 @@ function set_unique_dyads_for_study_group( $study_group_id ){
 		
 		$highest_index = $wpdb->get_var( $index_sql );
 		$count = $highest_index;
+		$info_id_count = 1; //reset info id count w each study
 	
 		//get number of ea tabs
 		$num_ea = cc_transtria_get_num_ea_tabs_for_study( $study_id );
@@ -181,14 +182,14 @@ function set_unique_dyads_for_study_group( $study_group_id ){
 					foreach( $this_im[ "indicators" ][$i] as $single_ind ){
 							
 						//if we have something in the VALUES string already, prepend with comma
-						if( $values_string != "" ){
+						if( $values_string != "" ){ //No longer using the values string, but might try to incorporate later for efficiency..
 							$values_string .= ",";
 						}
 						
-						//TODO: optimize this...for each...study? Can we make this wpdb statement more dynamical?
-						$metakey	= "Harriet's Adages";
-						$metavalue	= "WordPress' database interface is like Sunday Morning: Easy.";
+						//info id = study id _ seq _ incremental value (starting w/ 1)
+						$info_id = $study_id[0] . "_" . $i . "_" . $info_id_count;
 
+						//TODO: optimize this...for each...study? Can we make this wpdb statement more dynamical?
 						$wpdb->query( $wpdb->prepare( 
 							"
 								INSERT INTO $wpdb->transtria_analysis_intermediate
@@ -196,7 +197,7 @@ function set_unique_dyads_for_study_group( $study_group_id ){
 								VALUES ( %d, %s, %d, %d, %s, %s )
 							", 
 							$count,
-							$count, 
+							$info_id, 
 							$study_id[0],
 							$i,
 							$single_ind,
@@ -211,6 +212,7 @@ function set_unique_dyads_for_study_group( $study_group_id ){
 						
 						//update the count
 						$count++;
+						$info_id_count++;
 					
 					}
 				

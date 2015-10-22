@@ -9,13 +9,12 @@
  */
 
 /**
- * Output logic for the analysis page. includes the wrapper pieces.
- * Question building is handled separately
+ * Output logic for the analysis page. 
  *
  * @since   1.0.0
  * @return 	outputs html
  */
-function cc_transtria_render_analysis_form(){
+function cc_transtria_render_analysis_page(){
 
 	$studies_data = cc_transtria_get_singleton_dropdown_options( );
 	$study_group_ids = cc_transtria_get_study_groupings();
@@ -44,15 +43,17 @@ function cc_transtria_render_analysis_form(){
 		
 		</div>
 	
+		<h3>Intermediate Variables</h3>
+		
+		<h4>Indicator-Measure Dyad(s):</h4>
 		<table id="intermediate_vars">
-		
-			<th>Study ID</th>
-			<th>Unique ID</th>
-			<th>Seq</th>
-			<th>Indicator</th>
-			<th>Measure</th>		
-		
-			<tr id="data_parent"></tr>
+			<tr class="no_remove">
+				<th>Study ID</th>
+				<th>Unique ID (StudyID_seq_uniqueID</th>
+				<th>Indicator</th>
+				<th>Measure</th>		
+			</tr>
+			<tr id="data_parent" class="no_remove"></tr>
 		
 		</table>
 		

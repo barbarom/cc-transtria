@@ -38,6 +38,9 @@ function cc_transtria_render_tab_subnav(){
 				<li <?php if ( cc_transtria_on_assignments_screen() ) { echo 'class="current"'; } ?>>
 					<a href="<?php echo cc_transtria_get_assignments_permalink(); ?>">Assignments</a>
 				</li>
+                <li <?php if ( cc_transtria_on_studygrouping_screen() ) { echo 'class="current"'; } ?>>
+                    <a href="<?php echo cc_transtria_get_studygrouping_permalink(); ?>">Study Groupings</a>
+                </li>
                 <li <?php if ( cc_transtria_on_analysis_screen() ) { echo 'class="current"'; } ?>>
                     <a href="<?php echo cc_transtria_get_analysis_permalink(); ?>">Analysis</a>
                 </li>
