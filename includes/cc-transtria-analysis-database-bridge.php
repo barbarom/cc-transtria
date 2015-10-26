@@ -177,21 +177,75 @@ function get_unique_ims_for_study_group( $study_group_id ){
 		SELECT      info_id, indicator_value, indicator, measure
 		FROM        $wpdb->transtria_analysis_intermediate
 		WHERE		StudyGroupingID = %d 
+		ORDER BY	measure, indicator
 		",
 		$study_group_id
 	); 
 	
 	$im_rows = $wpdb->get_results( $im_sql, ARRAY_A );
 	
+	var_dump( $im_rows );
+	
+	$analysis_id_count = 1;
 	foreach( $im_rows as $one_intermediate_im ){
 	
-		//first, see if im w measure value exists in unique array
-		var_dump( $one_intermediate_im );
+		$next_measure = $one_intermediate_im["measure"];
+		$next_indicator_val = $one_intermediate_im["indicator_value"];
+		$next_indicator = $one_intermediate_im["indicator"];
+		
+		//get array of [ info_id => measure ] pairs that are NON-duplicative
+		$temp_array_measure = array_column ( $unique_ims, "measure", "indicator_value" );
+		//var_dump( $temp_array_measure );
 	
+		//first, see if im w measure value exists in temp measure array
+		if( in_array( $next_measure, $temp_array_measure ) ){
+		
+			$found = false;
+			//var_dump( $temp_array_measure );
+			//if in array, see if we have the indicator_val in the unique array at all of the unique ids (info_id) for the measure
+			foreach( $temp_array_measure as $i => $measure ){
+				//check this unique id (info id) in the unique array. Is it the indicator_val?
+				///var_dump( $next_indicator_val );
+				//var_dump( $i );
+				
+				if( $i == $next_indicator_val ){
+					$found = true;
+				}
+			}
+			
+			//if we still haven't found the next_indicator for this measure, add to unique array
+			if( $found == false ){
+				$new_index = $study_group_id . "_" . $analysis_id_count;
+				$unique_ims[ $new_index ] = array( 
+						"measure" => $next_measure, 
+						"indicator_value" => $next_indicator_val,
+						"indicator" => $next_indicator
+					);
+					
+				//update our counter
+				$analysis_id_count++;
+			
+			}
+		
+		} else {
+			//$adding_things = "Adding things...";
+			//var_dump( $adding_things );
+			//add this indicator/measure to unique_ims array
+			$new_index = $study_group_id . "_" . $analysis_id_count;
+			$unique_ims[ $new_index ] = array( 
+					"measure" => $next_measure, 
+					"indicator_value" => $next_indicator_val,
+					"indicator" => $next_indicator
+				);
+				
+			//update our counter
+			$analysis_id_count++;
+		}
+		
 	}
 	
-	
-	return $form_rows;
+	//var_dump( $unique_ims );
+	return $unique_ims;
 	
 }
 
@@ -212,7 +266,7 @@ function get_analysis_vars_for_group( $study_group_id ){
 		FROM        $wpdb->transtria_analysis
 		WHERE		StudyGroupingID = %d 
 		",
-		current( $study_group_id )
+		$study_group_id
 	); 
 	
 	$form_rows = $wpdb->get_results( $analysis_sql, ARRAY_A );
@@ -387,22 +441,51 @@ function set_dyads_for_study_group( $study_group_id ){
  */
 function set_unique_analysis_ids_for_group( $study_group_id ){
 
+	global $wpdb;
+	
 	//get all dyads for this group
 	$all_ims = get_unique_ims_for_study_group( $study_group_id );
-
-	$all_unique_ims = array(); //empty to hold NON duplicates
 	
-	foreach( $all_ims as $one_im ){
+	//TODO: talk to Transtria and review this decision, they may need Analysis IDs to be SET (unless deleted or created, not recreated)
 	
-		var_dump( $one_im );
+	//for now, remove all analysis rows of this study group from analysis table
+	$analysis_del_row = $wpdb->delete( 
+			$wpdb->transtria_analysis, 
+			array( 
+				'StudyGroupingID' => (int)$study_group_id 
+			)
+		);
 	
+	
+	//var_dump( $all_ims );
+	$placeholder = 0;
+	foreach( $all_ims as $analysis_index => $one_im ){
+	
+		$measure = $one_im[ "measure" ];
+		$indicator = $one_im[ "indicator" ];
+		$indicator_val = $one_im[ "indicator_value" ];
+		//add these to analysis table
+		//var_dump( $analysis_index );
+		//var_dump( $one_im );
+	
+		$spartacus = $wpdb->prepare( 
+			"
+				INSERT INTO $wpdb->transtria_analysis
+				( info_id, StudyGroupingID, study_design, indicator_value, indicator, measure )
+				VALUES ( %s, %d, %d, %s, %s, %s )
+			", 
+			$analysis_index,
+			$study_group_id,
+			$placeholder,
+			$indicator_val, 
+			$indicator,
+			$measure
+		);
+		
+		$wpdb->query( $spartacus );
 	
 	}
 	
-	
-
-
-
 }
 
 

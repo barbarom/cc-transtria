@@ -27,6 +27,7 @@ function cc_transtria_class_init(){
 	// Helper and utility functions
 	require_once( dirname( __FILE__ ) . '/includes/cc-transtria-functions.php' );
 	require_once( dirname( __FILE__ ) . '/includes/cc-transtria-analysis-functions.php' );
+	require_once( dirname( __FILE__ ) . '/includes/array_column.php' ); //to mimic php 5.5+ array column function //TODO: test w actual servers, since dev environ is 5.5.+
 	
 	// Template-y functions
 	require_once( dirname( __FILE__ ) . '/includes/cc-transtria-template-tags.php' );
@@ -71,7 +72,7 @@ function cc_transtria_class_init(){
 	
 	//write-to analysis tables
 	$wpdb->transtria_analysis_intermediate = $wpdb->prefix . 'transtria_analysis_intermediate';
-	$wpdb->transtria_analysis_final = $wpdb->prefix . 'transtria_analysis_final';
+	$wpdb->transtria_analysis = $wpdb->prefix . 'transtria_analysis';
 	
 }
 add_action( 'bp_include', 'cc_transtria_class_init' );

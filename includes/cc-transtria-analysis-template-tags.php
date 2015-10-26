@@ -64,7 +64,7 @@ function cc_transtria_render_analysis_page(){
 				
 				</table>
 				
-				<h4>Effect or Asociation Direction:</h4>
+				<h4>Effect or Association Direction:</h4>
 				<a id="hide_direction_table" class="button">HIDE I-M DIRECTIONS</a>
 				<table id="intermediate_vars_direction">
 					<tr class="no_remove">
@@ -82,7 +82,63 @@ function cc_transtria_render_analysis_page(){
 			
 			<div id="analysis_vars_content" class="single_analysis_content">
 			
-				Analysis vars!  Yeah!
+				<h3>Analysis Variables</h3>
+				
+				<h4>Indicator-Measure Dyad(s):</h4>
+				<a id="hide_analysis_im_table" class="button">HIDE I-M DYADS</a>
+				<table id="analysis_vars_im">
+					<tr class="no_remove">
+						<th>Study Grouping ID</th>
+						<th>Analysis ID (SG _ unique ID)</th>
+						<th>Indicator</th>
+						<th>Measure</th>		
+					</tr>
+					<tr id="data_parent" class="no_remove"></tr>
+				
+				</table>
+				
+				<select id="analysis_study_design">Study Design
+					<option value="-1"> -- Select Study Design -- </option>
+				</select>
+				
+				<h4>Net Effects or Associations:</h4>
+				<a id="hide_analysis_effect_table" class="button">HIDE I-M DIRECTIONS</a>
+				<table id="analysis_vars_effect">
+					<tr class="no_remove">
+						<th>Analysis ID (Study ID _ seq _ unique ID)</th>
+						<th>Indicator</th>
+						<th>Measure</th>		
+						<th>Net Effect or Association</th>		
+					</tr>
+					<tr id="data_parent" class="no_remove"></tr>
+				
+				</table>
+				
+				<h4>Effectiveness:</h4>
+				<a id="hide_analysis_effectiveness_table" class="button">HIDE EFFECTIVENESS</a>
+				<table id="analysis_vars_effectiveness">
+					<tr class="no_remove">
+						<th>Population or Subpopulation</th>
+						<th>Indicator</th>
+						<th>Measure</th>		
+						<th>Effectiveness</th>		
+					</tr>
+					<tr id="data_parent" class="no_remove"></tr>
+				
+				</table>
+				
+				<h4>Effectiveness, High Risk Populations:</h4>
+				<a id="hide_analysis_hrpops_table" class="button">HIDE HR POPS</a>
+				<table id="analysis_vars_hrpops">
+					<tr class="no_remove">
+						<th>Population or Subpopulation</th>
+						<th>Indicator</th>
+						<th>Measure</th>		
+						<th>Effectiveness, HR Pops</th>		
+					</tr>
+					<tr id="data_parent" class="no_remove"></tr>
+				
+				</table>
 				
 			</div>
 		

@@ -754,7 +754,7 @@ class CC_Transtria_Extras {
 		$data[ 'analysis_vars' ] = $analysis_data;
 		
 		//echo json_encode( $data );
-		echo json_encode( $dyad_array );
+		echo json_encode( $data );
 		
 		die();
 	

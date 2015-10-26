@@ -54,6 +54,7 @@ function get_vars_by_grouping(){
 	//where to add table data after success
 	which_tr_parent = jQuery("table#intermediate_vars_im tr#data_parent");
 	which_tr_parent_dir = jQuery("table#intermediate_vars_direction tr#data_parent");
+	which_tr_parent_analysis_im = jQuery("table#analysis_vars_im tr#data_parent");
 	
 	//ajax data
 	var ajax_action = 'get_im_dyads_by_group';
@@ -92,40 +93,73 @@ function get_vars_by_grouping(){
 			//draw table#intermediate_vars_im (4 cols)
 			var txt = "";
 			var txt_dir = "";
+			var txt_a_im = "";
 			//for each study
-			jQuery.each( data, function (){
-				//for each row in intermediate table for this study
-				var this_study_data = jQuery( this );
-				jQuery.each( this_study_data, function(){
-					//console.log( this );
+			if( data.intermediate_vars != undefined ){
+				jQuery.each( data.intermediate_vars, function (){
+					//for each row in intermediate table for this study
+					var this_study_data = jQuery( this );
+					jQuery.each( this_study_data, function(){
+						//console.log( this );
+						
+						txt += "<tr>";
+						txt += "<td>" + this.StudyID + "</td>";
+						txt += "<td>" + this.info_id + "</td>";
+						//txt += "<td>" + this.ea_seq_id + "</td>"; //this info now embedded in info_id
+						txt += "<td>" + this.indicator + "</td>";
+						txt += "<td>" + this.measure + "</td>";
+						
+						txt += "</tr>";
+						
+						//also populate the ea direction table
+						txt_dir += "<tr>"; 
+						txt_dir += "<td>" + this.info_id + "</td>";
+						txt_dir += "<td>" + this.indicator + "</td>";
+						txt_dir += "<td>" + this.measure + "</td>";
+						txt_dir += "<td>" + this.outcome_type + "</td>";
+						txt_dir += "<td>" + this.calc_ea_direction + "</td>";
+						
+						txt_dir += "</tr>";
 					
-					txt += "<tr>";
-					txt += "<td>" + this.StudyID + "</td>";
-					txt += "<td>" + this.info_id + "</td>";
-					//txt += "<td>" + this.ea_seq_id + "</td>"; //this info now embedded in info_id
-					txt += "<td>" + this.indicator + "</td>";
-					txt += "<td>" + this.measure + "</td>";
-					
-					txt += "</tr>";
-					
-					//also populate the ea direction table
-					txt_dir += "<tr>"; 
-					txt_dir += "<td>" + this.info_id + "</td>";
-					txt_dir += "<td>" + this.indicator + "</td>";
-					txt_dir += "<td>" + this.measure + "</td>";
-					txt_dir += "<td>" + this.outcome_type + "</td>";
-					txt_dir += "<td>" + this.calc_ea_direction + "</td>";
-					
-					txt_dir += "</tr>";
+					});
+					//console.log( jQuery(this ) );
 				
 				});
-				//console.log( jQuery(this ) );
+			} //end if intermediate_vars
 			
-			});
+			if( data.analysis_vars != undefined ){
+				jQuery.each( data.analysis_vars, function (){
+					//for each row in intermediate table for this study
+					var this_analysis_data = jQuery( this );
+					jQuery.each( this_analysis_data, function(){
+						//console.log( this );
+						
+						txt_a_im += "<tr>";
+						txt_a_im += "<td>" + this.StudyGroupingID + "</td>";
+						txt_a_im += "<td>" + this.info_id + "</td>";
+						txt_a_im += "<td>" + this.indicator + "</td>";
+						txt_a_im += "<td>" + this.measure + "</td>";
+						
+						txt_a_im += "</tr>";
+						
+						//TODO: populate the net effects table
+						
+						
+						//TODO: populate the effectiveness table
+						
+						
+						//TODO: populate thehr pops table
+					
+					});
+					//console.log( jQuery(this ) );
+				
+				});
+			} //end if intermedaite_vars
 			
 			//add html to page
 			which_tr_parent.after( txt );
 			which_tr_parent_dir.after( txt_dir );
+			which_tr_parent_analysis_im.after( txt_a_im );
 			
 		}
 		
