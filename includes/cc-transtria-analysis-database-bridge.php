@@ -187,15 +187,48 @@ function get_unique_ims_for_study_group( $study_group_id ){
 	var_dump( $im_rows );
 	
 	$analysis_id_count = 1;
+	$previous_measure = ""; //for scope
+	$previous_indicator_val = "";
+	$next_measure = ""; //for scope
+	$next_indicator_val = "";
+	$info_id_list = ""; //init our info id list
+	
+	//iterate through im rows
 	foreach( $im_rows as $one_intermediate_im ){
 	
+		//previous iteration's value:
+		$previous_measure = $next_measure;
+		$previous_indicator_val = $next_indicator_val;
+		
+		//next values to check against
 		$next_measure = $one_intermediate_im["measure"];
 		$next_indicator_val = $one_intermediate_im["indicator_value"];
 		$next_indicator = $one_intermediate_im["indicator"];
+		$next_info_id = $one_intermediate_im["info_id"];
 		
-		//get array of [ info_id => measure ] pairs that are NON-duplicative
+		//get array of [ info_id => measure ] pairs that are NON-duplicative.  However, Include all info_ids of duplicates w/in that unique array.
 		$temp_array_measure = array_column ( $unique_ims, "measure", "indicator_value" );
+		//$temp_array_measure_info_id = array_column ( $unique_ims, "measure", "info_id" );
 		//var_dump( $temp_array_measure );
+		
+		//if previous vals == next vals, DUPLICATE and we need to add the info_id to the current analysis array list
+		if( ( $previous_measure == $next_measure ) && ( $previous_indicator_val == $next_indicator_val ) ){
+			//we're still in duplicate land, add info id to list
+			$info_id_list = $info_id_list . ',' . $next_info_id;
+			//update duplicative entry in unique_ims: how
+			
+		
+		} else {
+			//this is a new dyad
+			//$info_id_list = 
+		
+		}
+		
+		
+		
+		//Method 2: go through double-sorted list and
+		
+		
 	
 		//first, see if im w measure value exists in temp measure array
 		if( in_array( $next_measure, $temp_array_measure ) ){
@@ -205,11 +238,11 @@ function get_unique_ims_for_study_group( $study_group_id ){
 			//if in array, see if we have the indicator_val in the unique array at all of the unique ids (info_id) for the measure
 			foreach( $temp_array_measure as $i => $measure ){
 				//check this unique id (info id) in the unique array. Is it the indicator_val?
-				///var_dump( $next_indicator_val );
-				//var_dump( $i );
-				
 				if( $i == $next_indicator_val ){
+					//we've found it!  Don't add to unique_ims, but add the info_id
 					$found = true;
+					//what's the current info id string?
+					//$unique_ims
 				}
 			}
 			
@@ -219,7 +252,8 @@ function get_unique_ims_for_study_group( $study_group_id ){
 				$unique_ims[ $new_index ] = array( 
 						"measure" => $next_measure, 
 						"indicator_value" => $next_indicator_val,
-						"indicator" => $next_indicator
+						"indicator" => $next_indicator,
+						"info_ids" => $next_info_id
 					);
 					
 				//update our counter
@@ -241,6 +275,7 @@ function get_unique_ims_for_study_group( $study_group_id ){
 			//update our counter
 			$analysis_id_count++;
 		}
+		
 		
 	}
 	
