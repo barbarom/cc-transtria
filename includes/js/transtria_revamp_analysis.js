@@ -4,11 +4,21 @@
 function analysisClickListen(){
 
 	//load in studies given study id
-	jQuery("a#get_studies_by_group").on("click", get_studies_by_grouping );
+	jQuery("a#get_vars_by_group").on("click", get_vars_by_grouping );
 	
-	//run analysis for study group
+	//run intermediate analysis for study group
+	jQuery("a#run_intermediate_analysis").on("click", run_intermediate_analysis );
+	
+	//run final analysis for study group
 	jQuery("a#run_analysis").on("click", run_analysis );
-
+	
+	//show/hides
+	jQuery("a#hide_im_table").on("click", toggle_im_table );
+	jQuery("a#hide_direction_table").on("click", toggle_direction_table );
+	
+	
+	//when clicking on the ea tabs
+	jQuery('.analysis_tab_label').on( "click", analysis_tab_toggle );
 
 
 
@@ -17,8 +27,22 @@ function analysisClickListen(){
 
 }
 
+//tabs toggle for analysis var sections
+function analysis_tab_toggle(){
 
-function get_studies_by_grouping(){
+	var whichtab = jQuery(this).data("whichanalysistab");
+	
+	//fade out all, remove active class from all l
+	jQuery("#analysis_content .single_analysis_content").fadeOut();
+	jQuery("label.analysis_tab_label").removeClass("active");
+	
+	jQuery("#" + whichtab + ".single_analysis_content").fadeIn();
+	jQuery(this).addClass("active");
+	//console.log(whichtab);
+	
+}
+
+function get_vars_by_grouping(){
 
 	this_study_group = jQuery("select#StudyGroupingIDList").val();
 	
@@ -28,7 +52,8 @@ function get_studies_by_grouping(){
 	var usrmsgshell = jQuery('.analysis_messages');
 	
 	//where to add table data after success
-	which_tr_parent = jQuery("table#intermediate_vars tr#data_parent");
+	which_tr_parent = jQuery("table#intermediate_vars_im tr#data_parent");
+	which_tr_parent_dir = jQuery("table#intermediate_vars_direction tr#data_parent");
 	
 	//ajax data
 	var ajax_action = 'get_im_dyads_by_group';
@@ -54,7 +79,7 @@ function get_studies_by_grouping(){
 			spinny.fadeIn();
 			
 			//clear taable
-			jQuery("table#intermediate_vars tr").not(".no_remove").remove();
+			jQuery("table#intermediate_vars_im tr").not(".no_remove").remove();
 			
 		}
 	}).success( function( data ) {
@@ -64,8 +89,9 @@ function get_studies_by_grouping(){
 			return;
 		} else {
 		
-			//draw table#intermediate_vars (4 cols)
+			//draw table#intermediate_vars_im (4 cols)
 			var txt = "";
+			var txt_dir = "";
 			//for each study
 			jQuery.each( data, function (){
 				//for each row in intermediate table for this study
@@ -81,6 +107,16 @@ function get_studies_by_grouping(){
 					txt += "<td>" + this.measure + "</td>";
 					
 					txt += "</tr>";
+					
+					//also populate the ea direction table
+					txt_dir += "<tr>"; 
+					txt_dir += "<td>" + this.info_id + "</td>";
+					txt_dir += "<td>" + this.indicator + "</td>";
+					txt_dir += "<td>" + this.measure + "</td>";
+					txt_dir += "<td>" + this.outcome_type + "</td>";
+					txt_dir += "<td>" + this.calc_ea_direction + "</td>";
+					
+					txt_dir += "</tr>";
 				
 				});
 				//console.log( jQuery(this ) );
@@ -89,6 +125,7 @@ function get_studies_by_grouping(){
 			
 			//add html to page
 			which_tr_parent.after( txt );
+			which_tr_parent_dir.after( txt_dir );
 			
 		}
 		
@@ -104,6 +141,58 @@ function get_studies_by_grouping(){
 
 }
 
+
+function run_intermediate_analysis(){
+
+	this_study_group = jQuery("select#StudyGroupingIDList").val();
+	
+	//user messages
+	var spinny = jQuery('.analysis_messages .spinny');
+	var usrmsg = jQuery('.analysis_messages .usr-msg');
+	var usrmsgshell = jQuery('.analysis_messages');
+	
+	//ajax data
+	var ajax_action = 'run_intermediate_analysis';
+	var ajax_data = {
+		'action': ajax_action,
+		'transtria_nonce' : transtria_ajax.ajax_nonce,
+		'this_study_group' : this_study_group
+	};
+	
+	//ajax get the studies for this group
+	jQuery.ajax({
+		url: transtria_ajax.ajax_url, 
+		data: ajax_data, 
+		type: "POST",
+		dataType: "json",
+		beforeSend: function() {
+			usrmsg.html("Running Analysis for Study Group: <strong>" + this_study_group + "</strong>, hang tight..." );
+			usrmsgshell.fadeIn();
+			spinny.fadeIn();
+			
+		}
+	}).success( function( data ) {
+
+		if( data == "0" || data == 0 )  {
+			//console.log('what');=
+			return;
+		} else {
+			var parsed = JSON.parse( data );
+			console.log(parsed.responseText);
+			
+			
+		}
+		//var post_meat = data['single']; // = JSON.parse(data);
+	}).complete( function( data ) {
+
+		//console.log( data );
+		usrmsgshell.fadeOut();
+		spinny.fadeOut();
+		
+	});
+
+
+}
 
 function run_analysis(){
 
@@ -140,10 +229,8 @@ function run_analysis(){
 			//console.log('what');=
 			return;
 		} else {
-			var parsed = JSON.parse( data );
-			console.log(parsed.responseText);
-			
-			//draw table#intermediate_vars (4 cols)
+			//var parsed = JSON.parse( data );
+			console.log(data);
 			
 			
 		}
@@ -158,6 +245,38 @@ function run_analysis(){
 
 
 }
+
+
+//toggles visibility of im dyad table
+function toggle_im_table(){
+
+	var which_table = jQuery("table#intermediate_vars_im");
+	
+	if( which_table.is(":visible") ){
+		which_table.slideUp();
+		jQuery("a#hide_im_table").html("SHOW I-M DYADS");
+	} else {
+		which_table.slideDown();
+		jQuery("a#hide_im_table").html("HIDE I-M DYADS");
+	}
+	
+}
+
+//toggles visibility of im dyad table
+function toggle_direction_table(){
+
+	var which_table = jQuery("table#intermediate_vars_direction");
+	
+	if( which_table.is(":visible") ){
+		which_table.slideUp();
+		jQuery("a#hide_direction_table").html("SHOW I-M DIRECTIONS");
+	} else {
+		which_table.slideDown();
+		jQuery("a#hide_direction_table").html("HIDE I-M DIRECTIONS");
+	}
+	
+}
+
 
 
 //hmm...

@@ -43,6 +43,8 @@ function cc_transtria_class_init(){
 	
 	// Assignments template functions
 	require_once( dirname( __FILE__ ) . '/includes/cc-transtria-assignments-template-tags.php' );	
+	// STudy Grouping template functions
+	require_once( dirname( __FILE__ ) . '/includes/cc-transtria-studygrouping-template-tags.php' );	
 	// Analysis template functions
 	require_once( dirname( __FILE__ ) . '/includes/cc-transtria-analysis-template-tags.php' );	
 	

@@ -68,7 +68,8 @@ textarea{
 #sub_pops_tabs label.subpops_tab_label,
 #sub_pops_tabs label.ese_add_tab_label,
 #citation_tabs ul li,
-#effect_association_tabs ul li label{
+#effect_association_tabs ul li label,
+.analysis_tab_label{
   background: #eee; 
   padding: 10px 10px 12px; 
   border: 1px solid #ccc; 
@@ -97,7 +98,8 @@ textarea{
 #main_tabs label.main_tab_label.active,
 #sub_pops_tabs label.subpops_tab_label.active,
 #citation_tabs ul li.active,
-#effect_association_tabs label.ea_tab_label.active {
+#effect_association_tabs label.ea_tab_label.active,
+.analysis_tab_label.active {
 	background: white; 
 	padding: 6px; 
 	border: 8px solid #888;
@@ -133,8 +135,12 @@ textarea{
 .ipu_content .subpops_content,
 .ese_content .subpops_content,
 .esu_content .subpops_content,
-.ese-add_content .subpops_content{
+.ese-add_content .subpops_content,
+#analysis_vars_content{
 	display:none;
+}
+#analysis_vars_content{
+	margin-top:24px;
 }
 
 #population_tabs .subpops_content.ese_content td.remove_ese_tab_td {
@@ -144,7 +150,8 @@ textarea{
 
 .basic_info_messages,
 .assignments_messages,
-.analysis_messages{
+.analysis_messages,
+.studygrouping_messages{
 	width:100%;
 	margin-bottom:1em;
 	background-color:#ccffcc;
@@ -159,7 +166,8 @@ textarea{
 .basic_info_messages  .spinny,
 .citation_spinny.spinny,
 #results_content .spinny,
-.assignments_messages .spinny {
+.assignments_messages .spinny,
+.analysis_messages .spinny {
 	background-image: url('images/ajax-loader.gif');
 	background-repeat:no-repeat;
 	background-position:center center;
@@ -312,9 +320,9 @@ table#assignment-table th{
 	font-size:1em;
 	font-weight:bold;
 }
-table#intermediate_vars{
+table#intermediate_vars_im,
+table#intermediate_vars_direction{
 	margin:2em 0;
-	width:46%
 }
 
 

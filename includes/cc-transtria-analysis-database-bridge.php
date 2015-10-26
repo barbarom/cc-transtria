@@ -40,7 +40,7 @@ function get_study_ids_in_study_group( $study_group_id ){
  * @param int. Study ID.
  * @return multivariable array. array( seq# => array( "ID" => study_id, "codetypeID" => int ,"result" => string/array ), seq#2...
  */
-function get_unique_dyads_for_study( $study_id ){
+function get_dyads_by_study( $study_id ){
 
 	global $wpdb;
 	
@@ -71,8 +71,7 @@ function get_unique_dyads_for_study( $study_id ){
 	for( $i = 1; $i <= $num_ea; $i++ ){
 	
 		//get indicators for this seq
-		$these_indicators = get_indicators_for_studyid_seq( $study_id, $i, $flat_allowed_inds );
-		
+		$these_indicators = get_indicators_for_studyid_seq( $study_id, $i, $flat_allowed_inds );		
 		$these_measures = get_measures_for_studyid_seq( $study_id, $i );
 	
 		//append these indicators to all_indicators by seq
@@ -86,12 +85,12 @@ function get_unique_dyads_for_study( $study_id ){
 }
 
 /**
- * Gets all Indicator-Measure dyads for EACH ea tab (seq) in a given study GROUP
+ * Gets all Indicator-Measure dyads for EACH ea tab (seq) in a given study GROUP from table.  No calcs.
  *
  * @param int. Study ID.
  * @return array?
  */
-function get_unique_dyads_for_study_group( $study_group_id ){
+function get_dyads_for_study_group( $study_group_id ){
 
 	global $wpdb;
 	
@@ -121,14 +120,115 @@ function get_unique_dyads_for_study_group( $study_group_id ){
 	
 }
 
-
 /**
- * Sets all Indicator-Measure dyads for EACH ea tab (seq) in a given study GROUP
+ * Returns all Indicator-Measure dyads for EACH ea tab (seq) in a given study GROUP from table.  No calcs.
  *
  * @param int. Study ID.
  * @return array?
  */
-function set_unique_dyads_for_study_group( $study_group_id ){
+function get_all_ims_for_study_group( $study_group_id ){
+
+	global $wpdb;
+	
+	//get studies in this group
+	$study_ids = get_study_ids_in_study_group( $study_group_id );
+	
+	//$all_ims = array();
+	
+	//get all study id dyads for this group
+	$im_sql = $wpdb->prepare( 
+		"
+		SELECT      info_id, indicator_value, indicator, measure
+		FROM        $wpdb->transtria_analysis_intermediate
+		WHERE		StudyGroupingID = %d 
+		",
+		$study_group_id
+	); 
+	
+	$form_rows = $wpdb->get_results( $im_sql, ARRAY_A );
+	
+	//$all_dyads[ current( $s_id ) ] = $form_rows;
+	//array_push( $all_dyads, current( $s_id ) );
+	
+	
+	return $form_rows;
+	
+}
+
+/**
+ * Returns all UNIQUE Indicator-Measure dyads for EACH ea tab (seq) in a given study GROUP from table.  No dups.
+ *
+ * @param int. Study ID.
+ * @return array?
+ */
+function get_unique_ims_for_study_group( $study_group_id ){
+
+	global $wpdb;
+	
+	//get studies in this group
+	$study_ids = get_study_ids_in_study_group( $study_group_id );
+	
+	//$all_ims = array();
+	$unique_ims = array();
+	
+	//get all study id dyads for this group
+	$im_sql = $wpdb->prepare( 
+		"
+		SELECT      info_id, indicator_value, indicator, measure
+		FROM        $wpdb->transtria_analysis_intermediate
+		WHERE		StudyGroupingID = %d 
+		",
+		$study_group_id
+	); 
+	
+	$im_rows = $wpdb->get_results( $im_sql, ARRAY_A );
+	
+	foreach( $im_rows as $one_intermediate_im ){
+	
+		//first, see if im w measure value exists in unique array
+		var_dump( $one_intermediate_im );
+	
+	}
+	
+	
+	return $form_rows;
+	
+}
+
+/**
+ * Returns Analysis vars from table (not calcs)
+ * 
+ * @param int. Study Group ID
+ * @return array. Array of columns from analysis table.
+ */
+function get_analysis_vars_for_group( $study_group_id ){
+
+	global $wpdb;
+	
+	//get all analysis vars for this group
+	$analysis_sql = $wpdb->prepare( 
+		"
+		SELECT      *
+		FROM        $wpdb->transtria_analysis
+		WHERE		StudyGroupingID = %d 
+		",
+		current( $study_group_id )
+	); 
+	
+	$form_rows = $wpdb->get_results( $analysis_sql, ARRAY_A );
+	
+	return $form_rows;
+
+}
+ 
+
+/**
+ * Sets all Indicator-Measure dyads for EACH ea tab (seq) in a given study GROUP; updates intermediate_analysis table
+ *
+ * @param int. Study ID.
+ * @return array?
+ */
+function set_dyads_for_study_group( $study_group_id ){
 
 	global $wpdb;
 	
@@ -141,6 +241,11 @@ function set_unique_dyads_for_study_group( $study_group_id ){
 	//get all indicators/measures for each study
 	foreach( $study_ids as $study_id ){
 	
+		//Get other seq-related study data for analysis data (EA tab)
+		$ea_data = get_ea_analysis_data( $study_id[0] );
+		
+		//var_dump ( $ea_data );
+		
 		//Part I: remove all IM dyads w/ this study id form intermediate table
 		$intermediate_del_row = $wpdb->delete( 
 			$wpdb->transtria_analysis_intermediate, 
@@ -148,8 +253,9 @@ function set_unique_dyads_for_study_group( $study_group_id ){
 				'StudyID' => (int)$study_id[0]
 			)
 		);
-		//var_dump( $study_id[0] );
-		//what's our highest index?
+		
+		
+		//what's our highest index (for unique id int)?  //TODO: is there a better way for this?  OR does it even matter?
 		$index_sql = 
 			"
 			SELECT unique_id
@@ -159,13 +265,25 @@ function set_unique_dyads_for_study_group( $study_group_id ){
 			;
 		
 		$highest_index = $wpdb->get_var( $index_sql );
-		$count = $highest_index;
+		if( empty( $highest_index ) ){
+			$count = 1;
+		} else {
+			$count = $highest_index;
+		}
 		$info_id_count = 1; //reset info id count w each study
 	
 		//get number of ea tabs
 		$num_ea = cc_transtria_get_num_ea_tabs_for_study( $study_id );
-		$this_im = get_unique_dyads_for_study( (int) $study_id[0] ); //array index = seq number (ea tab number)
+		$this_im = get_dyads_by_study( (int) $study_id[0] ); //array index = seq number (ea tab number)
+		
+		//var_dump( $this_im );
+		//return false;
+		
 		$info_id = ""; //TODO: this...how, what?
+		$outcome_direction = "";
+		$outcome_type = "";
+		$outcome_duration = "";
+		$ea_direction = "";
 		
 		if( $num_ea > 0 ){ //if we even HAVE ea tabs
 			for( $i=1; $i <= $num_ea; $i++ ){ //$i = seq
@@ -175,12 +293,24 @@ function set_unique_dyads_for_study_group( $study_group_id ){
 				//end VALUES string
 				$values_end_string = " )";
 				
+				//set ea-level data (from $ea_data)
+				$outcome_direction = $ea_data[ $i ]["outcome_direction"];
+				$outcome_type = $ea_data[ $i ]["outcome_type"];
+				$outcome_duration = $ea_data[ $i ]["outcome_duration"];
+				$significant = $ea_data[ $i ]["significant"];
+				$ind_strategies_dir = $ea_data[ $i ]["indicators_strategies_directions"];
+				$ind_directions = $ea_data[ $i ]["indicator_directions"];
+				$ind_dir = "";
+				//var_dump( $ind_directions );
+				
+				
+				
 				//go through each measure - should be one, might not be
 				foreach( $this_im[ "measures" ][$i] as $single_measure ){
 					
 					//for each measure, cycle through all indicators
-					foreach( $this_im[ "indicators" ][$i] as $single_ind ){
-							
+					foreach( $this_im[ "indicators" ][$i] as $ind_index => $single_ind ){
+					
 						//if we have something in the VALUES string already, prepend with comma
 						if( $values_string != "" ){ //No longer using the values string, but might try to incorporate later for efficiency..
 							$values_string .= ",";
@@ -188,20 +318,43 @@ function set_unique_dyads_for_study_group( $study_group_id ){
 						
 						//info id = study id _ seq _ incremental value (starting w/ 1)
 						$info_id = $study_id[0] . "_" . $i . "_" . $info_id_count;
+						
+						//calc ea_direction
+						if( $significant == "N" ){
+							$ea_direction = "3";
+						} else {
+							if( !empty( $ind_directions[ $ind_index ] ) ){ //if we HAVE a direction, else let them know 
+								//TODO: this  22Oct 2015
+								//TODO: test for outcome direction similarly
+								$ind_dir = $ind_directions[ $ind_index ];
+								$ea_direction = cc_transtria_calculate_ea_direction( $indicator_direction, $outcome_direction );
+							} else {
+								$ind_dir = "no ind. direction set";
+								$ea_direction = "no ind. direction set";
+							}
+						}
 
 						//TODO: optimize this...for each...study? Can we make this wpdb statement more dynamical?
 						$wpdb->query( $wpdb->prepare( 
 							"
 								INSERT INTO $wpdb->transtria_analysis_intermediate
-								( unique_id, info_id, StudyID, ea_seq_id, indicator, measure )
-								VALUES ( %d, %s, %d, %d, %s, %s )
+								( unique_id, info_id, StudyID, StudyGroupingID, ea_seq_id, indicator_value, indicator, indicator_direction, measure, outcome_direction, outcome_type, outcome_duration, significant, calc_ea_direction )
+								VALUES ( %d, %s, %d, %d, %d, %s, %s, %s, %s, %s, %s, %s, %s, %s )
 							", 
 							$count,
 							$info_id, 
 							$study_id[0],
+							$study_group_id,
 							$i,
+							$ind_index, 
 							$single_ind,
-							$single_measure 
+							$ind_dir,
+							$single_measure,
+							$outcome_direction,
+							$outcome_type,
+							$outcome_duration,
+							$significant,
+							$ea_direction
 						) );
 						
 						
@@ -226,19 +379,38 @@ function set_unique_dyads_for_study_group( $study_group_id ){
 	return $study_ids; 
 }
 
-
-
 /**
- * Sets (unique, seq id) and Returns all UNIQUE Indicator
+ * Sets Analysis IDs for this group. Method: set analysis id for UNIQUE I-M dyads in study group (no dups!); update analysis table
  *
- * @param
- * @return
+ * @param int. Study Group ID.
+ * @return bool?
  */
-function get_unique_dyads_for_study_whaaat( $study_id ){
+function set_unique_analysis_ids_for_group( $study_group_id ){
+
+	//get all dyads for this group
+	$all_ims = get_unique_ims_for_study_group( $study_group_id );
+
+	$all_unique_ims = array(); //empty to hold NON duplicates
+	
+	foreach( $all_ims as $one_im ){
+	
+		var_dump( $one_im );
+	
+	
+	}
+	
+	
 
 
 
 }
+
+
+
+
+
+
+
 
 /**
  * Returns indicators for study id & seq (there are 2 kinds of indicators: codetbl indicators, study table indicators)
@@ -289,13 +461,23 @@ function get_indicators_for_studyid_seq( $study_id, $seq, $indicator_list ){
 	
 	//go through all these indicators and MAKE SURE they are in the indicators_list (b/c lagacy data! Fun!)
 	foreach( $code_table_indicators as $indicators ){
+		//var_dump( $indicators );
 		if( array_key_exists( $indicators["result"], $indicator_list ) ){
 			//if this indicator shows on the intervention/partnership tab, allow it! Bonus: indicators list has string descr of ind!
-			$new_code_table_inds[ $indicators["result"] ] = $indicator_list[ $indicators["result"] ];
+			//also, we need to account for 'other' - if 'Other' is checked, get 'other_indicator' value from studies table
+			if( $indicators["result"] == "Other" ){
+				//get 'other_intervention_indicators' from studies table
+				$other_ind = get_single_field_value_study_table( $study_id, 'other_intervention_indicators' );
+				$new_code_table_inds[ (string) $indicators["result"] ] = "Other: " . $other_ind;
+			} else {
+				$new_code_table_inds[ (string) $indicators["result"] ] = $indicator_list[ $indicators["result"] ];
+			}
 		
 		}
 		
 	}
+	
+	//var_dump( $new_code_table_inds );
 	
 	//Part II: now, get all indicators that are selected from the study:
 	//first, identify which indicators selected in this seq
@@ -333,9 +515,10 @@ function get_indicators_for_studyid_seq( $study_id, $seq, $indicator_list ){
 		}
 	}
 	
-	//combine and return both inds lists
-	$both_sets_indicators = array_merge( $new_code_table_inds, $new_ea_table_inds );
-		
+	//combine and return both inds lists (no array_merge, it reindexes int indeces)
+	//$both_sets_indicators = array_merge( $new_code_table_inds, $new_ea_table_inds );
+	$both_sets_indicators = $new_code_table_inds + $new_ea_table_inds;
+	
 	return $both_sets_indicators;
 
 
@@ -424,6 +607,82 @@ function get_measures_for_studyid_seq( $study_id, $seq ){
 
 }
 
+/**
+ * Returns Analysis-specific data from EA table
+ *
+ * @param int. Study ID.
+ * @return array. Array of all analysis fields for all seq (ea tabs)
+ */
+function get_ea_analysis_data( $study_id ){
+
+	global $wpdb;
+	
+	//init final array
+	$translated_ea = array();
+	
+	//get raw data from db
+	$ea_sql = $wpdb->prepare( 
+		"
+		SELECT      seq, outcome_direction, outcome_type, outcome_type_other, significant, duration, duration_notreported, indicator_strategies_directions
+		FROM        $wpdb->transtria_effect_association
+		WHERE		StudyID = %d
+		",
+		$study_id
+	); 
+	
+	$form_rows = $wpdb->get_results( $ea_sql, ARRAY_A );
+	
+	//now, we need to do lookups on some of these fields (to translate from lookup table)
+	foreach( $form_rows as $one_seq ){
+	
+		//var_dump( $one_seq );
+		
+		$new_outcome_direction = get_single_codetypeid_descr_by_value( 64, $one_seq["outcome_direction"] ); //64 = "Results Outcome Direction"
+		if( $one_seq["duration_notreported"] != "Y" ){
+			$new_outcome_duration = get_single_codetypeid_descr_by_value( 9, $one_seq["duration"] ); //9 = "Duration"
+		} else {
+			$new_outcome_duration = "not reported";
+		}
+		
+		//var_dump ( $one_seq["outcome_type_other"]);
+		if( ( $one_seq["outcome_type_other"] != "" )  || empty( $one_seq["outcome_type_other"] ) ){
+			//$new_outcome_type = get_single_codetypeid_descr_by_value( 54, $one_seq["outcome_type"] ); //64 = "OutcomeType"
+			//we can just return the value here, since it correspond's to Laura's algorithms
+			$new_outcome_type = $one_seq["outcome_type"]; 
+		} else {
+			$new_outcome_type = "Other: " . $one_seq["outcome_type"];
+		}
+		
+		//deal with serialized indicator/strategies/directions to get indicator["string"]  => Direction
+		$unserialized_inds = unserialize( $one_seq["indicator_strategies_directions"] );
+		$indicators_directions = array();
+		//var_dump( $unserialized_inds );
+		if( !empty( $unserialized_inds ) && ( $unserialized_inds != false ) ){
+			foreach( $unserialized_inds["indicators"] as $index => $details ){
+			
+				//var_dump( $index );
+				//var_dump( $details );
+				$indicators_directions[ $index ] = $details["direction"];
+			}
+		} else {
+			//TODO: are we looking for old vars here?
+		}
+		
+		
+		$translated_ea[ $one_seq["seq"] ] = array(
+				"outcome_direction" => $new_outcome_direction,
+				"outcome_type" => $new_outcome_type,
+				"outcome_duration" => $new_outcome_duration,
+				"significant" => $one_seq["significant"],
+				"indicator_directions" => $indicators_directions,
+				"indicators_strategies_directions" => $unserialized_inds
+			);
+	
+	}
+	//var_dump( $translated_ea );
+	return $translated_ea;
+
+}
 
 
 
@@ -478,7 +737,6 @@ function get_code_results_by_study_codetype( $study_id, $codetype ){
 			SELECT      value, descr
 			FROM        $wpdb->transtria_codetbl
 			WHERE		codetypeID = %d
-			AND			inactive_flag != 'Y'
 			AND			value = %s
 			ORDER BY	sequence
 			",
