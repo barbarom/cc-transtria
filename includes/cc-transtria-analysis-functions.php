@@ -26,3 +26,25 @@ function cc_transtria_calculate_ea_direction( $ind_dir, $out_dir ){
 
 
 }
+
+/**
+ * Searches multidimensional array by key=> value pair
+ *
+ * @param array, string, string
+ * @return
+ */
+function md_array_search( $array, $key, $value){
+    $results = array();
+
+    if ( is_array($array) ) {
+        if ( isset($array[$key]) && $array[$key] == $value ) {
+            $results[] = $array;
+        }
+
+        foreach ($array as $i => $subarray) {
+            $results[$i] = array_merge($results, md_array_search($subarray, $key, $value));
+        }
+    }
+
+    return $results;
+}

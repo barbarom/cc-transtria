@@ -184,7 +184,7 @@ function get_unique_ims_for_study_group( $study_group_id ){
 	
 	$im_rows = $wpdb->get_results( $im_sql, ARRAY_A );
 	
-	var_dump( $im_rows );
+	//var_dump( $im_rows );
 	
 	$analysis_id_count = 1;
 	$previous_measure = ""; //for scope
@@ -205,30 +205,44 @@ function get_unique_ims_for_study_group( $study_group_id ){
 		$next_indicator_val = $one_intermediate_im["indicator_value"];
 		$next_indicator = $one_intermediate_im["indicator"];
 		$next_info_id = $one_intermediate_im["info_id"];
+		$me = "measures";
+		$ind = "indicators";
 		
 		//get array of [ info_id => measure ] pairs that are NON-duplicative.  However, Include all info_ids of duplicates w/in that unique array.
 		$temp_array_measure = array_column ( $unique_ims, "measure", "indicator_value" );
-		//$temp_array_measure_info_id = array_column ( $unique_ims, "measure", "info_id" );
+		$temp_array_measure_info_id = array_column ( $unique_ims, "measure", "org_info_id" );
+		$temp_array_indicator_info_id = array_column ( $unique_ims, "indicator_value", "org_info_id" );
 		//var_dump( $temp_array_measure );
 		
-		//if previous vals == next vals, DUPLICATE and we need to add the info_id to the current analysis array list
+		//if previous vals == next vals, DUPLICATE and we need to add the info_id to the current analysis array list (unless both empty, means we're at start)
 		if( ( $previous_measure == $next_measure ) && ( $previous_indicator_val == $next_indicator_val ) ){
-			//we're still in duplicate land, add info id to list
-			$info_id_list = $info_id_list . ',' . $next_info_id;
-			//update duplicative entry in unique_ims: how
+			//&& ( ( $previous_measure != "" ) || ( $next_measure != "" ) ) ){
+			//update duplicative entry in unique_ims: cros-reference $temp_array_indicator_info_id and $temp_array_measure_info_id to get info_id 
+			$info_id_list_measures = array_keys( $temp_array_measure_info_id, $next_measure );
+			$info_id_list_indicators = array_keys( $temp_array_indicator_info_id, $next_indicator_val );
+
+			//what info_id has this measure and indicator?
+			$intersect_ids = array_intersect( $info_id_list_measures, $info_id_list_indicators );
 			
+			$org_info_id = current( $intersect_ids ); //should only be one!  TODO: shore this method up
+			
+			//find entry in unique_ims, update "info_ids" w new list
+			foreach( $unique_ims as $im_index => $im_values ){
+				if( $org_info_id == $im_values["org_info_id"] ){
+					//append to existing list
+					$info_id_list = $im_values["info_id_list"] . ',' . $next_info_id;
+					
+					//update original entry w new info_id list
+					$unique_ims[ $im_index ]["info_id_list"] = $info_id_list;
+				
+				}
+			
+			}
+			
+		} 
 		
-		} else {
-			//this is a new dyad
-			//$info_id_list = 
-		
-		}
-		
-		
-		
-		//Method 2: go through double-sorted list and
-		
-		
+
+		//memory_get_peak_usage();
 	
 		//first, see if im w measure value exists in temp measure array
 		if( in_array( $next_measure, $temp_array_measure ) ){
@@ -253,7 +267,8 @@ function get_unique_ims_for_study_group( $study_group_id ){
 						"measure" => $next_measure, 
 						"indicator_value" => $next_indicator_val,
 						"indicator" => $next_indicator,
-						"info_ids" => $next_info_id
+						"org_info_id" => $next_info_id,
+						"info_id_list" => $next_info_id
 					);
 					
 				//update our counter
@@ -262,14 +277,14 @@ function get_unique_ims_for_study_group( $study_group_id ){
 			}
 		
 		} else {
-			//$adding_things = "Adding things...";
-			//var_dump( $adding_things );
-			//add this indicator/measure to unique_ims array
+			//we don't even have the measure present, so add this indicator/measure to unique_ims array
 			$new_index = $study_group_id . "_" . $analysis_id_count;
 			$unique_ims[ $new_index ] = array( 
 					"measure" => $next_measure, 
 					"indicator_value" => $next_indicator_val,
-					"indicator" => $next_indicator
+					"indicator" => $next_indicator,
+					"org_info_id" => $next_info_id,
+					"info_id_list" => $next_info_id
 				);
 				
 			//update our counter
