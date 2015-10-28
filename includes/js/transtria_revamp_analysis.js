@@ -15,11 +15,14 @@ function analysisClickListen(){
 	//show/hides
 	jQuery("a#hide_im_table").on("click", toggle_im_table );
 	jQuery("a#hide_direction_table").on("click", toggle_direction_table );
+	jQuery("a#hide_design_table").on("click", toggle_direction_table );
 	
 	
-	//when clicking on the ea tabs
+	//when clicking on the analysis/intermediate vars tabs
 	jQuery('.analysis_tab_label').on( "click", analysis_tab_toggle );
 
+	//
+	jQuery('#intermediate_vars_content #show_direction_algorithm').on( "click", intermediate_algorithm_toggle );
 
 
 
@@ -42,6 +45,23 @@ function analysis_tab_toggle(){
 	
 }
 
+//toggle intermediate direction algorithm (could be a switch-case)
+function intermediate_algorithm_toggle(){
+
+	//get which algorithm to show/hide from the data-whichalgorithm attr
+	var which_alg = jQuery( this ).attr("data-whichalgorithm");
+	
+	if( jQuery("#" + which_alg).is(":visible") ){
+		jQuery( "#" + which_alg ).hide();
+		jQuery( this ).html("SHOW ALGORITHM DETAILS");
+	} else {
+		jQuery( "#" + which_alg ).show();
+		jQuery( this ).html("HIDE ALGORITHM DETAILS");
+	}
+
+}
+
+
 function get_vars_by_grouping(){
 
 	this_study_group = jQuery("select#StudyGroupingIDList").val();
@@ -54,7 +74,10 @@ function get_vars_by_grouping(){
 	//where to add table data after success
 	which_tr_parent = jQuery("table#intermediate_vars_im tr#data_parent");
 	which_tr_parent_dir = jQuery("table#intermediate_vars_direction tr#data_parent");
+	which_tr_parent_intermediate_design = jQuery("table#intermediate_vars_design tr#data_parent");
+	
 	which_tr_parent_analysis_im = jQuery("table#analysis_vars_im tr#data_parent");
+	which_tr_parent_analysis_effect = jQuery("table#analysis_vars_effect tr#data_parent");
 	
 	//ajax data
 	var ajax_action = 'get_im_dyads_by_group';
@@ -81,6 +104,11 @@ function get_vars_by_grouping(){
 			
 			//clear taable
 			jQuery("table#intermediate_vars_im tr").not(".no_remove").remove();
+			jQuery("table#intermediate_vars_direction tr").not(".no_remove").remove();
+			jQuery("table#analysis_vars_im tr").not(".no_remove").remove();
+			jQuery("table#analysis_vars_effect tr").not(".no_remove").remove();
+			jQuery("table#analysis_vars_effectiveness tr").not(".no_remove").remove();
+			jQuery("table#analysis_vars_hrpops tr").not(".no_remove").remove();
 			
 		}
 	}).success( function( data ) {
@@ -93,6 +121,7 @@ function get_vars_by_grouping(){
 			//draw table#intermediate_vars_im (4 cols)
 			var txt = "";
 			var txt_dir = "";
+			var txt_design = "";
 			var txt_a_im = "";
 			//for each study
 			if( data.intermediate_vars != undefined ){
@@ -127,6 +156,19 @@ function get_vars_by_grouping(){
 				});
 			} //end if intermediate_vars
 			
+			if( data.intermediate_vars_study != undefined ){
+				jQuery.each( data.intermediate_vars_study, function ( index, this_inter_study_data){
+					//for each row in intermediate table for this study					
+					txt_design += "<tr>";
+					txt_design += "<td>" + index + "</td>";
+					txt_design += "<td>" + this.StudyDesignValue + "</td>";
+					txt_design += "<td>" + this.otherStudyDesign + "</td>";
+					
+					txt_design += "</tr>";
+						
+				});
+			} //end if intermedaite_vars
+			
 			if( data.analysis_vars != undefined ){
 				jQuery.each( data.analysis_vars, function (){
 					//for each row in intermediate table for this study
@@ -139,6 +181,7 @@ function get_vars_by_grouping(){
 						txt_a_im += "<td>" + this.info_id + "</td>";
 						txt_a_im += "<td>" + this.indicator + "</td>";
 						txt_a_im += "<td>" + this.measure + "</td>";
+						txt_a_im += "<td>" + this.info_id_list + "</td>";
 						
 						txt_a_im += "</tr>";
 						
@@ -148,7 +191,7 @@ function get_vars_by_grouping(){
 						//TODO: populate the effectiveness table
 						
 						
-						//TODO: populate thehr pops table
+						//TODO: populate the hr pops table
 					
 					});
 					//console.log( jQuery(this ) );
@@ -160,6 +203,7 @@ function get_vars_by_grouping(){
 			which_tr_parent.after( txt );
 			which_tr_parent_dir.after( txt_dir );
 			which_tr_parent_analysis_im.after( txt_a_im );
+			which_tr_parent_intermediate_design.after( txt_design );
 			
 		}
 		
@@ -307,6 +351,21 @@ function toggle_direction_table(){
 	} else {
 		which_table.slideDown();
 		jQuery("a#hide_direction_table").html("HIDE I-M DIRECTIONS");
+	}
+	
+}
+
+//toggles visibility of study design table
+function toggle_direction_table(){
+
+	var which_table = jQuery("table#intermediate_vars_design");
+	
+	if( which_table.is(":visible") ){
+		which_table.slideUp();
+		jQuery("a#hide_design_table").html("SHOW STUDY DESIGN");
+	} else {
+		which_table.slideDown();
+		jQuery("a#hide_design_table").html("HIDE STUDY DESIGN");
 	}
 	
 }

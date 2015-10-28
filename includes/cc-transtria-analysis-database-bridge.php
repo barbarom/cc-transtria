@@ -174,7 +174,7 @@ function get_unique_ims_for_study_group( $study_group_id ){
 	//get all study id dyads for this group
 	$im_sql = $wpdb->prepare( 
 		"
-		SELECT      info_id, indicator_value, indicator, measure
+		SELECT      info_id, indicator_value, indicator, measure, calc_ea_direction
 		FROM        $wpdb->transtria_analysis_intermediate
 		WHERE		StudyGroupingID = %d 
 		ORDER BY	measure, indicator
@@ -205,6 +205,7 @@ function get_unique_ims_for_study_group( $study_group_id ){
 		$next_indicator_val = $one_intermediate_im["indicator_value"];
 		$next_indicator = $one_intermediate_im["indicator"];
 		$next_info_id = $one_intermediate_im["info_id"];
+		$effects = $one_intermediate_im["calc_ea_direction"];
 		$me = "measures";
 		$ind = "indicators";
 		
@@ -255,8 +256,6 @@ function get_unique_ims_for_study_group( $study_group_id ){
 				if( $i == $next_indicator_val ){
 					//we've found it!  Don't add to unique_ims, but add the info_id
 					$found = true;
-					//what's the current info id string?
-					//$unique_ims
 				}
 			}
 			
@@ -268,7 +267,8 @@ function get_unique_ims_for_study_group( $study_group_id ){
 						"indicator_value" => $next_indicator_val,
 						"indicator" => $next_indicator,
 						"org_info_id" => $next_info_id,
-						"info_id_list" => $next_info_id
+						"info_id_list" => $next_info_id,
+						"net_effects" => $effects
 					);
 					
 				//update our counter
@@ -284,14 +284,14 @@ function get_unique_ims_for_study_group( $study_group_id ){
 					"indicator_value" => $next_indicator_val,
 					"indicator" => $next_indicator,
 					"org_info_id" => $next_info_id,
-					"info_id_list" => $next_info_id
+					"info_id_list" => $next_info_id,
+					"net_effects" => $effects
 				);
 				
 			//update our counter
 			$analysis_id_count++;
 		}
-		
-		
+				
 	}
 	
 	//var_dump( $unique_ims );
@@ -299,6 +299,7 @@ function get_unique_ims_for_study_group( $study_group_id ){
 	
 }
 
+ 
 /**
  * Returns Analysis vars from table (not calcs)
  * 
@@ -321,10 +322,80 @@ function get_analysis_vars_for_group( $study_group_id ){
 	
 	$form_rows = $wpdb->get_results( $analysis_sql, ARRAY_A );
 	
+	//TODO: decide where this goes...
+	//translate study design vals (since this is analysis, it's not in lookups)
+	foreach( $form_rows as $index => $row ){
+		//var_dump( $row );
+		switch( $row["study_design"] ){
+			case 1:
+				$row["study_design_label"] = "Intervention Evaluation";
+				break;
+			case 2:
+				$row["study_design_label"] = "Associational Study";
+				break;
+			default:
+				$row["study_design_label"] = "";
+				break;
+		}
+		
+		//put the study label back into total array
+		$form_rows[ $index ] = $row;
+	}
+	
 	return $form_rows;
 
 }
- 
+
+/**
+ * Returns study-level data for intermediate vars
+ *
+ * @param int. Study Grouping ID.
+ * @return array.  Array of info by study ids
+ */
+function get_study_level_for_intermediate( $study_group_id ){
+
+	global $wpdb;
+	
+	//get studies in this group
+	$study_ids = get_study_ids_in_study_group( $study_group_id );
+	
+	$studies_data = array();
+	
+	foreach( $study_ids as $s_id ){
+		
+		//var_dump( $s_id );
+		//get study-level vars for intermediate tab
+		$study_sql = $wpdb->prepare( 
+			"
+			SELECT      StudyDesignID, otherStudyDesign
+			FROM        $wpdb->transtria_studies
+			WHERE		StudyID = %d 
+			",
+			current( $s_id )
+		); 
+		
+		$form_rows = $wpdb->get_results( $study_sql, ARRAY_A );
+	
+		$studies_data[ current( $s_id ) ] = $form_rows;
+	}
+	
+	//array_push( $all_dyads, current( $s_id ) );
+	$study_design_lookup = get_lookup_for_study_design();
+	
+	//loop through studies data and replace study_design value with actual words
+	foreach( $studies_data as $index => $one_study ){
+		//var_dump( $index );
+		$one_study = current( $one_study );
+		$this_value = $one_study[ "StudyDesignID" ];
+		//var_dump( $study_design_lookup[ $this_value ] );
+		$one_study[ "StudyDesignValue" ] = $study_design_lookup[ $this_value ]->descr;	
+		$studies_data[ $index ] = $one_study;
+	}
+	
+	return $studies_data;
+
+
+}
 
 /**
  * Sets all Indicator-Measure dyads for EACH ea tab (seq) in a given study GROUP; updates intermediate_analysis table
@@ -347,8 +418,7 @@ function set_dyads_for_study_group( $study_group_id ){
 	
 		//Get other seq-related study data for analysis data (EA tab)
 		$ea_data = get_ea_analysis_data( $study_id[0] );
-		
-		//var_dump ( $ea_data );
+		$study_data = get_study_analysis_data( $study_id[0] );
 		
 		//Part I: remove all IM dyads w/ this study id form intermediate table
 		$intermediate_del_row = $wpdb->delete( 
@@ -388,6 +458,8 @@ function set_dyads_for_study_group( $study_group_id ){
 		$outcome_type = "";
 		$outcome_duration = "";
 		$ea_direction = "";
+		
+		$study_design = $study_data["StudyDesignID"];
 		
 		if( $num_ea > 0 ){ //if we even HAVE ea tabs
 			for( $i=1; $i <= $num_ea; $i++ ){ //$i = seq
@@ -442,13 +514,14 @@ function set_dyads_for_study_group( $study_group_id ){
 						$wpdb->query( $wpdb->prepare( 
 							"
 								INSERT INTO $wpdb->transtria_analysis_intermediate
-								( unique_id, info_id, StudyID, StudyGroupingID, ea_seq_id, indicator_value, indicator, indicator_direction, measure, outcome_direction, outcome_type, outcome_duration, significant, calc_ea_direction )
-								VALUES ( %d, %s, %d, %d, %d, %s, %s, %s, %s, %s, %s, %s, %s, %s )
+								( unique_id, info_id, StudyID, StudyGroupingID, StudyDesignID, ea_seq_id, indicator_value, indicator, indicator_direction, measure, outcome_direction, outcome_type, outcome_duration, significant, calc_ea_direction )
+								VALUES ( %d, %s, %d, %d, %s, %d, %s, %s, %s, %s, %s, %s, %s, %s, %s )
 							", 
 							$count,
 							$info_id, 
 							$study_id[0],
 							$study_group_id,
+							$study_design,
 							$i,
 							$ind_index, 
 							$single_ind,
@@ -483,6 +556,8 @@ function set_dyads_for_study_group( $study_group_id ){
 	return $study_ids; 
 }
 
+
+
 /**
  * Sets Analysis IDs for this group. Method: set analysis id for UNIQUE I-M dyads in study group (no dups!); update analysis table
  *
@@ -511,9 +586,19 @@ function set_unique_analysis_ids_for_group( $study_group_id ){
 	$placeholder = 0;
 	foreach( $all_ims as $analysis_index => $one_im ){
 	
+		var_dump( $one_im );
 		$measure = $one_im[ "measure" ];
 		$indicator = $one_im[ "indicator" ];
 		$indicator_val = $one_im[ "indicator_value" ];
+		$info_id_list = $one_im[ "info_id_list" ];
+		
+		//set ea_direction, if no duplicates
+		if( strpos( $info_id_list, "," ) === false ){
+			$ea_direction = $one_im[ "net_effects" ];
+		} else {
+			$ea_direction = "";
+		}
+		
 		//add these to analysis table
 		//var_dump( $analysis_index );
 		//var_dump( $one_im );
@@ -521,15 +606,17 @@ function set_unique_analysis_ids_for_group( $study_group_id ){
 		$spartacus = $wpdb->prepare( 
 			"
 				INSERT INTO $wpdb->transtria_analysis
-				( info_id, StudyGroupingID, study_design, indicator_value, indicator, measure )
-				VALUES ( %s, %d, %d, %s, %s, %s )
+				( info_id, StudyGroupingID, study_design, indicator_value, indicator, measure, info_id_list, net_effects )
+				VALUES ( %s, %d, %d, %s, %s, %s, %s, %s )
 			", 
 			$analysis_index,
 			$study_group_id,
 			$placeholder,
 			$indicator_val, 
 			$indicator,
-			$measure
+			$measure,
+			$info_id_list,
+			$ea_direction
 		);
 		
 		$wpdb->query( $spartacus );
@@ -537,9 +624,6 @@ function set_unique_analysis_ids_for_group( $study_group_id ){
 	}
 	
 }
-
-
-
 
 
 
@@ -817,6 +901,36 @@ function get_ea_analysis_data( $study_id ){
 
 }
 
+/**
+ * Returns Analysis-specific data from Studies table
+ *
+ * @param int. Study ID.
+ * @return array. Array of all analysis fields for study
+ */
+function get_study_analysis_data( $study_id ){
+
+	global $wpdb;
+	
+	//init final array
+	$translated_ea = array();
+	
+	//get raw data from db
+	$study_sql = $wpdb->prepare( 
+		"
+		SELECT      StudyID, StudyDesignID
+		FROM        $wpdb->transtria_studies
+		WHERE		StudyID = %d
+		",
+		$study_id
+	); 
+	
+	$form_row = $wpdb->get_row( $study_sql, ARRAY_A );
+
+	return $form_row;
+
+}
+
+
 
 
 /*** GENERAL DATABASE HELPER FUNCTIONS (How do you like my Modularity, now?) *****/
@@ -891,6 +1005,32 @@ function get_code_results_by_study_codetype( $study_id, $codetype ){
 
 }
 
+/**
+ * Returns a lookup table for codetypeid
+ *
+ * @param int. CodetypeID
+ * @return array. Indexed values => descr
+ */
+function get_codetbl_by_codetype( $codetypeID ){
+
+	global $wpdb;
+	
+	//what is the codetypeID (in codetype table) given a codetype string
+	$codetype_sql = $wpdb->prepare( 
+		"
+		SELECT      value, descr
+		FROM        $wpdb->transtria_codetbl
+		WHERE		codetypeID = %s 
+		ORDER BY 	sequence
+		",
+		$codetypeID
+	); 
+
+	$codetbl_rows = $wpdb->get_results( $codetype_sql, OBJECT_K );
+
+	return $codetbl_rows;
+
+}
 
 /**
  * Returns field value for single column/study_id in table
@@ -984,3 +1124,14 @@ function get_measures_textboxes_by_study_seq_value( $study_id, $seq, $measure_va
 
 }
 
+/**
+ * Returns lookup table for study design
+ *
+ * @return array. Ints => atrings
+ */
+function get_lookup_for_study_design(){
+
+	$values = get_codetbl_by_codetype( 99 );
+
+	return $values;
+}

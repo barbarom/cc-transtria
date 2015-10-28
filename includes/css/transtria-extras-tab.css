@@ -325,6 +325,19 @@ table#intermediate_vars_direction{
 	margin:2em 0;
 }
 
+#intermediate_vars_content .show_algorithm{
+	border: 2px solid #cccccc;
+    display: none;
+    margin: 2em;
+    padding: 0 2em;
+	color: #636363;
+}
+
+
+
+
+
+
 
 
 .placeholder-tr{

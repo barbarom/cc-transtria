@@ -747,10 +747,12 @@ class CC_Transtria_Extras {
 		$study_group = $_POST["this_study_group"];
 		
 		$dyad_array = get_dyads_for_study_group( $study_group );
+		$study_data = get_study_level_for_intermediate( $study_group );
 		$analysis_data = get_analysis_vars_for_group( $study_group );
 		
 		//set data
 		$data[ 'intermediate_vars' ] = $dyad_array;
+		$data[ 'intermediate_vars_study' ] = $study_data;
 		$data[ 'analysis_vars' ] = $analysis_data;
 		
 		//echo json_encode( $data );

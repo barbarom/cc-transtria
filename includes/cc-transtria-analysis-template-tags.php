@@ -64,8 +64,37 @@ function cc_transtria_render_analysis_page(){
 				
 				</table>
 				
+				<h4>Study Design</h4>
+				<a id="hide_design_table" class="button">HIDE STUDY DESIGN</a>
+				<table id="intermediate_vars_design">
+					<tr class="no_remove">
+						<th>Study ID</th>
+						<th>Study Design</th>
+						<th>Study Design, Other</th>		
+					</tr>
+					<tr id="data_parent" class="no_remove"></tr>
+				
+				</table>
+				
 				<h4>Effect or Association Direction:</h4>
 				<a id="hide_direction_table" class="button">HIDE I-M DIRECTIONS</a>
+				<a id="show_direction_algorithm" class="button alignright" data-whichalgorithm="intermediate_direction_algorithm">SHOW ALGORITHM DETAILS</a>
+				<div id="intermediate_direction_algorithm" class="show_algorithm">
+					<h4>Effect or Association Direction</h4>
+					<p>
+						if( $significant == "N" ){<br />
+							&nbsp;$ea_direction = "3";<br />
+						} else { <br />
+							&nbsp;if( !empty( $ind_directions[ $ind_index ] ) ){ //if we HAVE a direction, else let them know <br />
+								&nbsp;&nbsp;$ind_dir = $ind_directions[ $ind_index ];<br />
+								&nbsp;&nbsp;$ea_direction = cc_transtria_calculate_ea_direction( $indicator_direction, $outcome_direction );<br />
+							&nbsp;} else {<br />
+								&nbsp;&nbsp;$ind_dir = "no ind. direction set";<br />
+								&nbsp;&nbsp;$ea_direction = "no ind. direction set";<br />
+							&nbsp;}<br />
+						}<br />
+					</p>
+				</div>
 				<table id="intermediate_vars_direction">
 					<tr class="no_remove">
 						<th>Unique ID (Study ID _ seq _ unique ID)</th>
@@ -91,7 +120,8 @@ function cc_transtria_render_analysis_page(){
 						<th>Study Grouping ID</th>
 						<th>Analysis ID (SG _ unique ID)</th>
 						<th>Indicator</th>
-						<th>Measure</th>		
+						<th>Measure</th>	
+						<th>Duplicate IDs</th>	
 					</tr>
 					<tr id="data_parent" class="no_remove"></tr>
 				
@@ -99,6 +129,8 @@ function cc_transtria_render_analysis_page(){
 				
 				<select id="analysis_study_design">Study Design
 					<option value="-1"> -- Select Study Design -- </option>
+					<option value="-1"> 1 = Intervention Evaluation </option>
+					<option value="-1"> 2 = Associational Study </option>
 				</select>
 				
 				<h4>Net Effects or Associations:</h4>

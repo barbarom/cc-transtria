@@ -1071,20 +1071,24 @@ function get_current_study_info(){
 				
 			});
 			
+			console.log( 'pre multi' );
 			//now handle the incoming multiple data
-			jQuery.each( multi_meat, function(index, element) {
-				
-				//do we have an element div id w this index?  
-				// TODO: edit study function in php to return indexes = div ids
-				selector_obj = jQuery("#" + index );
-				//selector_obj_by_name = jQuery("input[name='" + index + "']");
-				
-				if( selector_obj.length > 0 ){
-					//mark child options of that value as 'selected'
-					selector_obj.val( element ).prop("checked", true);
-				
-				}
-			});
+			console.log( jQuery.isPlainObject( multi_meat ) );
+			if( jQuery.isPlainObject( multi_meat ) ){
+				jQuery.each( multi_meat, function(index, element) {
+					
+					//do we have an element div id w this index?  
+					// TODO: edit study function in php to return indexes = div ids
+					selector_obj = jQuery("#" + index );
+					//selector_obj_by_name = jQuery("input[name='" + index + "']");
+					//console.log( selector_obj );
+					if( selector_obj.length > 0 ){
+						//mark child options of that value as 'selected'
+						selector_obj.val( element ).prop("checked", true);
+						//console.log( selector_obj );
+					}
+				});
+			}
 			
 		}).complete( function(data){
 		
