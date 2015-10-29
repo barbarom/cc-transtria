@@ -421,9 +421,9 @@ function get_study_level_for_intermediate( $study_group_id ){
 			$this_s_id
 		); 
 		
-		$form_rows = $wpdb->get_row( $study_sql, ARRAY_A );
+		$study_row = $wpdb->get_row( $study_sql, ARRAY_A );
  
-		$studies_data[ $this_s_id ] = $form_rows;
+		$studies_data[ $this_s_id ] = $study_row;
 		
 		//get multi data
 		//intervention components: codetypeID = 37
@@ -438,6 +438,24 @@ function get_study_level_for_intermediate( $study_group_id ){
 		//add multi data to all study data array
 		$studies_data[ $this_s_id ][ "multi" ] = $studies_multi_data;
 		$studies_multi_data = array();
+		
+		//get ipe data (freq of exposure, rate of participation)
+		$which_pop = 'ipe';
+		$pops_sql = $wpdb->prepare(
+			"
+			SELECT      ParticipationRate, ExposureFrequency, rateofparticipation_notreported, freqofexposure_notreported
+			FROM        $wpdb->transtria_population
+			WHERE		StudyID = %d 
+			AND			PopulationType = %s
+			",
+			$this_s_id,
+			$which_pop		
+		);
+		
+		$pops_row = $wpdb->get_row( $pops_sql, ARRAY_A );
+		
+		//append pops data to study_data
+		$studies_data[ $this_s_id ][ $which_pop ] = $pops_row;
 		
 	}
 	

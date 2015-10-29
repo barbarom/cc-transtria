@@ -27,7 +27,7 @@ function cc_transtria_render_analysis_page(){
 		</div>
 		
 		<div id="analysis_choices">
-			<select id="StudyGroupingIDList" style="">
+			1. <select id="StudyGroupingIDList" style="">
 				<option value="-1"> -- Select Study Group -- </option>
 			<?php
 				foreach( $study_group_ids as $key => $val ){
@@ -36,12 +36,16 @@ function cc_transtria_render_analysis_page(){
 					
 				}
 			?>
-			</select>
+			</select> Select Study Grouping
+			<br />
+			2. <a id="run_intermediate_analysis" class="button">RUN INTERMEDIATE ANALYSIS**</a>
+			<br />
+			3. <a id="run_analysis" class="button">RUN ANALYSIS**</a>
+			<br />
+			4. <a id="get_vars_by_group" class="button">DISPLAY ALL VARS</a>
 			
-			<a id="run_intermediate_analysis" class="button">1. RUN INTERMEDIATE ANALYSIS FOR STUDY GROUP</a>
-			<a id="run_analysis" class="button">2. RUN ANALYSIS FOR STUDY GROUP</a>
-			<a id="get_vars_by_group" class="button">3. DISPLAY ALL VARS FOR STUDY GROUP</a>
-		
+			<h4><em>**Note: will overwrite existing variables and computations</em></h4>
+			
 		</div>
 		
 		<label class="analysis_tab_label active" data-whichanalysistab="intermediate_vars_content" for="intermediate_tab">Intermediate Data</label>
@@ -226,7 +230,7 @@ function cc_transtria_render_analysis_page(){
 						<th>Analysis ID (SG _ unique ID)</th>
 						<th>Indicator</th>
 						<th>Measure</th>	
-						<th>Duplicate IDs</th>	
+						<th>Unique IDs ( >1 = duplicate)</th>	
 					</tr>
 					<tr id="data_parent" class="no_remove"></tr>
 				

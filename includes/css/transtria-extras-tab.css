@@ -314,11 +314,14 @@ table#assignment-table th{
 #analysis_choices {
 	margin:2em 0;
 	border: 3px solid #ccc;
-	padding:2em 1em;
+	padding:2em 1em 1em;
+	overflow:hidden;
+	font-weight:bold;
 }
 #analysis_choices .button{
 	font-size:1em;
 	font-weight:bold;
+	margin-top:1em;
 }
 table#intermediate_vars_im,
 table#intermediate_vars_direction{
@@ -332,6 +335,9 @@ table#intermediate_vars_direction{
     margin: 2em;
     padding: 0 2em;
 	color: #636363;
+}
+#analysis_content table td{
+	min-width:80px
 }
 
 #analysis_content a.analysis_save{

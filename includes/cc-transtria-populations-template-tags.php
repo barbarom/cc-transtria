@@ -404,7 +404,7 @@ function cc_transtria_render_subpopulations_tab( $field_data, $which_pop = 'tp')
 			<tr class="<?php echo $which_pop; ?>_not_general">
 				<td><label>Frequency of Exposure:</label></td>
 				<td colspan="3">
-					<select id="<?php echo $which_pop; ?>_exposure_frequency">
+					<select id="<?php echo $which_pop; ?>_exposure_frequency" class="population_table">
 						<option value="">---Select---</option>
 						<?php 
 							foreach( $dd_multiple_options_pops[ 'ipe_exposure_frequency' ] as $k => $v ){

@@ -395,7 +395,11 @@ function cc_transtria_save_to_pops_table_raw( $studies_data, $study_id, $new_stu
 	foreach( $parsed_studies_data as $pop_type => $pop_array ){
 	
 		$new_index[ $pop_type ] = cc_transtria_match_div_ids_to_pops_columns_single( $pop_type, $pop_array, true );
-	
+				//debuggin stuff
+				/*if( $pop_type == "ipe" ){
+					var_dump( $pop_array );
+				
+				}*/
 	}
 	
 	//TODO: if this works, combine things
@@ -452,6 +456,8 @@ function cc_transtria_save_to_pops_table_raw( $studies_data, $study_id, $new_stu
 			// wpdb->update is perfect for this. Wow. Ref: https://codex.wordpress.org/Class_Reference/wpdb#UPDATE_rows
 			if ( !empty ( $index_val ) ) {
 				$num_study_rows_updated = $wpdb->update( $wpdb->transtria_population, $index_val, $pops_where, $format = null, $where_format = null );
+				
+				
 			} 
 				
 			if( $num_study_rows_updated === false ){
