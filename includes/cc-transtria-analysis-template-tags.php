@@ -38,9 +38,9 @@ function cc_transtria_render_analysis_page(){
 			?>
 			</select>
 			
-			<a id="get_vars_by_group" class="button">GET ALL VARS FOR STUDY GROUP</a>
-			<a id="run_intermediate_analysis" class="button">RUN INTERMEDIATE ANALYSIS FOR STUDY GROUP</a>
-			<a id="run_analysis" class="button">RUN ANALYSIS FOR STUDY GROUP</a>
+			<a id="run_intermediate_analysis" class="button">1. RUN INTERMEDIATE ANALYSIS FOR STUDY GROUP</a>
+			<a id="run_analysis" class="button">2. RUN ANALYSIS FOR STUDY GROUP</a>
+			<a id="get_vars_by_group" class="button">3. DISPLAY ALL VARS FOR STUDY GROUP</a>
 		
 		</div>
 		
@@ -49,10 +49,10 @@ function cc_transtria_render_analysis_page(){
 		
 		<div id="analysis_content">
 			<div id="intermediate_vars_content" class="single_analysis_content">
-				<h3>Intermediate Variables</h3>
+				<h3 id="intermediate_vars_header_text">Intermediate Variables</h3>
 				
 				<h4>Indicator-Measure Dyad(s):</h4>
-				<a id="hide_im_table" class="button">HIDE I-M DYADS</a>
+				<a id="hide_im_table" class="button" data-whichtable="intermediate_vars_im" data-whichlabel="I-M DYADS">HIDE I-M DYADS</a>
 				<table id="intermediate_vars_im">
 					<tr class="no_remove">
 						<th>Study ID</th>
@@ -65,7 +65,7 @@ function cc_transtria_render_analysis_page(){
 				</table>
 				
 				<h4>Study Design</h4>
-				<a id="hide_design_table" class="button">HIDE STUDY DESIGN</a>
+				<a id="hide_design_table" class="button" data-whichtable="intermediate_vars_design" data-whichlabel="STUDY DESIGN">HIDE STUDY DESIGN</a>
 				<table id="intermediate_vars_design">
 					<tr class="no_remove">
 						<th>Study ID</th>
@@ -77,7 +77,7 @@ function cc_transtria_render_analysis_page(){
 				</table>
 				
 				<h4>Effect or Association Direction:</h4>
-				<a id="hide_direction_table" class="button">HIDE I-M DIRECTIONS</a>
+				<a id="hide_direction_table"  data-whichtable="intermediate_vars_direction" data-whichlabel="I-M DIRECTIONS"class="button">HIDE I-M DIRECTIONS</a>
 				<a id="show_direction_algorithm" class="button alignright" data-whichalgorithm="intermediate_direction_algorithm">SHOW ALGORITHM DETAILS</a>
 				<div id="intermediate_direction_algorithm" class="show_algorithm">
 					<h4>Effect or Association Direction</h4>
@@ -107,11 +107,31 @@ function cc_transtria_render_analysis_page(){
 				
 				</table>
 				
+				
+				<h4>Intervention Components</h4>
+				<a id="hide_component_table" class="button" data-whichtable="intermediate_vars_components" data-whichlabel="INTERVENTION COMPONENTS">HIDE INTERVENTION COMPONENTS</a>
+				<table id="intermediate_vars_components">
+					<tr class="no_remove">
+						<th>Study ID</th>
+						<th>Intervention Components</th>
+						<th>Not Reported</th>		
+					</tr>
+					<tr id="data_parent" class="no_remove"></tr>
+				
+				</table>
+				
+				
+				
+				
+				
+				
+				
+				
 			</div>
 			
 			<div id="analysis_vars_content" class="single_analysis_content">
 			
-				<h3>Analysis Variables</h3>
+				<h3 id="analysis_vars_header_text">Analysis Variables</h3>
 				
 				<h4>Indicator-Measure Dyad(s):</h4>
 				<a id="hide_analysis_im_table" class="button">HIDE I-M DYADS</a>
@@ -129,12 +149,25 @@ function cc_transtria_render_analysis_page(){
 				
 				<select id="analysis_study_design">Study Design
 					<option value="-1"> -- Select Study Design -- </option>
-					<option value="-1"> 1 = Intervention Evaluation </option>
-					<option value="-1"> 2 = Associational Study </option>
+					<option value="1"> 1 = Intervention Evaluation </option>
+					<option value="2"> 2 = Associational Study </option>
 				</select>
 				
 				<h4>Net Effects or Associations:</h4>
 				<a id="hide_analysis_effect_table" class="button">HIDE I-M DIRECTIONS</a>
+				<a id="show_effect_algorithm" class="button alignright" data-whichalgorithm="analysis_effect_algorithm">SHOW ALGORITHM DETAILS</a>
+				<div id="analysis_effect_algorithm" class="show_algorithm">
+					<h4>Effect or Association Direction</h4>
+					<p>
+						IF there are no duplicates for an I-M dyad {<br />
+							&nbsp;Net Effect = I-M effect/association direction;<br />
+						} ELSE { <br />
+							&nbsp;DROPDOWN to save direction value to analysis_id<br />
+							&nbsp;TODO: implement intermediate algorithm to auto-generate if duplicates<br />
+						}<br />
+					</p>
+				</div>
+				
 				<table id="analysis_vars_effect">
 					<tr class="no_remove">
 						<th>Analysis ID (Study ID _ seq _ unique ID)</th>

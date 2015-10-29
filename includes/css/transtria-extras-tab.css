@@ -325,7 +325,8 @@ table#intermediate_vars_direction{
 	margin:2em 0;
 }
 
-#intermediate_vars_content .show_algorithm{
+#intermediate_vars_content .show_algorithm,
+#analysis_vars_content .show_algorithm{
 	border: 2px solid #cccccc;
     display: none;
     margin: 2em;

@@ -13,16 +13,19 @@ function analysisClickListen(){
 	jQuery("a#run_analysis").on("click", run_analysis );
 	
 	//show/hides
-	jQuery("a#hide_im_table").on("click", toggle_im_table );
-	jQuery("a#hide_direction_table").on("click", toggle_direction_table );
-	jQuery("a#hide_design_table").on("click", toggle_direction_table );
+	jQuery("a#hide_im_table").on("click", toggle_var_table );
+	jQuery("a#hide_direction_table").on("click", toggle_var_table );
+	jQuery("a#hide_design_table").on("click", toggle_var_table );
+	
+	jQuery("a#hide_component_table").on( "click", toggle_var_table );
 	
 	
 	//when clicking on the analysis/intermediate vars tabs
 	jQuery('.analysis_tab_label').on( "click", analysis_tab_toggle );
 
 	//show/hide algorithms
-	jQuery('#intermediate_vars_content #show_direction_algorithm').on( "click", intermediate_algorithm_toggle );
+	jQuery('#intermediate_vars_content #show_direction_algorithm').on( "click", algorithm_toggle );
+	jQuery('#analysis_vars_content #show_effect_algorithm').on( "click", algorithm_toggle );
 
 	//saving analysis vars
 	jQuery('#analysis_vars_content .analysis_save').on("click", save_analysis_vars );
@@ -48,7 +51,7 @@ function analysis_tab_toggle(){
 }
 
 //toggle intermediate direction algorithm (could be a switch-case)
-function intermediate_algorithm_toggle(){
+function algorithm_toggle(){
 
 	//get which algorithm to show/hide from the data-whichalgorithm attr
 	var which_alg = jQuery( this ).attr("data-whichalgorithm");
@@ -107,6 +110,8 @@ function get_vars_by_grouping(){
 			//clear taable
 			jQuery("table#intermediate_vars_im tr").not(".no_remove").remove();
 			jQuery("table#intermediate_vars_direction tr").not(".no_remove").remove();
+			jQuery("table#intermediate_vars_design tr").not(".no_remove").remove();
+			
 			jQuery("table#analysis_vars_im tr").not(".no_remove").remove();
 			jQuery("table#analysis_vars_effect tr").not(".no_remove").remove();
 			jQuery("table#analysis_vars_effectiveness tr").not(".no_remove").remove();
@@ -162,6 +167,8 @@ function get_vars_by_grouping(){
 			} //end if intermediate_vars
 			
 			if( data.intermediate_vars_study != undefined ){
+				//update header label
+				jQuery("#intermediate_vars_content h3#intermediate_vars_header_text").html("Intermediate Variables: Study Grouping " + this_study_group );
 				jQuery.each( data.intermediate_vars_study, function ( index, this_inter_study_data){
 					//for each row in intermediate table for this study					
 					txt_design += "<tr>";
@@ -175,6 +182,8 @@ function get_vars_by_grouping(){
 			} //end if intermedaite_vars
 			
 			if( data.analysis_vars != undefined ){
+				//update header label
+				jQuery("#analysis_vars_content h3#analysis_vars_header_text").html("Analysis Variables: Study Grouping " + this_study_group );
 				jQuery.each( data.analysis_vars, function (){
 					//for each row in intermediate table for this study
 					var this_analysis_data = jQuery( this );
@@ -200,15 +209,20 @@ function get_vars_by_grouping(){
 							txt_a_effects += "<td>" + this.net_effects + "</td>";
 						} else {
 							txt_a_effects += "<td><select class='net_effects'><option value='-1'> -- Select Net Effect or Association -- </option>";
-							//console.log( txt_a_effects );
+							var net_effects_vars = this.net_effects;
 							jQuery.each( transtria_ajax.effect_direction_lookup, function( i, v ){
 								//console.log( v.descr );
-								if( this.net_effects == i ){
+								if( net_effects_vars == i ){
 									var selected = true;
 								} else {
 									var selected = false;
 								}
-								txt_a_effects += "<option value='" + i + "'>" + v.descr + "</option>";
+								txt_a_effects += "<option value='" + i + "'";
+								//if we are on our selected value
+								if( selected == true ){
+									txt_a_effects += " selected='selected' ";
+								}
+								txt_a_effects += ">" + i + " - " + v.descr + "</option>";
 							});
 							txt_a_effects += "</select></td>";
 						
@@ -273,7 +287,7 @@ function run_intermediate_analysis(){
 		type: "POST",
 		dataType: "json",
 		beforeSend: function() {
-			usrmsg.html("Running Analysis for Study Group: <strong>" + this_study_group + "</strong>, hang tight..." );
+			usrmsg.html("Running Intermediate Analysis for Study Group: <strong>" + this_study_group + "</strong>, hang tight..." );
 			usrmsgshell.fadeIn();
 			spinny.fadeIn();
 			
@@ -420,47 +434,19 @@ function save_analysis_vars(){
 }
 
 
-//toggles visibility of im dyad table
-function toggle_im_table(){
+//toggles visibility of variable tables
+function toggle_var_table(){
 
-	var which_table = jQuery("table#intermediate_vars_im");
+	var which_table_attr = jQuery( this ).attr("data-whichtable");
+	var which_table = jQuery("table#" + which_table_attr);
+	var which_label = jQuery( this ).attr("data-whichlabel");
 	
 	if( which_table.is(":visible") ){
 		which_table.slideUp();
-		jQuery("a#hide_im_table").html("SHOW I-M DYADS");
+		jQuery( this ).html("SHOW " + which_label);
 	} else {
 		which_table.slideDown();
-		jQuery("a#hide_im_table").html("HIDE I-M DYADS");
-	}
-	
-}
-
-//toggles visibility of im dyad table
-function toggle_direction_table(){
-
-	var which_table = jQuery("table#intermediate_vars_direction");
-	
-	if( which_table.is(":visible") ){
-		which_table.slideUp();
-		jQuery("a#hide_direction_table").html("SHOW I-M DIRECTIONS");
-	} else {
-		which_table.slideDown();
-		jQuery("a#hide_direction_table").html("HIDE I-M DIRECTIONS");
-	}
-	
-}
-
-//toggles visibility of study design table
-function toggle_direction_table(){
-
-	var which_table = jQuery("table#intermediate_vars_design");
-	
-	if( which_table.is(":visible") ){
-		which_table.slideUp();
-		jQuery("a#hide_design_table").html("SHOW STUDY DESIGN");
-	} else {
-		which_table.slideDown();
-		jQuery("a#hide_design_table").html("HIDE STUDY DESIGN");
+		jQuery( this ).html("HIDE " + which_label);
 	}
 	
 }

@@ -402,24 +402,44 @@ function get_study_level_for_intermediate( $study_group_id ){
 	$study_ids = get_study_ids_in_study_group( $study_group_id );
 	
 	$studies_data = array();
+	$studies_multi_data = array();
 	
+	//get all study data
 	foreach( $study_ids as $s_id ){
+	
+		$this_s_id = current( $s_id );
 		
-		//var_dump( $s_id );
 		//get study-level vars for intermediate tab
 		$study_sql = $wpdb->prepare( 
 			"
-			SELECT      StudyDesignID, otherStudyDesign
+			SELECT      StudyDesignID, otherStudyDesign, intervention_purpose, intervention_summary, support, opposition, other_setting_type
 			FROM        $wpdb->transtria_studies
 			WHERE		StudyID = %d 
 			",
-			current( $s_id )
+			$this_s_id
 		); 
 		
-		$form_rows = $wpdb->get_results( $study_sql, ARRAY_A );
-	
-		$studies_data[ current( $s_id ) ] = $form_rows;
+		$form_rows = $wpdb->get_row( $study_sql, ARRAY_A );
+ 
+		$studies_data[ $this_s_id ] = $form_rows;
+		
+		//get multi data
+		//intervention components: codetypeID = 37
+		$studies_multi_data["intervention_components"] = get_code_results_by_study_codetype( $this_s_id, "Intervention Components" );
+		//complexity: codetypeID = 6
+		$studies_multi_data["complexity"] = get_code_results_by_study_codetype( $this_s_id, "Complexity" );
+		//Setting Type: codetypeID = 90
+		$studies_multi_data["setting_type"] = get_code_results_by_study_codetype( $this_s_id, "SettingType" );
+		//PSE components: codetypeID = 61
+		$studies_multi_data["pse_components"] = get_code_results_by_study_codetype( $this_s_id, "PSEcomponents" );
+		
+		//add multi data to all study data array
+		$studies_data[ $this_s_id ][ "multi" ] = $studies_multi_data;
+		$studies_multi_data = array();
+		
 	}
+	
+	//var_dump( $studies_data );
 	
 	//array_push( $all_dyads, current( $s_id ) );
 	$study_design_lookup = get_lookup_for_study_design();
@@ -427,12 +447,13 @@ function get_study_level_for_intermediate( $study_group_id ){
 	//loop through studies data and replace study_design value with actual words
 	foreach( $studies_data as $index => $one_study ){
 		//var_dump( $index );
-		$one_study = current( $one_study );
+		//$one_study = current( $one_study );
 		$this_value = $one_study[ "StudyDesignID" ];
 		//var_dump( $study_design_lookup[ $this_value ] );
 		$one_study[ "StudyDesignValue" ] = $study_design_lookup[ $this_value ]->descr;	
 		$studies_data[ $index ] = $one_study;
 	}
+	//var_dump( $studies_data );
 	
 	return $studies_data;
 
@@ -1016,7 +1037,7 @@ function get_code_results_by_study_codetype( $study_id, $codetype ){
 	); 
 
 	$cr_rows = $wpdb->get_results( $coderesult_sql, ARRAY_A );
-	//var_dump( $cr_rows );
+	//var_dump( $coderesult_sql );
 	$all_results = array();
 	
 	//look up descr for each cr_rows, since values are coded
