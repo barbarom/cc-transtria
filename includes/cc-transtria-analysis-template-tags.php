@@ -145,6 +145,9 @@ function cc_transtria_render_analysis_page(){
 					<tr id="data_parent" class="no_remove"></tr>
 				
 				</table>
+				<a id="save_analysis_effects" class="button alignright analysis_save" data-whichvars="net_effects">SAVE EFFECTS</a>
+				
+				<br />
 				
 				<h4>Effectiveness:</h4>
 				<a id="hide_analysis_effectiveness_table" class="button">HIDE EFFECTIVENESS</a>

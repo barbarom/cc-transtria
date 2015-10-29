@@ -137,6 +137,9 @@ class CC_Transtria_Extras {
 		add_action( 'wp_ajax_get_im_dyads_by_group' , array( $this, 'get_im_dyads_by_group' ) );
 		add_action( 'wp_ajax_run_intermediate_analysis' , array( $this, 'run_intermediate_analysis' ) );
 		add_action( 'wp_ajax_run_analysis' , array( $this, 'run_analysis' ) );
+		
+		//save things from assignments tab
+		add_action( 'wp_ajax_save_analysis_vars' , array( $this, 'save_analysis_vars' ) );
 
 	}
 
@@ -303,8 +306,6 @@ class CC_Transtria_Extras {
 		// @TODO: Define deactivation functionality here
 	}
 
-	
-	
 	/**
 	 * Load the plugin text domain for translation.
 	 *
@@ -393,7 +394,8 @@ class CC_Transtria_Extras {
 					'study_home' => cc_transtria_get_home_permalink(),
 					'all_studies' => cc_transtria_get_study_ids(),
 					'measures_w_text' => cc_transtria_measures_w_extra_text(),
-					'measures_w_text_short' => cc_transtria_measures_w_extra_text( false )
+					'measures_w_text_short' => cc_transtria_measures_w_extra_text( false ),
+					'effect_direction_lookup' => get_codetbl_by_codetype( 63 )
 				)
 			);
 			
@@ -640,7 +642,6 @@ class CC_Transtria_Extras {
 	
 	}
 	
-	
 	/**
 	 * saves Study Data for a given study ID or creates next study id and saves to that
 	 *
@@ -789,14 +790,11 @@ class CC_Transtria_Extras {
 			return false;
 		}
 		
-		//get all I-M dyads for this Study Group; count duplicates once; 
-		
+		//get all I-M dyads for this Study Group; account for duplicates; 
 		$study_group = $_POST["this_study_group"];
 		
 		$unique_ims = set_unique_analysis_ids_for_group( $study_group );
-		
-		//$setting_dyad_test = get_unique_dyads_for_study( 346 );
-		
+				
 		//echo json_encode( $unique_ims );
 		echo json_encode( 'run analysis extras' );
 		
@@ -804,5 +802,25 @@ class CC_Transtria_Extras {
 	
 	}
 	
+	//ajax save analysis vars
+	function save_analysis_vars(){
+		// Is the nonce good?
+		if ( ! check_ajax_referer( 'cc_transtria_ajax_nonce', 'transtria_nonce' ) ) {
+			return false;
+		}
+		
+		$analysis_vars = $_POST["analysis_vars"];
+		if( !empty( $analysis_vars ) ){
+			$analysis_success = save_vars_to_analysis_table( $analysis_vars );
+		} else {
+			$analysis_success = "no analysis vars to save";
+		}
+		
+		//return message
+		echo json_encode( $analysis_success );
+		
+		die();
+	
+	}
 	
 } // End class

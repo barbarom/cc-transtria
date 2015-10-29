@@ -80,6 +80,9 @@ function get_dyads_by_study( $study_id ){
 	
 	}
 	
+	//unset
+	unset( $these_indicators, $these_measures, $allowed_inds, $flat_allowed_inds);
+	
 	return array( 'indicators' => $all_indicators, 'measures' => $all_measures );
 
 }
@@ -113,9 +116,11 @@ function get_dyads_for_study_group( $study_group_id ){
 		$form_rows = $wpdb->get_results( $ea_sql, ARRAY_A );
 		
 		$all_dyads[ current( $s_id ) ] = $form_rows;
-		//array_push( $all_dyads, current( $s_id ) );
+		
 	}
 	
+	
+	unset( $form_rows, $study_ids );
 	return $all_dyads;
 	
 }
@@ -129,12 +134,7 @@ function get_dyads_for_study_group( $study_group_id ){
 function get_all_ims_for_study_group( $study_group_id ){
 
 	global $wpdb;
-	
-	//get studies in this group
-	$study_ids = get_study_ids_in_study_group( $study_group_id );
-	
-	//$all_ims = array();
-	
+
 	//get all study id dyads for this group
 	$im_sql = $wpdb->prepare( 
 		"
@@ -146,11 +146,7 @@ function get_all_ims_for_study_group( $study_group_id ){
 	); 
 	
 	$form_rows = $wpdb->get_results( $im_sql, ARRAY_A );
-	
-	//$all_dyads[ current( $s_id ) ] = $form_rows;
-	//array_push( $all_dyads, current( $s_id ) );
-	
-	
+
 	return $form_rows;
 	
 }
@@ -231,15 +227,13 @@ function get_unique_ims_for_study_group( $study_group_id ){
 			foreach( $unique_ims as $im_index => $im_values ){
 				if( $org_info_id == $im_values["org_info_id"] ){
 					//append to existing list
-					$info_id_list = $im_values["info_id_list"] . ',' . $next_info_id;
+					$info_id_list = $im_values["info_id_list"] . ', ' . $next_info_id;
 					
 					//update original entry w new info_id list
 					$unique_ims[ $im_index ]["info_id_list"] = $info_id_list;
 				
 				}
-			
 			}
-			
 		} 
 		
 
@@ -345,6 +339,54 @@ function get_analysis_vars_for_group( $study_group_id ){
 	return $form_rows;
 
 }
+
+/**
+ * Saves analysis vars to analysis table
+ *
+ * @param array. Array indexed by column name
+ * 
+ */
+function save_vars_to_analysis_table( $analysis_vars ){
+
+	global $wpdb;
+	
+	//sort the incoming array by info_id...hooowwwww
+	$vars_by_id = array();
+	
+	foreach( $analysis_vars as $var_type => $ids_and_vals ){
+	
+		//check to see if this 
+		var_dump( $var_type );
+		foreach( $ids_and_vals as $info_id => $actual_val ){
+			//append this to the vars_by_id table
+			$vars_by_id[ $info_id ][ $var_type ] = $actual_val;		
+		
+		}
+		
+	}
+	
+	//cycle through each id and construct a sql query?
+	foreach( $vars_by_id as $info_id => $labels_and_vals ){
+		
+		$data = array();
+		//parse the columns/vars and values into $data array
+		foreach( $labels_and_vals as $label => $val ){
+			
+			$data[ $label ] = $val;		
+		
+		}
+		
+		$where = array( 
+			'info_id' => $info_id
+		);
+
+		$result[ $info_id ] = $wpdb->update( $wpdb->transtria_analysis, $data, $where, $format = null, $where_format = null );
+	
+	}
+	
+	return $result;
+}
+
 
 /**
  * Returns study-level data for intermediate vars
@@ -595,8 +637,10 @@ function set_unique_analysis_ids_for_group( $study_group_id ){
 		//set ea_direction, if no duplicates
 		if( strpos( $info_id_list, "," ) === false ){
 			$ea_direction = $one_im[ "net_effects" ];
+			$duplicate_im = "N";
 		} else {
 			$ea_direction = "";
+			$duplicate_im = "Y";
 		}
 		
 		//add these to analysis table
@@ -606,8 +650,8 @@ function set_unique_analysis_ids_for_group( $study_group_id ){
 		$spartacus = $wpdb->prepare( 
 			"
 				INSERT INTO $wpdb->transtria_analysis
-				( info_id, StudyGroupingID, study_design, indicator_value, indicator, measure, info_id_list, net_effects )
-				VALUES ( %s, %d, %d, %s, %s, %s, %s, %s )
+				( info_id, StudyGroupingID, study_design, indicator_value, indicator, measure, info_id_list, duplicate_ims, net_effects )
+				VALUES ( %s, %d, %d, %s, %s, %s, %s, %s, %s )
 			", 
 			$analysis_index,
 			$study_group_id,
@@ -616,6 +660,7 @@ function set_unique_analysis_ids_for_group( $study_group_id ){
 			$indicator,
 			$measure,
 			$info_id_list,
+			$duplicate_im,
 			$ea_direction
 		);
 		

@@ -333,7 +333,10 @@ table#intermediate_vars_direction{
 	color: #636363;
 }
 
-
+#analysis_content a.analysis_save{
+	font-size: 1.5em;
+	font-weight: bold;
+}
 
 
 

@@ -1279,7 +1279,13 @@ function save_study(){
 		if( jQuery( element ).is('input:radio')){
 			//we need to think about this.
 			index_name = jQuery(this).attr("name");
-			studies_table_vals[ index_name ] = jQuery('input[name="' + index_name + '"]:checked').val();
+			this_checks = jQuery('input[name="' + index_name + '"]:checked').val();
+			//check for undefined values (overwriting existing checks as "")
+			if( this_checks == undefined ){
+				this_checks = "";
+			}
+			
+			studies_table_vals[ index_name ] = this_checks;
 			
 		} else {
 			index_name = jQuery(this).attr("id");
@@ -1295,7 +1301,13 @@ function save_study(){
 		if( jQuery( element ).is('input:radio')){
 			//we need to think about this.
 			index_name = jQuery(this).attr("name");
-			pops_table_vals[ index_name ] = jQuery('input[name="' + index_name + '"]:checked').val();
+			this_checks = jQuery('input[name="' + index_name + '"]:checked').val();
+			//check for undefined values (overwriting existing checks as "")
+			if( this_checks == undefined ){
+				this_checks = "";
+			}
+			
+			pops_table_vals[ index_name ] = this_checks;
 			
 		} else {
 			index_name = jQuery(this).attr("id");
