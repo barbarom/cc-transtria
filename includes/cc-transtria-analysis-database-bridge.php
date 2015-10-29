@@ -412,7 +412,9 @@ function get_study_level_for_intermediate( $study_group_id ){
 		//get study-level vars for intermediate tab
 		$study_sql = $wpdb->prepare( 
 			"
-			SELECT      StudyDesignID, otherStudyDesign, intervention_purpose, intervention_summary, support, opposition, other_setting_type
+			SELECT      StudyDesignID, otherStudyDesign, intervention_purpose, intervention_summary, support, opposition, other_setting_type, sustainability_flag,
+				sustainabilityplan_notreported, interventioncomponents_notreported, complexity_notreported, support_notreported, opposition_notreported,
+				interventionpurpose_notreported, interventionsummary_notreported
 			FROM        $wpdb->transtria_studies
 			WHERE		StudyID = %d 
 			",

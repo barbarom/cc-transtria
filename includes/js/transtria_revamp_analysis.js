@@ -66,6 +66,23 @@ function algorithm_toggle(){
 
 }
 
+//toggles visibility of variable tables
+function toggle_var_table(){
+
+	var which_table_attr = jQuery( this ).attr("data-whichtable");
+	var which_table = jQuery("table#" + which_table_attr);
+	var which_label = jQuery( this ).attr("data-whichlabel");
+	
+	if( which_table.is(":visible") ){
+		which_table.slideUp();
+		jQuery( this ).html("SHOW " + which_label);
+	} else {
+		which_table.slideDown();
+		jQuery( this ).html("HIDE " + which_label);
+	}
+	
+}
+
 
 function get_vars_by_grouping(){
 
@@ -80,6 +97,15 @@ function get_vars_by_grouping(){
 	which_tr_parent = jQuery("table#intermediate_vars_im tr#data_parent");
 	which_tr_parent_dir = jQuery("table#intermediate_vars_direction tr#data_parent");
 	which_tr_parent_intermediate_design = jQuery("table#intermediate_vars_design tr#data_parent");
+	which_tr_parent_intermediate_components = jQuery("table#intermediate_vars_components tr#data_parent");
+	which_tr_parent_intermediate_complexity = jQuery("table#intermediate_vars_complexity tr#data_parent");
+	which_tr_parent_intermediate_purpose = jQuery("table#intermediate_vars_purpose tr#data_parent");
+	which_tr_parent_intermediate_summary = jQuery("table#intermediate_vars_summary tr#data_parent");
+	which_tr_parent_intermediate_settingtype = jQuery("table#intermediate_vars_settingtype tr#data_parent");
+	which_tr_parent_intermediate_pse = jQuery("table#intermediate_vars_pse tr#data_parent");
+	which_tr_parent_intermediate_support = jQuery("table#intermediate_vars_support tr#data_parent");
+	which_tr_parent_intermediate_opposition = jQuery("table#intermediate_vars_opposition tr#data_parent");
+	which_tr_parent_intermediate_sustainability = jQuery("table#intermediate_vars_sustainability tr#data_parent");
 	
 	which_tr_parent_analysis_im = jQuery("table#analysis_vars_im tr#data_parent");
 	which_tr_parent_analysis_effect = jQuery("table#analysis_vars_effect tr#data_parent");
@@ -111,6 +137,15 @@ function get_vars_by_grouping(){
 			jQuery("table#intermediate_vars_im tr").not(".no_remove").remove();
 			jQuery("table#intermediate_vars_direction tr").not(".no_remove").remove();
 			jQuery("table#intermediate_vars_design tr").not(".no_remove").remove();
+			jQuery("table#intermediate_vars_components tr").not(".no_remove").remove();
+			jQuery("table#intermediate_vars_complexity tr").not(".no_remove").remove();
+			jQuery("table#intermediate_vars_purpose tr").not(".no_remove").remove();
+			jQuery("table#intermediate_vars_summary tr").not(".no_remove").remove();
+			jQuery("table#intermediate_vars_settingtype tr").not(".no_remove").remove();
+			jQuery("table#intermediate_vars_pse tr").not(".no_remove").remove();
+			jQuery("table#intermediate_vars_support tr").not(".no_remove").remove();
+			jQuery("table#intermediate_vars_opposition tr").not(".no_remove").remove();
+			jQuery("table#intermediate_vars_sustainability tr").not(".no_remove").remove();
 			
 			jQuery("table#analysis_vars_im tr").not(".no_remove").remove();
 			jQuery("table#analysis_vars_effect tr").not(".no_remove").remove();
@@ -129,6 +164,17 @@ function get_vars_by_grouping(){
 			var txt = "";
 			var txt_dir = "";
 			var txt_design = "";
+			var txt_components = "";
+			var txt_complexity = "";
+			var txt_representativeness = "";
+			var txt_purpose = "";
+			var txt_summary = "";
+			var txt_settingtype = "";
+			var txt_pse = "";
+			var txt_support = "";
+			var txt_opposition = "";
+			var txt_sustainability = "";
+			
 			var txt_a_im = "";
 			var txt_a_effects = "";
 			
@@ -171,15 +217,31 @@ function get_vars_by_grouping(){
 				jQuery("#intermediate_vars_content h3#intermediate_vars_header_text").html("Intermediate Variables: Study Grouping " + this_study_group );
 				jQuery.each( data.intermediate_vars_study, function ( index, this_inter_study_data){
 					//for each row in intermediate table for this study					
-					txt_design += "<tr>";
-					txt_design += "<td>" + index + "</td>";
+					txt_design += "<tr><td>" + index + "</td>";
 					txt_design += "<td>" + this.StudyDesignValue + "</td>";
-					txt_design += "<td>" + this.otherStudyDesign + "</td>";
-					
-					txt_design += "</tr>";
-						
+					txt_design += "<td>" + this.otherStudyDesign + "</td></tr>";
+					//purpose
+					txt_purpose += "<tr><td>" + index + "</td>";
+					txt_purpose += "<td>" + this.intervention_purpose + "</td>";
+					txt_purpose += "<td>" + this.interventionpurpose_notreported + "</td></tr>";
+					//summary
+					txt_summary += "<tr><td>" + index + "</td>";
+					txt_summary += "<td>" + this.intervention_summary + "</td>";
+					txt_summary += "<td>" + this.interventionsummary_notreported + "</td></tr>";
+					//support
+					txt_support += "<tr><td>" + index + "</td>";
+					txt_support += "<td>" + this.support + "</td>";
+					txt_support += "<td>" + this.support_notreported + "</td></tr>";
+					//opposition
+					txt_opposition += "<tr><td>" + index + "</td>";
+					txt_opposition += "<td>" + this.opposition + "</td>";
+					txt_opposition += "<td>" + this.opposition_notreported + "</td></tr>";
+					//sustainability
+					txt_sustainability += "<tr><td>" + index + "</td>";
+					txt_sustainability += "<td>" + this.sustainability_flag + "</td>";
+					txt_sustainability += "<td>" + this.sustainabilityplan_notreported + "</td></tr>";
 				});
-			} //end if intermedaite_vars
+			} //end if intermedaite_vars_study
 			
 			if( data.analysis_vars != undefined ){
 				//update header label
@@ -244,8 +306,18 @@ function get_vars_by_grouping(){
 			//add html to page
 			which_tr_parent.after( txt );
 			which_tr_parent_dir.after( txt_dir );
-			which_tr_parent_analysis_im.after( txt_a_im );
 			which_tr_parent_intermediate_design.after( txt_design );
+			which_tr_parent_intermediate_components.after( txt_components );
+			which_tr_parent_intermediate_complexity.after( txt_complexity );
+			which_tr_parent_intermediate_purpose.after( txt_purpose );
+			which_tr_parent_intermediate_summary.after( txt_summary );
+			which_tr_parent_intermediate_settingtype.after( txt_settingtype );
+			which_tr_parent_intermediate_pse.after( txt_pse );
+			which_tr_parent_intermediate_support.after( txt_support );
+			which_tr_parent_intermediate_opposition.after( txt_opposition );
+			which_tr_parent_intermediate_sustainability.after( txt_sustainability );
+	
+			which_tr_parent_analysis_im.after( txt_a_im );
 			which_tr_parent_analysis_effect.after( txt_a_effects );
 			
 		}
@@ -433,23 +505,6 @@ function save_analysis_vars(){
 	});
 }
 
-
-//toggles visibility of variable tables
-function toggle_var_table(){
-
-	var which_table_attr = jQuery( this ).attr("data-whichtable");
-	var which_table = jQuery("table#" + which_table_attr);
-	var which_label = jQuery( this ).attr("data-whichlabel");
-	
-	if( which_table.is(":visible") ){
-		which_table.slideUp();
-		jQuery( this ).html("SHOW " + which_label);
-	} else {
-		which_table.slideDown();
-		jQuery( this ).html("HIDE " + which_label);
-	}
-	
-}
 
 
 

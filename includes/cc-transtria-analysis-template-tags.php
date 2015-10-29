@@ -120,10 +120,95 @@ function cc_transtria_render_analysis_page(){
 				
 				</table>
 				
+				<h4>Complexity</h4>
+				<table id="intermediate_vars_complexity">
+					<tr class="no_remove">
+						<th>Study ID</th>
+						<th>Complexity</th>
+						<th>Not Reported</th>		
+					</tr>
+					<tr id="data_parent" class="no_remove"></tr>
+				
+				</table>
+				
+				<!-- insert participation/potention exposure here - WHERE FROM? -->	
+				
+				<!-- insert Representativeness here - WHERE FROM? -->	
 				
 				
+				<h4>Intervention Purpose</h4>
+				<table id="intermediate_vars_purpose">
+					<tr class="no_remove">
+						<th>Study ID</th>
+						<th>Intervention Purpose</th>
+						<th>Not Reported</th>		
+					</tr>
+					<tr id="data_parent" class="no_remove"></tr>
 				
+				</table>
 				
+				<h4>Intervention Summary</h4>
+				<table id="intermediate_vars_summary">
+					<tr class="no_remove">
+						<th>Study ID</th>
+						<th>Intervention Summary</th>
+						<th>Not Reported</th>		
+					</tr>
+					<tr id="data_parent" class="no_remove"></tr>
+				
+				</table>
+				
+				<h4>Setting Type</h4>
+				<table id="intermediate_vars_settingtype">
+					<tr class="no_remove">
+						<th>Study ID</th>
+						<th>Setting Type</th>
+						<th>Not Reported</th>		
+					</tr>
+					<tr id="data_parent" class="no_remove"></tr>
+				
+				</table>
+				<h4>PSE Components</h4>
+				<table id="intermediate_vars_pse">
+					<tr class="no_remove">
+						<th>Study ID</th>
+						<th>PSE Components</th>
+						<th>Not Reported</th>		
+					</tr>
+					<tr id="data_parent" class="no_remove"></tr>
+				
+				</table>
+				<h4>Support</h4>
+				<table id="intermediate_vars_support">
+					<tr class="no_remove">
+						<th>Study ID</th>
+						<th>Support</th>
+						<th>Not Reported</th>		
+					</tr>
+					<tr id="data_parent" class="no_remove"></tr>
+				
+				</table>
+				<h4>Opposition</h4>
+				<table id="intermediate_vars_opposition">
+					<tr class="no_remove">
+						<th>Study ID</th>
+						<th>Opposition</th>
+						<th>Not Reported</th>		
+					</tr>
+					<tr id="data_parent" class="no_remove"></tr>
+				
+				</table>
+				
+				<h4>Plan for Sustainability</h4>
+				<table id="intermediate_vars_sustainability">
+					<tr class="no_remove">
+						<th>Study ID</th>
+						<th>Plan for Sustainability</th>
+						<th>Not Reported</th>		
+					</tr>
+					<tr id="data_parent" class="no_remove"></tr>
+				
+				</table>
 				
 				
 				
