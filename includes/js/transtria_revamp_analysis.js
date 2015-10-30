@@ -270,7 +270,7 @@ function get_vars_by_grouping(){
 						//intervention components
 						txt_components += "<tr><td>" + index + "</td>";
 						complex_string = ""; //reset  
-						if( this_inter_study_data.multi.complexity != undefined ){
+						if( this_inter_study_data.multi.intervention_components != undefined ){
 							if( this_inter_study_data.interventioncomponents_notreported == "Y" ){
 								txt_components += "<td></td><td>Y</td></tr>";
 							} else if( this_inter_study_data.multi.intervention_components.length > 0 ){
@@ -292,32 +292,55 @@ function get_vars_by_grouping(){
 						}
 						
 						//setting type
-						//TODO: this, including other_setting_type in addition to not reported
 						txt_settingtype += "<tr><td>" + index + "</td>";
 						complex_string = ""; //reset  
-						if( this_inter_study_data.multi.complexity != undefined ){
+						if( this_inter_study_data.multi.setting_type != undefined ){
 							if( this_inter_study_data.settingtype_notreported == "Y" ){
-								txt_settingtype += "<td></td><td>Y</td></tr>";
-							} else if( this_inter_study_data.multi.intervention_components.length > 0 ){
-								jQuery.each( this_inter_study_data.multi.intervention_components, function( complex_i, complex_v ){
+								txt_settingtype += "<td></td><td></td><td>Y</td></tr>";
+							} else if( this_inter_study_data.multi.setting_type.length > 0 ){
+								jQuery.each( this_inter_study_data.multi.setting_type, function( complex_i, complex_v ){
 									//console.log( complex_v);
 									//console.log( complex_v[0]["value"] );
 									complex_string += "\n" + complex_v[0]["value"] + ": " + complex_v[0]["descr"] + ";";
 								});
 								txt_settingtype += "<td>" + complex_string + "</td>";
-								txt_settingtype += "<td>" + complex_string + "</td>";
+								txt_settingtype += "<td>" + this_inter_study_data.other_setting_type + "</td>";
 								txt_settingtype += "<td>N</td></tr>";
 							} else {
 								txt_settingtype += "<td>No data</td>";
-								txt_settingtype += "<td>No data</td>";
+								txt_settingtype += "<td>" + this_inter_study_data.other_setting_type + "</td>";
 								txt_settingtype += "<td>No data</td></tr>";
 							}
 							
 						} else {
 							txt_settingtype += "<td>No data</td>";
-							txt_settingtype += "<td>No data</td></tr>";
+							txt_settingtype += "<td>" + this_inter_study_data.other_setting_type + "</td>";
+							txt_settingtype += "<td>" + this_inter_study_data.settingtype_notreported + "</td></tr>";
 						}
 						
+						//pse components
+						txt_pse += "<tr><td>" + index + "</td>";
+						complex_string = ""; //reset  
+						if( this_inter_study_data.multi.pse_components != undefined ){
+							if( this_inter_study_data.psecomponents_notreported == "Y" ){
+								txt_pse += "<td></td><td>Y</td></tr>";
+							} else if( this_inter_study_data.multi.pse_components.length > 0 ){
+								jQuery.each( this_inter_study_data.multi.pse_components, function( complex_i, complex_v ){
+									//console.log( complex_v);
+									//console.log( complex_v[0]["value"] );
+									complex_string += "\n" + complex_v[0]["value"] + ": " + complex_v[0]["descr"] + ";";
+								});
+								txt_pse += "<td>" + complex_string + "</td>";
+								txt_pse += "<td>N</td></tr>";
+							} else {
+								txt_pse += "<td>No data</td>";
+								txt_pse += "<td>No data</td></tr>";
+							}
+							
+						} else {
+							txt_pse += "<td>No data</td>";
+							txt_pse += "<td>No data</td></tr>";
+						}
 						//console.log( this_inter_study_data.multi );
 					}
 					
