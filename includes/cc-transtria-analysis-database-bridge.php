@@ -414,7 +414,7 @@ function get_study_level_for_intermediate( $study_group_id ){
 			"
 			SELECT      StudyDesignID, otherStudyDesign, intervention_purpose, intervention_summary, support, opposition, other_setting_type, sustainability_flag,
 				sustainabilityplan_notreported, interventioncomponents_notreported, complexity_notreported, support_notreported, opposition_notreported,
-				interventionpurpose_notreported, interventionsummary_notreported
+				interventionpurpose_notreported, interventionsummary_notreported, settingtype_notreported
 			FROM        $wpdb->transtria_studies
 			WHERE		StudyID = %d 
 			",
@@ -443,7 +443,7 @@ function get_study_level_for_intermediate( $study_group_id ){
 		$which_pop = 'ipe';
 		$pops_sql = $wpdb->prepare(
 			"
-			SELECT      ParticipationRate, ExposureFrequency, rateofparticipation_notreported, freqofexposure_notreported
+			SELECT      ParticipationRate, ExposureFrequency, rateofparticipation_notreported, freqofexposure_notreported, Representativeness, representativeness_notreported
 			FROM        $wpdb->transtria_population
 			WHERE		StudyID = %d 
 			AND			PopulationType = %s
@@ -635,11 +635,12 @@ function set_dyads_for_study_group( $study_group_id ){
 		}
 	}
 	
-	var_dump( $values_string );	
+	//var_dump( $values_string );	
 	return $study_ids; 
 }
 
-
+/**
+ * 
 
 /**
  * Sets Analysis IDs for this group. Method: set analysis id for UNIQUE I-M dyads in study group (no dups!); update analysis table
@@ -712,7 +713,79 @@ function set_unique_analysis_ids_for_group( $study_group_id ){
 }
 
 
+function calc_and_set_intermediates_for_study_group( $study_group_id ){
 
+	global $wpdb;
+	
+	//get all intermediate study-level variables
+	$study_data = get_study_level_for_intermediate( $study_group_id );
+	$intermediate_calcs = array();
+	$temp_vals = array();
+		
+	//intervention components, complexity, pse components
+	foreach( $study_data as $study_id => $values ){
+		//var_dump( $values );
+		if( !empty( $values["multi"]["intervention_components"] ) ){
+			$temp_vals = array();
+			foreach( $values["multi"]["intervention_components"] as $in => $in_val ){
+				$in_val = current( $in_val );
+				array_push( $temp_vals, $in_val["value"] );
+			}
+			//if we only have 1 element
+			if( count( $array ) == 1 ){
+				if( in_array( "1", $temp_vals ) || in_array( "1", $temp_vals ) ){
+					$intermediate_calcs[$study_id]["multi_component"] = "Y";
+				} else {
+					$intermediate_calcs[$study_id]["multi_component"] = "N";
+				}
+			} else if( count( $array ) > 1 ){ //we have more than one value
+				$intermediate_calcs[$study_id]["multi_component"] = "Y";
+			} 
+		}
+		//complexity
+		if( $values["complexity_notreported"] == "Y" ){
+			$intermediate_calcs[$study_id]["complexity"] = 999; //complexity not reported
+		} else if( !empty( $values["multi"]["complexity"] ) ){
+			$intermediate_calcs[$study_id]["complexity"] = 1; //at least one checked
+		} else {
+			$intermediate_calcs[$study_id]["complexity"] = 0; //no complexity checked
+		}
+		//ipe - rate of participation
+		if( $values["ipe"]["rateofparticipation_notreported"] == "Y" ){
+			$intermediate_calcs[$study_id]["ParticipationRate"] = 999; //no complexity checked
+		} else if( !empty( $values["ipe"]["ParticipationRate"] ) ){
+			if( (int)$values["ipe"]["ParticipationRate"] >= 75 ){
+				$intermediate_calcs[$study_id]["ParticipationRate"] = 1;
+			} else {
+				$intermediate_calcs[$study_id]["ParticipationRate"] = 0;
+			}
+		}
+		//ipe - potential exposure
+		if( !empty( $values["ipe"]["ExposureFrequency"] ) ){
+			if( (int)$values["ipe"]["ExposureFrequency"] == 1 ){
+				$intermediate_calcs[$study_id]["ExposureFrequency"] = 1;
+			} else {
+				$intermediate_calcs[$study_id]["ExposureFrequency"] = 2;
+			}
+		}
+		//ipe - representativeness
+		if( $values["ipe"]["representativeness_notreported"] == "Y" ){
+			$intermediate_calcs[$study_id]["Representativeness"] = 999; //no complexity checked
+		} else if( !empty( $values["ipe"]["Representativeness"] ) ){
+			if( (int)$values["ipe"]["Representativeness"] == "Y" ){
+				$intermediate_calcs[$study_id]["Representativeness"] = 1;
+			} else {
+				$intermediate_calcs[$study_id]["Representativeness"] = 2;
+			}
+		}
+		
+	
+	
+	}
+
+	return $intermediate_calcs;
+
+}
 
 
 /**

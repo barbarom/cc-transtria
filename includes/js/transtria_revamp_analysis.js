@@ -111,7 +111,7 @@ function get_vars_by_grouping(){
 	which_tr_parent_analysis_effect = jQuery("table#analysis_vars_effect tr#data_parent");
 	
 	//ajax data
-	var ajax_action = 'get_im_dyads_by_group';
+	var ajax_action = 'get_im_dyads_and_data_by_group';
 	var ajax_data = {
 		'action': ajax_action,
 		'transtria_nonce' : transtria_ajax.ajax_nonce,
@@ -240,6 +240,87 @@ function get_vars_by_grouping(){
 					txt_sustainability += "<tr><td>" + index + "</td>";
 					txt_sustainability += "<td>" + this.sustainability_flag + "</td>";
 					txt_sustainability += "<td>" + this.sustainabilityplan_notreported + "</td></tr>";
+					
+					//multis
+					if( this_inter_study_data.multi != undefined ){
+						//complexity
+						txt_complexity += "<tr><td>" + index + "</td>";
+						var complex_string = ""; //for flattening arrays for display
+						if( this_inter_study_data.multi.complexity != undefined ){
+							if( this_inter_study_data.complexity_notreported == "Y" ){
+								txt_complexity += "<td></td><td>Y</td></tr>";
+							} else if( this_inter_study_data.multi.complexity.length > 0 ){
+								jQuery.each( this_inter_study_data.multi.complexity, function( complex_i, complex_v ){
+									//console.log( complex_v);
+									//console.log( complex_v[0]["value"] );
+									complex_string += "\n" + complex_v[0]["value"] + ": " + complex_v[0]["descr"] + ";";
+								});
+								txt_complexity += "<td>" + complex_string + "</td>";
+								txt_complexity += "<td>N</td></tr>";
+							} else {
+								txt_complexity += "<td>No data</td>";
+								txt_complexity += "<td>No data</td></tr>";
+							}
+							
+						} else {
+							txt_complexity += "<td>No data</td>";
+							txt_complexity += "<td>No data</td></tr>";
+						}
+						
+						//intervention components
+						txt_components += "<tr><td>" + index + "</td>";
+						complex_string = ""; //reset  
+						if( this_inter_study_data.multi.complexity != undefined ){
+							if( this_inter_study_data.interventioncomponents_notreported == "Y" ){
+								txt_components += "<td></td><td>Y</td></tr>";
+							} else if( this_inter_study_data.multi.intervention_components.length > 0 ){
+								jQuery.each( this_inter_study_data.multi.intervention_components, function( complex_i, complex_v ){
+									//console.log( complex_v);
+									//console.log( complex_v[0]["value"] );
+									complex_string += "\n" + complex_v[0]["value"] + ": " + complex_v[0]["descr"] + ";";
+								});
+								txt_components += "<td>" + complex_string + "</td>";
+								txt_components += "<td>N</td></tr>";
+							} else {
+								txt_components += "<td>No data</td>";
+								txt_components += "<td>No data</td></tr>";
+							}
+							
+						} else {
+							txt_components += "<td>No data</td>";
+							txt_components += "<td>No data</td></tr>";
+						}
+						
+						//setting type
+						//TODO: this, including other_setting_type in addition to not reported
+						txt_settingtype += "<tr><td>" + index + "</td>";
+						complex_string = ""; //reset  
+						if( this_inter_study_data.multi.complexity != undefined ){
+							if( this_inter_study_data.settingtype_notreported == "Y" ){
+								txt_settingtype += "<td></td><td>Y</td></tr>";
+							} else if( this_inter_study_data.multi.intervention_components.length > 0 ){
+								jQuery.each( this_inter_study_data.multi.intervention_components, function( complex_i, complex_v ){
+									//console.log( complex_v);
+									//console.log( complex_v[0]["value"] );
+									complex_string += "\n" + complex_v[0]["value"] + ": " + complex_v[0]["descr"] + ";";
+								});
+								txt_settingtype += "<td>" + complex_string + "</td>";
+								txt_settingtype += "<td>" + complex_string + "</td>";
+								txt_settingtype += "<td>N</td></tr>";
+							} else {
+								txt_settingtype += "<td>No data</td>";
+								txt_settingtype += "<td>No data</td>";
+								txt_settingtype += "<td>No data</td></tr>";
+							}
+							
+						} else {
+							txt_settingtype += "<td>No data</td>";
+							txt_settingtype += "<td>No data</td></tr>";
+						}
+						
+						//console.log( this_inter_study_data.multi );
+					}
+					
 				});
 			} //end if intermedaite_vars_study
 			
@@ -267,9 +348,10 @@ function get_vars_by_grouping(){
 						txt_a_effects += "<td class='analysis_id'>" + this.info_id + "</td>";
 						txt_a_effects += "<td>" + this.indicator + "</td>";
 						txt_a_effects += "<td>" + this.measure + "</td>";
-						if( this.duplicate_ims == "N" ) { //set the net effect, since it's coming from 1 IM
+						
+						if( this.duplicate_ims == "N" ) { //static net effect, since it's coming from only 1 IM
 							txt_a_effects += "<td>" + this.net_effects + "</td>";
-						} else {
+						} else { //dropdown
 							txt_a_effects += "<td><select class='net_effects'><option value='-1'> -- Select Net Effect or Association -- </option>";
 							var net_effects_vars = this.net_effects;
 							jQuery.each( transtria_ajax.effect_direction_lookup, function( i, v ){
@@ -370,8 +452,9 @@ function run_intermediate_analysis(){
 			//console.log('what');=
 			return;
 		} else {
-			var parsed = JSON.parse( data );
-			console.log(parsed.responseText);
+			//var parsed = JSON.parse( data );
+			//console.log(parsed.responseText);
+			console.log( data );
 			
 			
 		}

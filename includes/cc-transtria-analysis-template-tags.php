@@ -42,7 +42,7 @@ function cc_transtria_render_analysis_page(){
 			<br />
 			3. <a id="run_analysis" class="button">RUN ANALYSIS**</a>
 			<br />
-			4. <a id="get_vars_by_group" class="button">DISPLAY ALL VARS</a>
+			4. <a id="get_vars_by_group" class="button">GET/DISPLAY ALL VARS</a>
 			
 			<h4><em>**Note: will overwrite existing variables and computations</em></h4>
 			
@@ -167,6 +167,7 @@ function cc_transtria_render_analysis_page(){
 					<tr class="no_remove">
 						<th>Study ID</th>
 						<th>Setting Type</th>
+						<th>Other Setting Type</th>
 						<th>Not Reported</th>		
 					</tr>
 					<tr id="data_parent" class="no_remove"></tr>

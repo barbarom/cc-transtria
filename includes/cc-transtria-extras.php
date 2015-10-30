@@ -134,7 +134,7 @@ class CC_Transtria_Extras {
 		add_action( 'wp_ajax_create_evaluation_sample_div' , array( $this, 'create_evaluation_sample_div' ) );		
 		
 		//get things for analysis tab
-		add_action( 'wp_ajax_get_im_dyads_by_group' , array( $this, 'get_im_dyads_by_group' ) );
+		add_action( 'wp_ajax_get_im_dyads_and_data_by_group' , array( $this, 'get_im_dyads_and_data_by_group' ) );
 		add_action( 'wp_ajax_run_intermediate_analysis' , array( $this, 'run_intermediate_analysis' ) );
 		add_action( 'wp_ajax_run_analysis' , array( $this, 'run_analysis' ) );
 		
@@ -739,7 +739,7 @@ class CC_Transtria_Extras {
 	}		
 	
 	//ajax get all study ids in a study group
-	public function get_im_dyads_by_group(){
+	public function get_im_dyads_and_data_by_group(){
 		// Is the nonce good?
 		if ( ! check_ajax_referer( 'cc_transtria_ajax_nonce', 'transtria_nonce' ) ) {
 			return false;
@@ -773,11 +773,12 @@ class CC_Transtria_Extras {
 		$study_group = $_POST["this_study_group"];
 		
 		$study_id_array = set_dyads_for_study_group( $study_group );
+		$intermediate_calcs = calc_and_set_intermediates_for_study_group( $study_group );
 		
 		//$setting_dyad_test = get_unique_dyads_for_study( 346 );
 		
 		//echo json_encode( $study_id_array );
-		echo json_encode( $study_id_array );
+		echo json_encode( $intermediate_calcs );
 		
 		die();
 	
