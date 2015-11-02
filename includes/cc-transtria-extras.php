@@ -794,7 +794,7 @@ class CC_Transtria_Extras {
 		//get all I-M dyads for this Study Group; account for duplicates; 
 		$study_group = $_POST["this_study_group"];
 		
-		$unique_ims = set_unique_analysis_ids_for_group( $study_group );
+		$unique_ims = calc_and_set_unique_analysis_ids_for_group( $study_group );
 				
 		//echo json_encode( $unique_ims );
 		echo json_encode( 'run analysis extras' );
