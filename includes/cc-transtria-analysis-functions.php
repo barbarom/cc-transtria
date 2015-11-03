@@ -98,7 +98,7 @@ function calculate_study_design_for_analysis( $studygrouping_id ){
 		array_push( $all_designs, $values->StudyDesignID );
 	}
 	
-	var_dump( $all_designs );
+	//var_dump( $all_designs );
 	//Evaluate against StudyDesign algorithm
 	//The algorithm numbers are DIFFERENT here than in Laura's notes, because of the way they are assigned in the codetbl already. //99=StudyDesign
 	$one_array = array( "1", "2", "3", "4", "5", "6", "7", "8", "12" );
@@ -229,7 +229,7 @@ function calculate_outcome_types_studygrouping( $study_group_id ){
  * @param array. Array of strings indicating study id_seq_uniqueid
  * @return string
  */
-function calculate_duration_for_analysis( $info_id_list, $studygroup_ea_data ){
+function calculate_duration_for_analysis_duplicates( $info_id_list, $studygroup_ea_data ){
 
 	//get array( study_id => array( seq# => unique_num, seq# => unique_num ...
 	$parsed_id_array = parse_study_seq_id_list( $info_id_list );
@@ -255,6 +255,28 @@ function calculate_duration_for_analysis( $info_id_list, $studygroup_ea_data ){
 	
 }
 
+function calculate_duration_for_analysis_single( $duration_string ){
+
+	switch ( $duration_string ) {
+		case "more than 12 months":
+			return 3;
+			break;
+		case "6-12 months":
+			return 2;
+			break;
+		case "less than 6 months":
+			return 1;
+			break;
+		case "Not applicable":
+			return 999;
+			break;
+		default:
+			return "no data";
+			break;
+	
+	}
+
+}
 
 
 
@@ -305,18 +327,19 @@ function calc_general_effectiveness_analysis( $study_design, $duration, $net_eff
 	}
 	
 	// check for string values where there should be an int (means that net_effects, type, duration are not right )
-	if( !is_int( $net_effect ) ){
+	if( !is_int( (int)$net_effect ) ){
 		return "data error: net effect";
-	} else if( !is_int( $type ) ){
+	} else if( !is_int( (int)$type ) ){
 		return "data error: outcome type";
-	} else if( !is_int( $duration ) ){
+	} else if( !is_int( (int)$duration ) ){
 		return "data error: duration";
-	} else if( !is_int( $study_design ) ){ //for good measure (in case of error string adding later)
+	} else if( !is_int( (int)$study_design ) ){ //for good measure (in case of error string adding later)
 		return "data error: study design";
 	}
 	
 	//if outcome_type is != 1 or 2, return
-	if( $type != 1 || $type != 2 ){
+	if( $type != "1" && $type != "2" ){
+		//var_dump( $type );
 		return "outcome type != 1 or 2";
 	}
 	

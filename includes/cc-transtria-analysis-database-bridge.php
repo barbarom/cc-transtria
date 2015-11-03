@@ -647,27 +647,33 @@ function get_analysis_vars_for_group( $study_group_id ){
 	
 	$form_rows = $wpdb->get_results( $analysis_sql, ARRAY_A );
 	
-	//TODO: decide where this goes...
-	//translate study design vals (since this is analysis, it's not in lookups)
-	foreach( $form_rows as $index => $row ){
-		//var_dump( $row );
-		switch( $row["study_design"] ){
-			case 1:
-				$row["study_design_label"] = "Intervention Evaluation";
-				break;
-			case 2:
-				$row["study_design_label"] = "Associational Study";
-				break;
-			default:
-				$row["study_design_label"] = "";
-				break;
-		}
-		
-		//put the study label back into total array
-		$form_rows[ $index ] = $row;
-	}
-	
 	return $form_rows;
+
+} 
+
+/**
+ * Returns Study Grouping vars from SG table (not calcs)
+ * 
+ * @param int. Study Group ID
+ * @return array. Array of columns from analysis table.
+ */
+function get_studygrouping_vars( $study_group_id ){
+
+	global $wpdb;
+	
+	//get all analysis vars for this group
+	$sg_sql = $wpdb->prepare( 
+		"
+		SELECT      *
+		FROM        $wpdb->transtria_analysis_studygrouping
+		WHERE		StudyGroupingID = %d 
+		",
+		$study_group_id
+	); 
+	
+	$form_row = $wpdb->get_row( $sg_sql, ARRAY_A );
+	
+	return $form_row;
 
 }
 
@@ -724,38 +730,42 @@ function save_vars_to_analysis_table( $analysis_vars ){
  * @param array. Array indexed by column name
  * 
  */
-function save_studygroup_vars_to_analysis_table( $analysis_vars, $study_group_id ){
+function save_studygroup_vars_to_sg_table( $analysis_vars, $study_group_id ){
 
 	global $wpdb;
 	
 	$vars_by_id = array();
 	
-	
-	
 	foreach( $analysis_vars as $var_type => $ids_and_vals ){
 	
-		$vars_by_id[ $var_type ] = $actual_val;		
-		
-	}
-	
-	return $vars_by_id;
-	
-	//cycle through each id and construct a sql query?
-	foreach( $vars_by_id as $info_id => $labels_and_vals ){
-		
-		$data = array();
-		//parse the columns/vars and values into $data array
-		foreach( $labels_and_vals as $label => $val ){
-			
-			$data[ $label ] = $val;		
+		switch( $var_type ){
+			case "analysis_study_design":
+				$var_type = "study_design";
+				break;
+			default:
+				$var_type = $var_type;
+				break;
 		
 		}
 		
+		$vars_by_id[ $var_type ] = $ids_and_vals;		
+		
+	}
+		
+	$data = array();
+	
+	//cycle through each id and construct a sql query?
+	foreach( $vars_by_id as $label => $val ){
+		
+		
+		//parse the columns/vars and values into $data array
+		$data[ $label ] = $val;		
+		
 		$where = array( 
-			'info_id' => $info_id
+			'StudyGroupingID' => $study_group_id
 		);
 
-		$result[ $info_id ] = $wpdb->update( $wpdb->transtria_analysis, $data, $where, $format = null, $where_format = null );
+		$result = $wpdb->update( $wpdb->transtria_analysis_studygrouping, $data, $where, $format = null, $where_format = null );
 	
 	}
 	
@@ -1072,7 +1082,55 @@ function set_dyads_for_study_group( $study_group_id ){
 }
 
 /**
- * 
+ * Secondary data analysis, from vars added via Analysis form
+ *
+ * @param int. Study Grouping ID.
+ *
+*/
+function recalc_analysis_vars_form_data( $study_group_id ){
+
+	global $wpdb; 
+	
+	//what needs to be updated when the study design, net effect (... )are updated?
+	$analysis_vars = get_analysis_vars_for_group( $study_group_id );
+	
+	//recalc effectiveness
+	//get design (Study Grouping level)
+	$sg_vars = get_studygrouping_vars( $study_group_id );
+	$design = $sg_vars["study_design"];
+	
+	$duration = 0;
+	$effect = 0;
+	$type = 0;
+	
+	//get other vars for effectiveness (analysis level)
+	foreach( $analysis_vars as $index => $a_vals ){
+	
+		//var_dump( $index );
+		$this_info_id = $a_vals[ "info_id" ];
+		
+		//pull out pieces of info
+		$duration = $a_vals[ "duration" ];
+		$effect = $a_vals[ "net_effects" ];
+		$type = $a_vals[ "outcome_type" ];
+		
+		$new_effectiveness = calc_general_effectiveness_analysis( $design, $duration, $effect, $type );
+		
+		//insert new vals by info_id
+		$data = array(
+			"effectiveness_general" => $new_effectiveness
+			);
+			
+		$where = array( 
+			'info_id' => $this_info_id
+		);
+
+		$result = $wpdb->update( $wpdb->transtria_analysis, $data, $where, $format = null, $where_format = null );
+		
+	}
+
+	return "recalc'd complete: " . $result;
+}
 
 /**
  * Sets Analysis IDs for this group. Method: set analysis id for UNIQUE I-M dyads in study group (no dups!); update analysis table w/ calcs
@@ -1107,6 +1165,7 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 	//get measures => outcome types for study group/analysis
 	$measures_outcome_types = calculate_outcome_types_studygrouping( $study_group_id );
 	
+	//calculate duration, duplicate, effectiveness_general for each unique im; INSERT INTO analysis table
 	foreach( $all_ims as $analysis_index => $one_im ){
 	
 		//var_dump( $one_im );
@@ -1125,8 +1184,8 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 			
 			$this_intermediate_im = get_single_im_from_intermediate( $info_id_list );
 			//var_dump( $this_intermediate_im );
-			$duration = $this_intermediate_im[ "outcome_duration" ];
-			
+			//$duration = $this_intermediate_im[ "outcome_duration" ];
+			$duration = calculate_duration_for_analysis_single( $this_intermediate_im[ "outcome_duration" ] );
 			
 		} else {
 			$duplicate_im = "Y";
@@ -1141,7 +1200,7 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 			}
 			
 			//calculate duration, net_effect, etc, based on info_id_list - modulate
-			$duration = calculate_duration_for_analysis( $info_id_list, $studygroup_ea_data );
+			$duration = calculate_duration_for_analysis_duplicates( $info_id_list, $studygroup_ea_data );
 			
 		}
 		
@@ -1155,13 +1214,13 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 		$spartacus = $wpdb->prepare( 
 			"
 				INSERT INTO $wpdb->transtria_analysis
-				( info_id, StudyGroupingID, study_design, domestic_international, indicator_value, indicator, measure, info_id_list, duplicate_ims, 
+				( info_id, StudyGroupingID, domestic_international, indicator_value, indicator, measure, info_id_list, duplicate_ims, 
 					net_effects, duration, outcome_type, effectiveness_general )
-				VALUES ( %s, %d, %d, %d, %s, %s, %s, %s, %s, %s, %s, %s, %s )
+				VALUES ( %s, %d, %d, %s, %s, %s, %s, %s, %s, %s, %s, %s )
 			", 
 			$analysis_index,
 			$study_group_id,
-			$study_design,
+			//$study_design,  //now saved to studygrouping table
 			$domestic_intl,
 			$indicator_val, 
 			$indicator,
@@ -1174,9 +1233,32 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 			$effectiveness_gen
 		);
 		
-		$wpdb->query( $spartacus );
+		$help_me = $wpdb->query( $spartacus );
+		//var_dump( $help_me );
 	
 	}
+	
+	
+	//remove all rows of this study group from studygrouping table
+	$sg_del_row = $wpdb->delete( 
+			$wpdb->transtria_analysis_studygrouping, 
+			array( 
+				'StudyGroupingID' => (int)$study_group_id 
+			)
+		);
+		
+	//Update Studygrouping-level vars: Study Design
+	$spartacus_designed = $wpdb->prepare( 
+		"
+			INSERT INTO $wpdb->transtria_analysis_studygrouping
+			( StudyGroupingID, study_design )
+			VALUES ( %d, %s )
+		", 
+		$study_group_id,
+		$study_design
+	);
+	
+	$wpdb->query( $spartacus_designed );
 	
 }
 

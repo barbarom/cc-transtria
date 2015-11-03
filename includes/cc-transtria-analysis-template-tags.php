@@ -38,11 +38,13 @@ function cc_transtria_render_analysis_page(){
 			?>
 			</select> Select Study Grouping
 			<br />
-			2. <a id="run_intermediate_analysis" class="button">RUN INTERMEDIATE ANALYSIS**</a>
+			2. <a id="run_intermediate_analysis" class="button"> RUN INTERMEDIATE ANALYSIS**</a>
 			<br />
-			3. <a id="run_analysis" class="button">RUN ANALYSIS**</a>
+			3. <a id="run_analysis" class="button"> RUN INITIAL ANALYSIS (from INTERMEDIATE VARS)**</a>
 			<br />
-			4. <a id="get_vars_by_group" class="button">GET/DISPLAY ALL VARS</a>
+			4. <a id="get_vars_by_group" class="button"> GET/DISPLAY ALL VARS</a>
+			<br />
+			5. <a id="run_second_analysis" class="button"> RUN ANALYSIS w/ NEW VARS</a>
 			
 			<h4><em>**Note: will overwrite existing variables and computations</em></h4>
 			
@@ -240,6 +242,7 @@ function cc_transtria_render_analysis_page(){
 				
 				</table>
 				
+				<h4 id="study_design_label">Study Design:</h4>
 				<select class="analysis_study_design">Study Design
 					<option value="-1"> -- Select Study Design -- </option>
 					<option value="1"> 1 = Intervention Evaluation </option>

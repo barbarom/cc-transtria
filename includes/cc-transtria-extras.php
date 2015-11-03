@@ -137,6 +137,7 @@ class CC_Transtria_Extras {
 		add_action( 'wp_ajax_get_im_dyads_and_data_by_group' , array( $this, 'get_im_dyads_and_data_by_group' ) );
 		add_action( 'wp_ajax_run_intermediate_analysis' , array( $this, 'run_intermediate_analysis' ) );
 		add_action( 'wp_ajax_run_analysis' , array( $this, 'run_analysis' ) );
+		add_action( 'wp_ajax_run_second_analysis' , array( $this, 'run_second_analysis' ) );
 		
 		//save things from assignments tab
 		add_action( 'wp_ajax_save_analysis_vars' , array( $this, 'save_analysis_vars' ) );
@@ -751,11 +752,13 @@ class CC_Transtria_Extras {
 		$dyad_array = get_dyads_for_study_group( $study_group );
 		$study_data = get_study_level_for_intermediate( $study_group );
 		$analysis_data = get_analysis_vars_for_group( $study_group );
+		$sg_data = get_studygrouping_vars( $study_group );
 		
 		//set data
 		$data[ 'intermediate_vars' ] = $dyad_array;
 		$data[ 'intermediate_vars_study' ] = $study_data;
 		$data[ 'analysis_vars' ] = $analysis_data;
+		$data[ 'study_grouping' ] = $sg_data;
 		
 		//echo json_encode( $data );
 		echo json_encode( $data );
@@ -798,7 +801,7 @@ class CC_Transtria_Extras {
 		$unique_ims = calc_and_set_unique_analysis_ids_for_group( $study_group );
 				
 		//echo json_encode( $unique_ims );
-		echo json_encode( 'run analysis extras' );
+		echo json_encode( 'ran analysis' );
 		
 		die();
 	
@@ -825,6 +828,26 @@ class CC_Transtria_Extras {
 	
 	}
 	
+	//ajax run SECONDARY analysis
+	public function run_second_analysis(){
+		// Is the nonce good?
+		if ( ! check_ajax_referer( 'cc_transtria_ajax_nonce', 'transtria_nonce' ) ) {
+			return false;
+		}
+		
+		//get all I-M dyads for this Study Group; account for duplicates; 
+		$study_group = $_POST["this_study_group"];
+		
+		$unique_ims = recalc_analysis_vars_form_data( $study_group );
+				
+		//echo json_encode( $unique_ims );
+		echo json_encode( 'ran second analysis' );
+		
+		die();
+	
+	}
+	
+	
 	//ajax save STUDY GROUP variables to analysis table...for now
 	function save_studygroup_vars(){
 		// Is the nonce good?
@@ -836,7 +859,7 @@ class CC_Transtria_Extras {
 		$study_group = $_POST["study_group"];
 		
 		if( !empty( $analysis_vars ) ){
-			$analysis_success = save_studygroup_vars_to_analysis_table( $analysis_vars, $study_group );
+			$analysis_success = save_studygroup_vars_to_sg_table( $analysis_vars, $study_group );
 		} else {
 			$analysis_success = "no SG analysis vars to save";
 		}

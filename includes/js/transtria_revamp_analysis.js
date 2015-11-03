@@ -11,6 +11,7 @@ function analysisClickListen(){
 	
 	//run final analysis for study group
 	jQuery("a#run_analysis").on("click", run_analysis );
+	jQuery("a#run_second_analysis").on("click", run_second_analysis );
 	
 	//show/hides
 	jQuery("a#hide_im_table").on("click", toggle_var_table );
@@ -411,7 +412,24 @@ function get_vars_by_grouping(){
 					//console.log( jQuery(this ) );
 				
 				});
-			} //end if intermedaite_vars
+			} //end if analysis_vars
+			
+			//do we have study grouping-level vars we need to show (study design)
+			if( data.study_grouping != undefined ){
+				console.log( data.study_grouping );
+				
+				//update StudyDesign select for this study group
+				jQuery("select.analysis_study_design").val( data.study_grouping.study_design );
+				
+				//update text
+				if( data.study_grouping.study_design == 0 ){
+					jQuery('h4#study_design_label').html("Study Design for Study Group " + this_study_group + ": no design selected" );
+				} else {
+					jQuery('h4#study_design_label').html("Study Design for Study Group " + this_study_group + ":" + data.study_grouping.study_design );
+				}
+			
+			}
+			
 			
 			//add html to page
 			which_tr_parent.after( txt );
@@ -500,6 +518,7 @@ function run_intermediate_analysis(){
 
 }
 
+//first analysis - from the intermediate table
 function run_analysis(){
 
 	this_study_group = jQuery("select#StudyGroupingIDList").val();
@@ -533,26 +552,68 @@ function run_analysis(){
 			
 		}
 	}).success( function( data ) {
-
 		if( data == "0" || data == 0 )  {
 			//console.log('what');=
 			return;
 		} else {
 			//var parsed = JSON.parse( data );
 			console.log(data);
-			
-			
 		}
 		//var post_meat = data['single']; // = JSON.parse(data);
 	}).complete( function( data ) {
-
 		//console.log( data );
 		usrmsgshell.fadeOut();
 		spinny.fadeOut();
-		
 	});
+}
 
+//second analysis - considering the form vars
+function run_second_analysis(){
 
+	this_study_group = jQuery("select#StudyGroupingIDList").val();
+	
+	//update hidden input
+	jQuery("input#secret_study_group").val( this_study_group );
+	
+	//user messages
+	var spinny = jQuery('.analysis_messages .spinny');
+	var usrmsg = jQuery('.analysis_messages .usr-msg');
+	var usrmsgshell = jQuery('.analysis_messages');
+	
+	//ajax data
+	var ajax_action = 'run_second_analysis';
+	var ajax_data = {
+		'action': ajax_action,
+		'transtria_nonce' : transtria_ajax.ajax_nonce,
+		'this_study_group' : this_study_group
+	};
+	
+	//ajax get the studies for this group
+	jQuery.ajax({
+		url: transtria_ajax.ajax_url, 
+		data: ajax_data, 
+		type: "POST",
+		dataType: "json",
+		beforeSend: function() {
+			usrmsg.html("Running Secondary Analysis for Study Group: <strong>" + this_study_group + "</strong>, hang tight..." );
+			usrmsgshell.fadeIn();
+			spinny.fadeIn();
+			
+		}
+	}).success( function( data ) {
+		if( data == "0" || data == 0 )  {
+			//console.log('what');=
+			return;
+		} else {
+			//var parsed = JSON.parse( data );
+			console.log(data);
+		}
+		//var post_meat = data['single']; // = JSON.parse(data);
+	}).complete( function( data ) {
+		//console.log( data );
+		usrmsgshell.fadeOut();
+		spinny.fadeOut();
+	});
 }
 
 //saves analysis vars //TODO: make this apply to 'all' somehow
@@ -634,24 +695,6 @@ function save_analysis_vars(){
 		
 	});
 }
-
-
-
-
-//hmm...
-function draw_table( ){
-
-
-
-
-
-
-
-}
-
-
-
-
 
 
 
