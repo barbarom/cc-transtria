@@ -66,7 +66,6 @@ function cc_transtria_calculate_ea_direction_for_studygrouping( $study_group_id 
 
 }
 
-
 /** Returns a study design for all analysis in a group
  *
  * @param int. Study Grouping
@@ -99,15 +98,15 @@ function calculate_study_design_for_analysis( $studygrouping_id ){
 		array_push( $all_designs, $values->StudyDesignID );
 	}
 	
-	//var_dump( $all_designs );
+	var_dump( $all_designs );
 	//Evaluate against StudyDesign algorithm
 	//The algorithm numbers are DIFFERENT here than in Laura's notes, because of the way they are assigned in the codetbl already. //99=StudyDesign
-	$one_array = array( 1, 2, 3, 4, 5, 6, 7, 8, 12 );
+	$one_array = array( "1", "2", "3", "4", "5", "6", "7", "8", "12" );
 	if( in_array( $one_array, $all_designs ) ){
 		return 1;
 	}
 	
-	else if( in_array( 11, $all_designs ) ){
+	else if( in_array( "11", $all_designs ) ){
 		return 0;
 	}
 	
@@ -116,7 +115,7 @@ function calculate_study_design_for_analysis( $studygrouping_id ){
 	}
 	
 	//else if all values are the same and are 9
-	else if( count( array_unique( $all_designs ) ) === 1 && end( $all_designs ) == 9 ) {
+	else if( count( array_unique( $all_designs ) ) === "1" && end( $all_designs ) == "9" ) {
 		return 2;
 	}
 	
@@ -180,7 +179,48 @@ function calculate_domestic_intl_for_analysis( $studygrouping_id ){
 
 }
 
+/**
+ * Returns the Measure - Outcome Type pairs for a Study Grouping. Outcome Type (seq) must be the SAME for Measure types (seq) across a SG.
+ * 	There *should* only be one measure per ea tab (seq) and IS only one Outcome Type per.
+ *
+ * @param int. Study Grouping ID.
+ * @return array. Key->val pairs for (string) Measure => (string) Outcome Type
+ */
+function calculate_outcome_types_studygrouping( $study_group_id ){
 
+	global $wpdb;
+	
+	//get all study ids (in list) in this group
+	$study_list = get_study_id_list_in_study_group( $study_group_id );
+	
+	//Get Measures and outcome types for each
+	$all_ims = get_all_ims_for_study_group( $study_group_id );
+	$measures_outcome_types = array();
+	
+	foreach( $all_ims as $one_im ){
+		$this_measure = $one_im["measure"];
+		$this_outcome_type = $one_im["outcome_type"];
+		
+		//do we have this measure in the final array?
+		if( !empty( $measures_outcome_types[ $this_measure ] ) ) {
+			//we have the measure.  Do the outcome types match?
+			if( $measures_outcome_types[ $this_measure ] != $this_outcome_type ){
+				//mismatch.  note it.
+				$measures_outcome_types[ $this_measure ] = "multiple outcome types for same measure";
+			}
+			
+		} else {
+			//add to the array
+			$measures_outcome_types[ $this_measure ] = $this_outcome_type;
+		}
+		
+	
+	}
+
+	//var_dump( $measures_outcome_types );
+	return $measures_outcome_types;
+
+}
 
 
 /**
@@ -207,10 +247,10 @@ function calculate_duration_for_analysis( $info_id_list, $studygroup_ea_data ){
 	
 	//var_dump( $temp_durations );
 	//if we have the highest duration value present, set $duration and return. continue for next longest, etc
-	if( in_array( "more than 12 months", $temp_durations ) ){ return "more than 12 months"; }
-	else if( in_array( "6-12 months", $temp_durations ) ){ return "6-12 months"; }
-	else if( in_array( "less than 6 months", $temp_durations ) ) { return "more than 12 months"; }
-	else if( in_array( "Not applicable", $temp_durations ) ) { return "Not applicable"; }
+	if( in_array( "more than 12 months", $temp_durations ) ){ return 3; }
+	else if( in_array( "6-12 months", $temp_durations ) ){ return 2; }
+	else if( in_array( "less than 6 months", $temp_durations ) ) { return 1; }
+	else if( in_array( "Not applicable", $temp_durations ) ) { return 999; }
 	else { return "no data"; }
 	
 }
@@ -254,9 +294,47 @@ function parse_study_seq_id_list( $info_id_list ){
 /**
  * Calculates "effectiveness" rating, General
  *
- * @param int, int, int, int. Study Design int, Intervention Duration int, Net Effects or Association int, Outcome Type int.
+ * @param int/string, int/string, int/string, int/string. Study Design, Intervention Duration, Net Effects or Association, Outcome Type.
  *
  */
-function calculate_effectiveness_general( $study_design ){
-
-} 
+function calc_general_effectiveness_analysis( $study_design, $duration, $net_effect, $type ){
+	
+	//first, check that study design != 0 (means not set!)
+	if( $study_design == 0 ){
+		return "no study design";
+	}
+	
+	// check for string values where there should be an int (means that net_effects, type, duration are not right )
+	if( !is_int( $net_effect ) ){
+		return "data error: net effect";
+	} else if( !is_int( $type ) ){
+		return "data error: outcome type";
+	} else if( !is_int( $duration ) ){
+		return "data error: duration";
+	} else if( !is_int( $study_design ) ){ //for good measure (in case of error string adding later)
+		return "data error: study design";
+	}
+	
+	//if outcome_type is != 1 or 2, return
+	if( $type != 1 || $type != 2 ){
+		return "outcome type != 1 or 2";
+	}
+	
+	//Algorithmeat!
+	if( ( $study_design == 1 ) && ( ( $duration == 2 ) ||( $duration == 3 ) ) && ( $net_effect == 1 ) ){
+		return 1;
+	} else if( ( $study_design == 1 ) && ( $duration == 1 ) && ( $net_effect == 1 ) ){
+		return 2;
+	} else if( ( $study_design == 1 ) && ( ( $net_effect == 2 ) || ( $net_effect == 3 ) ) ){
+		return 3;
+	} else if( ( $study_design == 2 ) && ( $net_effect == 1 ) ){
+		return 4;
+	} else if( ( $study_design == 2 ) && ( $net_effect == 2 ) ){
+		return 5;
+	} else if( ( $study_design == 2 ) && ( $net_effect == 3 ) ){
+		return 6;
+	} else {
+		return 999;
+	}
+	
+}

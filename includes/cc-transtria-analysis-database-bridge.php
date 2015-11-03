@@ -169,7 +169,7 @@ function get_all_ims_for_study_group( $study_group_id ){
 	//get all study id dyads for this group
 	$im_sql = $wpdb->prepare( 
 		"
-		SELECT      info_id, indicator_value, indicator, measure
+		SELECT      info_id, indicator_value, indicator, measure, outcome_type
 		FROM        $wpdb->transtria_analysis_intermediate
 		WHERE		StudyGroupingID = %d 
 		",
@@ -183,7 +183,7 @@ function get_all_ims_for_study_group( $study_group_id ){
 }
 
 /**
- * Returns all UNIQUE Indicator-Measure dyads for EACH ea tab (seq) in a given study GROUP from table.  No dups.
+ * NOT USED RIGHT NOW: Returns all UNIQUE Indicator-Measure dyads for EACH ea tab (seq) in a given study GROUP from table.  No dups.
  *
  * @param int. Study ID.
  * @return array?
@@ -349,6 +349,7 @@ function get_unique_ims_for_study_group_pop( $study_group_id ){
 	//$study_ids = get_study_ids_in_study_group( $study_group_id );
 	
 	$unique_ims = array();
+	
 	//get all study id dyads for this group
 	$im_sql = $wpdb->prepare( 
 		"
@@ -364,11 +365,6 @@ function get_unique_ims_for_study_group_pop( $study_group_id ){
 	$im_rows = $wpdb->get_results( $im_sql, ARRAY_A );
 	
 	$analysis_id_count = 1;
-	$previous_measure = ""; //for scope
-	$previous_indicator_val = "";
-	$previous_eval_pop = "";
-	$previous_result_pop = "";
-	$previous_result_popYN = "";
 
 	$next_measure = ""; //for scope
 	$next_indicator_val = "";
@@ -378,23 +374,19 @@ function get_unique_ims_for_study_group_pop( $study_group_id ){
 	
 	$info_id_list = ""; //init our info id list
 	
-	//iterate through im rows
+	$temp_im_list = array(); //to hold temporary im info_id values that match SO FAR in the mathcing process (5 properties to match)
+	
+	//iterate through all intermediate im rows
 	foreach( $im_rows as $one_intermediate_im ){
 	
-		//previous iteration's value:
-		$previous_measure = $next_measure;
-		$previous_indicator_val = $next_indicator_val;
-		$previous_eval_pop = $next_eval_pop;
-		$previous_result_pop = $next_result_pop;
-		$previous_result_popYN = $next_result_popYN;
-		
+		//var_dump( $temp_im_list  );
 		//next values to check against
 		$next_measure = $one_intermediate_im["measure"];
 		$next_indicator_val = $one_intermediate_im["indicator_value"];
 		$next_indicator = $one_intermediate_im["indicator"];
-		$next_eval_pop = $one_intermediate_im["result_evaluation_population"];
-		$next_result_popYN = $one_intermediate_im["result_subpopulation"];
-		$next_result_pop = $one_intermediate_im["result_subpopulationYN"];
+		$next_evalpop = $one_intermediate_im["result_evaluation_population"];
+		$next_subpop = $one_intermediate_im["result_subpopulation"];
+		$next_subpopYN = $one_intermediate_im["result_subpopulationYN"];
 		
 		$next_info_id = $one_intermediate_im["info_id"];
 		$effects = $one_intermediate_im["calc_ea_direction"];
@@ -403,60 +395,39 @@ function get_unique_ims_for_study_group_pop( $study_group_id ){
 		$ind = "indicators";
 		
 		//get array of [ info_id => measure ] pairs that are NON-duplicative.  However, Include all info_ids of duplicates w/in that unique array.
-		$temp_array_measure = array_column ( $unique_ims, "measure", "indicator_value" );
 		$temp_array_measure_info_id = array_column ( $unique_ims, "measure", "org_info_id" );
 		$temp_array_indicator_info_id = array_column ( $unique_ims, "indicator_value", "org_info_id" );
-		//var_dump( $temp_array_measure );
+		$temp_array_evalpop_info_id = array_column ( $unique_ims, "result_evaluation_population", "org_info_id" );
+		$temp_array_subpopYN_info_id = array_column ( $unique_ims, "result_subpopulationYN", "org_info_id" );
+		$temp_array_subpop_info_id = array_column ( $unique_ims, "result_subpopulation", "org_info_id" );
+		//var_dump( $temp_array_subpopYN_info_id );
 		
-		//if previous vals == next vals, DUPLICATE and we need to add the info_id to the current analysis array list 
-		if( ( $previous_measure == $next_measure ) && ( $previous_indicator_val == $next_indicator_val ) 
-			&& ( $previous_eval_pop == $next_eval_pop ) && ( $previous_result_pop == $next_result_popYN ) && ( $previous_result_popYN == $next_result_pop ) ){
 		
-			//update duplicative entry in unique_ims: cros-reference $temp_array_indicator_info_id and $temp_array_measure_info_id to get info_id 
-			$info_id_list_measures = array_keys( $temp_array_measure_info_id, $next_measure );
-			$info_id_list_indicators = array_keys( $temp_array_indicator_info_id, $next_indicator_val );
+		//redoing the thinking...
+		//Do the current 5 properties match any already in the $unique_ims array? Flags 
+		$meas_ind_found = false;
+		$evalpop_found = false;
+		$subpopYN_found = false;
+		$subpop_found = false;
+		
+		
+		//Check for Uniqueness of 5 vars together (pentad). Measure => Indicator => Result Evaluation Population => result Subpopulation YN => Result SubPopulations
+		if( in_array( $next_measure, $temp_array_measure_info_id ) ){  // 1/5
+			//we have the measure in the unique_im array.  Get all info_ids and iterate through $unique_im for other 4 variables			
+			$this_measure_by_info_id = array_keys( $temp_array_measure_info_id, $next_measure ); //array of all unique_im info_ids with THIS measure
 
-			//what info_id has this measure and indicator?
-			$intersect_ids = array_intersect( $info_id_list_measures, $info_id_list_indicators );
-			
-			$org_info_id = current( $intersect_ids ); //should only be one!  TODO: shore this method up
-			
-			//find entry in unique_ims, update "info_ids" w new list
-			foreach( $unique_ims as $im_index => $im_values ){
-				if( $org_info_id == $im_values["org_info_id"] ){
-					//append to existing list
-					$info_id_list = $im_values["info_id_list"] . ', ' . $next_info_id;
-					
-					//update original entry w new info_id list
-					$unique_ims[ $im_index ]["info_id_list"] = $info_id_list;
-				
+			//cycle through these ids to see if we have THIS indicator at THIS measure for THIS info id
+			foreach( $this_measure_by_info_id as $meas_info_id ){			
+				//if we have THIS measure and indicator together:= 2/5
+				if( $temp_array_indicator_info_id[ $meas_info_id ] == $next_indicator_val  ){
+					$meas_ind_found = true;
+					//update our temp list
+					array_push( $temp_im_list, $meas_info_id );
 				}
 			}
 			
-			
-			
-			
-		} 
-		
-
-		//memory_get_peak_usage();
-	
-		//first, see if im w measure value exists in temp measure array
-		if( in_array( $next_measure, $temp_array_measure ) ){
-		
-			$found = false;
-			//var_dump( $temp_array_measure );
-			//if in array, see if we have the indicator_val in the unique array at all of the unique ids (info_id) for the measure
-			foreach( $temp_array_measure as $i => $measure ){
-				//check this unique id (info id) in the unique array. Is it the indicator_val?
-				if( $i == $next_indicator_val ){
-					//we've found it!  Don't add to unique_ims, but add the info_id
-					$found = true;
-				}
-			}
-			
-			//if we still haven't found the next_indicator for this measure, add to unique array
-			if( $found == false ){
+			//if no Measure-Indicator pair of these values, put in db
+			if( $meas_ind_found == false ){ //not even this I-M dyad in there!
 				$new_index = $study_group_id . "_" . $analysis_id_count;
 				$unique_ims[ $new_index ] = array( 
 						"measure" => $next_measure, 
@@ -464,12 +435,137 @@ function get_unique_ims_for_study_group_pop( $study_group_id ){
 						"indicator" => $next_indicator,
 						"org_info_id" => $next_info_id,
 						"info_id_list" => $next_info_id,
-						"net_effects" => $effects
+						"net_effects" => $effects,
+						"result_evaluation_population" => $next_evalpop,
+						"result_subpopulationYN" => $next_subpopYN,
+						"result_subpopulation" => $next_subpop
 					);
 					
 				//update our counter
 				$analysis_id_count++;
-			
+				
+			} else { //Indicator and measure are not unique, check for eval pop
+				//result evaluation pop = 3/5
+				foreach( $temp_im_list as $temp_info_id ){
+					//if we have THIS measure, indicator and THIS result evaluation pop together
+					if( $temp_array_evalpop_info_id[ $temp_info_id ] == $next_evalpop  ){
+						$evalpop_found = true;
+					} else {
+						//not a match with THIS, so remove it from the temp_id list?
+						if( ( $key = array_search( $temp_info_id, $temp_im_list ) ) !== false ) { 
+							unset( $temp_im_list[$key] );
+						}
+					}
+					
+				}
+				
+				//check for truthiness of uniqueness of the I-M dyad so far; if !found, put it in unique_ims
+				if( $evalpop_found == false ){ //not even this I-M dyad in there!
+					$new_index = $study_group_id . "_" . $analysis_id_count;
+					$unique_ims[ $new_index ] = array( 
+							"measure" => $next_measure, 
+							"indicator_value" => $next_indicator_val,
+							"indicator" => $next_indicator,
+							"org_info_id" => $next_info_id,
+							"info_id_list" => $next_info_id,
+							"net_effects" => $effects,
+							"result_evaluation_population" => $next_evalpop,
+							"result_subpopulationYN" => $next_subpopYN,
+							"result_subpopulation" => $next_subpop
+						);
+						
+					//update our counter
+					$analysis_id_count++;
+					
+				} else { //Indicator and measure and eval pop are not unique, check for subpop YN
+					//subpop YN = 4/5
+					foreach( $temp_im_list as $temp_info_id ){
+						//if we have THIS measure, indicator, result evaluation pop and THIS subpop YN together
+						if( $temp_array_subpopYN_info_id[ $temp_info_id ] == $next_subpopYN  ){
+							$subpopYN_found = true;							
+						} else {
+							//not a match with THIS, so remove it from the temp_id list?
+							if( ( $key = array_search( $temp_info_id, $temp_im_list ) ) !== false ) { 
+								unset( $temp_im_list[$key] );
+							}
+						}
+					}
+					
+					if( $subpopYN_found == false ){ //not even this I-M dyad in there!
+						$new_index = $study_group_id . "_" . $analysis_id_count;
+						$unique_ims[ $new_index ] = array( 
+								"measure" => $next_measure, 
+								"indicator_value" => $next_indicator_val,
+								"indicator" => $next_indicator,
+								"org_info_id" => $next_info_id,
+								"info_id_list" => $next_info_id,
+								"net_effects" => $effects,
+								"result_evaluation_population" => $next_evalpop,
+								"result_subpopulationYN" => $next_subpopYN,
+								"result_subpopulation" => $next_subpop
+							);
+							
+						//update our counter
+						$analysis_id_count++;
+						
+					} else { //Indicator and measure are not unique, check for subpop
+						//subpop = 5/5
+						foreach( $temp_im_list as $temp_info_id ){
+							//if we have THIS measure, indicator, result evaluation pop, subpop YN and THIS subpop together
+							if( $temp_array_subpop_info_id[ $temp_info_id ] == $next_subpop  ){
+								$subpop_found = true;
+							} else {
+								//update our temp list - remove this im from it?
+								if( ( $key = array_search( $temp_info_id, $temp_im_list ) ) !== false ) { 
+									unset( $temp_im_list[$key] );
+								}
+							}
+							
+						}
+						
+						if( $subpop_found == false ){ //not even this I-M dyad in there!
+							$new_index = $study_group_id . "_" . $analysis_id_count;
+							$unique_ims[ $new_index ] = array( 
+									"measure" => $next_measure, 
+									"indicator_value" => $next_indicator_val,
+									"indicator" => $next_indicator,
+									"org_info_id" => $next_info_id,
+									"info_id_list" => $next_info_id,
+									"net_effects" => $effects,
+									"result_evaluation_population" => $next_evalpop,
+									"result_subpopulationYN" => $next_subpopYN,
+									"result_subpopulation" => $next_subpop
+								);
+								
+							//update our counter
+							$analysis_id_count++;
+							
+						} else {
+							//we have a duplicate!  Add this to the I-M info_id_list param..
+							foreach( $temp_im_list as $temp_id ) { //should be just one (the original info_id)..
+								//$next_info_id at this point is the duplicate and needs to be added to the unique_ims at the ORIGINAL ($temp_id)
+								
+								
+								//what's the original info_id?
+								foreach( $unique_ims as $this_info_id => $this_values ){
+									if( $this_values["org_info_id"] == $temp_id ){
+										//we have the original
+										
+										//append info_id to existing list
+										$info_id_list = $unique_ims[ $this_info_id ]["info_id_list"] . ', ' . $next_info_id;
+										
+										//update original entry w new info_id list
+										$unique_ims[ $this_info_id ]["info_id_list"] = $info_id_list;
+										
+										break; //we are done here
+									}	
+								}
+							}
+						}
+					}
+					
+				}
+				
 			}
 		
 		} else {
@@ -481,22 +577,21 @@ function get_unique_ims_for_study_group_pop( $study_group_id ){
 					"indicator" => $next_indicator,
 					"org_info_id" => $next_info_id,
 					"info_id_list" => $next_info_id,
-					"net_effects" => $effects
+					"net_effects" => $effects,
+					"result_evaluation_population" => $next_evalpop,
+					"result_subpopulationYN" => $next_subpopYN,
+					"result_subpopulation" => $next_subpop
 				);
 				
 			//update our counter
 			$analysis_id_count++;
 		}
+		
 				
 	}
 	
-	//Go through each unique 
-	
-	//TODO: make this efficient when Transtria stops changing their minds about things. crap.
-	//var_dump( $unique_ims );
-	
-	
-	
+	$temp_im_list = array(); //new temp im list next time we iterate
+		
 	//var_dump( $unique_ims );
 	return $unique_ims;
 	
@@ -600,6 +695,50 @@ function save_vars_to_analysis_table( $analysis_vars ){
 		}
 		
 	}
+	
+	//cycle through each id and construct a sql query?
+	foreach( $vars_by_id as $info_id => $labels_and_vals ){
+		
+		$data = array();
+		//parse the columns/vars and values into $data array
+		foreach( $labels_and_vals as $label => $val ){
+			
+			$data[ $label ] = $val;		
+		
+		}
+		
+		$where = array( 
+			'info_id' => $info_id
+		);
+
+		$result[ $info_id ] = $wpdb->update( $wpdb->transtria_analysis, $data, $where, $format = null, $where_format = null );
+	
+	}
+	
+	return $result;
+}
+
+/**
+ * Saves studygroup-level analysis vars to analysis table from front-end form
+ *
+ * @param array. Array indexed by column name
+ * 
+ */
+function save_studygroup_vars_to_analysis_table( $analysis_vars, $study_group_id ){
+
+	global $wpdb;
+	
+	$vars_by_id = array();
+	
+	
+	
+	foreach( $analysis_vars as $var_type => $ids_and_vals ){
+	
+		$vars_by_id[ $var_type ] = $actual_val;		
+		
+	}
+	
+	return $vars_by_id;
 	
 	//cycle through each id and construct a sql query?
 	foreach( $vars_by_id as $info_id => $labels_and_vals ){
@@ -731,13 +870,28 @@ function set_dyads_for_study_group( $study_group_id ){
 	$study_ids = get_study_ids_in_study_group( $study_group_id );
 	$all_dyads = array();
 	$values_string = "";  //for the impending massive INSERT INTO statement..
-	$count = 1;
+	
+	//what's our highest index (for unique id int)?  //TODO: is there a better way for this?  OR does it even matter?
+	$index_sql = 
+		"
+		SELECT unique_id
+		FROM $wpdb->transtria_analysis_intermediate
+		ORDER BY unique_id DESC LIMIT 0, 1
+		"
+		;
+	
+	$highest_index = $wpdb->get_var( $index_sql );
+	if( empty( $highest_index ) ){
+		$index_count = 1;
+	} else {
+		$index_count = $highest_index + 1;
+	}
 	
 	//get all indicators/measures for each study
 	foreach( $study_ids as $study_id ){
 	
 		$new_study_id = $study_id["StudyID"];
-		//var_dump( $new_study_id );
+		var_dump( $new_study_id );
 	
 		//Get other seq-related study data for analysis data (EA tab)
 		$ea_data = get_ea_analysis_data( $new_study_id );
@@ -752,21 +906,9 @@ function set_dyads_for_study_group( $study_group_id ){
 		);
 		
 		
-		//what's our highest index (for unique id int)?  //TODO: is there a better way for this?  OR does it even matter?
-		$index_sql = 
-			"
-			SELECT unique_id
-			FROM $wpdb->transtria_analysis_intermediate
-			ORDER BY unique_id DESC LIMIT 0, 1
-			"
-			;
+		//var_dump( $new_study_id );
+		//var_dump( $ea_data );
 		
-		$highest_index = $wpdb->get_var( $index_sql );
-		if( empty( $highest_index ) ){
-			$count = 1;
-		} else {
-			$count = $highest_index;
-		}
 		$info_id_count = 1; //reset info id count w each study
 	
 		//get number of ea tabs
@@ -788,8 +930,10 @@ function set_dyads_for_study_group( $study_group_id ){
 		if( $num_ea > 0 ){ //if we even HAVE ea tabs
 			for( $i=1; $i <= $num_ea; $i++ ){ //$i = seq
 			
+				var_dump( $i );
+			
 				//start VALUES string
-				$values_start_string = "(" . $count . ", , " . (int) $new_study_id . ", " . $i . ", ";
+				$values_start_string = "(" . $index_count . ", , " . (int) $new_study_id . ", " . $i . ", ";
 				//end VALUES string
 				$values_end_string = " )";
 				
@@ -811,9 +955,11 @@ function set_dyads_for_study_group( $study_group_id ){
 				
 				//go through each measure - should be one, might not be
 				foreach( $this_im[ "measures" ][$i] as $single_measure ){
+					//var_dump( $single_measure );
 					
 					//for each measure, cycle through all indicators on this EA tab
 					foreach( $this_im[ "indicators" ][$i] as $ind_index => $single_ind ){
+						//var_dump( $single_ind );
 					
 						//if we have something in the VALUES string already, prepend with comma
 						if( $values_string != "" ){ //No longer using the values string, but might try to incorporate later for efficiency..
@@ -839,15 +985,16 @@ function set_dyads_for_study_group( $study_group_id ){
 						}
 
 						//TODO: optimize this...for each...study? Can we make this wpdb statement more dynamical?
-						$wpdb->query( $wpdb->prepare( 
+						
+						/*$inter_analysis_sql = $wpdb->prepare( 
 							"
 								INSERT INTO $wpdb->transtria_analysis_intermediate
 								( unique_id, info_id, StudyID, StudyGroupingID, StudyDesignID, ea_seq_id, indicator_value, indicator, 
-									indicator_direction, measure, outcome_direction, outcome_type, outcome_duration, significant, calc_ea_direction,
-									result_evaluation_population, result_subpopulationYN, result_subpopulation)
+								indicator_direction, measure, outcome_direction, outcome_type, outcome_duration, significant, calc_ea_direction, 
+								result_evaluation_population, result_subpopulationYN, result_subpopulation)
 								VALUES ( %d, %s, %d, %d, %s, %d, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s )
 							", 
-							$count,
+							$index_count++,
 							$info_id, 
 							$new_study_id,
 							$study_group_id,
@@ -865,17 +1012,52 @@ function set_dyads_for_study_group( $study_group_id ){
 							$result_eval_pop,
 							$result_sub_pop_yn,
 							$result_sub_pop
-						) );
+						); 
+						*/
 						
+						$did_it_work = $wpdb->insert( 
+							$wpdb->transtria_analysis_intermediate, 
+							array( 
+								'unique_id' => $index_count, 
+								'info_id' => $info_id,
+								'StudyID' => $new_study_id,
+								'StudyGroupingID' => $study_group_id,
+								'StudyDesignID' => $study_design,
+								'ea_seq_id' => $i,
+								'indicator_value' => $ind_index,
+								'indicator' => $single_ind,
+								'indicator_direction' => $ind_dir,
+								'measure' => $single_measure,
+								'outcome_direction' => $outcome_direction,
+								'outcome_type' => $outcome_type,
+								'outcome_duration' => $outcome_duration,
+								'significant' => $significant,
+								'calc_ea_direction' => $ea_direction,
+								'result_evaluation_population' => $result_eval_pop,
+								'result_subpopulationYN' => $result_sub_pop_yn,
+								'result_subpopulation' => $result_sub_pop
+							), 
+							array( '%d', '%s', '%d', '%d', '%s', '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s' ) 
+						);
+						
+						
+						//var_dump( $inter_analysis_sql );
+						//$helps = $wpdb->query( $inter_analysis_sql );
+						
+						if( $did_it_work === false ){
+						
+							var_dump( $wpdb->last_query );
+						}
+						//var_dump( $did_it_work );
+						//update the count
+						$index_count++;
+						$info_id_count++;
 						
 						//HERE, construct the VALUES statements!
 						$values_string .= $values_start_string;
 						$values_string .= $single_ind . ", " . $single_measure;
 						$values_string .= $values_end_string;
 						
-						//update the count
-						$count++;
-						$info_id_count++;
 					
 					}
 				
@@ -885,7 +1067,7 @@ function set_dyads_for_study_group( $study_group_id ){
 		}
 	}
 	
-	//var_dump( $values_string );	
+	var_dump( $values_string );	
 	return $study_ids; 
 }
 
@@ -903,7 +1085,8 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 	global $wpdb;
 	
 	//get all dyads for this group
-	$all_ims = get_unique_ims_for_study_group( $study_group_id );
+	$all_ims = get_unique_ims_for_study_group_pop( $study_group_id );
+	//$all_ims = get_unique_ims_for_study_group( $study_group_id );
 		
 	//remove all analysis rows of this study group from analysis table
 	$analysis_del_row = $wpdb->delete( 
@@ -921,6 +1104,9 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 	$study_design = calculate_study_design_for_analysis( (int)$study_group_id ); //if "0", we will need drop down..
 	$domestic_intl = calculate_domestic_intl_for_analysis( (int)$study_group_id );
 	
+	//get measures => outcome types for study group/analysis
+	$measures_outcome_types = calculate_outcome_types_studygrouping( $study_group_id );
+	
 	foreach( $all_ims as $analysis_index => $one_im ){
 	
 		//var_dump( $one_im );
@@ -930,17 +1116,16 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 		$info_id_list = $one_im[ "info_id_list" ];
 		$ea_direction = $one_im[ "net_effects" ];
 		$duration = "";
-		$type = "";
+		$type = $measures_outcome_types[ $measure ];
 		
 		
-		//Only ONE I-M dyad, no duplicates: set ea_direction, duration, outcome type
+		//Only ONE I-M dyad, no duplicates: set ea_direction, duration
 		if( strpos( $info_id_list, "," ) === false ){
 			$duplicate_im = "N";
 			
 			$this_intermediate_im = get_single_im_from_intermediate( $info_id_list );
 			//var_dump( $this_intermediate_im );
 			$duration = $this_intermediate_im[ "outcome_duration" ];
-			$type = $this_intermediate_im[ "outcome_type" ];
 			
 			
 		} else {
@@ -957,10 +1142,11 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 			
 			//calculate duration, net_effect, etc, based on info_id_list - modulate
 			$duration = calculate_duration_for_analysis( $info_id_list, $studygroup_ea_data );
-			//$type = calculate_outcometype_for_analysis( $info_id_list );
-			//interna
 			
 		}
+		
+		//calculate effectiveness for this analysis id
+		$effectiveness_gen = calc_general_effectiveness_analysis( $study_design, $duration, $ea_direction, $type );
 		
 		//add these to analysis table
 		//var_dump( $analysis_index );
@@ -969,8 +1155,9 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 		$spartacus = $wpdb->prepare( 
 			"
 				INSERT INTO $wpdb->transtria_analysis
-				( info_id, StudyGroupingID, study_design, domestic_international, indicator_value, indicator, measure, info_id_list, duplicate_ims, net_effects, duration )
-				VALUES ( %s, %d, %d, %d, %s, %s, %s, %s, %s, %s, %s )
+				( info_id, StudyGroupingID, study_design, domestic_international, indicator_value, indicator, measure, info_id_list, duplicate_ims, 
+					net_effects, duration, outcome_type, effectiveness_general )
+				VALUES ( %s, %d, %d, %d, %s, %s, %s, %s, %s, %s, %s, %s, %s )
 			", 
 			$analysis_index,
 			$study_group_id,
@@ -982,7 +1169,9 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 			$info_id_list,
 			$duplicate_im,
 			$ea_direction,
-			$duration
+			$duration,
+			$type,
+			$effectiveness_gen
 		);
 		
 		$wpdb->query( $spartacus );
@@ -1309,12 +1498,12 @@ function get_ea_analysis_data( $study_id ){
 		}
 		
 		//var_dump ( $one_seq["outcome_type_other"]);
-		if( ( $one_seq["outcome_type_other"] != "" )  || empty( $one_seq["outcome_type_other"] ) ){
+		if( ( $one_seq["outcome_type_other"] == "" ) || empty( $one_seq["outcome_type_other"] ) ){
 			//$new_outcome_type = get_single_codetypeid_descr_by_value( 54, $one_seq["outcome_type"] ); //64 = "OutcomeType"
 			//we can just return the value here, since it correspond's to Laura's algorithms
 			$new_outcome_type = $one_seq["outcome_type"]; 
 		} else {
-			$new_outcome_type = "Other: " . $one_seq["outcome_type"];
+			$new_outcome_type = "Other: " . $one_seq["outcome_type_other"];
 		}
 		
 		//deal with serialized indicator/strategies/directions to get indicator["string"] => Direction

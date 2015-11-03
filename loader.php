@@ -73,6 +73,7 @@ function cc_transtria_class_init(){
 	//write-to analysis tables
 	$wpdb->transtria_analysis_intermediate = $wpdb->prefix . 'transtria_analysis_intermediate';
 	$wpdb->transtria_analysis = $wpdb->prefix . 'transtria_analysis';
+	$wpdb->transtria_analysis_studygrouping = $wpdb->prefix . 'transtria_analysis_studygrouping';  //write-to sg table
 	
 }
 add_action( 'bp_include', 'cc_transtria_class_init' );

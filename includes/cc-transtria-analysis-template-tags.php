@@ -52,6 +52,7 @@ function cc_transtria_render_analysis_page(){
 		<label class="analysis_tab_label" data-whichanalysistab="analysis_vars_content" for="analysis_tab">Analysis Data</label>
 		
 		<div id="analysis_content">
+			<input id="secret_study_group" hidden="hidden" >
 			<div id="intermediate_vars_content" class="single_analysis_content">
 				<h3 id="intermediate_vars_header_text">Intermediate Variables</h3>
 				
@@ -227,21 +228,25 @@ function cc_transtria_render_analysis_page(){
 				<a id="hide_analysis_im_table" class="button">HIDE I-M DYADS</a>
 				<table id="analysis_vars_im">
 					<tr class="no_remove">
-						<th>Study Grouping ID</th>
 						<th>Analysis ID (SG _ unique ID)</th>
 						<th>Indicator</th>
-						<th>Measure</th>	
-						<th>Unique IDs ( >1 = duplicate)</th>	
+						<th>Measure</th>
+						<th>Unique IDs ( >1 = duplicate)</th>
+						<th>Net Effects</th>
+						<th>Outcome Type</th>
+						<th>Effectiveness</th>
 					</tr>
 					<tr id="data_parent" class="no_remove"></tr>
 				
 				</table>
 				
-				<select id="analysis_study_design">Study Design
+				<select class="analysis_study_design">Study Design
 					<option value="-1"> -- Select Study Design -- </option>
 					<option value="1"> 1 = Intervention Evaluation </option>
 					<option value="2"> 2 = Associational Study </option>
 				</select>
+				<a id="save_analysis_studydesign" class="button alignright analysis_save" data-whichvars="analysis_study_design" data-whichsave="save_studygroup_vars">SAVE STUDY DESIGN</a>
+				
 				
 				<h4>Net Effects or Associations:</h4>
 				<a id="hide_analysis_effect_table" class="button">HIDE I-M DIRECTIONS</a>
@@ -268,7 +273,7 @@ function cc_transtria_render_analysis_page(){
 					<tr id="data_parent" class="no_remove"></tr>
 				
 				</table>
-				<a id="save_analysis_effects" class="button alignright analysis_save" data-whichvars="net_effects">SAVE EFFECTS</a>
+				<a id="save_analysis_effects" class="button alignright analysis_save" data-whichvars="net_effects" data-whichsave="save_analysis_vars">SAVE EFFECTS</a>
 				
 				<br />
 				

@@ -140,6 +140,7 @@ class CC_Transtria_Extras {
 		
 		//save things from assignments tab
 		add_action( 'wp_ajax_save_analysis_vars' , array( $this, 'save_analysis_vars' ) );
+		add_action( 'wp_ajax_save_studygroup_vars' , array( $this, 'save_studygroup_vars' ) );
 
 	}
 
@@ -815,6 +816,29 @@ class CC_Transtria_Extras {
 			$analysis_success = save_vars_to_analysis_table( $analysis_vars );
 		} else {
 			$analysis_success = "no analysis vars to save";
+		}
+		
+		//return message
+		echo json_encode( $analysis_success );
+		
+		die();
+	
+	}
+	
+	//ajax save STUDY GROUP variables to analysis table...for now
+	function save_studygroup_vars(){
+		// Is the nonce good?
+		if ( ! check_ajax_referer( 'cc_transtria_ajax_nonce', 'transtria_nonce' ) ) {
+			return false;
+		}
+		
+		$analysis_vars = $_POST["analysis_vars"];
+		$study_group = $_POST["study_group"];
+		
+		if( !empty( $analysis_vars ) ){
+			$analysis_success = save_studygroup_vars_to_analysis_table( $analysis_vars, $study_group );
+		} else {
+			$analysis_success = "no SG analysis vars to save";
 		}
 		
 		//return message

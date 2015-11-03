@@ -88,6 +88,9 @@ function get_vars_by_grouping(){
 
 	this_study_group = jQuery("select#StudyGroupingIDList").val();
 	
+	//update hidden input
+	jQuery("input#secret_study_group").val( this_study_group );
+	
 	//user messages
 	var spinny = jQuery('.analysis_messages .spinny');
 	var usrmsg = jQuery('.analysis_messages .usr-msg');
@@ -357,11 +360,13 @@ function get_vars_by_grouping(){
 						//console.log( this );
 						
 						txt_a_im += "<tr>";
-						txt_a_im += "<td>" + this.StudyGroupingID + "</td>";
 						txt_a_im += "<td>" + this.info_id + "</td>";
 						txt_a_im += "<td>" + this.indicator + "</td>";
 						txt_a_im += "<td>" + this.measure + "</td>";
 						txt_a_im += "<td>" + this.info_id_list + "</td>";
+						txt_a_im += "<td>" + this.net_effects + "</td>";
+						txt_a_im += "<td>" + this.outcome_type + "</td>";
+						txt_a_im += "<td>" + this.effectiveness_general + "</td>";
 						
 						txt_a_im += "</tr>";
 						
@@ -443,6 +448,8 @@ function get_vars_by_grouping(){
 function run_intermediate_analysis(){
 
 	this_study_group = jQuery("select#StudyGroupingIDList").val();
+	//update hidden input
+	jQuery("input#secret_study_group").val( this_study_group );
 	
 	//user messages
 	var spinny = jQuery('.analysis_messages .spinny');
@@ -497,6 +504,9 @@ function run_analysis(){
 
 	this_study_group = jQuery("select#StudyGroupingIDList").val();
 	
+	//update hidden input
+	jQuery("input#secret_study_group").val( this_study_group );
+	
 	//user messages
 	var spinny = jQuery('.analysis_messages .spinny');
 	var usrmsg = jQuery('.analysis_messages .usr-msg');
@@ -548,37 +558,51 @@ function run_analysis(){
 //saves analysis vars //TODO: make this apply to 'all' somehow
 function save_analysis_vars(){
 	//which analysis save button did we touch?
-	var which_vars = jQuery(this).attr('data-whichvars');
+	var which_vars = jQuery(this).attr('data-whichvars'); //should match the select(s) that need savin'
+	var which_action = jQuery(this).attr('data-whichsave'); //let's us know at which level to save this analysis var
 	var which_id = 0;
 	var selected_val = 0;
 	var this_save_vars = {};
 	var all_save_vars = {};
 	
-	//get all the selects of this class
-	jQuery.each( jQuery('select.' + which_vars ), function(){
-		//get analysis id
-		which_id = jQuery(this).parent('td').siblings('td.analysis_id').html();
+	if( which_action == "save_analysis_vars" ){
+		//get all the selects of this class
+		jQuery.each( jQuery('select.' + which_vars ), function(){
+			//get analysis id
+			which_id = jQuery(this).parent('td').siblings('td.analysis_id').html();
+			
+			//get which value is selected
+			selected_val = jQuery(this).val();
+			if( selected_val != '-1' ){
+				//add this value to the array
+				this_save_vars[which_id] = selected_val;
+			}
+			
+		});
+		//console.log( one_var );
 		
-		//get which value is selected
-		selected_val = jQuery(this).val();
-		if( selected_val != '-1' ){
-			//add this value to the array
-			this_save_vars[which_id] = selected_val;
-		}
-		
-	});
-	//console.log( one_var );
+		all_save_vars[ which_vars ] = this_save_vars;
+	} else { //studygroup-level savin'
 	
-	all_save_vars[ which_vars ] = this_save_vars;
+		selected_val = jQuery('select.' + which_vars ).val();
+		
+		if( selected_val == '-1' ){ //don't waste my time
+			return;
+		}
+		all_save_vars[ which_vars ] = selected_val;
+	
+	}
 	
 	//console.log( all_save_vars );
 	
 	//set up ajax data
-	var ajax_action = 'save_analysis_vars';
+	//change action depending on whether it's analysis-id-specific vars or studygroup-specific vars
+	var ajax_action = which_action; //'save_analysis_vars';
 	var ajax_data = {
 		'action': ajax_action,
 		'transtria_nonce' : transtria_ajax.ajax_nonce,
-		'analysis_vars' : all_save_vars
+		'analysis_vars' : all_save_vars,
+		'study_group' : jQuery("input#secret_study_group").val()
 	};
 	
 	//AJAX that noise
