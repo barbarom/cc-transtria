@@ -44,7 +44,7 @@ function cc_transtria_render_analysis_page(){
 			<br />
 			4. <a id="get_vars_by_group" class="button"> GET/DISPLAY ALL VARS</a>
 			<br />
-			5. <a id="run_second_analysis" class="button"> RUN ANALYSIS w/ NEW VARS</a>
+			5. <a id="run_second_analysis" class="button"> RUN ANALYSIS w/ NEW VARS, GET VARS</a>
 			
 			<h4><em>**Note: will overwrite existing variables and computations</em></h4>
 			
@@ -248,7 +248,10 @@ function cc_transtria_render_analysis_page(){
 					<option value="1"> 1 = Intervention Evaluation </option>
 					<option value="2"> 2 = Associational Study </option>
 				</select>
-				<a id="save_analysis_studydesign" class="button alignright analysis_save" data-whichvars="analysis_study_design" data-whichsave="save_studygroup_vars">SAVE STUDY DESIGN</a>
+				<span>
+					<a id="save_analysis_studydesign" class="button alignright analysis_save" data-whichvars="analysis_study_design" data-whichsave="save_studygroup_vars" data-whichmsg="studydesign_msg">SAVE STUDY DESIGN</a>
+					<div id="studydesign_msg" class="save_analysis_msg"></div>
+				</span>
 				
 				
 				<h4>Net Effects or Associations:</h4>
@@ -276,8 +279,10 @@ function cc_transtria_render_analysis_page(){
 					<tr id="data_parent" class="no_remove"></tr>
 				
 				</table>
-				<a id="save_analysis_effects" class="button alignright analysis_save" data-whichvars="net_effects" data-whichsave="save_analysis_vars">SAVE EFFECTS</a>
-				
+				<span>
+					<a id="save_analysis_effects" class="button alignright analysis_save" data-whichvars="net_effects" data-whichsave="save_analysis_vars" data-whichmsg="net_effects_msg">SAVE EFFECTS</a>
+					<div id="net_effects_msg" class="save_analysis_msg"></div>
+				</span>
 				<br />
 				
 				<h4>Effectiveness:</h4>

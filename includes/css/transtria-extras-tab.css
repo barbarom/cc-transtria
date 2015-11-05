@@ -152,7 +152,7 @@ textarea{
 .assignments_messages,
 .analysis_messages,
 .studygrouping_messages{
-	width:100%;
+	width:auto;
 	margin-bottom:1em;
 	background-color:#ccffcc;
     padding: 1em;
@@ -345,6 +345,13 @@ table#intermediate_vars_direction{
 	font-weight: bold;
 }
 
+#analysis_content .save_analysis_msg{
+	float: right;
+    font-style: italic;
+    font-weight: bold;
+    padding-right: 8px;
+    padding-top: 10px;
+}
 
 
 

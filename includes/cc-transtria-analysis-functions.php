@@ -102,7 +102,10 @@ function calculate_study_design_for_analysis( $studygrouping_id ){
 	//Evaluate against StudyDesign algorithm
 	//The algorithm numbers are DIFFERENT here than in Laura's notes, because of the way they are assigned in the codetbl already. //99=StudyDesign
 	$one_array = array( "1", "2", "3", "4", "5", "6", "7", "8", "12" );
-	if( in_array( $one_array, $all_designs ) ){
+	
+	$check_intersect = array_intersect( $one_array, $all_designs );
+	
+	if( !empty( $check_intersect ) ){
 		return 1;
 	}
 	
@@ -360,4 +363,790 @@ function calc_general_effectiveness_analysis( $study_design, $duration, $net_eff
 		return 999;
 	}
 	
+}
+
+/**
+ * Calculates Population or SubPopulation for an I-M
+ *
+ * @param
+ * @return population_calc, list of unique_ids (if duplicate = "Y") that are evaluated (info_id_list_hr)?
+ */
+function calculate_pop_subpop_analysis( $pop_data_by_study_id, $info_id_list, $evalpop, $subpopYN, $subpop, $this_study_group ){
+
+	//set vars for THIS im
+	
+	//parse info list to show what Studies (study_ids) we need to look at
+	$study_id_list = array();
+	$info_id_list_by_study = array();
+	$exploded_info_ids = explode( ", ", $info_id_list );
+	foreach( $exploded_info_ids as $this_info_id ){
+		$underscore_pos = strpos( $this_info_id, "_" );
+		$this_study_id = substr( $this_info_id, 0, $underscore_pos );
+		//push to study id list
+		array_push( $study_id_list, $this_study_id );
+		//push this info id to list by study (for info_id_list_hr-ing later)
+		if( $info_id_list_by_study[$this_study_id] == null ){
+			$info_id_list_by_study[$this_study_id] = array();
+		}
+		array_push( $info_id_list_by_study[$this_study_id], $this_info_id ); 
+	}
+	
+	
+	//get unique vals for study ids
+	$new_study_ids = array_unique( $study_id_list );
+	
+	//TODO, clean this up when no incoming $subpop (check for subpop, etc), etc
+	$this_subpop = current( unserialize( $subpop ) );//-> value is db value; => descr is string d
+	$this_evalpop = current( unserialize( $evalpop ) ); //->value is db value ("TP", "EU", etc); ->descr is full string name
+	$this_evalpop_string = evalpop_lookup( $this_evalpop["value"] ); //returns "tp", "ese0", etc (the PopulationType in the pops data)
+	
+	$this_pop_data = array(); //to hold current study's incoming single pop data
+	$eval_pop_data_parsed = array(); //to hold all studies' parsed pop data (with eval pop and IPE data only!); indexed by column name
+	$ipe_pop_data_parsed = array(); //to hold all studies' parsed pop data (with eval pop and IPE data only!); indexed by column name
+	
+	//subpopulation of Populations tabs, indexed by study
+	$sub_pop_data = get_pops_subpop_data_study_group( $this_study_group ); //indexed by study id (Youth value == 1)
+	
+
+	
+	//Gather population data across studies?  Maybe?
+	//	Need to get percentages for eval pop AND IPE
+	foreach( $new_study_ids as $one_study ){
+		
+		//all study-form population data
+		$this_pop_data = $pop_data_by_study_id[ $one_study ];
+		
+		//this result eval pop data //$this_evalpop_string
+		$eval_pop_data = $this_pop_data[ $this_evalpop_string ];
+		$ipe_pop_data = $this_pop_data[ "ipe" ];
+		
+		
+		//are race percentages even reported??
+		$eval_pop_data_parsed["racepercentages_notreported"][$one_study] = $eval_pop_data->racepercentages_notreported;
+		$ipe_pop_data_parsed["racepercentages_notreported"][$one_study] = $ipe_pop_data->racepercentages_notreported;
+		
+		//if eval pop race percentages not reported, don't continue to populate; "Y" = not reported
+		if( $eval_pop_data_parsed["racepercentages_notreported"][$one_study] == "N" ){
+			
+			//get percentages, subpopulation values for this study's eval pop
+			$eval_pop_data_parsed["PctBlack"][$one_study] = $eval_pop_data->PctBlack;
+			$eval_pop_data_parsed["PctAsian"][$one_study] = $eval_pop_data->PctAsian;
+			$eval_pop_data_parsed["PctPacificIslander"][$one_study] = $eval_pop_data->PctPacificIslander;
+			$eval_pop_data_parsed["PctNativeAmerican"][$one_study] = $eval_pop_data->PctNativeAmerican;
+			$eval_pop_data_parsed["PctOtherRace"][$one_study] = $eval_pop_data->PctOtherRace;
+			$eval_pop_data_parsed["PctHispanic"][$one_study] = $eval_pop_data->PctHispanic;
+			$eval_pop_data_parsed["PctLowerIncome"][$one_study] = $eval_pop_data->PctLowerIncome;
+			$eval_pop_data_parsed["GenderCode"][$one_study] = $eval_pop_data->GenderCode;
+			$eval_pop_data_parsed["gender_notreported"][$one_study] = $eval_pop_data->gender_notreported;
+			$eval_pop_data_parsed["isGeneralPopulation"][$one_study] = $eval_pop_data->isGeneralPopulation;
+			$eval_pop_data_parsed["generalpopulation_notreported"][$one_study] = $eval_pop_data->generalpopulation_notreported;
+		
+			$eval_pop_racereported = true; //set flag
+		} else {
+			$eval_pop_racereported = false;  //set flag
+		}
+		
+		//if ipe pop race percentages not reported, don't continue to populate
+		if( $ipe_pop_data_parsed["racepercentages_notreported"][$one_study] == "N" ){
+		
+			//get percentages, subpopulation values for this study's IPE pop
+			$ipe_pop_data_parsed["PctBlack"][$one_study] = $ipe_pop_data->PctBlack;
+			$ipe_pop_data_parsed["PctAsian"][$one_study] = $ipe_pop_data->PctAsian;
+			$ipe_pop_data_parsed["PctPacificIslander"][$one_study] = $ipe_pop_data->PctPacificIslander;
+			$ipe_pop_data_parsed["PctNativeAmerican"][$one_study] = $ipe_pop_data->PctNativeAmerican;
+			$ipe_pop_data_parsed["PctOtherRace"][$one_study] = $ipe_pop_data->PctOtherRace;
+			$ipe_pop_data_parsed["PctHispanic"][$one_study] = $ipe_pop_data->PctHispanic;
+			$ipe_pop_data_parsed["PctLowerIncome"][$one_study] = $ipe_pop_data->PctLowerIncome;
+			$ipe_pop_data_parsed["GenderCode"][$one_study] = $ipe_pop_data->GenderCode;
+			$ipe_pop_data_parsed["gender_notreported"][$one_study] = $ipe_pop_data->gender_notreported;
+			$ipe_pop_data_parsed["isGeneralPopulation"][$one_study] = $ipe_pop_data->isGeneralPopulation;
+			$ipe_pop_data_parsed["generalpopulation_notreported"][$one_study] = $ipe_pop_data->generalpopulation_notreported;
+		
+			$ipe_pop_racereported = true; //set flag
+			
+		} else {
+			$ipe_pop_racereported = false;  //set flag
+		}
+	}
+	
+	
+	
+	/***** ALGORITHM *****/
+	/*This should do what?
+	//	if subpop id'd (African American, Girls, etc), evaluate from that.
+	//	Else, need to evaluate the race percentages for the Result Evaluation Population ("TP", "ESE0", etc)
+	//	In order, if race percentages for ANY of the Unique IDs (I-M dyads that make up the current Analysis ID) == 100, go with that.
+	//	However, if they have companion Unique ID != 100 on that race %, exclude these Unique IDs for HR-specific props/calc (duration, study design, net effects, outcome type.
+	*/
+	
+	$return_data = array(
+		'which_pop' => "", //subpop, eval pop, ipe
+		'population_calc' => "", //what's the digit?
+		'info_id_list_hr' => array() //(if subpop, this will be incoming info_if_list)
+		);
+	$study_list_hr = array();
+	$we_found_it = false;
+	
+	//1. African-American = 5
+	if( (int)$this_subpop["value"] == 5 ){
+		$return_data['which_pop'] = "subpop";
+		$return_data['population_calc'] = 5;
+		$return_data['info_id_list_hr'] = $info_id_list;
+		$we_found_it = true;
+	} else if( $eval_pop_racereported ){ //any of the studies' ptcblack data
+		foreach( $eval_pop_data_parsed["PctBlack"] as $which_study => $racepct ){
+			if( $racepct == 100 ){ //yes!
+				$return_data['population_calc'] = 5;
+				array_push( $study_list_hr, $which_study ); //add to the hr list
+				$we_found_it = true;
+			}
+		}
+		$info_id_list_hr = parse_hr_info_list( $study_list_hr, $info_id_list_by_study );
+		//return the things
+		$return_data['which_pop'] = $this_evalpop_string;
+		$return_data['info_id_list_hr'] = $info_id_list_hr;
+	
+	} else if( $ipe_pop_racereported ){ //look to ipe
+		foreach( $ipe_pop_data_parsed["PctBlack"] as $which_study => $racepct ){
+			if( $racepct == 100 ){ //yes!
+				$return_data['population_calc'] = 5;
+				array_push( $study_list_hr, $which_study ); //add to the hr list
+				$we_found_it = true;
+			}
+		}
+		$info_id_list_hr = parse_hr_info_list( $study_list_hr, $info_id_list_by_study );
+		//return the things
+		$return_data['which_pop'] = "ipe";
+		$return_data['info_id_list_hr'] = $info_id_list_hr;
+	
+	}
+	
+	if( $we_found_it == true ){
+		return $return_data;
+	}
+	
+	//2. Asian-American = 6
+	if( (int)$this_subpop["value"] == 6 ){
+		$return_data['which_pop'] = "subpop";
+		$return_data['population_calc'] = 6;
+		$return_data['info_id_list_hr'] = $info_id_list;
+		$we_found_it = true;
+	} else if( $eval_pop_racereported ){ //any of the studies' ptcblack data
+		foreach( $eval_pop_data_parsed["PctAsian"] as $which_study => $racepct ){
+			if( $racepct == 100 ){ //yes!
+				$return_data['population_calc'] = 6;
+				array_push( $study_list_hr, $which_study ); //add to the hr list
+				$we_found_it = true;
+			}
+		}
+		$info_id_list_hr = parse_hr_info_list( $study_list_hr, $info_id_list_by_study );
+		//return the things
+		$return_data['which_pop'] = $this_evalpop_string;
+		$return_data['info_id_list_hr'] = $info_id_list_hr;
+	
+	} else if( $ipe_pop_racereported ){ //look to ipe
+		foreach( $ipe_pop_data_parsed["PctAsian"] as $which_study => $racepct ){
+			if( $racepct == 100 ){ //yes!
+				$return_data['population_calc'] = 6;
+				array_push( $study_list_hr, $which_study ); //add to the hr list
+				$we_found_it = true;
+			}
+		}
+		$info_id_list_hr = parse_hr_info_list( $study_list_hr, $info_id_list_by_study );
+		//return the things
+		$return_data['which_pop'] = "ipe";
+		$return_data['info_id_list_hr'] = $info_id_list_hr;
+	
+	}
+	
+	if( $we_found_it == true ){
+		return $return_data;
+	}
+
+	//3. Native American/ Alaskan Native = 7 (11 in db)
+	if( (int)$this_subpop["value"] == 11 ){
+		$return_data['which_pop'] = "subpop";
+		$return_data['population_calc'] = 7;
+		$return_data['info_id_list_hr'] = $info_id_list;
+		$we_found_it = true;
+	} else if( $eval_pop_racereported ){ //any of the studies' ptcblack data
+		foreach( $eval_pop_data_parsed["PctNativeAmerican"] as $which_study => $racepct ){
+			if( $racepct == 100 ){ //yes!
+				$return_data['population_calc'] = 7;
+				array_push( $study_list_hr, $which_study ); //add to the hr list
+				$we_found_it = true;
+			}
+		}
+		$info_id_list_hr = parse_hr_info_list( $study_list_hr, $info_id_list_by_study );
+		//return the things
+		$return_data['which_pop'] = $this_evalpop_string;
+		$return_data['info_id_list_hr'] = $info_id_list_hr;
+	
+	} else if( $ipe_pop_racereported ){ //look to ipe
+		foreach( $ipe_pop_data_parsed["PctNativeAmerican"] as $which_study => $racepct ){
+			if( $racepct == 100 ){ //yes!
+				$return_data['population_calc'] = 7;
+				array_push( $study_list_hr, $which_study ); //add to the hr list
+				$we_found_it = true;
+			}
+		}
+		$info_id_list_hr = parse_hr_info_list( $study_list_hr, $info_id_list_by_study );
+		//return the things
+		$return_data['which_pop'] = "ipe";
+		$return_data['info_id_list_hr'] = $info_id_list_hr;
+	
+	}
+	
+	if( $we_found_it == true ){
+		return $return_data;
+	}
+	
+	//4. Native Hawaiian/Pacific Islander = 8 (8 in db)
+	if( (int)$this_subpop["value"] == 8 ){
+		$return_data['which_pop'] = "subpop";
+		$return_data['population_calc'] = 8;
+		$return_data['info_id_list_hr'] = $info_id_list;
+		$we_found_it = true;
+	} else if( $eval_pop_racereported ){ //any of the studies' ptcblack data
+		foreach( $eval_pop_data_parsed["PctPacificIslander"] as $which_study => $racepct ){
+			if( $racepct == 100 ){ //yes!
+				$return_data['population_calc'] = 8;
+				array_push( $study_list_hr, $which_study ); //add to the hr list
+				$we_found_it = true;
+			}
+		}
+		$info_id_list_hr = parse_hr_info_list( $study_list_hr, $info_id_list_by_study );
+		//return the things
+		$return_data['which_pop'] = $this_evalpop_string;
+		$return_data['info_id_list_hr'] = $info_id_list_hr;
+	
+	} else if( $ipe_pop_racereported ){ //look to ipe
+		foreach( $ipe_pop_data_parsed["PctPacificIslander"] as $which_study => $racepct ){
+			if( $racepct == 100 ){ //yes!
+				$return_data['population_calc'] = 8;
+				array_push( $study_list_hr, $which_study ); //add to the hr list
+				$we_found_it = true;
+			}
+		}
+		$info_id_list_hr = parse_hr_info_list( $study_list_hr, $info_id_list_by_study );
+		//return the things
+		$return_data['which_pop'] = "ipe";
+		$return_data['info_id_list_hr'] = $info_id_list_hr;
+	
+	}
+	
+	if( $we_found_it == true ){
+		return $return_data;
+	}
+	
+	//5. Other Race = 9 (12 in db)
+	if( (int)$this_subpop["value"] == 12 ){
+		$return_data['which_pop'] = "subpop";
+		$return_data['population_calc'] = 9;
+		$return_data['info_id_list_hr'] = $info_id_list;
+		$we_found_it = true;
+	} else if( $eval_pop_racereported ){ //any of the studies' ptcblack data
+		foreach( $eval_pop_data_parsed["PctOtherRace"] as $which_study => $racepct ){
+			if( $racepct == 100 ){ //yes!
+				$return_data['population_calc'] = 9;
+				array_push( $study_list_hr, $which_study ); //add to the hr list
+				$we_found_it = true;
+			}
+		}
+		$info_id_list_hr = parse_hr_info_list( $study_list_hr, $info_id_list_by_study );
+		//return the things
+		$return_data['which_pop'] = $this_evalpop_string;
+		$return_data['info_id_list_hr'] = $info_id_list_hr;
+	
+	} else if( $ipe_pop_racereported ){ //look to ipe
+		foreach( $ipe_pop_data_parsed["PctOtherRace"] as $which_study => $racepct ){
+			if( $racepct == 100 ){ //yes!
+				$return_data['population_calc'] = 9;
+				array_push( $study_list_hr, $which_study ); //add to the hr list
+				$we_found_it = true;
+			}
+		}
+		$info_id_list_hr = parse_hr_info_list( $study_list_hr, $info_id_list_by_study );
+		//return the things
+		$return_data['which_pop'] = "ipe";
+		$return_data['info_id_list_hr'] = $info_id_list_hr;
+	
+	}
+	
+	if( $we_found_it == true ){
+		return $return_data;
+	}
+	
+	//6. Hispanic/Latino = 10 (9 in db)
+	if( (int)$this_subpop["value"] == 9 ){
+		$return_data['which_pop'] = "subpop";
+		$return_data['population_calc'] = 10;
+		$return_data['info_id_list_hr'] = $info_id_list;
+		$we_found_it = true;
+	} else if( $eval_pop_racereported ){ //any of the studies' ptcblack data
+		foreach( $eval_pop_data_parsed["PctHispanic"] as $which_study => $racepct ){
+			if( $racepct == 100 ){ //yes!
+				$return_data['population_calc'] = 10;
+				array_push( $study_list_hr, $which_study ); //add to the hr list
+				$we_found_it = true;
+			}
+		}
+		$info_id_list_hr = parse_hr_info_list( $study_list_hr, $info_id_list_by_study );
+		//return the things
+		$return_data['which_pop'] = $this_evalpop_string;
+		$return_data['info_id_list_hr'] = $info_id_list_hr;
+	
+	} else if( $ipe_pop_racereported ){ //look to ipe
+		foreach( $ipe_pop_data_parsed["PctHispanic"] as $which_study => $racepct ){
+			if( $racepct == 100 ){ //yes!
+				$return_data['population_calc'] = 10;
+				array_push( $study_list_hr, $which_study ); //add to the hr list
+				$we_found_it = true;
+			}
+		}
+		$info_id_list_hr = parse_hr_info_list( $study_list_hr, $info_id_list_by_study );
+		//return the things
+		$return_data['which_pop'] = "ipe";
+		$return_data['info_id_list_hr'] = $info_id_list_hr;
+	
+	}
+	
+	if( $we_found_it == true ){
+		return $return_data;
+	}
+	
+	//7. Lower Income = 11 (10 in db)
+	if( (int)$this_subpop["value"] == 10 ){
+		$return_data['which_pop'] = "subpop";
+		$return_data['population_calc'] = 11;
+		$return_data['info_id_list_hr'] = $info_id_list;
+		$we_found_it = true;
+	} else if( $eval_pop_racereported ){ //any of the studies' ptcblack data
+		foreach( $eval_pop_data_parsed["PctLowerIncome"] as $which_study => $racepct ){
+			if( $racepct == 100 ){ //yes!
+				$return_data['population_calc'] = 11;
+				array_push( $study_list_hr, $which_study ); //add to the hr list
+				$we_found_it = true;
+			}
+		}
+		$info_id_list_hr = parse_hr_info_list( $study_list_hr, $info_id_list_by_study );
+		//return the things
+		$return_data['which_pop'] = $this_evalpop_string;
+		$return_data['info_id_list_hr'] = $info_id_list_hr;
+	
+	} else if( $ipe_pop_racereported ){ //look to ipe
+		foreach( $ipe_pop_data_parsed["PctLowerIncome"] as $which_study => $racepct ){
+			if( $racepct == 100 ){ //yes!
+				$return_data['population_calc'] = 11;
+				array_push( $study_list_hr, $which_study ); //add to the hr list
+				$we_found_it = true;
+			}
+		}
+		$info_id_list_hr = parse_hr_info_list( $study_list_hr, $info_id_list_by_study );
+		//return the things
+		$return_data['which_pop'] = "ipe";
+		$return_data['info_id_list_hr'] = $info_id_list_hr;
+	
+	}
+	
+	if( $we_found_it == true ){
+		return $return_data;
+	}
+	
+	//8. Girls = 1 (1 in db); Gender = "F", subpop = 1 (Youth)
+	if( (int)$this_subpop["value"] == 1 ){
+		$return_data['which_pop'] = "subpop";
+		$return_data['population_calc'] = 1;
+		$return_data['info_id_list_hr'] = $info_id_list;
+		$we_found_it = true;
+	} else if( $eval_pop_data_parsed["gender_notreported"] != "Y" ){ //any of the studies' ptcblack data
+		foreach( $eval_pop_data_parsed["GenderCode"] as $which_study => $gender ){
+			//what are the pops subpops strings?
+			$this_pop_subpops = $sub_pop_data[ $which_study ][ $this_evalpop_string ];
+			$pop_subpop_array = array(); //to hold the subpop strings (i.e. "Adults", "Families", "Youth")
+			foreach( $this_pop_subpops as $this_pop_subpop ){
+				array_push( $pop_subpop_array, $this_pop_subpop->descr );
+			}
+			
+			if( ( trim( $gender ) == "F" ) && in_array( "Youth", $pop_subpop_array ) ){ //if Gender == "F" AND this pop subpop contains "Youth"...
+				$return_data['population_calc'] = 1;
+				array_push( $study_list_hr, $which_study ); //add to the hr list
+				$we_found_it = true;
+			}
+		}
+		$info_id_list_hr = parse_hr_info_list( $study_list_hr, $info_id_list_by_study );
+		//return the things
+		$return_data['which_pop'] = $this_evalpop_string;
+		$return_data['info_id_list_hr'] = $info_id_list_hr;
+	
+	} else if( $ipe_pop_data_parsed["gender_notreported"] != "Y" ){ //look to ipe
+		foreach( $ipe_pop_data_parsed["GenderCode"] as $which_study => $gender ){
+			//what are the ipe subpops?
+			$this_pop_subpops = $sub_pop_data[ $which_study ][ "ipe" ];
+			$pop_subpop_array = array(); //to hold the subpop strings (i.e. "Adults", "Families", "Youth")
+			foreach( $this_pop_subpops as $this_pop_subpop ){
+				array_push( $pop_subpop_array, $this_pop_subpop->descr );
+			}
+			//do we have "F" and Youth for IPE?
+			if( ( trim( $gender ) == "F" )  && in_array( "Youth", $pop_subpop_array ) ){ //yes!
+				$return_data['population_calc'] = 1;
+				array_push( $study_list_hr, $which_study ); //add to the hr list
+				$we_found_it = true;
+			}
+		}
+		$info_id_list_hr = parse_hr_info_list( $study_list_hr, $info_id_list_by_study );
+		//return the things
+		$return_data['which_pop'] = "ipe";
+		$return_data['info_id_list_hr'] = $info_id_list_hr;
+	
+	}
+	
+	if( $we_found_it == true ){
+		return $return_data;
+	}
+	
+	//9. Boys = 2 (2 in db); Gender = "M", subpop = 1 (Youth)
+	if( (int)$this_subpop["value"] == 2 ){
+		$return_data['which_pop'] = "subpop";
+		$return_data['population_calc'] = 2;
+		$return_data['info_id_list_hr'] = $info_id_list;
+		$we_found_it = true;
+	} else if( $eval_pop_data_parsed["gender_notreported"] != "Y" ){ //any of the studies' ptcblack data
+		foreach( $eval_pop_data_parsed["GenderCode"] as $which_study => $gender ){
+			//what are the pops subpops strings?
+			$this_pop_subpops = $sub_pop_data[ $which_study ][ $this_evalpop_string ];
+			$pop_subpop_array = array(); //to hold the subpop strings (i.e. "Adults", "Families", "Youth")
+			foreach( $this_pop_subpops as $this_pop_subpop ){
+				array_push( $pop_subpop_array, $this_pop_subpop->descr );
+			}
+			
+			if( ( trim( $gender ) == "M" ) && in_array( "Youth", $pop_subpop_array ) ){ //if Gender == "F" AND this pop subpop contains "Youth"...
+				$return_data['population_calc'] = 2;
+				array_push( $study_list_hr, $which_study ); //add to the hr list
+				$we_found_it = true;
+			}
+		}
+		$info_id_list_hr = parse_hr_info_list( $study_list_hr, $info_id_list_by_study );
+		//return the things
+		$return_data['which_pop'] = $this_evalpop_string;
+		$return_data['info_id_list_hr'] = $info_id_list_hr;
+	
+	} else if( $ipe_pop_data_parsed["gender_notreported"] != "Y" ){ //look to ipe
+		foreach( $ipe_pop_data_parsed["GenderCode"] as $which_study => $gender ){
+			//what are the ipe subpops?
+			$this_pop_subpops = $sub_pop_data[ $which_study ][ "ipe" ];
+			$pop_subpop_array = array(); //to hold the subpop strings (i.e. "Adults", "Families", "Youth")
+			foreach( $this_pop_subpops as $this_pop_subpop ){
+				array_push( $pop_subpop_array, $this_pop_subpop->descr );
+			}
+			//do we have "F" and Youth for IPE?
+			if( ( trim( $gender ) == "M" )  && in_array( "Youth", $pop_subpop_array ) ){ //yes!
+				$return_data['population_calc'] = 2;
+				array_push( $study_list_hr, $which_study ); //add to the hr list
+				$we_found_it = true;
+			}
+		}
+		$info_id_list_hr = parse_hr_info_list( $study_list_hr, $info_id_list_by_study );
+		//return the things
+		$return_data['which_pop'] = "ipe";
+		$return_data['info_id_list_hr'] = $info_id_list_hr;
+	
+	}
+	
+	if( $we_found_it == true ){
+		return $return_data;
+	}
+	
+	//10. Women = 3 (3 in db); Gender = "F"
+	if( (int)$this_subpop["value"] == 3 ){
+		$return_data['which_pop'] = "subpop";
+		$return_data['population_calc'] = 3;
+		$return_data['info_id_list_hr'] = $info_id_list;
+		$we_found_it = true;
+	} else if( $eval_pop_data_parsed["gender_notreported"] != "Y" ){ //any of the studies' ptcblack data
+		foreach( $eval_pop_data_parsed["GenderCode"] as $which_study => $gender ){
+			
+			if( trim( $gender ) == "F" ){ //if Gender == "F" AND this pop subpop contains "Youth"...
+				$return_data['population_calc'] = 3;
+				array_push( $study_list_hr, $which_study ); //add to the hr list
+				$we_found_it = true;
+			}
+		}
+		$info_id_list_hr = parse_hr_info_list( $study_list_hr, $info_id_list_by_study );
+		//return the things
+		$return_data['which_pop'] = $this_evalpop_string;
+		$return_data['info_id_list_hr'] = $info_id_list_hr;
+	
+	} else if( $ipe_pop_data_parsed["gender_notreported"] != "Y" ){ //look to ipe
+		foreach( $ipe_pop_data_parsed["GenderCode"] as $which_study => $gender ){
+			
+			//do we have "F"
+			if( trim( $gender ) == "F" ){ //yes!
+				$return_data['population_calc'] = 3;
+				array_push( $study_list_hr, $which_study ); //add to the hr list
+				$we_found_it = true;
+			}
+		}
+		$info_id_list_hr = parse_hr_info_list( $study_list_hr, $info_id_list_by_study );
+		//return the things
+		$return_data['which_pop'] = "ipe";
+		$return_data['info_id_list_hr'] = $info_id_list_hr;
+	
+	}
+	
+	if( $we_found_it == true ){
+		return $return_data;
+	}
+	
+	//11. Men = 4 (4 in db); Gender = "M"
+	if( (int)$this_subpop["value"] == 4 ){
+		$return_data['which_pop'] = "subpop";
+		$return_data['population_calc'] = 4;
+		$return_data['info_id_list_hr'] = $info_id_list;
+		$we_found_it = true;
+	} else if( $eval_pop_data_parsed["gender_notreported"] != "Y" ){ //any of the studies' ptcblack data
+		foreach( $eval_pop_data_parsed["GenderCode"] as $which_study => $gender ){
+			
+			if( trim( $gender ) == "M" ){ //if Gender == "F" AND this pop subpop contains "Youth"...
+				$return_data['population_calc'] = 4;
+				array_push( $study_list_hr, $which_study ); //add to the hr list
+				$we_found_it = true;
+			}
+		}
+		$info_id_list_hr = parse_hr_info_list( $study_list_hr, $info_id_list_by_study );
+		//return the things
+		$return_data['which_pop'] = $this_evalpop_string;
+		$return_data['info_id_list_hr'] = $info_id_list_hr;
+	
+	} else if( $ipe_pop_data_parsed["gender_notreported"] != "Y" ){ //look to ipe
+		foreach( $ipe_pop_data_parsed["GenderCode"] as $which_study => $gender ){
+			
+			//do we have "F"
+			if( trim( $gender ) == "M" ){ //it's raining men..
+				$return_data['population_calc'] = 4;
+				array_push( $study_list_hr, $which_study ); //add to the hr list
+				$we_found_it = true;
+			}
+		}
+		$info_id_list_hr = parse_hr_info_list( $study_list_hr, $info_id_list_by_study );
+		//return the things
+		$return_data['which_pop'] = "ipe";
+		$return_data['info_id_list_hr'] = $info_id_list_hr;
+	
+	}
+	
+	if( $we_found_it == true ){
+		return $return_data;
+	}
+	
+	//12a. Youth = 12; No subpop check - FOR RESULTS EVAL POP ONLY!
+	foreach( $new_study_ids as $this_study ) {
+	
+		//what are the pops subpops strings?
+		$this_pop_subpops = $sub_pop_data[ $this_study ][ $this_evalpop_string ];
+		$pop_subpop_array = array(); //to hold the subpop strings (i.e. "Adults", "Families", "Youth")
+		foreach( $this_pop_subpops as $this_pop_subpop ){
+			array_push( $pop_subpop_array, $this_pop_subpop->descr );
+		}
+		
+		if( in_array( "Youth", $pop_subpop_array ) ){ //if this pop subpop contains "Youth"...
+			$return_data['population_calc'] = 12;
+			array_push( $study_list_hr, $this_study ); //add to the hr list
+			$we_found_it = true;
+			$info_id_list_hr = parse_hr_info_list( $study_list_hr, $info_id_list_by_study );
+			//return the things
+			$return_data['which_pop'] = $this_evalpop_string;
+			$return_data['info_id_list_hr'] = $info_id_list_hr;
+		}
+
+	}
+	
+	if( $we_found_it == true ){
+		return $return_data;
+	}
+	
+	//12b. Youth = 12; No subpop check - FOR IPE ONLY!
+	foreach( $new_study_ids as $this_study ) {
+	
+		//what are the pops subpops strings?
+		$this_pop_subpops = $sub_pop_data[ $this_study ][ "ipe" ];
+		$pop_subpop_array = array(); //to hold the subpop strings (i.e. "Adults", "Families", "Youth")
+		foreach( $this_pop_subpops as $this_pop_subpop ){
+			array_push( $pop_subpop_array, $this_pop_subpop->descr );
+		}
+		
+		if( in_array( "Youth", $pop_subpop_array ) ){ //if this pop subpop contains "Youth"...
+			$return_data['population_calc'] = 12;
+			array_push( $study_list_hr, $this_study ); //add to the hr list
+			$we_found_it = true;
+			$info_id_list_hr = parse_hr_info_list( $study_list_hr, $info_id_list_by_study );
+			//return the things
+			$return_data['which_pop'] = "ipe";
+			$return_data['info_id_list_hr'] = $info_id_list_hr;
+		}
+
+	}
+	
+	if( $we_found_it == true ){
+		return $return_data;
+	}
+	
+	//13a. GENERAL = 13; No subpop check - FOR RESULTS EVAL POP ONLY!
+	foreach( $new_study_ids as $this_study ) {
+	
+		if( $eval_pop_data_parsed["isGeneralPopulation"][$this_study] == "Y" ){
+		
+			$return_data['population_calc'] = 13;
+			array_push( $study_list_hr, $this_study ); //add to the hr list
+			$we_found_it = true;
+			$info_id_list_hr = parse_hr_info_list( $study_list_hr, $info_id_list_by_study );
+			//return the things
+			$return_data['which_pop'] = $this_evalpop_string;
+			$return_data['info_id_list_hr'] = $info_id_list_hr;
+		}
+	
+	}
+	
+	if( $we_found_it == true ){
+		return $return_data;
+	}
+	
+	//13b. GENERAL = 13; No subpop check - FOR IPE ONLY!
+	foreach( $new_study_ids as $this_study ) {
+	
+		if( $ipe_pop_data_parsed["isGeneralPopulation"][$this_study] == "Y" ){
+		
+			$return_data['population_calc'] = 13;
+			array_push( $study_list_hr, $this_study ); //add to the hr list
+			$we_found_it = true;
+			$info_id_list_hr = parse_hr_info_list( $study_list_hr, $info_id_list_by_study );
+			//return the things
+			$return_data['which_pop'] ="ipe";
+			$return_data['info_id_list_hr'] = $info_id_list_hr;
+		}
+	
+	}
+	
+	if( $we_found_it == true ){
+		return $return_data;
+	}
+	
+	$return_data['population_calc'] = 0;
+	$return_data['which_pop'] = 0;
+	$return_data['info_id_list_hr'] = $info_id_list_hr;
+	
+	return $return_data;
+
+}
+
+/**
+ * Returns array for subpop value lookup.  This is mostly Mel's lookup for now, probs never called.
+ *
+ * @return array. Int=>val
+ *
+ */
+function subpop_lookup(){
+
+	//array of subpops/values in db 
+	return array(
+		1 => "Girls",
+		2 => "Boys",
+		3 => "Women",
+		4 => "Men",
+		5 => "African American Participants",
+		6 => "Asian Participants",
+		7 => "White Participants",
+		8 => "Pacific Islander/Native Hawaiian Participants",
+		9 => "Hispanic/Latino Participants",
+		10 => "Low Income Participants",
+		11 => "Native American/Alaskan Native",
+		12 => "Other Race",
+		13 => "Non-English Speaking"
+		);
+		
+}
+
+/**
+ * Returns codetype ids for Population-based subpopulations
+ *
+ * @return array. CodetypeId => subpop name
+ */
+function pop_subpop_codetypeid_lookup(){
+
+	return array(
+		102 => "tp",
+		103 => "ipe",
+		104 => "ipu",
+		105 => "ese",
+		106 => "esu",
+		1004 => "ese0",
+		1014 => "ese1",
+		1024 => "ese2",
+		1034 => "ese3",
+		1044 => "ese4",
+		1054 => "ese5",
+		1064 => "ese6",
+		1074 => "ese7",
+		1084 => "ese8",
+		1094 => "ese9"
+		);
+
+}
+
+/**
+ * Returns array for subpop value lookup.  This is mostly Mel's lookup for now, probs never called.
+ *
+ * @return array. Int=>val
+ *
+ */
+function evalpop_lookup( $this_eval_pop ){
+
+	//array of subpops/values in db 
+	$all_eval_pops = array(
+		"TP" => "tp",
+		"IE" => "ipe",
+		"EU" => "ipu",
+		"SE" => "ese",
+		"SU" => "esu",
+		"E0" => "ese0",
+		"E0" => "ese1",
+		"E0" => "ese2",
+		"E0" => "ese3",
+		"E0" => "ese4",
+		"E0" => "ese5",
+		"E0" => "ese6",
+		"E0" => "ese7",
+		"E0" => "ese8",
+		"E0" => "ese9"
+		);
+		
+	return $all_eval_pops[ $this_eval_pop ];
+		
+}
+
+/**
+ * Returns list of info_ids (unique ids) given a list of info ids by study and a list of studies to be included in list
+ *
+ * @param array, array.
+ * @return array.  Info ids.
+ *
+ */
+function parse_hr_info_list( $study_list_hr, $info_id_list_by_study ){
+
+	$info_id_list_hr = array();
+	foreach( $study_list_hr as $study_id ){
+		if( !empty( $info_id_list_by_study[ $study_id ] ) ){
+		
+			foreach( $info_id_list_by_study as $info_id ){
+			
+				//array_push( $info_id_list_hr, $info_id );
+				$info_id_list_hr[] = $info_id ;
+		
+			}
+		}
+	}
+	
+	//var_dump( $info_id_list_hr );
+	return current( $info_id_list_hr);
+
 }

@@ -84,7 +84,7 @@ function toggle_var_table(){
 	
 }
 
-
+//Get/Display all the vars!
 function get_vars_by_grouping(){
 
 	this_study_group = jQuery("select#StudyGroupingIDList").val();
@@ -254,10 +254,13 @@ function get_vars_by_grouping(){
 							if( this_inter_study_data.complexity_notreported == "Y" ){
 								txt_complexity += "<td></td><td>Y</td></tr>";
 							} else if( this_inter_study_data.multi.complexity.length > 0 ){
+								//console.log( this_inter_study_data.multi.complexity );
 								jQuery.each( this_inter_study_data.multi.complexity, function( complex_i, complex_v ){
-									//console.log( complex_v);
-									//console.log( complex_v[0]["value"] );
-									complex_string += "\n" + complex_v[0]["value"] + ": " + complex_v[0]["descr"] + ";";
+									if( complex_v.length > 0 ){
+										//console.log( complex_v);
+										//console.log( complex_v[0]["value"] );
+										complex_string += "\n" + complex_v[0]["value"] + ": " + complex_v[0]["descr"] + ";";
+									}
 								});
 								txt_complexity += "<td>" + complex_string + "</td>";
 								txt_complexity += "<td>N</td></tr>";
@@ -279,9 +282,11 @@ function get_vars_by_grouping(){
 								txt_components += "<td></td><td>Y</td></tr>";
 							} else if( this_inter_study_data.multi.intervention_components.length > 0 ){
 								jQuery.each( this_inter_study_data.multi.intervention_components, function( complex_i, complex_v ){
-									//console.log( complex_v);
-									//console.log( complex_v[0]["value"] );
-									complex_string += "\n" + complex_v[0]["value"] + ": " + complex_v[0]["descr"] + ";";
+									if( complex_v.length > 0 ){
+										//console.log( complex_v);
+										//console.log( complex_v[0]["value"] );
+										complex_string += "\n" + complex_v[0]["value"] + ": " + complex_v[0]["descr"] + ";";
+									}
 								});
 								txt_components += "<td>" + complex_string + "</td>";
 								txt_components += "<td>N</td></tr>";
@@ -303,9 +308,11 @@ function get_vars_by_grouping(){
 								txt_settingtype += "<td></td><td></td><td>Y</td></tr>";
 							} else if( this_inter_study_data.multi.setting_type.length > 0 ){
 								jQuery.each( this_inter_study_data.multi.setting_type, function( complex_i, complex_v ){
-									//console.log( complex_v);
-									//console.log( complex_v[0]["value"] );
-									complex_string += "\n" + complex_v[0]["value"] + ": " + complex_v[0]["descr"] + ";";
+									if( complex_v.length > 0 ){
+										//console.log( complex_v);
+										//console.log( complex_v[0]["value"] );
+										complex_string += "\n" + complex_v[0]["value"] + ": " + complex_v[0]["descr"] + ";";
+									}
 								});
 								txt_settingtype += "<td>" + complex_string + "</td>";
 								txt_settingtype += "<td>" + this_inter_study_data.other_setting_type + "</td>";
@@ -330,9 +337,11 @@ function get_vars_by_grouping(){
 								txt_pse += "<td></td><td>Y</td></tr>";
 							} else if( this_inter_study_data.multi.pse_components.length > 0 ){
 								jQuery.each( this_inter_study_data.multi.pse_components, function( complex_i, complex_v ){
-									//console.log( complex_v);
-									//console.log( complex_v[0]["value"] );
-									complex_string += "\n" + complex_v[0]["value"] + ": " + complex_v[0]["descr"] + ";";
+									if( complex_v.length > 0 ){
+										//console.log( complex_v);
+										//console.log( complex_v[0]["value"] );
+										complex_string += "\n" + complex_v[0]["value"] + ": " + complex_v[0]["descr"] + ";";
+									}
 								});
 								txt_pse += "<td>" + complex_string + "</td>";
 								txt_pse += "<td>N</td></tr>";
@@ -385,7 +394,7 @@ function get_vars_by_grouping(){
 							var net_effects_vars = this.net_effects;
 							jQuery.each( transtria_ajax.effect_direction_lookup, function( i, v ){
 								//console.log( v.descr );
-								if( net_effects_vars == i ){
+								if( parseInt( net_effects_vars ) == parseInt( i ) ){
 									var selected = true;
 								} else {
 									var selected = false;
@@ -416,7 +425,7 @@ function get_vars_by_grouping(){
 			
 			//do we have study grouping-level vars we need to show (study design)
 			if( data.study_grouping != undefined ){
-				console.log( data.study_grouping );
+				//console.log( data.study_grouping );
 				
 				//update StudyDesign select for this study group
 				jQuery("select.analysis_study_design").val( data.study_grouping.study_design );
@@ -510,7 +519,8 @@ function run_intermediate_analysis(){
 	}).complete( function( data ) {
 
 		//console.log( data );
-		usrmsgshell.fadeOut();
+		usrmsg.html("Intermediate Calculations Complete for Study Group: <strong>" + this_study_group + "</strong>" );
+		//usrmsgshell.fadeOut();
 		spinny.fadeOut();
 		
 	});
@@ -562,7 +572,8 @@ function run_analysis(){
 		//var post_meat = data['single']; // = JSON.parse(data);
 	}).complete( function( data ) {
 		//console.log( data );
-		usrmsgshell.fadeOut();
+		usrmsg.html("Analysis Complete for Study Group: <strong>" + this_study_group + "</strong>" );
+		//usrmsgshell.fadeOut();
 		spinny.fadeOut();
 	});
 }
@@ -601,6 +612,10 @@ function run_second_analysis(){
 			
 		}
 	}).success( function( data ) {
+		
+		//get vars again
+		get_vars_by_grouping();
+		
 		if( data == "0" || data == 0 )  {
 			//console.log('what');=
 			return;
@@ -611,8 +626,8 @@ function run_second_analysis(){
 		//var post_meat = data['single']; // = JSON.parse(data);
 	}).complete( function( data ) {
 		//console.log( data );
-		usrmsgshell.fadeOut();
-		spinny.fadeOut();
+		//usrmsgshell.fadeOut();
+		//spinny.fadeOut();
 	});
 }
 
@@ -621,6 +636,12 @@ function save_analysis_vars(){
 	//which analysis save button did we touch?
 	var which_vars = jQuery(this).attr('data-whichvars'); //should match the select(s) that need savin'
 	var which_action = jQuery(this).attr('data-whichsave'); //let's us know at which level to save this analysis var
+	var which_msg_class = jQuery(this).attr('data-whichmsg'); //let's us know at which level to save this analysis var
+	var which_msg = jQuery("#" + which_msg_class);
+	if( which_msg.length == 0 ){
+		which_msg = jQuery(".analysis_messages .usr-msg"); //hmm, not sure about this check, but NO TIME
+	}
+	
 	var which_id = 0;
 	var selected_val = 0;
 	var this_save_vars = {};
@@ -673,6 +694,7 @@ function save_analysis_vars(){
 		type: "POST",
 		dataType: "json",
 		beforeSend: function() {
+			which_msg.html("Saving...");
 			//usrmsg.html("Retrieving data, hang tight..." );
 			//usrmsgshell.fadeIn();
 			//spinny.fadeIn();
@@ -689,11 +711,14 @@ function save_analysis_vars(){
 		}
 	}).complete( function( data ) {
 
-		console.log( data );
+		//console.log( data );
+		which_msg.html("Saved!");
 		//usrmsgshell.fadeOut();
 		//spinny.fadeOut();
 		
-	});
+	}).error( function( data ) {
+		which_msg.html("Oh no, error!");
+	});;
 }
 
 

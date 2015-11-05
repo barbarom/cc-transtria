@@ -331,7 +331,7 @@ class CC_Transtria_Extras {
 	public function enqueue_styles() {
 
 		if ( cc_transtria_is_component() ) {
-			wp_enqueue_style( 'transtria-extras-tab', plugins_url( 'css/transtria-extras-tab.css', __FILE__ ), array(), '1.02' );
+			wp_enqueue_style( 'transtria-extras-tab', plugins_url( 'css/transtria-extras-tab.css', __FILE__ ), array(), '1.03' );
 			wp_enqueue_style( 'components', plugins_url( 'css/components.css', __FILE__ ), array(), '1.01' );
 			wp_enqueue_style( 'multiselect', plugins_url( 'css/jquery.multiselect.css', __FILE__ ), array(), '1.01' );
 			wp_enqueue_style( 'datetimepicker', plugins_url( 'css/jquery.datetimepicker.css', __FILE__ ), array(), '1.01' );
@@ -377,7 +377,7 @@ class CC_Transtria_Extras {
 			
 			//wp_enqueue_script( $this->plugin_slug . 'dynamic_page_components', plugins_url( 'js/dynamic_components.js', __FILE__ ), array( 'jquery' ), '1.1' );
 			//wp_enqueue_script( $this->plugin_slug . 'transtria_basic_js', plugins_url( 'js/transtria_basic.js', __FILE__ ), array( 'jquery' ), '1.1' );
-			wp_enqueue_script( $this->plugin_slug . 'transtria_revamp_js', plugins_url( 'js/transtria_revamp.js', __FILE__ ), array( 'jquery' ), '1.3' );
+			wp_enqueue_script( $this->plugin_slug . 'transtria_revamp_js', plugins_url( 'js/transtria_revamp.js', __FILE__ ), array( 'jquery' ), '1.4' );
 			
 			if( cc_transtria_on_assignments_screen() ){
 				wp_enqueue_script( $this->plugin_slug . 'transtria_revamp_assignments_js', plugins_url( 'js/transtria_revamp_assignments.js', __FILE__ ), array( 'jquery' ), '1.0' );

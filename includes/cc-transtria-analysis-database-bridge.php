@@ -61,6 +61,101 @@ function get_study_id_list_in_study_group( $study_group_id ){
 	return $study_list;
 }
 
+/** 
+ * Returns population data, sorted by Study ID, for a given study group
+ *
+ * @param int. Study Grouping ID.
+ * @return array.  Array of population data, indexed by study id 
+ */
+function get_pop_data_study_group( $study_group_id ){
+
+	global $wpdb;
+	
+	//get list of studies here for query
+	$study_list = get_study_ids_in_study_group( $study_group_id );
+	//to hold all the pop data, sorted by study
+	$all_pop_data = array();
+	
+	foreach( $study_list as $study_id ){
+		$this_study_id = $study_id[ "StudyID"];
+		$pop_sql = 
+			"
+			SELECT PopulationType, isGeneralPopulation, generalpopulation_notreported, GenderCode, gender_notreported,
+				PctBlack, PctAsian, PctPacificIslander, PctNativeAmerican, PctOtherRace, PctHispanic, PctLowerIncome, racepercentages_notreported
+			FROM $wpdb->transtria_population
+			WHERE StudyID = $this_study_id
+			ORDER BY PopulationType
+			"		
+			;
+			
+		$form_rows = $wpdb->get_results( $pop_sql, OBJECT_K );
+		
+		$all_pop_data[ $this_study_id ] = $form_rows;
+	}
+	
+	return $all_pop_data;
+}
+
+/** 
+ * Returns population subpopulation data(Population Tab=>Subpop tab=>subpopulation), sorted by Study ID, for a given study group
+ *
+ * @param int. Study Grouping ID.
+ * @return array.  Array of population data, indexed by study id 
+ */
+function get_pops_subpop_data_study_group( $study_group_id ){
+
+	global $wpdb;
+	$subpops_lookup = pop_subpop_codetypeid_lookup();
+	$subpops_list = implode(",", array_keys( $subpops_lookup ) ); //list for query
+	
+	//get list of studies here for query
+	$study_list = get_study_ids_in_study_group( $study_group_id );
+	//to hold all the pop data, sorted by study
+	$all_pop_data = array();
+	
+	foreach( $study_list as $study_id ){
+		$this_study_id = $study_id[ "StudyID"];
+		$pop_sql = 
+			"
+			SELECT $wpdb->transtria_code_results.ID, $wpdb->transtria_code_results.codetypeID, $wpdb->transtria_code_results.result, 
+			$wpdb->transtria_codetbl.descr 
+			FROM $wpdb->transtria_code_results, $wpdb->transtria_codetbl 
+			WHERE $wpdb->transtria_codetbl.codetypeID = $wpdb->transtria_code_results.codetypeID 
+			AND $wpdb->transtria_code_results.result = $wpdb->transtria_codetbl.value 
+			AND $wpdb->transtria_code_results.ID =  $this_study_id 
+			AND $wpdb->transtria_code_results.codetypeID IN ( $subpops_list )
+			AND $wpdb->transtria_codetbl.codetypeID IN ( $subpops_list )
+			"
+			;
+			
+		$form_rows = $wpdb->get_results( $pop_sql, OBJECT );
+		
+		//var_dump( $form_rows );
+		
+		$reindexed_form_rows = array();
+		
+		//reindex with strings instead of codetypeIDs
+	
+		foreach( $form_rows as $index => $row ){ 
+			
+			//var_dump( $row );
+			if( !empty( $row ) ){
+				$new_index = $subpops_lookup[ $row->codetypeID ];
+				//var_dump( $new_index );
+				if( $reindexed_form_rows[ $new_index ] == null ){
+					$reindexed_form_rows[ $new_index ] = array();
+				}
+				array_push( $reindexed_form_rows[ $new_index ], $row);
+			
+			}
+		}
+		
+		$all_pop_data[ $this_study_id ] = $reindexed_form_rows;
+	}
+	
+	return $all_pop_data;
+}
+
 /**
  * Gets all Indicator-Measure dyads for EACH ea tab (seq) in a given study
  *
@@ -901,7 +996,7 @@ function set_dyads_for_study_group( $study_group_id ){
 	foreach( $study_ids as $study_id ){
 	
 		$new_study_id = $study_id["StudyID"];
-		var_dump( $new_study_id );
+		//var_dump( $new_study_id );
 	
 		//Get other seq-related study data for analysis data (EA tab)
 		$ea_data = get_ea_analysis_data( $new_study_id );
@@ -940,7 +1035,7 @@ function set_dyads_for_study_group( $study_group_id ){
 		if( $num_ea > 0 ){ //if we even HAVE ea tabs
 			for( $i=1; $i <= $num_ea; $i++ ){ //$i = seq
 			
-				var_dump( $i );
+				//var_dump( $i );
 			
 				//start VALUES string
 				$values_start_string = "(" . $index_count . ", , " . (int) $new_study_id . ", " . $i . ", ";
@@ -1158,13 +1253,19 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 	//var_dump( $all_ims );
 	$placeholder = 0;
 	
+	//get population data for calculating pop results
+	$pop_data_by_study_id = get_pop_data_study_group( $study_group_id ); //get this ONCE for all the ims
+	//$sub_pop_data = get_pops_subpop_data_study_group( $study_group_id );
+	
 	//calculate study-grouping-level analysis variables (Study Grouping, Domestic/International settings)
 	$study_design = calculate_study_design_for_analysis( (int)$study_group_id ); //if "0", we will need drop down..
+	
 	$domestic_intl = calculate_domestic_intl_for_analysis( (int)$study_group_id );
 	
 	//get measures => outcome types for study group/analysis
 	$measures_outcome_types = calculate_outcome_types_studygrouping( $study_group_id );
 	
+	/***** UPDATE Analysis table w/vars *****/
 	//calculate duration, duplicate, effectiveness_general for each unique im; INSERT INTO analysis table
 	foreach( $all_ims as $analysis_index => $one_im ){
 	
@@ -1174,8 +1275,22 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 		$indicator_val = $one_im[ "indicator_value" ];
 		$info_id_list = $one_im[ "info_id_list" ];
 		$ea_direction = $one_im[ "net_effects" ];
+		$evalpop = $one_im[ "result_evaluation_population" ];
+		$subpopYN = $one_im[ "result_subpopulationYN" ];
+		$subpop = $one_im[ "result_subpopulation" ];
+		
 		$duration = "";
+		//outcome type depends on measure
 		$type = $measures_outcome_types[ $measure ];
+		
+		
+		
+		/***** CALCULATE AND UPDATE W POPULATION VARS *****/
+		$result_pop_result = calculate_pop_subpop_analysis( $pop_data_by_study_id, $info_id_list, $evalpop, $subpopYN, $subpop, $study_group_id );
+			
+	//var_dump( $result_pop_result );
+	//return 'nanana';
+		
 		
 		
 		//Only ONE I-M dyad, no duplicates: set ea_direction, duration
@@ -1189,6 +1304,11 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 			
 		} else {
 			$duplicate_im = "Y";
+			
+			//remove duplicate IM duplicates from list
+			$exploded_infos = explode(", ", $info_id_list );
+			$new_infos = array_unique( $exploded_infos );
+			$info_id_list = implode( ", ", $new_infos );
 			
 			//get ea data for each study here (to send to calc functions)
 			$parsed_id_array = parse_study_seq_id_list( $info_id_list );
@@ -1215,8 +1335,9 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 			"
 				INSERT INTO $wpdb->transtria_analysis
 				( info_id, StudyGroupingID, domestic_international, indicator_value, indicator, measure, info_id_list, duplicate_ims, 
-					net_effects, duration, outcome_type, effectiveness_general )
-				VALUES ( %s, %d, %d, %s, %s, %s, %s, %s, %s, %s, %s, %s )
+					net_effects, duration, outcome_type, effectiveness_general, result_evaluation_population, result_subpopulationYN, result_subpopulation,
+					result_population_result)
+				VALUES ( %s, %d, %d, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s )
 			", 
 			$analysis_index,
 			$study_group_id,
@@ -1230,15 +1351,20 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 			$ea_direction,
 			$duration,
 			$type,
-			$effectiveness_gen
+			$effectiveness_gen,
+			$evalpop,
+			$subpopYN,
+			$subpop,
+			$result_pop_result["population_calc"]
 		);
 		
 		$help_me = $wpdb->query( $spartacus );
 		//var_dump( $help_me );
+		
 	
 	}
 	
-	
+	/*****  UPDATE Study Grouping table/vars *****/
 	//remove all rows of this study group from studygrouping table
 	$sg_del_row = $wpdb->delete( 
 			$wpdb->transtria_analysis_studygrouping, 
@@ -1259,7 +1385,12 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 	);
 	
 	$wpdb->query( $spartacus_designed );
+		
 	
+	//unset some things
+	unset( $measures_outcome_types );
+	unset( $all_ims );
+	unset( $pop_data_by_study_id );
 }
 
 /**
