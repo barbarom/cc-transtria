@@ -1288,7 +1288,7 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 		/***** CALCULATE AND UPDATE W POPULATION VARS *****/
 		$result_pop_result = calculate_pop_subpop_analysis( $pop_data_by_study_id, $info_id_list, $evalpop, $subpopYN, $subpop, $study_group_id );
 			
-	//var_dump( $result_pop_result );
+	var_dump( $result_pop_result );
 	//return 'nanana';
 		
 		
