@@ -26,6 +26,9 @@ function cc_transtria_calculate_ea_direction( $ind_dir, $out_dir ){
 
 }
 
+/**
+ * Calculats the EA direction across unique ids in a given Analysis ID/Study grouping
+ */
 function cc_transtria_calculate_ea_direction_for_studygrouping( $study_group_id ){
 
 	global $wpdb;
@@ -52,13 +55,65 @@ function cc_transtria_calculate_ea_direction_for_studygrouping( $study_group_id 
 	$instance_directions = array_count_values ( $all_directions );
 	
 	//if > 50% of directions == 1, return 1
-	if( ( $instance_directions[1] / $num_directions ) > 0.5 ){
-		return 1;
-	} else if ( ( ( $instance_directions[1] / $num_directions ) == 0.5 ) && ( ( $instance_directions[2] / $num_directions ) == 0.5 ) ||
-		( ( $instance_directions[3] / $num_directions ) > 0.5 ) ){
-		return 2;
-	} else if ( ( $instance_directions[2] / $num_directions ) > 0.5 ){
-		return 3;
+	if( $num_directions > 0 ){
+		if( ( $instance_directions[1] / $num_directions ) > 0.5 ){
+			return 1;
+		} else if ( ( ( $instance_directions[1] / $num_directions ) == 0.5 ) && ( ( $instance_directions[2] / $num_directions ) == 0.5 ) ||
+			( ( $instance_directions[3] / $num_directions ) > 0.5 ) ){
+			return 2;
+		} else if ( ( $instance_directions[2] / $num_directions ) > 0.5 ){
+			return 3;
+		}
+		
+	
+	}
+	//otherwise, we have a data error
+	return "data error";
+
+}
+
+/**
+ * Calculated the EA direction across unique ids in a given Analysis ID/Study grouping
+ */
+function calculate_net_effect_for_info_id_list( $info_id_list ){
+
+	global $wpdb;
+	
+	//get all calc_ea_direction for tihs study group
+	$direction_sql = 
+		"
+		SELECT info_id, calc_ea_direction
+		FROM $wpdb->transtria_analysis_intermediate
+		WHERE info_id IN ( $info_id_list )
+		"		
+		;
+		
+	$form_rows = $wpdb->get_results( $direction_sql, OBJECT_K );
+	
+	$all_directions = array();
+
+	//var_dump( $info_id_list );
+	//var_dump( $direction_sql );
+	
+	//put all study designs in single array to evaluate
+	foreach( $form_rows as $info_id => $values ){
+		array_push( $all_directions, $values->calc_ea_direction );
+	}
+	
+	//now the tricky algorithm
+	$num_directions = count( $all_directions ); 
+	$instance_directions = array_count_values ( $all_directions );
+	
+	//if > 50% of directions == 1, return 1
+	if( $num_directions > 0 ){
+		if( ( $instance_directions[1] / $num_directions ) > 0.5 ){
+			return 1;
+		} else if ( ( ( $instance_directions[1] / $num_directions ) == 0.5 ) && ( ( $instance_directions[2] / $num_directions ) == 0.5 ) ||
+			( ( $instance_directions[3] / $num_directions ) > 0.5 ) ){
+			return 2;
+		} else if ( ( $instance_directions[2] / $num_directions ) > 0.5 ){
+			return 3;
+		}
 	}
 	
 	//otherwise, we have a data error
@@ -66,12 +121,12 @@ function cc_transtria_calculate_ea_direction_for_studygrouping( $study_group_id 
 
 }
 
-/** Returns a study design for all analysis in a group
+/** Returns a study design for all studies in a group
  *
  * @param int. Study Grouping
  * @return int? string?
  */
-function calculate_study_design_for_analysis( $studygrouping_id ){
+function calculate_study_design_for_studygrouping( $studygrouping_id ){
 
 	global $wpdb;
 	
@@ -125,6 +180,69 @@ function calculate_study_design_for_analysis( $studygrouping_id ){
 	return $new_design;
 	
 }
+
+
+/** Returns a study design for all studies in info_id_list
+ *
+ * @param int. Study Grouping
+ * @return int? string?
+ */
+function calculate_study_design_for_info_id_list( $info_id_list ){
+
+	global $wpdb;
+	
+	//get all study ids (in list) in this info_id group
+	$study_list = parse_studyids_from_infoids( $info_id_list );
+	
+	//get all study designs for this list of study ids
+	$design_sql = 
+		"
+		SELECT StudyID, StudyDesignID
+		FROM $wpdb->transtria_studies
+		WHERE StudyID in ($study_list)
+		ORDER BY StudyID
+		"		
+		;
+		
+	$form_rows = $wpdb->get_results( $design_sql, OBJECT_K );
+	
+	$new_design = 0; //set to mean drop down to change value?
+	$all_designs = array();
+	
+	//put all study designs in single array to evaluate
+	foreach( $form_rows as $study_id => $values ){
+		array_push( $all_designs, $values->StudyDesignID );
+	}
+	
+	//var_dump( $all_designs );
+	//Evaluate against StudyDesign algorithm
+	//The algorithm numbers are DIFFERENT here than in Laura's notes, because of the way they are assigned in the codetbl already. //99=StudyDesign
+	$one_array = array( "1", "2", "3", "4", "5", "6", "7", "8", "12" );
+	
+	$check_intersect = array_intersect( $one_array, $all_designs );
+	
+	if( !empty( $check_intersect ) ){
+		return 1;
+	}
+	
+	else if( in_array( "11", $all_designs ) ){
+		return 0;
+	}
+	
+	else if( in_array( "null", $all_designs ) ){
+		return 0;
+	}
+	
+	//else if all values are the same and are 9
+	else if( count( array_unique( $all_designs ) ) === "1" && end( $all_designs ) == "9" ) {
+		return 2;
+	}
+	
+	return $new_design;
+	
+}
+
+
 
 /** Returns a domestic/international setting for all analysis in a group
  *
@@ -375,7 +493,7 @@ function calculate_pop_subpop_analysis( $pop_data_by_study_id, $info_id_list, $e
 
 	//set vars for THIS im
 	
-	//parse info list to show what Studies (study_ids) we need to look at
+	//parse info list to show what Studies (study_ids) we need to look at //TODO: modularize this (see func below)
 	$study_id_list = array();
 	$info_id_list_by_study = array();
 	$exploded_info_ids = explode( ", ", $info_id_list );
@@ -391,14 +509,30 @@ function calculate_pop_subpop_analysis( $pop_data_by_study_id, $info_id_list, $e
 		array_push( $info_id_list_by_study[$this_study_id], $this_info_id ); 
 	}
 	
-	
 	//get unique vals for study ids
 	$new_study_ids = array_unique( $study_id_list );
 	
+	//var_dump( $info_id_list );
+	//var_dump( $subpop );
 	//TODO, clean this up when no incoming $subpop (check for subpop, etc), etc
-	$this_subpop = current( unserialize( $subpop ) );//-> value is db value; => descr is string d
-	$this_evalpop = current( unserialize( $evalpop ) ); //->value is db value ("TP", "EU", etc); ->descr is full string name
-	$this_evalpop_string = evalpop_lookup( $this_evalpop["value"] ); //returns "tp", "ese0", etc (the PopulationType in the pops data)
+	$unpacked_subpop = unserialize( $subpop );
+	$unpacked_evalpop = unserialize( $evalpop );
+	if( $unpacked_subpop != false ){
+		$this_subpop = current( $unpacked_subpop );//-> value is db value; => descr is string d
+	} else {
+		$this_subpop = array();
+	}
+	if( $unpacked_evalpop != false ){
+		$this_evalpop = current( $unpacked_evalpop );//-> value is db value; => descr is string d
+		$this_evalpop_string = evalpop_lookup( $this_evalpop["value"] );
+	} else {
+		$this_evalpop = array();
+		$this_evalpop_string = "";
+	}
+	
+	 //returns "tp", "ese0", etc (the PopulationType in the pops data)
+	
+	
 	
 	$this_pop_data = array(); //to hold current study's incoming single pop data
 	$eval_pop_data_parsed = array(); //to hold all studies' parsed pop data (with eval pop and IPE data only!); indexed by column name
@@ -483,10 +617,16 @@ function calculate_pop_subpop_analysis( $pop_data_by_study_id, $info_id_list, $e
 	$return_data = array(
 		'which_pop' => "", //subpop, eval pop, ipe
 		'population_calc' => "", //what's the digit?
-		'info_id_list_hr' => array() //(if subpop, this will be incoming info_if_list)
+		'info_id_list_hr' => "" //(if subpop, this will be incoming info_if_list)
 		);
 	$study_list_hr = array();
 	$we_found_it = false;
+	
+	
+	
+	//var_dump( $ipe_pop_data_parsed );
+	//var_dump( $this_subpop["value"] );
+	
 	
 	//1. African-American = 5
 	if( (int)$this_subpop["value"] == 5 ){
@@ -515,6 +655,7 @@ function calculate_pop_subpop_analysis( $pop_data_by_study_id, $info_id_list, $e
 				$we_found_it = true;
 			}
 		}
+		//var_dump( $info_id_list_by_study );
 		$info_id_list_hr = parse_hr_info_list( $study_list_hr, $info_id_list_by_study );
 		//return the things
 		$return_data['which_pop'] = "ipe";
@@ -871,13 +1012,15 @@ function calculate_pop_subpop_analysis( $pop_data_by_study_id, $info_id_list, $e
 	} else if( $eval_pop_data_parsed["gender_notreported"] != "Y" ){ //any of the studies' ptcblack data
 		foreach( $eval_pop_data_parsed["GenderCode"] as $which_study => $gender ){
 			
-			if( trim( $gender ) == "F" ){ //if Gender == "F" AND this pop subpop contains "Youth"...
+			if( trim( $gender ) == "F" ){ //if Gender == "F" 
 				$return_data['population_calc'] = 3;
 				array_push( $study_list_hr, $which_study ); //add to the hr list
 				$we_found_it = true;
 			}
 		}
 		$info_id_list_hr = parse_hr_info_list( $study_list_hr, $info_id_list_by_study );
+		var_dump( "info id list wonem");
+		var_dump( $info_id_list_hr );
 		//return the things
 		$return_data['which_pop'] = $this_evalpop_string;
 		$return_data['info_id_list_hr'] = $info_id_list_hr;
@@ -1133,25 +1276,71 @@ function evalpop_lookup( $this_eval_pop ){
  * Returns list of info_ids (unique ids) given a list of info ids by study and a list of studies to be included in list
  *
  * @param array, array.
- * @return array.  Info ids.
+ * @return string.  Info ids w/ comma separator
  *
  */
 function parse_hr_info_list( $study_list_hr, $info_id_list_by_study ){
 
+	if( empty($study_list_hr) || empty( $info_id_list_by_study ) ){
+		return "";
+	}
 	$info_id_list_hr = array();
 	foreach( $study_list_hr as $study_id ){
 		if( !empty( $info_id_list_by_study[ $study_id ] ) ){
 		
-			foreach( $info_id_list_by_study as $info_id ){
+			foreach( $info_id_list_by_study[ $study_id ] as $info_id ){
 			
 				//array_push( $info_id_list_hr, $info_id );
+				//var_dump( $info_id );
 				$info_id_list_hr[] = $info_id ;
 		
 			}
 		}
 	}
 	
+	//var_dump( $info_id_list_by_study );
 	//var_dump( $info_id_list_hr );
-	return current( $info_id_list_hr);
+	//var_dump( $study_list_hr );
+	
+	if( count( $info_id_list_hr ) > 1 ){
+		$string_info_id_list = implode(", ", current( $info_id_list_hr ) ); 
+	} else {
+		$string_info_id_list = current( $info_id_list_hr );
+	}
+	return $string_info_id_list;
 
+}
+
+/**
+ * Returns list of study ids given list of info_ids
+ *
+ * @param array. List of info_ids in format: studyid_seq_count
+ * @return array. List of Study IDs
+ */
+function parse_studyids_from_infoids( $info_id_list ){
+
+	//parse info list to show what Studies (study_ids) we need to look at //TODO: modularize this (see func below)
+	$study_id_list = array();
+	//$info_id_list_by_study = array();
+	$exploded_info_ids = explode( ", ", $info_id_list );
+	foreach( $exploded_info_ids as $this_info_id ){
+		$underscore_pos = strpos( $this_info_id, "_" );
+		$this_study_id = substr( $this_info_id, 0, $underscore_pos );
+		//push to study id list
+		array_push( $study_id_list, $this_study_id );
+		
+		//TODO: do we need this here or in another helper func?
+		//push this info id to list by study (for info_id_list_hr-ing later)
+		/*
+		if( $info_id_list_by_study[$this_study_id] == null ){
+			$info_id_list_by_study[$this_study_id] = array();
+		}
+		array_push( $info_id_list_by_study[$this_study_id], $this_info_id ); 
+		*/
+	}
+	
+	//get unique vals for study ids
+	$new_study_ids = array_unique( $study_id_list );
+
+	return $new_study_ids;
 }

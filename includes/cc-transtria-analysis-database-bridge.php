@@ -241,6 +241,15 @@ function get_dyads_for_study_group( $study_group_id ){
 		
 		$form_rows = $wpdb->get_results( $ea_sql, ARRAY_A );
 		
+		foreach ( $form_rows as $index => $one_dyad ){
+		
+			$one_dyad['result_eval_unserial'] = unserialize( $one_dyad['result_evaluation_population'] );
+			$one_dyad['result_subpop_unserial'] = unserialize( $one_dyad['result_subpopulation'] );
+			
+			$form_rows[ $index ] = $one_dyad;
+		
+		}
+		
 		$all_dyads[ $s_id ] = $form_rows;
 		
 	}
@@ -903,7 +912,7 @@ function get_study_level_for_intermediate( $study_group_id ){
 		); 
 		
 		$study_row = $wpdb->get_row( $study_sql, ARRAY_A );
- 
+		
 		$studies_data[ $this_s_id ] = $study_row;
 		
 		//get multi data
@@ -1258,7 +1267,7 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 	//$sub_pop_data = get_pops_subpop_data_study_group( $study_group_id );
 	
 	//calculate study-grouping-level analysis variables (Study Grouping, Domestic/International settings)
-	$study_design = calculate_study_design_for_analysis( (int)$study_group_id ); //if "0", we will need drop down..
+	$study_design = calculate_study_design_for_studygrouping( (int)$study_group_id ); //if "0", we will need drop down..
 	
 	$domestic_intl = calculate_domestic_intl_for_analysis( (int)$study_group_id );
 	
@@ -1285,14 +1294,13 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 		
 		
 		
-		/***** CALCULATE AND UPDATE W POPULATION VARS *****/
+		/***** CALCULATE AND UPDATE W POPULATION VARS; calculate HR vars (HR info_id list comes from population calc) *****/
 		$result_pop_result = calculate_pop_subpop_analysis( $pop_data_by_study_id, $info_id_list, $evalpop, $subpopYN, $subpop, $study_group_id );
-			
-	var_dump( $result_pop_result );
-	//return 'nanana';
+		$info_id_list_hr = $result_pop_result['info_id_list_hr'];
+	//var_dump( $result_pop_result );
 		
-		
-		
+		//return "interrupted";
+		//calculate direction, duration
 		//Only ONE I-M dyad, no duplicates: set ea_direction, duration
 		if( strpos( $info_id_list, "," ) === false ){
 			$duplicate_im = "N";
@@ -1324,8 +1332,43 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 			
 		}
 		
+		//calculate HR variables: study_design_hr, duration_hr, net_effects_hr, outcome_type_hr
+		//Only ONE I-M dyad, no duplicates: set ea_direction, duration
+		if( strpos( $info_id_list_hr, "," ) === false ){
+			//$duplicate_im_hr = "N";
+			
+			$this_intermediate_im = get_single_im_from_intermediate( $info_id_list_hr );
+			$duration_hr = calculate_duration_for_analysis_single( $this_intermediate_im[ "outcome_duration" ] );
+			
+		} else {
+			//remove duplicate IM duplicates from list (TODO: find why this is happening in the get_unique_ims func..)
+			$exploded_infos = explode(", ", $info_id_list_hr );
+			$new_infos = array_unique( $exploded_infos );
+			$info_id_list_hr = implode( ", ", $new_infos );
+			
+			//get ea data for each study here (to send to calc functions)
+			$parsed_id_array = parse_study_seq_id_list( $info_id_list_hr );
+			$studygroup_ea_data = array();
+			foreach( $parsed_id_array as $s_id => $vals ){
+				//get ea data (seq) for this study
+				$studygroup_ea_data[ $s_id ] = get_ea_analysis_data( $s_id );
+			
+			}
+			
+			//calculate duration, net_effect, etc, based on info_id_list - modulate
+			$duration_hr = calculate_duration_for_analysis_duplicates( $info_id_list, $studygroup_ea_data );
+			
+		}
+		
+		//
+		$study_design_hr = calculate_study_design_for_info_id_list( $info_id_list_hr ); //if "0", we will need drop down..
+		$net_effects_hr = calculate_net_effect_for_info_id_list( $info_id_list_hr );
+		
+		//return( $analysis_index );
+		
 		//calculate effectiveness for this analysis id
 		$effectiveness_gen = calc_general_effectiveness_analysis( $study_design, $duration, $ea_direction, $type );
+		//$effectiveness_pop
 		
 		//add these to analysis table
 		//var_dump( $analysis_index );
@@ -1334,10 +1377,10 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 		$spartacus = $wpdb->prepare( 
 			"
 				INSERT INTO $wpdb->transtria_analysis
-				( info_id, StudyGroupingID, domestic_international, indicator_value, indicator, measure, info_id_list, duplicate_ims, 
-					net_effects, duration, outcome_type, effectiveness_general, result_evaluation_population, result_subpopulationYN, result_subpopulation,
-					result_population_result)
-				VALUES ( %s, %d, %d, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s )
+				( info_id, StudyGroupingID, domestic_international, indicator_value, indicator, measure, info_id_list, info_id_list_hr, duplicate_ims, 
+					study_design_hr, net_effects, net_effects_hr, duration, duration_hr, outcome_type, effectiveness_general, result_evaluation_population, 
+					result_subpopulationYN, result_subpopulation, result_population_result)
+				VALUES ( %s, %d, %d, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s )
 			", 
 			$analysis_index,
 			$study_group_id,
@@ -1347,9 +1390,13 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 			$indicator,
 			$measure,
 			$info_id_list,
+			$info_id_list_hr,
 			$duplicate_im,
+			$study_design_hr,
 			$ea_direction,
+			$net_effects_hr,
 			$duration,
+			$duration_hr,
 			$type,
 			$effectiveness_gen,
 			$evalpop,
@@ -1394,7 +1441,7 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 }
 
 /**
- * Calculates and inserts intermediate variables into intermediate_analysis table
+ * TODO: FIX ME: THis is not what is happening here: Calculates and inserts intermediate variables into intermediate_analysis table
  *
  * @param int. Study Group IS.
  * @return

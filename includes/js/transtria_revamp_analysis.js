@@ -192,11 +192,30 @@ function get_vars_by_grouping(){
 						//console.log( this );
 						
 						txt += "<tr>";
-						txt += "<td>" + this.StudyID + "</td>";
+						//txt += "<td>" + this.StudyID + "</td>";
 						txt += "<td>" + this.info_id + "</td>";
 						//txt += "<td>" + this.ea_seq_id + "</td>"; //this info now embedded in info_id
 						txt += "<td>" + this.indicator + "</td>";
 						txt += "<td>" + this.measure + "</td>";
+						txt += "<td>" + this.result_subpopulationYN + "</td>";
+						if( this.result_subpop_unserial == false ){
+							txt += "<td>no subpop</td>";
+						} else {
+							if( this.result_subpop_unserial[0].descr != undefined ){
+								txt += "<td>" + this.result_subpop_unserial[0].descr + "</td>";
+							} else {
+								txt += "<tdsubpop error</td>";
+							}
+						}
+						if( this.result_eval_unserial == false ){
+							txt += "<td>no eval pop</td>";
+						} else {
+							if( this.result_eval_unserial[0].descr != undefined ){
+								txt += "<td>" + this.result_eval_unserial[0].descr + "</td>";
+							} else {
+								txt += "<tdeval pop error</td>";
+							}
+						}
 						
 						txt += "</tr>";
 						

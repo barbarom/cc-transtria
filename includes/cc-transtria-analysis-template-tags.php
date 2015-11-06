@@ -62,10 +62,13 @@ function cc_transtria_render_analysis_page(){
 				<a id="hide_im_table" class="button" data-whichtable="intermediate_vars_im" data-whichlabel="I-M DYADS">HIDE I-M DYADS</a>
 				<table id="intermediate_vars_im">
 					<tr class="no_remove">
-						<th>Study ID</th>
+						<!--<th>Study ID</th>-->
 						<th>Unique ID (Study ID _ seq _ unique ID)</th>
 						<th>Indicator</th>
-						<th>Measure</th>		
+						<th>Measure</th>
+						<th>Subpop?</th>
+						<th>Subpop!</th>
+						<th>Eval pop</th>
 					</tr>
 					<tr id="data_parent" class="no_remove"></tr>
 				
