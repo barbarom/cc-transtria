@@ -2078,8 +2078,6 @@ function get_lookup_for_study_design(){
 			$values[(int)$i] = $stuff;
 		
 		}
-	
-	
 	}
 
 	return $values;
