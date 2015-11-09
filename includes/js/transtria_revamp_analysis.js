@@ -17,6 +17,8 @@ function analysisClickListen(){
 	jQuery("a#hide_im_table").on("click", toggle_var_table );
 	jQuery("a#hide_direction_table").on("click", toggle_var_table );
 	jQuery("a#hide_design_table").on("click", toggle_var_table );
+	jQuery("a#hide_analysis_im_table").on("click", toggle_var_table );
+	jQuery("a#hide_analysis_effect_table").on("click", toggle_var_table );
 	
 	jQuery("a#hide_component_table").on( "click", toggle_var_table );
 	
@@ -113,6 +115,7 @@ function get_vars_by_grouping(){
 	
 	which_tr_parent_analysis_im = jQuery("table#analysis_vars_im tr#data_parent");
 	which_tr_parent_analysis_effect = jQuery("table#analysis_vars_effect tr#data_parent");
+	which_tr_parent_analysis_pops = jQuery("table#analysis_vars_population tr#data_parent");
 	
 	//ajax data
 	var ajax_action = 'get_im_dyads_and_data_by_group';
@@ -153,7 +156,7 @@ function get_vars_by_grouping(){
 			
 			jQuery("table#analysis_vars_im tr").not(".no_remove").remove();
 			jQuery("table#analysis_vars_effect tr").not(".no_remove").remove();
-			jQuery("table#analysis_vars_effectiveness tr").not(".no_remove").remove();
+			jQuery("table#analysis_vars_population tr").not(".no_remove").remove();
 			jQuery("table#analysis_vars_hrpops tr").not(".no_remove").remove();
 			
 		}
@@ -181,6 +184,7 @@ function get_vars_by_grouping(){
 			
 			var txt_a_im = "";
 			var txt_a_effects = "";
+			var txt_a_pops = "";
 			
 			
 			//for each study
@@ -431,7 +435,31 @@ function get_vars_by_grouping(){
 						
 						txt_a_effects += "</tr>";
 						//console.log( txt_a_effects );
-						//TODO: populate the effectiveness table
+						
+						//TODO: populate the populations table
+						txt_a_pops += "<tr>";
+						txt_a_pops += "<td class='analysis_id'>" + this.info_id + "</td>";
+						txt_a_pops += "<td>" + this.info_id_list_hr + "</td>";
+						if( this.result_evaluation_population[0] != undefined ){
+							if( this.result_evaluation_population[0].descr != undefined ){
+								txt_a_pops += "<td>" + this.result_evaluation_population[0].descr + "</td>";
+							} 
+						} else {
+							txt_a_pops += "<td>no eval pop</td>";
+						}
+						txt_a_pops += "<td>" + this.result_subpopulationYN + "</td>";
+						if( this.result_subpopulation[0] != undefined ){
+							if( this.result_subpopulation[0].descr != undefined ){
+								txt_a_pops += "<td>" + this.result_subpopulation[0].descr + "</td>";
+							}
+						} else {
+							txt_a_pops += "<td>no sub pop</td>";
+						}
+						//txt_a_pops += "<td>" + this.result_subpopulation + "</td>";
+						txt_a_pops += "<td>" + this.result_population_result + "</td>";
+						
+						txt_a_pops += "</tr>";
+						
 						
 						
 						//TODO: populate the hr pops table
@@ -475,6 +503,7 @@ function get_vars_by_grouping(){
 	
 			which_tr_parent_analysis_im.after( txt_a_im );
 			which_tr_parent_analysis_effect.after( txt_a_effects );
+			which_tr_parent_analysis_pops.after( txt_a_pops );
 			
 		}
 		

@@ -325,6 +325,11 @@ function get_unique_ims_for_study_group( $study_group_id ){
 	$next_indicator_val = "";
 	$info_id_list = ""; //init our info id list
 	
+	$effects = cc_transtria_calculate_ea_direction_for_studygrouping( $study_group_id );
+		//$effects = $one_intermediate_im["calc_ea_direction"];
+		var_dump( $next_info_id );
+		var_dump( $effects );
+		
 	//iterate through im rows
 	foreach( $im_rows as $one_intermediate_im ){
 	
@@ -337,10 +342,7 @@ function get_unique_ims_for_study_group( $study_group_id ){
 		$next_indicator_val = $one_intermediate_im["indicator_value"];
 		$next_indicator = $one_intermediate_im["indicator"];
 		$next_info_id = $one_intermediate_im["info_id"];
-		//$effects = $one_intermediate_im["calc_ea_direction"];
-		$effects = cc_transtria_calculate_ea_direction_for_studygrouping( $study_group_id );
-		var_dump( $next_info_id );
-		var_dump( $effects );
+		
 		
 		$evalpop = $one_intermediate_im["result_evaluation_population"];
 		$subpop_YN = $one_intermediate_im["result_subpopulationYN"];
@@ -476,6 +478,9 @@ function get_unique_ims_for_study_group_pop( $study_group_id ){
 	$next_result_pop = "";
 	$next_result_popYN = "";
 	
+	//net eggects calcd at study grouping level
+	$effects = cc_transtria_calculate_ea_direction_for_studygrouping( $study_group_id );
+	
 	$info_id_list = ""; //init our info id list
 	
 	$temp_im_list = array(); //to hold temporary im info_id values that match SO FAR in the mathcing process (5 properties to match)
@@ -493,7 +498,7 @@ function get_unique_ims_for_study_group_pop( $study_group_id ){
 		$next_subpopYN = $one_intermediate_im["result_subpopulationYN"];
 		
 		$next_info_id = $one_intermediate_im["info_id"];
-		$effects = $one_intermediate_im["calc_ea_direction"];
+		//$effects = $one_intermediate_im["calc_ea_direction"];
 		
 		$me = "measures";
 		$ind = "indicators";
@@ -750,6 +755,25 @@ function get_analysis_vars_for_group( $study_group_id ){
 	); 
 	
 	$form_rows = $wpdb->get_results( $analysis_sql, ARRAY_A );
+	
+	//unserialize the serialized
+	foreach( $form_rows as $index => $row ){
+	
+		if( !empty( $row[ "result_evaluation_population" ] ) ){
+			
+			$new_eval = unserialize( $row[ "result_evaluation_population" ] );
+			$form_rows[ $index ][ "result_evaluation_population" ] = $new_eval;		
+		
+		}
+		if( !empty( $row[ "result_subpopulation" ] ) ){
+			
+			$new_eval = unserialize( $row[ "result_subpopulation" ] );
+			$form_rows[ $index ][ "result_subpopulation" ] = $new_eval;		
+		
+		}
+	
+	
+	}
 	
 	return $form_rows;
 
@@ -1058,10 +1082,12 @@ function set_dyads_for_study_group( $study_group_id ){
 				$significant = $ea_data[ $i ]["significant"];
 				$ind_strategies_dir = $ea_data[ $i ]["indicators_strategies_directions"];
 				$ind_directions = $ea_data[ $i ]["indicator_directions"];
+				$ind_strategies = $ea_data[ $i ]["indicator_strategies"];
 				$result_eval_pop = $ea_data[ $i ]["result_evaluation_population"];
 				$result_sub_pop_yn = $ea_data[ $i ]["result_subpopulationYN"];
 				$result_sub_pop = $ea_data[ $i ]["result_subpopulation"];
 				$ind_dir = "";
+				$ind_strat = "";
 				
 				//var_dump( $this_im );
 				
@@ -1073,6 +1099,8 @@ function set_dyads_for_study_group( $study_group_id ){
 					
 					//for each measure, cycle through all indicators on this EA tab
 					foreach( $this_im[ "indicators" ][$i] as $ind_index => $single_ind ){
+						//var_dump( $ind_index );
+						//var_dump( $ind_directions[ $ind_index ] );
 						//var_dump( $single_ind );
 					
 						//if we have something in the VALUES string already, prepend with comma
@@ -1086,49 +1114,36 @@ function set_dyads_for_study_group( $study_group_id ){
 						//calc ea_direction
 						if( $significant == "N" ){
 							$ea_direction = "3";
+							
+							//ind direction will go in the db, so capture them anyway
+							if( !empty( $ind_directions[ $ind_index ] ) ){ //if we HAVE a direction, else let them know
+								$ind_dir = $ind_directions[ $ind_index ];
+							} else {
+								$ind_dir = "no ind. direction set";
+							}
 						} else {
 							if( !empty( $ind_directions[ $ind_index ] ) ){ //if we HAVE a direction, else let them know 
-								//TODO: this  22Oct 2015
-								//TODO: test for outcome direction similarly
+								
 								$ind_dir = $ind_directions[ $ind_index ];
+								var_dump( $ind_dir );
 								$ea_direction = cc_transtria_calculate_ea_direction( $ind_dir, $outcome_direction );
 							} else {
 								$ind_dir = "no ind. direction set";
 								$ea_direction = "no ind. direction set";
 							}
 						}
+						
+						//get strategies associated with this indicator
+						if( !empty( $ind_strategies[ $ind_index ] ) ){ //if we HAVE a direction, else let them know 
+							//var_dump( $ind_strategies );
+							//multiple strategies/indicator means serializing?
+							$ind_strat_raw = $ind_strategies[ $ind_index ];
+							$ind_strat = serialize( $ind_strat_raw );
+						} else {
+							$ind_strat = "no ind. strategy set";
+						}
 
-						//TODO: optimize this...for each...study? Can we make this wpdb statement more dynamical?
-						
-						/*$inter_analysis_sql = $wpdb->prepare( 
-							"
-								INSERT INTO $wpdb->transtria_analysis_intermediate
-								( unique_id, info_id, StudyID, StudyGroupingID, StudyDesignID, ea_seq_id, indicator_value, indicator, 
-								indicator_direction, measure, outcome_direction, outcome_type, outcome_duration, significant, calc_ea_direction, 
-								result_evaluation_population, result_subpopulationYN, result_subpopulation)
-								VALUES ( %d, %s, %d, %d, %s, %d, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s )
-							", 
-							$index_count++,
-							$info_id, 
-							$new_study_id,
-							$study_group_id,
-							$study_design,
-							$i,
-							$ind_index, 
-							$single_ind,
-							$ind_dir,
-							$single_measure,
-							$outcome_direction,
-							$outcome_type,
-							$outcome_duration,
-							$significant,
-							$ea_direction,
-							$result_eval_pop,
-							$result_sub_pop_yn,
-							$result_sub_pop
-						); 
-						*/
-						
+						//add this IM-ness to the intermediate table
 						$did_it_work = $wpdb->insert( 
 							$wpdb->transtria_analysis_intermediate, 
 							array( 
@@ -1141,6 +1156,7 @@ function set_dyads_for_study_group( $study_group_id ){
 								'indicator_value' => $ind_index,
 								'indicator' => $single_ind,
 								'indicator_direction' => $ind_dir,
+								'indicator_strategies' => $ind_strat,
 								'measure' => $single_measure,
 								'outcome_direction' => $outcome_direction,
 								'outcome_type' => $outcome_type,
@@ -1151,7 +1167,7 @@ function set_dyads_for_study_group( $study_group_id ){
 								'result_subpopulationYN' => $result_sub_pop_yn,
 								'result_subpopulation' => $result_sub_pop
 							), 
-							array( '%d', '%s', '%d', '%d', '%s', '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s' ) 
+							array( '%d', '%s', '%d', '%d', '%s', '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s' ) 
 						);
 						
 						
@@ -1733,7 +1749,8 @@ function get_ea_analysis_data( $study_id ){
 	//get raw data from db
 	$ea_sql = $wpdb->prepare( 
 		"
-		SELECT      seq, outcome_direction, outcome_type, outcome_type_other, significant, duration, duration_notreported, indicator_strategies_directions, result_subpopulation
+		SELECT      seq, outcome_direction, outcome_type, outcome_type_other, significant, duration, duration_notreported, 
+			indicator_strategies_directions, result_subpopulation
 		FROM        $wpdb->transtria_effect_association
 		WHERE		StudyID = %d
 		",
@@ -1769,13 +1786,20 @@ function get_ea_analysis_data( $study_id ){
 		//deal with serialized indicator/strategies/directions to get indicator["string"] => Direction
 		$unserialized_inds = unserialize( $one_seq["indicator_strategies_directions"] );
 		$indicators_directions = array();
-		//var_dump( $unserialized_inds );
+		$indicators_strategies = array();
+		//var_dump( $unserialized_inds["indicators"] );
 		if( !empty( $unserialized_inds ) && ( $unserialized_inds != false ) ){
 			foreach( $unserialized_inds["indicators"] as $index => $details ){
 			
 				//var_dump( $index );
 				//var_dump( $details );
 				$indicators_directions[ $index ] = $details["direction"];
+			}
+			foreach( $unserialized_inds["indicators"] as $which_ind => $details ){
+			
+				//var_dump( $index );
+				//var_dump( $details );
+				$indicators_strategies[$which_ind] = $details["strategies"];
 			}
 		} else {
 			//TODO: are we looking for old vars here?
@@ -1800,6 +1824,7 @@ function get_ea_analysis_data( $study_id ){
 				"outcome_duration" => $new_outcome_duration,
 				"significant" => $one_seq["significant"],
 				"indicator_directions" => $indicators_directions,
+				"indicator_strategies" => $indicators_strategies,
 				"indicators_strategies_directions" => $unserialized_inds,
 				"result_subpopulationYN" => $one_seq["result_subpopulation"],
 				"result_evaluation_population" => serialize( current( $result_eval_pop ) ),

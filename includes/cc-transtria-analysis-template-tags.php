@@ -230,7 +230,7 @@ function cc_transtria_render_analysis_page(){
 				<h3 id="analysis_vars_header_text">Analysis Variables</h3>
 				
 				<h4>Indicator-Measure Dyad(s):</h4>
-				<a id="hide_analysis_im_table" class="button">HIDE I-M DYADS</a>
+				<a id="hide_analysis_im_table" class="button" data-whichlabel="ANALYSIS IDs" data-whichtable="analysis_vars_im">HIDE ANALYSIS IDs</a>
 				<table id="analysis_vars_im">
 					<tr class="no_remove">
 						<th>Analysis ID (SG _ unique ID)</th>
@@ -258,7 +258,7 @@ function cc_transtria_render_analysis_page(){
 				
 				
 				<h4>Net Effects or Associations:</h4>
-				<a id="hide_analysis_effect_table" class="button">HIDE I-M DIRECTIONS</a>
+				<a id="hide_analysis_effect_table" class="button" data-whichlabel="NET EFFECTS" data-whichtable="analysis_vars_effect">HIDE NET EFFECTS</a>
 				<a id="show_effect_algorithm" class="button alignright" data-whichalgorithm="analysis_effect_algorithm">SHOW ALGORITHM DETAILS</a>
 				<div id="analysis_effect_algorithm" class="show_algorithm">
 					<h4>Effect or Association Direction</h4>
@@ -288,14 +288,16 @@ function cc_transtria_render_analysis_page(){
 				</span>
 				<br />
 				
-				<h4>Effectiveness:</h4>
-				<a id="hide_analysis_effectiveness_table" class="button">HIDE EFFECTIVENESS</a>
-				<table id="analysis_vars_effectiveness">
+				<h4>Populations:</h4>
+				<a id="hide_analysis_population_table" class="button" data-whichlabel="POPULATIONS" data-whichtable="analysis_vars_population">HIDE POPULATIONS</a>
+				<table id="analysis_vars_population">
 					<tr class="no_remove">
-						<th>Population or Subpopulation</th>
-						<th>Indicator</th>
-						<th>Measure</th>		
-						<th>Effectiveness</th>		
+						<th>Analysis ID (Study ID _ seq _ unique ID)</th>
+						<th>Unique IDs - HR</th>
+						<th>Evaluation Population</th>
+						<th>Result Subpopulation YN?</th>
+						<th>Result Subpopulation</th>		
+						<th>Population or Subpopulation</th>		
 					</tr>
 					<tr id="data_parent" class="no_remove"></tr>
 				

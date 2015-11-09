@@ -54,6 +54,8 @@ function cc_transtria_calculate_ea_direction_for_studygrouping( $study_group_id 
 	$num_directions = count( $all_directions ); 
 	$instance_directions = array_count_values ( $all_directions );
 	
+	var_dump( $num_directions );
+	
 	//if > 50% of directions == 1, return 1
 	if( $num_directions > 0 ){
 		if( ( $instance_directions[1] / $num_directions ) > 0.5 ){
@@ -77,6 +79,17 @@ function cc_transtria_calculate_ea_direction_for_studygrouping( $study_group_id 
  */
 function calculate_net_effect_for_info_id_list( $info_id_list ){
 
+	//TODO: modularize this
+	if( strpos( $info_id_list, "," ) === false ){
+		$info_implode = "'" . $info_id_list . "'";
+	
+	} else {
+		$info_explode = explode(", ", $info_id_list );
+		$info_implode = implode( "', '", $info_explode ); //adding quotes for mysql happy times
+		//pre and post-pend
+		$info_implode = "'" . $info_implode . "'";
+	} 
+	
 	global $wpdb;
 	
 	//get all calc_ea_direction for tihs study group
@@ -84,7 +97,7 @@ function calculate_net_effect_for_info_id_list( $info_id_list ){
 		"
 		SELECT info_id, calc_ea_direction
 		FROM $wpdb->transtria_analysis_intermediate
-		WHERE info_id IN ( $info_id_list )
+		WHERE info_id IN ( $info_implode )
 		"		
 		;
 		
@@ -103,6 +116,8 @@ function calculate_net_effect_for_info_id_list( $info_id_list ){
 	//now the tricky algorithm
 	$num_directions = count( $all_directions ); 
 	$instance_directions = array_count_values ( $all_directions );
+	
+	//var_dump( $instance_directions );
 	
 	//if > 50% of directions == 1, return 1
 	if( $num_directions > 0 ){
@@ -194,12 +209,29 @@ function calculate_study_design_for_info_id_list( $info_id_list ){
 	//get all study ids (in list) in this info_id group
 	$study_list = parse_studyids_from_infoids( $info_id_list );
 	
+	if( count( $study_list ) > 1 ){
+		$study_id_list = implode(", ", $study_list ); 
+	} else {
+		$study_id_list = current( $study_list );
+	}
+	
+	//TODO: modularize this
+	if( strpos( $study_id_list, "," ) === false ){
+		$info_implode = "'" . $study_id_list . "'";
+	
+	} else {
+		$info_explode = explode(", ", $study_id_list );
+		$info_implode = implode( "', '", $info_explode ); //adding quotes for mysql happy times
+		//pre and post-pend
+		$info_implode = "'" . $info_implode . "'";
+	} 
+	
 	//get all study designs for this list of study ids
 	$design_sql = 
 		"
 		SELECT StudyID, StudyDesignID
 		FROM $wpdb->transtria_studies
-		WHERE StudyID in ($study_list)
+		WHERE StudyID in ($info_implode)
 		ORDER BY StudyID
 		"		
 		;
@@ -372,6 +404,7 @@ function calculate_duration_for_analysis_duplicates( $info_id_list, $studygroup_
 	else if( in_array( "6-12 months", $temp_durations ) ){ return 2; }
 	else if( in_array( "less than 6 months", $temp_durations ) ) { return 1; }
 	else if( in_array( "Not applicable", $temp_durations ) ) { return 999; }
+	else if( in_array( "not reported", $temp_durations ) ) { return "not reported"; }
 	else { return "no data"; }
 	
 }
@@ -390,6 +423,9 @@ function calculate_duration_for_analysis_single( $duration_string ){
 			break;
 		case "Not applicable":
 			return 999;
+			break;
+		case "not reported":
+			return "not reported";
 			break;
 		default:
 			return "no data";
@@ -514,7 +550,7 @@ function calculate_pop_subpop_analysis( $pop_data_by_study_id, $info_id_list, $e
 	
 	//var_dump( $info_id_list );
 	//var_dump( $subpop );
-	//TODO, clean this up when no incoming $subpop (check for subpop, etc), etc
+	//TODO, clean this up when no incoming $subpop (check for subpop!!, etc), etc
 	$unpacked_subpop = unserialize( $subpop );
 	$unpacked_evalpop = unserialize( $evalpop );
 	if( $unpacked_subpop != false ){
@@ -530,7 +566,7 @@ function calculate_pop_subpop_analysis( $pop_data_by_study_id, $info_id_list, $e
 		$this_evalpop_string = "";
 	}
 	
-	 //returns "tp", "ese0", etc (the PopulationType in the pops data)
+	//returns "tp", "ese0", etc (the PopulationType in the pops data)
 	
 	
 	
@@ -1019,8 +1055,8 @@ function calculate_pop_subpop_analysis( $pop_data_by_study_id, $info_id_list, $e
 			}
 		}
 		$info_id_list_hr = parse_hr_info_list( $study_list_hr, $info_id_list_by_study );
-		var_dump( "info id list wonem");
-		var_dump( $info_id_list_hr );
+		//var_dump( "info id list wonem");
+		//var_dump( $info_id_list_hr );
 		//return the things
 		$return_data['which_pop'] = $this_evalpop_string;
 		$return_data['info_id_list_hr'] = $info_id_list_hr;
