@@ -1292,6 +1292,7 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 	
 	/***** UPDATE Analysis table w/vars *****/
 	//calculate duration, duplicate, effectiveness_general for each unique im; INSERT INTO analysis table
+	//var_dump( $all_ims );
 	foreach( $all_ims as $analysis_index => $one_im ){
 	
 		//var_dump( $one_im );
@@ -1318,6 +1319,7 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 		//return "interrupted";
 		//calculate direction, duration
 		//Only ONE I-M dyad, no duplicates: set ea_direction, duration
+		//var_dump( $info_id_list );
 		if( strpos( $info_id_list, "," ) === false ){
 			$duplicate_im = "N";
 			
@@ -1334,6 +1336,7 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 			$new_infos = array_unique( $exploded_infos );
 			$info_id_list = implode( ", ", $new_infos );
 			
+			//var_dump( $info_id_list );
 			//get ea data for each study here (to send to calc functions)
 			$parsed_id_array = parse_study_seq_id_list( $info_id_list );
 			$studygroup_ea_data = array();
@@ -1378,7 +1381,10 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 		
 		//
 		$study_design_hr = calculate_study_design_for_info_id_list( $info_id_list_hr ); //if "0", we will need drop down..
+		
+		var_dump( $analysis_index );
 		$net_effects_hr = calculate_net_effect_for_info_id_list( $info_id_list_hr );
+		var_dump( $net_effects_hr );
 		
 		//return( $analysis_index );
 		
@@ -1387,9 +1393,6 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 		//$effectiveness_pop
 		
 		//add these to analysis table
-		//var_dump( $analysis_index );
-		//var_dump( $one_im );
-	
 		$spartacus = $wpdb->prepare( 
 			"
 				INSERT INTO $wpdb->transtria_analysis
@@ -2068,6 +2071,16 @@ function get_measures_textboxes_by_study_seq_value( $study_id, $seq, $measure_va
 function get_lookup_for_study_design(){
 
 	$values = get_codetbl_by_codetype( 99 );
+	
+	//let's int these
+	foreach( $values as $i => $stuff ){
+		if( is_int( (int)$i ) ){
+			$values[(int)$i] = $stuff;
+		
+		}
+	
+	
+	}
 
 	return $values;
 }

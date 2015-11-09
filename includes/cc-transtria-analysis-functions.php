@@ -54,7 +54,7 @@ function cc_transtria_calculate_ea_direction_for_studygrouping( $study_group_id 
 	$num_directions = count( $all_directions ); 
 	$instance_directions = array_count_values ( $all_directions );
 	
-	var_dump( $num_directions );
+	//var_dump( $num_directions );
 	
 	//if > 50% of directions == 1, return 1
 	if( $num_directions > 0 ){
@@ -70,7 +70,7 @@ function cc_transtria_calculate_ea_direction_for_studygrouping( $study_group_id 
 	
 	}
 	//otherwise, we have a data error
-	return "data error";
+	return "data error: ea dir for SG";
 
 }
 
@@ -79,6 +79,7 @@ function cc_transtria_calculate_ea_direction_for_studygrouping( $study_group_id 
  */
 function calculate_net_effect_for_info_id_list( $info_id_list ){
 
+	var_dump( $info_id_list );
 	//TODO: modularize this
 	if( strpos( $info_id_list, "," ) === false ){
 		$info_implode = "'" . $info_id_list . "'";
@@ -998,8 +999,10 @@ function calculate_pop_subpop_analysis( $pop_data_by_study_id, $info_id_list, $e
 			//what are the pops subpops strings?
 			$this_pop_subpops = $sub_pop_data[ $which_study ][ $this_evalpop_string ];
 			$pop_subpop_array = array(); //to hold the subpop strings (i.e. "Adults", "Families", "Youth")
-			foreach( $this_pop_subpops as $this_pop_subpop ){
-				array_push( $pop_subpop_array, $this_pop_subpop->descr );
+			if( !empty( $this_pop_subpops ) ){
+				foreach( $this_pop_subpops as $this_pop_subpop ){
+					array_push( $pop_subpop_array, $this_pop_subpop->descr );
+				}
 			}
 			
 			if( ( trim( $gender ) == "M" ) && in_array( "Youth", $pop_subpop_array ) ){ //if Gender == "F" AND this pop subpop contains "Youth"...
@@ -1124,20 +1127,26 @@ function calculate_pop_subpop_analysis( $pop_data_by_study_id, $info_id_list, $e
 	}
 	
 	//12a. Youth = 12; No subpop check - FOR RESULTS EVAL POP ONLY!
+	//var_dump( $new_study_ids ); //12 
+	//var_dump( $info_id_list_by_study ); //yup
 	foreach( $new_study_ids as $this_study ) {
 	
 		//what are the pops subpops strings?
 		$this_pop_subpops = $sub_pop_data[ $this_study ][ $this_evalpop_string ];
 		$pop_subpop_array = array(); //to hold the subpop strings (i.e. "Adults", "Families", "Youth")
-		foreach( $this_pop_subpops as $this_pop_subpop ){
-			array_push( $pop_subpop_array, $this_pop_subpop->descr );
+		if( !empty( $this_pop_subpops ) ){
+			foreach( $this_pop_subpops as $this_pop_subpop ){
+				array_push( $pop_subpop_array, $this_pop_subpop->descr );
+			}
 		}
 		
 		if( in_array( "Youth", $pop_subpop_array ) ){ //if this pop subpop contains "Youth"...
 			$return_data['population_calc'] = 12;
 			array_push( $study_list_hr, $this_study ); //add to the hr list
 			$we_found_it = true;
+		//var_dump( $study_list_hr );
 			$info_id_list_hr = parse_hr_info_list( $study_list_hr, $info_id_list_by_study );
+			//var_dump( $info_id_list_hr );
 			//return the things
 			$return_data['which_pop'] = $this_evalpop_string;
 			$return_data['info_id_list_hr'] = $info_id_list_hr;
@@ -1335,11 +1344,11 @@ function parse_hr_info_list( $study_list_hr, $info_id_list_by_study ){
 	}
 	
 	//var_dump( $info_id_list_by_study );
-	//var_dump( $info_id_list_hr );
 	//var_dump( $study_list_hr );
 	
 	if( count( $info_id_list_hr ) > 1 ){
-		$string_info_id_list = implode(", ", current( $info_id_list_hr ) ); 
+	//var_dump( $info_id_list_hr );
+		$string_info_id_list = implode(", ", $info_id_list_hr ); 
 	} else {
 		$string_info_id_list = current( $info_id_list_hr );
 	}
