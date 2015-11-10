@@ -145,11 +145,14 @@ for( $k = 0; $k < $row_count; $k++ ){
 } 
 
 
+//unset all the headers?
+header_remove();
+
 // Redirect output to a client’s web browser (Excel5) 
-//header('Content-Type: application/vnd.ms-excel'); 
-//header('Content-Disposition: attachment;filename="Limesurvey_Results.xls"'); 
-//header('Cache-Control: max-age=0'); 
-//$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5'); 
+header('Content-Type: application/vnd.ms-excel'); 
+header('Content-Disposition: attachment;filename="Limesurvey_Results.xls"'); 
+header('Cache-Control: max-age=0'); 
+$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5'); 
 //$objWriter->save('php://output');
 	
 	

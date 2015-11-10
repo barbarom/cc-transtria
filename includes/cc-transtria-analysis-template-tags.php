@@ -38,9 +38,9 @@ function cc_transtria_render_analysis_page(){
 			?>
 			</select> Select Study Grouping
 			<br />
-			2. <a id="run_intermediate_analysis" class="button"> RUN INTERMEDIATE ANALYSIS**</a>
+			2. <a id="run_intermediate_analysis" class="button"> SET UNIQUE IDS**</a>
 			<br />
-			3. <a id="run_analysis" class="button"> RUN INITIAL ANALYSIS (from INTERMEDIATE VARS)**</a>
+			3. <a id="run_analysis" class="button"> SET ANALYSIS IDS (from UNIQUE IDS)**</a>
 			<br />
 			4. <a id="get_vars_by_group" class="button"> GET/DISPLAY ALL VARS</a>
 			<br />
@@ -305,12 +305,13 @@ function cc_transtria_render_analysis_page(){
 				
 				<h4>Effectiveness, High Risk Populations:</h4>
 				<a id="hide_analysis_hrpops_table" class="button">HIDE HR POPS</a>
-				<table id="analysis_vars_hrpops">
+				<table id="analysis_vars_effectiveness_hr">
 					<tr class="no_remove">
+						<th>Analysis ID (Study ID _ seq _ unique ID)</th>
 						<th>Population or Subpopulation</th>
 						<th>Indicator</th>
 						<th>Measure</th>		
-						<th>Effectiveness, HR Pops</th>		
+						<th>Effectiveness, HR Pops</th>	
 					</tr>
 					<tr id="data_parent" class="no_remove"></tr>
 				

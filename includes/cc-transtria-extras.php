@@ -776,8 +776,9 @@ class CC_Transtria_Extras {
 		
 		$study_group = $_POST["this_study_group"];
 		
-		$study_id_array = set_dyads_for_study_group( $study_group );
-		$intermediate_calcs = calc_and_set_intermediates_for_study_group( $study_group );
+		$study_id_array = calc_and_set_dyads_primary_intermediate_analysis( $study_group );
+		 //TODO: get rid of this and read vars form intermediate table only! (since complexity, freq of part, etc, calcs might change and bad practice to have in two places)
+		$intermediate_calcs = run_secondary_intermediate_analysis( $study_group );
 		
 		//$setting_dyad_test = get_unique_dyads_for_study( 346 );
 		

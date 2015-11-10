@@ -19,6 +19,7 @@ function analysisClickListen(){
 	jQuery("a#hide_design_table").on("click", toggle_var_table );
 	jQuery("a#hide_analysis_im_table").on("click", toggle_var_table );
 	jQuery("a#hide_analysis_effect_table").on("click", toggle_var_table );
+	jQuery("a#hide_analysis_population_table").on("click", toggle_var_table );
 	
 	jQuery("a#hide_component_table").on( "click", toggle_var_table );
 	
@@ -116,6 +117,7 @@ function get_vars_by_grouping(){
 	which_tr_parent_analysis_im = jQuery("table#analysis_vars_im tr#data_parent");
 	which_tr_parent_analysis_effect = jQuery("table#analysis_vars_effect tr#data_parent");
 	which_tr_parent_analysis_pops = jQuery("table#analysis_vars_population tr#data_parent");
+	which_tr_parent_effectiveness_hr = jQuery("table#analysis_vars_effectiveness_hr tr#data_parent");
 	
 	//ajax data
 	var ajax_action = 'get_im_dyads_and_data_by_group';
@@ -157,7 +159,7 @@ function get_vars_by_grouping(){
 			jQuery("table#analysis_vars_im tr").not(".no_remove").remove();
 			jQuery("table#analysis_vars_effect tr").not(".no_remove").remove();
 			jQuery("table#analysis_vars_population tr").not(".no_remove").remove();
-			jQuery("table#analysis_vars_hrpops tr").not(".no_remove").remove();
+			jQuery("table#analysis_vars_effectiveness_hr tr").not(".no_remove").remove();
 			
 		}
 	}).success( function( data ) {
@@ -184,6 +186,7 @@ function get_vars_by_grouping(){
 			
 			var txt_a_im = "";
 			var txt_a_effects = "";
+			var txt_a_effects_hr = "";
 			var txt_a_pops = "";
 			
 			
@@ -436,6 +439,16 @@ function get_vars_by_grouping(){
 						txt_a_effects += "</tr>";
 						//console.log( txt_a_effects );
 						
+						
+						txt_a_effects_hr += "<tr>";
+						txt_a_effects_hr += "<td class='analysis_id'>" + this.info_id + "</td>";
+						txt_a_effects_hr += "<td>" + this.result_population_result + "</td>";
+						txt_a_effects_hr += "<td>" + this.indicator + "</td>";
+						txt_a_effects_hr += "<td>" + this.measure + "</td>";
+						txt_a_effects_hr += "<td>" + this.effectiveness_hr + "</td>";
+						txt_a_effects_hr += "</tr>";
+						
+						
 						//TODO: populate the populations table
 						txt_a_pops += "<tr>";
 						txt_a_pops += "<td class='analysis_id'>" + this.info_id + "</td>";
@@ -504,6 +517,7 @@ function get_vars_by_grouping(){
 			which_tr_parent_analysis_im.after( txt_a_im );
 			which_tr_parent_analysis_effect.after( txt_a_effects );
 			which_tr_parent_analysis_pops.after( txt_a_pops );
+			which_tr_parent_effectiveness_hr.after( txt_a_effects_hr );
 			
 		}
 		
@@ -654,7 +668,7 @@ function run_second_analysis(){
 		type: "POST",
 		dataType: "json",
 		beforeSend: function() {
-			usrmsg.html("Running Secondary Analysis for Study Group: <strong>" + this_study_group + "</strong>, hang tight..." );
+			usrmsg.html("Re-Running Analysis with form variables (Study Design, Net effects) for Study Group: <strong>" + this_study_group + "</strong>, hang tight..." );
 			usrmsgshell.fadeIn();
 			spinny.fadeIn();
 			

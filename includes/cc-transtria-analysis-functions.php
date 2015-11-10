@@ -79,7 +79,7 @@ function cc_transtria_calculate_ea_direction_for_studygrouping( $study_group_id 
  */
 function calculate_net_effect_for_info_id_list( $info_id_list ){
 
-	var_dump( $info_id_list );
+	//var_dump( $info_id_list );
 	//TODO: modularize this
 	if( strpos( $info_id_list, "," ) === false ){
 		$info_implode = "'" . $info_id_list . "'";
@@ -436,6 +436,76 @@ function calculate_duration_for_analysis_single( $duration_string ){
 
 }
 
+/**
+ * Gets, combines and returns strategies given an info id list (go through each unique id here and combine strategies!)
+ *
+ * @param string. Comma-space delimited list of UniqueIDs
+ * @return string. Strategies
+ *
+ */
+function calculate_strategies_for_info_id_list( $info_id_list ){
+
+	global $wpdb;
+
+	//add quotes for mysql IN clause
+		//TODO: modularize this!!  Also in calc_study_design by info id.
+	if( strpos( $info_id_list, "," ) === false ){
+		$info_implode = "'" . $info_id_list . "'";
+	
+	} else {
+		$info_explode = explode(", ", $info_id_list );
+		$info_implode = implode( "', '", $info_explode ); //adding quotes for mysql happy times
+		//pre and post-pend
+		$info_implode = "'" . $info_implode . "'";
+	} 
+
+	//upload codetbl for strategies (1 db call, vs many) //"Strategies" = 98
+	$strategy_lookup = get_codetbl_by_codetype( 98 );
+	
+	$all_strategies = array();
+	//get all serialized strategies for this list of study ids
+	$strat_sql = 
+		"
+		SELECT indicator_strategies
+		FROM $wpdb->transtria_analysis_intermediate
+		WHERE info_id in ($info_implode)
+		ORDER BY info_id
+		"		
+		;
+		
+	$form_rows = $wpdb->get_results( $strat_sql, ARRAY_N );
+	
+	//TODO: unserialize strategies
+	foreach( $form_rows as $i => $v ){
+		//var_dump( $i );
+		//first, check to see if default text is there
+		$uncereal = unserialize( current( $v ) ); //to array of index => strategy values (numbers to be looked up)
+		//var_dump( $uncereal );
+		if( $uncereal !== false ){ //will get rid of 'ind. not selected' or whatever
+			foreach( $uncereal as $in => $va ){
+				//lookup each value in strategy lookup table
+				$this_strategy = $strategy_lookup[ $va ]->descr;
+				//append to all strategies array
+				$all_strategies[ $va ] = $this_strategy;
+				
+			}
+		
+		} 
+	
+	}
+	
+	//if we have no strategies in list, return 999.
+	if( empty( $all_strategies ) ){
+		$all_strategies[] = 999;
+		$all_strategies = serialize( $all_strategies );
+	} else {
+		$all_strategies = serialize( $all_strategies );
+	}
+	
+	return $all_strategies;
+
+
+}
 
 
 /** 
