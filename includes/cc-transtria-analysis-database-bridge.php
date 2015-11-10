@@ -1471,6 +1471,34 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 			
 		}
 		
+		//parse strategies into up-to-5 individual ones
+		$uncereal_strats = unserialize( $strategies );
+		$strategy_1 = "";
+		$strategy_2 = "";
+		$strategy_3 = "";
+		$strategy_4 = "";
+		$strategy_5 = "";
+		$strategy_1_text_ = "";
+		$strategy_2_text = "";
+		$strategy_3_text = "";
+		$strategy_4_text = "";
+		$strategy_5_text = "";
+		$strat_count = 1;
+		
+		foreach( $uncereal_strats as $strat_i => $strat_v ){
+			$text_name = $strat_count . "_text";
+			if( $strat_v == 999 ){
+				$strategy_{$strat_count} = 999;
+				$strategy_{$text_name} = "Not applicable";
+			} else {
+				$strategy_{$strat_count} = $strat_i;
+				$strategy_{$text_name} = $strat_v;
+			}
+		
+			$strat_count++;
+		}
+		
+		
 		//calculate effectiveness for this analysis id
 		$effectiveness_gen = calc_general_effectiveness_analysis( $study_design, $duration, $ea_direction, $type );
 		
@@ -1480,8 +1508,9 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 				INSERT INTO $wpdb->transtria_analysis
 				( info_id, StudyGroupingID, domestic_international, indicator_value, indicator, measure, info_id_list, info_id_list_hr, duplicate_ims, 
 					net_effects, duration, outcome_type, indicator_strategies, effectiveness_general, 
-					result_evaluation_population, result_subpopulationYN, result_subpopulation, result_population_result)
-				VALUES ( %s, %d, %d, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s )
+					result_evaluation_population, result_subpopulationYN, result_subpopulation, result_population_result,
+					strategy_1, strategy_1_text, strategy_2, strategy_2_text, strategy_3, strategy_3_text, strategy_4, strategy_4_text, strategy_5, strategy_5_text,)
+				VALUES ( %s, %d, %d, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s )
 			", 
 			$analysis_index,
 			$study_group_id,
@@ -1500,7 +1529,17 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 			$evalpop,
 			$subpopYN,
 			$subpop,
-			$result_pop_result["population_calc"]
+			$result_pop_result["population_calc"],
+			$strategy_1,
+			$strategy_1_text,
+			$strategy_2,
+			$strategy_2_text,
+			$strategy_3,
+			$strategy_3_text,
+			$strategy_4,
+			$strategy_4_text,
+			$strategy_5,
+			$strategy_5_text
 		);
 		
 		$help_me = $wpdb->query( $spartacus );

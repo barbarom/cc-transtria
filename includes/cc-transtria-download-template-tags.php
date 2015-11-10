@@ -18,32 +18,19 @@ function cc_transtria_render_download_page(){
 
      
     // Define the full path to your folder from root
-     
     $path =  dirname( __FILE__ ) . "/downloads";
      
-     
-     
     // Open the folder
-     
     $dir_handle = @opendir($path) or die("Unable to open $path");
      
-     
-     
     // Loop through the files
-     
     while ($file = readdir($dir_handle)) {
      
+		if($file == "." || $file == ".." || $file == "index.php" )
      
+		continue;
      
-    if($file == "." || $file == ".." || $file == "index.php" )
-     
-     
-     
-    continue;
-     
-    echo "<a href=\"$file\">$file</a><br>&gt;";
-     
-     
+		echo "<a href=\"$file\">$file</a><br>&gt;";
      
     }
      
