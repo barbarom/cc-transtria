@@ -48,6 +48,8 @@ function cc_transtria_class_init(){
 	require_once( dirname( __FILE__ ) . '/includes/cc-transtria-studygrouping-template-tags.php' );	
 	// Analysis template functions
 	require_once( dirname( __FILE__ ) . '/includes/cc-transtria-analysis-template-tags.php' );	
+	// Download template functions
+	require_once( dirname( __FILE__ ) . '/includes/cc-transtria-download-template-tags.php' );	
 	
 	// The main class
 	require_once( dirname( __FILE__ ) . '/includes/cc-transtria-extras.php' );
