@@ -1488,11 +1488,11 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 		foreach( $uncereal_strats as $strat_i => $strat_v ){
 			$text_name = $strat_count . "_text";
 			if( $strat_v == 999 ){
-				$strategy_{$strat_count} = 999;
-				$strategy_{$text_name} = "Not applicable";
+				${ 'strategy_' . $strat_count } = 999;
+				${ 'strategy_' . $strat_count . '_text'} = "Not applicable";
 			} else {
-				$strategy_{$strat_count} = $strat_i;
-				$strategy_{$text_name} = $strat_v;
+				${ 'strategy_' . $strat_count } = $strat_i;
+				${ 'strategy_' . $strat_count . '_text'} = $strat_v;
 			}
 		
 			$strat_count++;
@@ -1509,7 +1509,7 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 				( info_id, StudyGroupingID, domestic_international, indicator_value, indicator, measure, info_id_list, info_id_list_hr, duplicate_ims, 
 					net_effects, duration, outcome_type, indicator_strategies, effectiveness_general, 
 					result_evaluation_population, result_subpopulationYN, result_subpopulation, result_population_result,
-					strategy_1, strategy_1_text, strategy_2, strategy_2_text, strategy_3, strategy_3_text, strategy_4, strategy_4_text, strategy_5, strategy_5_text,)
+					strategy_1, strategy_1_text, strategy_2, strategy_2_text, strategy_3, strategy_3_text, strategy_4, strategy_4_text, strategy_5, strategy_5_text )
 				VALUES ( %s, %d, %d, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s )
 			", 
 			$analysis_index,
