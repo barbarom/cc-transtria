@@ -1947,61 +1947,88 @@ function get_measures_for_studyid_seq( $study_id, $seq ){
 	
 	//single codetype id returned
 	$codetype_id = $wpdb->get_var( $codetype_sql ); //get_var returns single var
-
-	//if we've got nothing, bounce
-	if( empty( $codetype_id ) ){
-		return false;
-	}
 	
-	//get all in code_results for this codetype_id
-	$results_sql = $wpdb->prepare(
-		"
-		SELECT *
-		FROM $wpdb->transtria_code_results
-		WHERE codetypeID = %d
-		AND ID = %d
-		",
-		$codetype_id,
-		$study_id
-	);
-	
-	//code table measures
-	$code_table_measures = $wpdb->get_results( $results_sql, ARRAY_A );
-	
-	//get all string descriptions of measures.  If special measures, add addtnl text to description
-	$all_measure_numbers_names = array();
-	$descr = "";
-	
-	//special measures index
-	$special_measures_list = cc_transtria_measures_w_extra_text( false );
-	//var_dump( $special_measures_list );
-	foreach( $code_table_measures as $measures ){
-		//for each "result", look it up and give it a name - "Meaures" is codetypeID = 
-		$descr = get_single_codetypeid_descr_by_value( 136, $measures[ "result" ] );
-		//var_dump( $measures[ "codetypeID" ] );
-		//var_dump( $descr );
+	//if we've got nothing, return false 
+	if( !empty( $codetype_id ) ){
 		
-		//Part II: if any of these measures is in the 'special measures' list, get textboxe(s) and treat EACH as separate measure
-		if( in_array( $measures[ "result" ], $special_measures_list ) ){
-			//get all measures in ea table (serialized), append to descr 
-			$special_measures_textbox = get_measures_textboxes_by_study_seq_value( $study_id, $seq, $measures[ "result" ] );
-						
-			//IF we have special measures with addtnl text, add that text to descr
-			if( ( $special_measures_textbox == "" ) || ( empty( $special_measures_textbox ) ) ){
-				//add like normal to the measures list
-				$all_measure_numbers_names[ $measures[ "result" ] ] = $descr;
-			} else {
-				//add text to descr
-				$all_measure_numbers_names[ $measures[ "result" ] ] =  $descr . ": " . $special_measures_textbox;
-			}
+		//get all in code_results for this codetype_id
+		$results_sql = $wpdb->prepare(
+			"
+			SELECT *
+			FROM $wpdb->transtria_code_results
+			WHERE codetypeID = %d
+			AND ID = %d
+			",
+			$codetype_id,
+			$study_id
+		);
+		
+		//code table measures
+		$code_table_measures = $wpdb->get_results( $results_sql, ARRAY_A );
+		
+		//var_dump( $code_table_measures );
+		//since there should only be one measure, "other measure" will be accounted for ONLY if nothing seleted in drop down
+		if( empty( $code_table_measures ) ){
+		
+			$ea_sql = $wpdb->prepare( 
+				"
+				SELECT      measures_other
+				FROM        $wpdb->transtria_effect_association
+				WHERE		StudyID = %d 
+				AND 		seq = %d
+				",
+				$study_id,
+				$seq
+			); 
+		
+			//var_dump( $ea_sql);
+			$ea_val = $wpdb->get_var( $ea_sql );
+			
+			//var_dump( $ea_rows );
+			$all_measure_numbers_names[ $ea_val ] = $ea_val;
 			
 		} else {
-			//add this measure val and descr, as is, to the measures list.
-			$all_measure_numbers_names[ $measures[ "result" ] ] = $descr;
+			//get all string descriptions of measures.  If special measures, add addtnl text to description
+			$all_measure_numbers_names = array();
+			$descr = "";
+			
+			//special measures index
+			$special_measures_list = cc_transtria_measures_w_extra_text( false );
+			//var_dump( $special_measures_list );
+			foreach( $code_table_measures as $measures ){
+				//for each "result", look it up and give it a name - "Meaures" is codetypeID = 
+				$descr = get_single_codetypeid_descr_by_value( 136, $measures[ "result" ] );
+				//var_dump( $measures[ "codetypeID" ] );
+				//var_dump( $descr );
+				
+				//Part II: if any of these measures is in the 'special measures' list, get textboxe(s) and treat EACH as separate measure
+				if( in_array( $measures[ "result" ], $special_measures_list ) ){
+					//get all measures in ea table (serialized), append to descr 
+					$special_measures_textbox = get_measures_textboxes_by_study_seq_value( $study_id, $seq, $measures[ "result" ] );
+								
+					//IF we have special measures with addtnl text, add that text to descr
+					if( ( $special_measures_textbox == "" ) || ( empty( $special_measures_textbox ) ) ){
+						//add like normal to the measures list
+						$all_measure_numbers_names[ $measures[ "result" ] ] = $descr;
+					} else {
+						//add text to descr
+						$all_measure_numbers_names[ $measures[ "result" ] ] =  $descr . ": " . $special_measures_textbox;
+					}
+					
+				} else {
+					//add this measure val and descr, as is, to the measures list.
+					$all_measure_numbers_names[ $measures[ "result" ] ] = $descr;
+				}
+				
+			}
+		
 		}
 		
+	} else {
+		return false;
 	}
-	
+	//Get 'other measure' for this ea tab and append to array
+	//var_dump( $all_measure_numbers_names ); //should ONLY be one measure, indexed by code result value => descr.
 	return $all_measure_numbers_names;
 
 }
