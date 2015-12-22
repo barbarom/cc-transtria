@@ -18,10 +18,21 @@ function cc_transtria_render_download_page(){
 
      
     // Define the full path to your folder from root
-    $path =  dirname( __FILE__ ) . "/downloads";
+	$root_ish = site_url();
+	//echo $root_ish;
+    //$path =  dirname( __FILE__ ) . "/downloads";
+    //$path =  $root_ish . 'PHPExcel/transtria/strategies.xls';
+	$path = $root_ish . "/PHPExcel/transtria/";
+	$strategies_path = $path . "strategies.xls";
+	//$path = "../../PHPExcel/transtria/strategies.xls";
+	//echo $path;
+	
+	echo "<h2>Reloading this page refreshes the following Excel documents:</h2>";
+	echo "<a href=\'$strategies_path\'>$strategies_path</a><br>";
      
+	/*
     // Open the folder
-    $dir_handle = @opendir($path) or die("Unable to open $path");
+    $dir_handle = opendir($path) or die("Unable to open $path");
      
     // Loop through the files
     while ($file = readdir($dir_handle)) {
@@ -35,14 +46,15 @@ function cc_transtria_render_download_page(){
     }
      
      
-     
     // Close
      
     closedir($dir_handle);
      
      
+    */
 
 	//include the csv file....GATKNGEKTREA TN
 	require_once( dirname( __FILE__ ) . '\transtria_strategies.php' );	
+	//require_once( $root_ish . '/PHPExcel/transtria/transtria_strategies.php' );	
 	
 }

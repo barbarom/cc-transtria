@@ -37,10 +37,16 @@ if (PHP_SAPI == 'cli')
 	die('This example should only be run from a Web Browser');
 
 /** Include PHPExcel */
-	//CSV doc and PHPExcel things
-	$root_ish = ABSPATH;
-	//var_dump( $root_ish );
-require_once $root_ish . '/PHPExcel/Classes/PHPExcel.php';
+//CSV doc and PHPExcel things
+$root_ish = ABSPATH;
+//var_dump( $root_ish );
+
+try{ 
+	require_once $root_ish . '/PHPExcel/Classes/PHPExcel.php';
+} catch ( Exception $e ) {
+    echo 'Caught exception: ',  $e->getMessage(), "\n";
+	exit;
+} 
 
 
 //what's the schema for this server?
@@ -146,13 +152,13 @@ for( $k = 0; $k < $row_count; $k++ ){
 
 
 //unset all the headers?
-header_remove();
+//header_remove();
 
 // Redirect output to a client’s web browser (Excel5) 
-header('Content-Type: application/vnd.ms-excel'); 
-header('Content-Disposition: attachment;filename="Limesurvey_Results.xls"'); 
-header('Cache-Control: max-age=0'); 
-$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5'); 
+//header('Content-Type: application/vnd.ms-excel'); 
+//header('Content-Disposition: attachment;filename="Limesurvey_Results.xls"'); 
+//header('Cache-Control: max-age=0'); 
+//$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5'); 
 //$objWriter->save('php://output');
 	
 	
@@ -164,4 +170,5 @@ $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
 
 $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
 //$objWriter->save('php://output'); //meeeeeeh?
-$objWriter->save( dirname( __FILE__ ) .'\downloads\write.xls');
+//$objWriter->save( dirname( __FILE__ ) .'\downloads\write.xls');
+$objWriter->save( $root_ish . '/PHPExcel/transtria/strategies.xls');
