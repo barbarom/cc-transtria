@@ -304,7 +304,7 @@ function calculate_domestic_intl_for_analysis( $studygrouping_id ){
 	$all_intls = array();
 	$all_notreported = array();
 	
-	//put all study designs in single array to evaluate
+	//put domestic international in a few arrays, to evaluate per the algorithm
 	foreach( $form_rows as $study_id => $values ){
 		//if "Not reported" ISN'T checked
 		if( $values->domeesticintlsetting_notreported != "Y" ){
@@ -316,11 +316,14 @@ function calculate_domestic_intl_for_analysis( $studygrouping_id ){
 	}
 	
 	//it's getting all algorithmic in here
-	if( ( in_array( "Y", $all_domestics ) ) && ( in_array( "Y", $all_domestics ) ) ){
+	// if domestic setting = 1 and intl setting =1 for any study in group, return 3
+	if( ( in_array( "Y", $all_domestics ) ) && ( in_array( "Y", $all_intls ) ) ){
 		return 3;
-	} else if( count( array_unique( $all_domestics ) ) === 1 && end( $all_domestics ) == "Y" ) { //all domestic
+	} else if( count( array_unique( $all_domestics ) ) === 1 && end( $all_domestics ) == "Y" ) { 
+		//else if all domestic settings = 1, return 1
 		return 1;
-	} else if( count( array_unique( $all_intls ) ) === 1 && end( $all_intls ) == "Y" ) { //all domestic
+	} else if( count( array_unique( $all_intls ) ) === 1 && end( $all_intls ) == "Y" ) { 
+		//else if all intl settings == 1, return 2
 		return 2;
 	} 
 	

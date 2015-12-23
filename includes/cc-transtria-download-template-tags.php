@@ -28,7 +28,7 @@ function cc_transtria_render_download_page(){
 	//echo $path;
 	
 	echo "<h2>Reloading this page refreshes the following Excel documents:</h2>";
-	echo "<a href=\'$strategies_path\'>$strategies_path</a><br>";
+	echo "<a href=\"$strategies_path\">$strategies_path</a><br>";
      
 	/*
     // Open the folder
