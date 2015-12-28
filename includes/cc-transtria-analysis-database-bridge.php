@@ -459,7 +459,7 @@ function get_unique_ims_for_study_group_pop( $study_group_id ){
 	//get all study id dyads for this group
 	$im_sql = $wpdb->prepare( 
 		"
-		SELECT      info_id, indicator_value, indicator, measure, calc_ea_direction, outcome_type, outcome_duration,
+		SELECT      info_id, indicator_value, indicator, measure_value, measure, calc_ea_direction, outcome_type, outcome_duration,
 			result_evaluation_population, result_subpopulationYN, result_subpopulation
 		FROM        $wpdb->transtria_analysis_intermediate
 		WHERE		StudyGroupingID = %d 
@@ -473,6 +473,7 @@ function get_unique_ims_for_study_group_pop( $study_group_id ){
 	$analysis_id_count = 1;
 
 	$next_measure = ""; //for scope
+	$next_measure_val = ""; 
 	$next_indicator_val = "";
 	$next_eval_pop = "";
 	$next_result_pop = "";
@@ -491,6 +492,7 @@ function get_unique_ims_for_study_group_pop( $study_group_id ){
 		//var_dump( $temp_im_list  );
 		//next values to check against
 		$next_measure = $one_intermediate_im["measure"];
+		$next_measure_val = $one_intermediate_im["measure_value"];
 		$next_indicator_val = $one_intermediate_im["indicator_value"];
 		$next_indicator = $one_intermediate_im["indicator"];
 		$next_evalpop = $one_intermediate_im["result_evaluation_population"];
@@ -540,6 +542,7 @@ function get_unique_ims_for_study_group_pop( $study_group_id ){
 				$new_index = $study_group_id . "_" . $analysis_id_count;
 				$unique_ims[ $new_index ] = array( 
 						"measure" => $next_measure, 
+						"measure_value" => $next_measure_val, 
 						"indicator_value" => $next_indicator_val,
 						"indicator" => $next_indicator,
 						"org_info_id" => $next_info_id,
@@ -573,6 +576,7 @@ function get_unique_ims_for_study_group_pop( $study_group_id ){
 					$new_index = $study_group_id . "_" . $analysis_id_count;
 					$unique_ims[ $new_index ] = array( 
 							"measure" => $next_measure, 
+							"measure_value" => $next_measure_val, 
 							"indicator_value" => $next_indicator_val,
 							"indicator" => $next_indicator,
 							"org_info_id" => $next_info_id,
@@ -604,6 +608,7 @@ function get_unique_ims_for_study_group_pop( $study_group_id ){
 						$new_index = $study_group_id . "_" . $analysis_id_count;
 						$unique_ims[ $new_index ] = array( 
 								"measure" => $next_measure, 
+								"measure_value" => $next_measure_val, 
 								"indicator_value" => $next_indicator_val,
 								"indicator" => $next_indicator,
 								"org_info_id" => $next_info_id,
@@ -636,6 +641,7 @@ function get_unique_ims_for_study_group_pop( $study_group_id ){
 							$new_index = $study_group_id . "_" . $analysis_id_count;
 							$unique_ims[ $new_index ] = array( 
 									"measure" => $next_measure, 
+									"measure_value" => $next_measure_val, 
 									"indicator_value" => $next_indicator_val,
 									"indicator" => $next_indicator,
 									"org_info_id" => $next_info_id,
@@ -682,6 +688,7 @@ function get_unique_ims_for_study_group_pop( $study_group_id ){
 			$new_index = $study_group_id . "_" . $analysis_id_count;
 			$unique_ims[ $new_index ] = array( 
 					"measure" => $next_measure, 
+					"measure_value" => $next_measure_val, 
 					"indicator_value" => $next_indicator_val,
 					"indicator" => $next_indicator,
 					"org_info_id" => $next_info_id,
@@ -869,6 +876,9 @@ function save_studygroup_vars_to_sg_table( $analysis_vars, $study_group_id ){
 		switch( $var_type ){
 			case "analysis_study_design":
 				$var_type = "study_design";
+				break;
+			case "analysis_study_design_hr":
+				$var_type = "study_design_hr";
 				break;
 			default:
 				$var_type = $var_type;
@@ -1107,7 +1117,7 @@ function calc_and_set_dyads_primary_intermediate_analysis( $study_group_id ){
 				
 				
 				//go through each measure - should be one, might not be
-				foreach( $this_im[ "measures" ][$i] as $single_measure ){
+				foreach( $this_im[ "measures" ][$i] as $measure_val => $single_measure ){
 					//var_dump( $single_measure );
 					
 					//for each measure, cycle through all indicators on this EA tab
@@ -1173,16 +1183,20 @@ function calc_and_set_dyads_primary_intermediate_analysis( $study_group_id ){
 							}
 							//if we only have 1 element
 							if( count( $temp_vals ) == 1 ){
-								if( in_array( 1, $temp_vals ) || in_array( "1", $temp_vals ) ){
-									$intermediate_calcs["multi_component"] = "Y";
+								//if the val = 1 or 2, yes Multi
+								if( in_array( 1, $temp_vals ) || in_array( "1", $temp_vals ) ||
+									in_array( 2, $temp_vals ) || in_array( "2", $temp_vals ) ){
+									$intermediate_calcs["multi_component"] = "1";
 								} else {
-									$intermediate_calcs["multi_component"] = "N";
+									//val = 3 or 4, no multi
+									$intermediate_calcs["multi_component"] = "0";
 								}
 								//var_dump( $intermediate_calcs );
-							} else if( count( $temp_vals ) > 1 ){ //we have more than one value
-								$intermediate_calcs["multi_component"] = "Y";
+							} else if( count( $temp_vals ) > 1 ){ //we have more than one value, yes multi
+								$intermediate_calcs["multi_component"] = "1";
 							} 
 						}
+						
 						//complexity
 						if( $this_study_data["complexity_notreported"] == "Y" ){
 							$intermediate_calcs["complexity"] = 999; //complexity not reported
@@ -1220,7 +1234,8 @@ function calc_and_set_dyads_primary_intermediate_analysis( $study_group_id ){
 							}
 						}
 													
-						
+						//calc the transtria value for indicator
+						$indicator_tt_val = cc_transtria_analysis_val_lookup( "indicator_value", $ind_index );
 						
 						//add this IM-ness to the intermediate table
 						$did_it_work = $wpdb->insert( 
@@ -1233,9 +1248,11 @@ function calc_and_set_dyads_primary_intermediate_analysis( $study_group_id ){
 								'StudyDesignID' => $study_design,
 								'ea_seq_id' => $i,
 								'indicator_value' => $ind_index,
+								'indicator_value_tt' => $indicator_tt_val,
 								'indicator' => $single_ind,
 								'indicator_direction' => $ind_dir,
 								'indicator_strategies' => $ind_strat,
+								'measure_value' => $measure_val,
 								'measure' => $single_measure,
 								'outcome_direction' => $outcome_direction,
 								'outcome_type' => $outcome_type,
@@ -1250,7 +1267,7 @@ function calc_and_set_dyads_primary_intermediate_analysis( $study_group_id ){
 								'result_subpopulationYN' => $result_sub_pop_yn,
 								'result_subpopulation' => $result_sub_pop
 							), 
-							array( '%d', '%s', '%d', '%d', '%s', '%d', '%s', '%s', '%s', '%s', '%s', 
+							array( '%d', '%s', '%d', '%d', '%s', '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
 							'%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s' ) 
 						);
 						
@@ -1273,7 +1290,7 @@ function calc_and_set_dyads_primary_intermediate_analysis( $study_group_id ){
 						$values_string .= $single_ind . ", " . $single_measure;
 						$values_string .= $values_end_string;
 						
-					
+						//var_dump( $single_measure ); //text at this point
 					}
 				
 				}
@@ -1312,13 +1329,14 @@ function run_secondary_intermediate_analysis( $study_group_id ){
 			}
 			//if we only have 1 element
 			if( count( $array ) == 1 ){
-				if( in_array( "1", $temp_vals ) || in_array( "1", $temp_vals ) ){
-					$intermediate_calcs[$study_id]["multi_component"] = "Y";
+				if( in_array( "1", $temp_vals ) || in_array( 1, $temp_vals ) ||
+					in_array( 2, $temp_vals ) || in_array( "2", $temp_vals ) ){
+					$intermediate_calcs[$study_id]["multi_component"] = "1";
 				} else {
-					$intermediate_calcs[$study_id]["multi_component"] = "N";
+					$intermediate_calcs[$study_id]["multi_component"] = "0";
 				}
 			} else if( count( $array ) > 1 ){ //we have more than one value
-				$intermediate_calcs[$study_id]["multi_component"] = "Y";
+				$intermediate_calcs[$study_id]["multi_component"] = "1";
 			} 
 		}
 		//complexity
@@ -1414,8 +1432,14 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 	
 		//var_dump( $one_im );
 		$measure = $one_im[ "measure" ];
+		$measure_val = $one_im[ "measure_value" ];
+		
 		$indicator = $one_im[ "indicator" ];
+		
+		//change indicator val to Laura's table
 		$indicator_val = $one_im[ "indicator_value" ];
+		$indicator_val_tt = cc_transtria_analysis_val_lookup( "indicator_value", $indicator_val );
+		
 		$info_id_list = $one_im[ "info_id_list" ];
 		$ea_direction = $one_im[ "net_effects" ];
 		$evalpop = $one_im[ "result_evaluation_population" ];
@@ -1506,21 +1530,24 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 		$spartacus = $wpdb->prepare(
 			"
 				INSERT INTO $wpdb->transtria_analysis
-				( info_id, StudyGroupingID, domestic_international, indicator_value, indicator, measure, info_id_list, info_id_list_hr, duplicate_ims, 
-					net_effects, duration, outcome_type, indicator_strategies, effectiveness_general, 
-					result_evaluation_population, result_subpopulationYN, result_subpopulation, result_population_result,
+				( info_id, StudyGroupingID, domestic_international, indicator_value, indicator_value_tt, indicator, measure_value, measure, 
+					info_id_list, info_id_list_hr, duplicate_ims, study_design, net_effects, duration, outcome_type, indicator_strategies, 
+					effectiveness_general, result_evaluation_population, result_subpopulationYN, result_subpopulation, result_population_result,
 					strategy_1, strategy_1_text, strategy_2, strategy_2_text, strategy_3, strategy_3_text, strategy_4, strategy_4_text, strategy_5, strategy_5_text )
-				VALUES ( %s, %d, %d, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s )
+				VALUES ( %s, %d, %d, %s, %d, %s, %d, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s )
 			", 
 			$analysis_index,
 			$study_group_id,
 			$domestic_intl,
 			$indicator_val, 
+			$indicator_val_tt, 
 			$indicator,
+			$measure_val,
 			$measure,
 			$info_id_list,
 			$info_id_list_hr,
 			$duplicate_im,
+			$study_design,
 			$ea_direction,
 			$duration,
 			$type,
@@ -1556,20 +1583,6 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 				'StudyGroupingID' => (int)$study_group_id 
 			)
 		);
-		
-	//Update Studygrouping-level vars: Study Design
-	$spartacus_designed = $wpdb->prepare( 
-		"
-			INSERT INTO $wpdb->transtria_analysis_studygrouping
-			( StudyGroupingID, study_design )
-			VALUES ( %d, %s )
-		", 
-		$study_group_id,
-		$study_design
-	);
-	
-	$wpdb->query( $spartacus_designed );
-	
 	
 	//unset some things
 	unset( $measures_outcome_types );
@@ -1682,6 +1695,22 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 	
 	
 	}
+	
+		
+	//Update Studygrouping-level vars: Study Design
+	$spartacus_designed = $wpdb->prepare( 
+		"
+			INSERT INTO $wpdb->transtria_analysis_studygrouping
+			( StudyGroupingID, study_design, study_design_hr )
+			VALUES ( %d, %s, %s )
+		", 
+		$study_group_id,
+		$study_design, 
+		$study_design_hr
+	);
+	
+	$wpdb->query( $spartacus_designed );
+	
 	
 	//unset some things
 	unset( $all_ims );

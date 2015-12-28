@@ -489,6 +489,7 @@ function get_vars_by_grouping(){
 				
 				//update StudyDesign select for this study group
 				jQuery("select.analysis_study_design").val( data.study_grouping.study_design );
+				jQuery("select.analysis_study_design_hr").val( data.study_grouping.study_design_hr );
 				
 				//update text
 				if( data.study_grouping.study_design == 0 ){
@@ -696,7 +697,15 @@ function run_second_analysis(){
 //saves analysis vars //TODO: make this apply to 'all' somehow
 function save_analysis_vars(){
 	//which analysis save button did we touch?
-	var which_vars = jQuery(this).attr('data-whichvars'); //should match the select(s) that need savin'
+	var which_var_raw = jQuery(this).attr('data-whichvars'); //should match the select(s) that need savin'
+	
+	//tODO: make this more efficient on the front-end.
+	if( which_var_raw == "analysis_study_design" ){
+		var which_vars = ["analysis_study_design", "analysis_study_design_hr"];
+	} else {
+		var which_vars = which_var_raw;
+	}
+	
 	var which_action = jQuery(this).attr('data-whichsave'); //let's us know at which level to save this analysis var
 	var which_msg_class = jQuery(this).attr('data-whichmsg'); //let's us know at which level to save this analysis var
 	var which_msg = jQuery("#" + which_msg_class);
@@ -719,21 +728,37 @@ function save_analysis_vars(){
 			selected_val = jQuery(this).val();
 			if( selected_val != '-1' ){
 				//add this value to the array
-				this_save_vars[which_id] = selected_val;
+				this_save_vars[ which_id ] = selected_val;
 			}
 			
 		});
 		//console.log( one_var );
 		
 		all_save_vars[ which_vars ] = this_save_vars;
-	} else { //studygroup-level savin'
+		
+	} else { //studygroup-level savin' // TODO, 23dec, when does this happen?
 	
+		/* //23dec2015
 		selected_val = jQuery('select.' + which_vars ).val();
 		
 		if( selected_val == '-1' ){ //don't waste my time
 			return;
 		}
 		all_save_vars[ which_vars ] = selected_val;
+		*/
+		jQuery.each( which_vars, function(){
+			//get analysis id
+			which_id = this;
+			
+			//get which value is selected
+			selected_val = jQuery("select." + this).val();
+			if( selected_val != '-1' ){
+				//add this value to the array
+				//this_save_vars[ which_id ] = selected_val;
+				all_save_vars[ which_id ] = selected_val;
+			}
+			
+		});
 	
 	}
 	

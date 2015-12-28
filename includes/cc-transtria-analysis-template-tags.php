@@ -245,14 +245,22 @@ function cc_transtria_render_analysis_page(){
 				
 				</table>
 				
-				<h4 id="study_design_label">Study Design:</h4>
-				<select class="analysis_study_design">Study Design
+				<h4 id="study_design_label">Study Designs:</h4>
+				<h5>Study Design</h5>
+				<select class="analysis_study_design">
 					<option value="-1"> -- Select Study Design -- </option>
 					<option value="1"> 1 = Intervention Evaluation </option>
 					<option value="2"> 2 = Associational Study </option>
 				</select>
+				<br />
+				<h5>Study Design High-Risk</h5>
+				<select class="analysis_study_design_hr">Study Design High-Risk
+					<option value="-1"> -- Select Study Design (HR) -- </option>
+					<option value="1"> 1 = Intervention Evaluation </option>
+					<option value="2"> 2 = Associational Study </option>
+				</select>
 				<span>
-					<a id="save_analysis_studydesign" class="button alignright analysis_save" data-whichvars="analysis_study_design" data-whichsave="save_studygroup_vars" data-whichmsg="studydesign_msg">SAVE STUDY DESIGN</a>
+					<a id="save_analysis_studydesign" class="button alignright analysis_save" data-whichvars="analysis_study_design" data-whichsave="save_studygroup_vars" data-whichmsg="studydesign_msg">SAVE STUDY DESIGNS</a>
 					<div id="studydesign_msg" class="save_analysis_msg"></div>
 				</span>
 				

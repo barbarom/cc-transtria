@@ -169,26 +169,28 @@ function calculate_study_design_for_studygrouping( $studygrouping_id ){
 		array_push( $all_designs, $values->StudyDesignID );
 	}
 	
-	//var_dump( $all_designs );
 	//Evaluate against StudyDesign algorithm
 	//The algorithm numbers are DIFFERENT here than in Laura's notes, because of the way they are assigned in the codetbl already. //99=StudyDesign
 	$one_array = array( "1", "2", "3", "4", "5", "6", "7", "8", "12" );
 	
+	//if study design for ANY studies == a number in the $one_array, return 1
 	$check_intersect = array_intersect( $one_array, $all_designs );
 	
 	if( !empty( $check_intersect ) ){
 		return 1;
 	}
 	
+	//else if study design is "other", return 0 (which means Assign!)
 	else if( in_array( "11", $all_designs ) ){
 		return 0;
 	}
 	
+	//else if study design is NULL, return 0 (which means Assign!)
 	else if( in_array( "null", $all_designs ) ){
 		return 0;
 	}
 	
-	//else if all values are the same and are 9
+	//else if all values are the same and are 9 (cross-sectional), return 2
 	else if( count( array_unique( $all_designs ) ) === "1" && end( $all_designs ) == "9" ) {
 		return 2;
 	}
@@ -347,9 +349,6 @@ function calculate_outcome_types_studygrouping( $study_group_id ){
 
 	global $wpdb;
 	
-	//get all study ids (in list) in this group
-	$study_list = get_study_id_list_in_study_group( $study_group_id );
-	
 	//Get Measures and outcome types for each
 	$all_ims = get_all_ims_for_study_group( $study_group_id );
 	$measures_outcome_types = array();
@@ -438,6 +437,44 @@ function calculate_duration_for_analysis_single( $duration_string ){
 	}
 
 }
+
+/**
+ * Returns the multi-component for the study grouping
+ *
+ * @param int. Study Grouping ID.
+ * @return array. Key->val pairs for (string) Measure => (string) Outcome Type
+ 
+function calculate_multi_component_studygrouping( $study_group_id ){
+
+	global $wpdb;
+	
+	//Get Measures and outcome types for each
+	$all_ims = get_all_ims_for_study_group( $study_group_id );
+	$multi_components = array();
+	
+	//populate array of mcs; return 1 is ANY are one
+	foreach( $all_ims as $one_im ){
+		$this_mc = $one_im["multi_component"];
+		
+		if( ( $this_mc == 1 ) || ( $this_mc == "1" ) ){
+			return 1;
+		}
+		
+		array_push( $multi_components, $this_mc );
+
+	}
+
+	//if no mcs = 1, go through rest of algorithm
+	if( count( array_unique( $multi_components ) ) === 1 && ( end( $multi_components ) == "1" || ( end( $multi_components ) == 1 ) ) ){
+		return 0;
+	} else if( count( array_unique( $multi_components ) ) === 1 && ( end( $multi_components ) == "999" || ( end( $multi_components ) == 999 ) ) ){
+		return 999;
+	} 
+	
+	return 0;
+
+}
+*/
 
 /**
  * Gets, combines and returns strategies given an info id list (go through each unique id here and combine strategies!)
@@ -1461,4 +1498,68 @@ function parse_studyids_from_infoids( $info_id_list ){
 	$new_study_ids = array_unique( $study_id_list );
 
 	return $new_study_ids;
+}
+
+/**** LOOKUPS **/
+function cc_transtria_analysis_val_lookup( $which_type, $value ){
+
+	switch( $which_type ){
+	
+		case "indicator_value":
+			//switch-case the values if they differ (between our db and transtria's desired output val)
+			switch( $value ){
+				case "A0":
+					return 100;
+				case "A1":
+					return 101;
+				case "A2":
+					return 102;
+				case "A3":
+					return 103;
+				case "A4":
+					return 104;
+				case "A5":
+					return 105;
+				case "A6":
+					return 106;
+				case "A7":
+					return 107;
+				case "A8":
+					return 108;
+				case "A9":
+					return 109;
+				case "AA":
+					return 110;
+				case "AB":
+					return 111;
+				case "AC":
+					return 112;
+				case "AD":
+					return 113;
+				case "AE":
+					return 114;
+				case "AF":
+					return 115;
+				case "AG":
+					return 116;
+				case "AH":
+					return 117;
+				case "AI":
+					return 118;
+				case "AJ":
+					return 119;
+				case "AK":
+					return 120;
+					
+				
+				//default for $value = transtria's value
+				default:
+					return $value;
+					break;
+			
+			}
+			break;
+		
+	}
+
 }
