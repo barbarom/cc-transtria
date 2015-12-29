@@ -338,46 +338,6 @@ function calculate_domestic_intl_for_analysis( $studygrouping_id ){
 
 }
 
-/**
- * Returns the Measure - Outcome Type pairs for a Study Grouping. Outcome Type (seq) must be the SAME for Measure types (seq) across a SG.
- * 	There *should* only be one measure per ea tab (seq) and IS only one Outcome Type per.
- *
- * @param int. Study Grouping ID.
- * @return array. Key->val pairs for (string) Measure => (string) Outcome Type
- */
-function calculate_outcome_types_studygrouping( $study_group_id ){
-
-	global $wpdb;
-	
-	//Get Measures and outcome types for each
-	$all_ims = get_all_ims_for_study_group( $study_group_id );
-	$measures_outcome_types = array();
-	
-	foreach( $all_ims as $one_im ){
-		$this_measure = $one_im["measure"];
-		$this_outcome_type = $one_im["outcome_type"];
-		
-		//do we have this measure in the final array?
-		if( !empty( $measures_outcome_types[ $this_measure ] ) ) {
-			//we have the measure.  Do the outcome types match?
-			if( $measures_outcome_types[ $this_measure ] != $this_outcome_type ){
-				//mismatch.  note it.
-				$measures_outcome_types[ $this_measure ] = "multiple outcome types for same measure";
-			}
-			
-		} else {
-			//add to the array
-			$measures_outcome_types[ $this_measure ] = $this_outcome_type;
-		}
-		
-	
-	}
-
-	//var_dump( $measures_outcome_types );
-	return $measures_outcome_types;
-
-}
-
 
 /**
  * Returns the duration for all studies/seq in a list
@@ -438,18 +398,59 @@ function calculate_duration_for_analysis_single( $duration_string ){
 
 }
 
+/*** CALCULATIONS BASED ON IM-SPECIFCI DATA  ****/
 /**
- * Returns the multi-component for the study grouping
+ * Returns the Measure - Outcome Type pairs for a Study Grouping. Outcome Type (seq) must be the SAME for Measure types (seq) across a SG.
+ * 	There *should* only be one measure per ea tab (seq) and IS only one Outcome Type per.
  *
- * @param int. Study Grouping ID.
+ * @param array. IM data.
  * @return array. Key->val pairs for (string) Measure => (string) Outcome Type
- 
-function calculate_multi_component_studygrouping( $study_group_id ){
+ */
+function calculate_outcome_types_ims( $all_ims ){
 
 	global $wpdb;
 	
 	//Get Measures and outcome types for each
-	$all_ims = get_all_ims_for_study_group( $study_group_id );
+	//$all_ims = get_all_ims_for_study_group( $study_group_id );
+	$measures_outcome_types = array();
+	
+	foreach( $all_ims as $one_im ){
+		$this_measure = $one_im["measure"];
+		$this_outcome_type = $one_im["outcome_type"];
+		
+		//do we have this measure in the final array?
+		if( !empty( $measures_outcome_types[ $this_measure ] ) ) {
+			//we have the measure.  Do the outcome types match?
+			if( $measures_outcome_types[ $this_measure ] != $this_outcome_type ){
+				//mismatch.  note it.
+				$measures_outcome_types[ $this_measure ] = "multiple outcome types for same measure";
+			}
+			
+		} else {
+			//add to the array
+			$measures_outcome_types[ $this_measure ] = $this_outcome_type;
+		}
+		
+	
+	}
+
+	//var_dump( $measures_outcome_types );
+	return $measures_outcome_types;
+
+}
+
+/**
+ * Returns the multi-component for the im data provided
+ *
+ * @param array. IM data.
+ * @return int.
+*/ 
+function calculate_multi_component_ims( $all_ims ){
+
+	global $wpdb;
+	
+	//Get Measures and outcome types for each
+	//$all_ims = get_all_ims_for_study_group( $study_group_id );
 	$multi_components = array();
 	
 	//populate array of mcs; return 1 is ANY are one
@@ -474,7 +475,132 @@ function calculate_multi_component_studygrouping( $study_group_id ){
 	return 0;
 
 }
-*/
+
+/**
+ * Returns the complexity for the im data provided
+ *
+ * @param array. IM data for all IMs in a study group.
+ * @return int.
+*/ 
+function calculate_complexity_ims( $all_ims ){
+
+	global $wpdb;
+	
+	//Get Measures and outcome types for each
+	//$all_ims = get_all_ims_for_study_group( $study_group_id );
+	$complexities = array();
+	
+	//populate array of mcs; return 1 is ANY are one
+	foreach( $all_ims as $one_im ){
+		$this_mc = $one_im["complexity"];
+		
+		if( ( $this_mc == 1 ) || ( $this_mc == "1" ) ){
+			return 1; //If complex = 1 (for any Unique ID in grouping), then complexity = 1
+		}
+		
+		array_push( $complexities, $this_mc );
+
+	}
+
+	//if no mcs = 1, go through rest of algorithm
+	if( count( array_unique( $complexities ) ) === 1 && ( end( $complexities ) == "1" || ( end( $complexities ) == 1 ) ) ){
+		return 0; //Else If complex = 0 (for ALL Unique IDs in grouping), then complex = 0
+	} else if( count( array_unique( $complexities ) ) === 1 && ( end( $complexities ) == "999" || ( end( $complexities ) == 999 ) ) ){
+		return 999; //Else If complex = 999 or NULL (for ALL Unique IDs in grouping), then complex = 999
+	} 
+	
+	return 0;
+
+}
+
+/**
+ * Returns the Participation or Exposure for the study grouping
+ *
+ * @param array. IM data for all IMs in a study group.
+ * @return int.
+*/ 
+function calculate_participation_exposure_ims( $all_ims ){
+
+	global $wpdb;
+	
+	$participations = array();
+	$exposures = array();
+	
+	//populate array of mcs; return 1 is ANY are one
+	foreach( $all_ims as $one_im ){
+		$this_part = $one_im["rate_of_participation"];
+		$this_exposure = $one_im["exposure_frequency"];
+		
+		//1 = High, if Participation = 1 OR (Participation = 999 AND Potential Exposure = 1) (for any Unique ID in grouping)
+		if( ( $this_part == 1 ) || ( $this_part == "1" ) ){ 
+			return 1;
+		} else if( ( ( $this_part == 999 ) || ( $this_part == "999" ) ) && ( ( $this_exposure == 1 ) || ( $this_exposure == "1" ) ) ){ 
+			return 1;
+		}
+		
+		array_push( $participations, $this_part );
+		array_push( $exposures, $this_exposure );
+
+	}
+
+	//2 = Low, if Participation = 2 OR (Participation = 999 AND Potential Exposure = 2) (for ALL Unique IDs in grouping) 
+	if( count( array_unique( $participations ) ) === 1 && ( end( $participations ) == "2" || ( end( $participations ) == 2 ) ) ){
+		return 2; 
+	} else if( ( count( array_unique( $participations ) ) === 1 && ( end( $participations ) == "999" || ( end( $participations ) == 999 ) ) ) &&
+		( count( array_unique( $exposures ) ) === 1 && ( end( $exposures ) == "2" || ( end( $exposures ) == 2 ) ) ) ){
+		return 2; 
+	} 
+	
+	//else, return 999 (participation AND exposure == 999)
+	return 999;
+
+}
+
+/**
+ * Returns the HR African American/Black values for incoming IM data
+ *
+ * @param array. IM data for all IMs in a study group.
+ * @return int.
+*/ 
+function calculate_hr_black_ims( $all_ims ){
+
+	global $wpdb;
+	
+	$ipe_data_highest = 999;
+	
+	//populate ipe_data_highest with highest percents;
+	foreach( $all_ims as $one_im ){
+		$this_pct = $one_im["ipe_pctblack"];
+		
+		//1 = High, if IPE “pctblack” = 100 (for any Unique ID in grouping)
+		if( ( $this_pct == 100 ) || ( $this_pct == "100" ) ){ 
+			return 1; //return 1 if IPE “pctblack” = 100 (for any Unique ID in grouping)
+		} 
+		//otherwise, if current percent > ipe_data_highest, put higher val in ipe_data_highest (unless 999)
+		if( ( $this_pct > $ipe_data_highest ) && ( ( $this_pct != 999 ) || ( $this_pct != "999" ) ) ){
+			$ipe_data_highest = $this_pct;
+		}
+
+	}
+
+	//calculate population score based on highest percentage
+	if( ( ( $ipe_data_highest >= 50 ) || ( $ipe_data_highest >= "50" ) ) && ( ( $ipe_data_highest < 100 ) || ( $ipe_data_highest < "100" ) ) ){ //2 = Moderate, else if IPE “pctblack” < 100 and >= 50, (for any Unique ID in grouping)
+		return 2; 
+	} else if( ( ( $ipe_data_highest >= 13.2 ) || ( $ipe_data_highest >= "13.2" ) ) && ( ( $ipe_data_highest < 50 ) || ( $ipe_data_highest < "50" ) ) ){ //3 = Low, else if IPE “pctblack” < 50 and >= 13.2
+		return 3; 
+	} else if( ( $ipe_data_highest < 13.2 ) || ( $ipe_data_highest < "13.2" ) ) { //4 = No, else if IPE “pctblack” < 13.2
+		return 4;
+	} else { //999 = Insufficient information, else if IPE “pctblack” = not reported (for ALL Unique IDs in grouping)
+		return 999;
+	}
+	
+	//else, if we are still in this function:
+	return 999;
+
+}
+
+
+
 
 /**
  * Gets, combines and returns strategies given an info id list (go through each unique id here and combine strategies!)

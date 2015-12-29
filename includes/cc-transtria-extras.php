@@ -384,7 +384,7 @@ class CC_Transtria_Extras {
 			}
 			
 			if( cc_transtria_on_analysis_screen() ){
-				wp_enqueue_script( $this->plugin_slug . 'transtria_revamp_analysis_js', plugins_url( 'js/transtria_revamp_analysis.js', __FILE__ ), array( 'jquery' ), '1.0' );
+				wp_enqueue_script( $this->plugin_slug . 'transtria_revamp_analysis_js', plugins_url( 'js/transtria_revamp_analysis.js', __FILE__ ), array( 'jquery' ), '1.1' );
 			}
 			
 			wp_localize_script( 
@@ -435,7 +435,7 @@ class CC_Transtria_Extras {
 	}
 
 	function registration_section_output() {
-	  if ( isset( $_GET['aha'] ) && $_GET['aha'] ) :
+	  if ( isset( $_GET['transtria'] ) && $_GET['transtria'] ) :
 	  ?>
 	    <div id="transtria-interest-opt-in" class="register-section checkbox">
 		    <?php  $avatar = bp_core_fetch_avatar( array(
@@ -547,12 +547,12 @@ class CC_Transtria_Extras {
 		$this_study_id = $_POST["this_study_id"];
 
 		$study_data['single'] = cc_transtria_get_single_study_data( $this_study_id );
+		$study_data['multiple'] = cc_transtria_get_study_data_multiple( $this_study_id );
 		$study_data['population_single'] = cc_transtria_get_pops_study_data_single( $this_study_id );
 		$study_data['num_ea_tabs'] = cc_transtria_get_num_ea_tabs_for_study( $this_study_id );
 		$study_data['num_other_indicators'] = cc_transtria_get_num_other_ind_for_study( $this_study_id );
 		$study_data['num_other_outcomes'] = cc_transtria_get_num_other_ind_for_study( $this_study_id );
 		$study_data['ea'] = cc_transtria_get_ea_tab_data_for_study( $this_study_id );
-		$study_data['multiple'] = cc_transtria_get_study_data_multiple( $this_study_id );
 		$study_data['special_data'] = cc_transtria_get_special_data( $this_study_id );
 		
 		//can we put these all into a flat array?

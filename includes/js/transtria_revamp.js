@@ -1093,7 +1093,7 @@ function get_current_study_info(){
 		}).complete( function(data){
 		
 		//have to handle the special data after everything else is loaded. Probs could do this in success after multi_meat gets processed
-			var special_meat = data.responseJSON.special_data;
+			
 			
 			//we're done!  Tell the user
 			spinny.css("display", "none");
@@ -1138,35 +1138,39 @@ function get_current_study_info(){
 			intervention_indicator_limiter( jQuery('#ea_template_result_indicator') );
 			outcomes_assessed_limiter( jQuery('#ea_template_result_outcome_accessed') );
 			
+			if( data.responseJSON != undefined ){
+			var special_meat = data.responseJSON.special_data;
 			
-			//TODO: handle the special data (parse and put into strategy/direction drop downs
-			jQuery.each( special_meat, function( ea_tab, v ) { //i = ea tab num, v = data
-			
-				//TODO: populate the strategies and directions for each ea tab
-				//console.log( ea_tab );
-				//console.log( v );
-				if( v.indicators != undefined ){
-					jQuery.each( v.indicators, function( ind_num, details ) {
-						
-						if( details.direction != undefined ){
-							//find dropdown for direction, update value
-							jQuery('.result_direction[data-this_ea_tab="' + ea_tab + '"][data-strategy_value="' + ind_num + '"]').val( details.direction );
+				//TODO: handle the special data (parse and put into strategy/direction drop downs
+				jQuery.each( special_meat, function( ea_tab, v ) { //i = ea tab num, v = data
+				
+					//TODO: populate the strategies and directions for each ea tab
+					//console.log( ea_tab );
+					//console.log( v );
+					if( v.indicators != undefined ){
+						jQuery.each( v.indicators, function( ind_num, details ) {
 							
-						} 
-						if( details.strategies != undefined ){
-							jQuery.each( details.strategies, function( strategy_num, strategy_val ){
-								//console.log( strategy_val );
-								//find strategy dropdown, update value
-								jQuery('[data-this_ea_tab="' + ea_tab + '"][data-strategy_value="' + ind_num + '"][data-strategy_num="' + strategy_num + '"]').val(strategy_val);
-							});
-						}
-						//find the jQuery select obj with the ea_tab, data-strategy_value (indicator num, needs to be refactored), data-strategy_num
-						//console.log( details );
-					
-					});
-				}
-			
-			});
+							if( details.direction != undefined ){
+								//find dropdown for direction, update value
+								jQuery('.result_direction[data-this_ea_tab="' + ea_tab + '"][data-strategy_value="' + ind_num + '"]').val( details.direction );
+								
+							} 
+							if( details.strategies != undefined ){
+								jQuery.each( details.strategies, function( strategy_num, strategy_val ){
+									//console.log( strategy_val );
+									//find strategy dropdown, update value
+									jQuery('[data-this_ea_tab="' + ea_tab + '"][data-strategy_value="' + ind_num + '"][data-strategy_num="' + strategy_num + '"]').val(strategy_val);
+								});
+							}
+							//find the jQuery select obj with the ea_tab, data-strategy_value (indicator num, needs to be refactored), data-strategy_num
+							//console.log( details );
+						
+						});
+					}
+				
+				});
+				
+			}
 			
 			//listen to Result Type radio (and show variables textarea if adjusted is selected on any)
 			jQuery("input[name$='_result_type']").on("click", show_adjusted_variables );

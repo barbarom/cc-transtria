@@ -273,7 +273,8 @@ function get_all_ims_for_study_group( $study_group_id ){
 	//get all study id dyads for this group
 	$im_sql = $wpdb->prepare( 
 		"
-		SELECT      info_id, indicator_value, indicator, measure, outcome_type
+		SELECT      info_id, indicator_value, indicator, measure, outcome_type, multi_component, complexity, exposure_frequency, rate_of_participation,
+			ipe_pctblack, ipe_pctasian, ipe_pctnativeamerican, ipe_pctpacificislander, ipe_pcthispanic, ipe_pctlowerincome
 		FROM        $wpdb->transtria_analysis_intermediate
 		WHERE		StudyGroupingID = %d 
 		",
@@ -963,11 +964,13 @@ function get_study_level_for_intermediate( $study_group_id ){
 		$studies_data[ $this_s_id ][ "multi" ] = $studies_multi_data;
 		$studies_multi_data = array();
 		
-		//get ipe data (freq of exposure, rate of participation)
+		//get ipe data (freq of exposure, rate of participation, race percentage data)
 		$which_pop = 'ipe';
 		$pops_sql = $wpdb->prepare(
 			"
-			SELECT      ParticipationRate, ExposureFrequency, rateofparticipation_notreported, freqofexposure_notreported, Representativeness, representativeness_notreported
+			SELECT      ParticipationRate, ExposureFrequency, rateofparticipation_notreported, freqofexposure_notreported, Representativeness, representativeness_notreported,
+				racepercentages_notreported, percenthispanic_notreported, percentlowerincome_notreported,
+				PctBlack, PctAsian, PctNativeAmerican, PctPacificIslander, PctHispanic, PctLowerIncome
 			FROM        $wpdb->transtria_population
 			WHERE		StudyID = %d 
 			AND			PopulationType = %s
@@ -1169,10 +1172,10 @@ function calc_and_set_dyads_primary_intermediate_analysis( $study_group_id ){
 						
 						//add study-level data to the intermediate table
 						
-						//intervention components, complexity, pse components
-						//var_dump( $new_study_id );
-						//var_dump( $this_study_data["multi"]["intervention_components"] );
-						if( !empty( $this_study_data["multi"]["intervention_components"] ) ){
+						//intervention components ("multi_component"), complexity, pse components
+						if( $this_study_data["interventioncomponents_notreported"] == "Y" ){ //if "interventioncomponents_notreported" checkbox checked, that trumps selections
+							$intermediate_calcs["multi_component"] = "999";
+						} else if( !empty( $this_study_data["multi"]["intervention_components"] ) ){
 							$temp_vals = array();
 							foreach( $this_study_data["multi"]["intervention_components"] as $in => $in_val ){
 								//var_dump( $in );
@@ -1181,6 +1184,7 @@ function calc_and_set_dyads_primary_intermediate_analysis( $study_group_id ){
 								//var_dump( $in_val["value"] );
 								array_push( $temp_vals, $in_val["value"] );
 							}
+							
 							//if we only have 1 element
 							if( count( $temp_vals ) == 1 ){
 								//if the val = 1 or 2, yes Multi
@@ -1195,26 +1199,32 @@ function calc_and_set_dyads_primary_intermediate_analysis( $study_group_id ){
 							} else if( count( $temp_vals ) > 1 ){ //we have more than one value, yes multi
 								$intermediate_calcs["multi_component"] = "1";
 							} 
+						} else { //no intervention components.  999.
+							$intermediate_calcs["multi_component"] = "999";
 						}
 						
 						//complexity
-						if( $this_study_data["complexity_notreported"] == "Y" ){
+						if( $this_study_data["complexity_notreported"] == "Y" ){ //if "complexity_notreported" checkbox checked, that trumps selections
 							$intermediate_calcs["complexity"] = 999; //complexity not reported
 						} else if( !empty( $this_study_data["multi"]["complexity"] ) ){
 							$intermediate_calcs["complexity"] = 1; //at least one checked
 						} else {
 							$intermediate_calcs["complexity"] = 0; //no complexity checked
 						}
+						
 						//ipe - rate of participation
 						if( $this_study_data["ipe"]["rateofparticipation_notreported"] == "Y" ){
-							$intermediate_calcs["ParticipationRate"] = 999; //no complexity checked
+							$intermediate_calcs["ParticipationRate"] = 999; //rate of participation "not reported" is checked
 						} else if( !empty( $this_study_data["ipe"]["ParticipationRate"] ) ){
 							if( (int)$this_study_data["ipe"]["ParticipationRate"] >= 75 ){
-								$intermediate_calcs["ParticipationRate"] = 1;
+								$intermediate_calcs["ParticipationRate"] = 1; //1 = High, if Rate of Participation >= 75%
+							} else if( (int)$this_study_data["ipe"]["ParticipationRate"] < 75 ){
+								$intermediate_calcs["ParticipationRate"] = 2; //2 = Low, if Rate of Participation < 75%
 							} else {
-								$intermediate_calcs["ParticipationRate"] = 0;
+								$intermediate_calcs["ParticipationRate"] = 999; //2 = Low, if Rate of Participation < 75%
 							}
 						}
+						
 						//ipe - potential exposure
 						if( !empty( $this_study_data["ipe"]["ExposureFrequency"] ) ){
 							if( (int)$this_study_data["ipe"]["ExposureFrequency"] == 1 ){
@@ -1233,7 +1243,40 @@ function calc_and_set_dyads_primary_intermediate_analysis( $study_group_id ){
 								$intermediate_calcs["Representativeness"] = 2;
 							}
 						}
-													
+									
+						/*** IPE Population calculations ***/
+						//Race percentages
+						if( $this_study_data["ipe"]["racepercentages_notreported"] == "Y" ){
+							//all race percentages are 999
+							$intermediate_calcs["ipe_pctblack"] = "999";
+							$intermediate_calcs["ipe_pctasian"] = 999;
+							$intermediate_calcs["ipe_pctnativeamerican"] = 999;
+							$intermediate_calcs["ipe_pctpacificislander"] = 999;
+						} else {
+							$intermediate_calcs["ipe_pctblack"] = $this_study_data["ipe"]["PctBlack"];
+							$intermediate_calcs["ipe_pctasian"] = $this_study_data["ipe"]["PctAsian"];
+							$intermediate_calcs["ipe_pctnativeamerican"] = $this_study_data["ipe"]["PctNativeAmerican"];
+							$intermediate_calcs["ipe_pctpacificislander"] = $this_study_data["ipe"]["PctPacificIslander"];
+						}
+						//IPE Hispanic
+						if( $this_study_data["ipe"]["percenthispanic_notreported"] == "Y" ){
+							//all race percentages are 999
+							$intermediate_calcs["ipe_pcthispanic"] = 999;
+						} else {
+							$intermediate_calcs["ipe_pcthispanic"] = $this_study_data["ipe"]["PctHispanic"];
+						}
+						//IPE Low income
+						if( $this_study_data["ipe"]["percentlowerincome_notreported"] == "Y" ){
+							//all race percentages are 999
+							$intermediate_calcs["ipe_pctlowerincome"] = 999;
+						} else {
+							$intermediate_calcs["ipe_pctlowerincome"] = $this_study_data["ipe"]["PctLowerIncome"];
+						} 
+
+						
+						
+						
+									
 						//calc the transtria value for indicator
 						$indicator_tt_val = cc_transtria_analysis_val_lookup( "indicator_value", $ind_index );
 						
@@ -1265,10 +1308,17 @@ function calc_and_set_dyads_primary_intermediate_analysis( $study_group_id ){
 								'rate_of_participation' => $intermediate_calcs["ParticipationRate"],
 								'result_evaluation_population' => $result_eval_pop,
 								'result_subpopulationYN' => $result_sub_pop_yn,
-								'result_subpopulation' => $result_sub_pop
+								'result_subpopulation' => $result_sub_pop,
+								'ipe_pctblack' => $intermediate_calcs["ipe_pctblack"],
+								'ipe_pctasian' => $intermediate_calcs["ipe_pctasian"],
+								'ipe_pctnativeamerican' => $intermediate_calcs["ipe_pctnativeamerican"],
+								'ipe_pctpacificislander' => $intermediate_calcs["ipe_pctpacificislander"],
+								'ipe_pcthispanic' => $intermediate_calcs["ipe_pcthispanic"],
+								'ipe_pctlowerincome' => $intermediate_calcs["ipe_pctlowerincome"]
 							), 
 							array( '%d', '%s', '%d', '%d', '%s', '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
-							'%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s' ) 
+							'%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
+							'%s', '%s', '%s', '%s', '%s', '%s' ) 
 						);
 						
 						//reset placeholders 
@@ -1299,7 +1349,7 @@ function calc_and_set_dyads_primary_intermediate_analysis( $study_group_id ){
 		}
 	}
 	
-	var_dump( $values_string );	
+	//var_dump( $values_string );	
 	return $study_ids; 
 }
 
@@ -1338,7 +1388,10 @@ function run_secondary_intermediate_analysis( $study_group_id ){
 			} else if( count( $array ) > 1 ){ //we have more than one value
 				$intermediate_calcs[$study_id]["multi_component"] = "1";
 			} 
+		} else { //no intervention components.  999.
+			$intermediate_calcs[$study_id]["multi_component"] = "999";
 		}
+		
 		//complexity
 		if( $values["complexity_notreported"] == "Y" ){
 			$intermediate_calcs[$study_id]["complexity"] = 999; //complexity not reported
@@ -1397,7 +1450,9 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 	
 	//get all dyads for this group
 	$all_ims = get_unique_ims_for_study_group_pop( $study_group_id );
-	//$all_ims = get_unique_ims_for_study_group( $study_group_id );
+	
+	//get specific info to calculate multi_component, complexity, outcome types, participation or exposure
+	$component_complexity_ims = get_all_ims_for_study_group( $study_group_id ); //get specific im data for these calcs, input to calc functions
 		
 	//remove all analysis rows of this study group from analysis table
 	$analysis_del_row = $wpdb->delete( 
@@ -1413,15 +1468,17 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 	
 	//get population data for calculating pop results
 	$pop_data_by_study_id = get_pop_data_study_group( $study_group_id ); //get this ONCE for all the ims
-	//$sub_pop_data = get_pops_subpop_data_study_group( $study_group_id );
 	
 	//calculate study-grouping-level analysis variables (Study Grouping, Domestic/International settings)
 	$study_design = calculate_study_design_for_studygrouping( (int)$study_group_id ); //if "0", we will need drop down..
-	
 	$domestic_intl = calculate_domestic_intl_for_analysis( (int)$study_group_id );
 	
-	//get measures => outcome types for study group/analysis
-	$measures_outcome_types = calculate_outcome_types_studygrouping( $study_group_id );
+	//calculate IM-level analysis variables (multi_component, complexity, outcome_type, participation or exposure
+	$multi_component = calculate_multi_component_ims( $component_complexity_ims );
+	$complexities = calculate_complexity_ims( $component_complexity_ims );
+	$measures_outcome_types = calculate_outcome_types_ims( $component_complexity_ims ); //get measures => outcome types for study group/analysis
+	$participation_exposure = calculate_participation_exposure_ims( $component_complexity_ims ); //calculate participation_exposure
+	$hr_black_calc = calculate_hr_black_ims( $component_complexity_ims ); 
 	
 	$outcome_types_hr = array(); //will hold analysis_index => outcome type (since type is tied to measure, nothing hr there)
 	$result_populations_hr = array(); //will hold analysis_index => population calc result
@@ -1532,9 +1589,10 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 				INSERT INTO $wpdb->transtria_analysis
 				( info_id, StudyGroupingID, domestic_international, indicator_value, indicator_value_tt, indicator, measure_value, measure, 
 					info_id_list, info_id_list_hr, duplicate_ims, study_design, net_effects, duration, outcome_type, indicator_strategies, 
-					effectiveness_general, result_evaluation_population, result_subpopulationYN, result_subpopulation, result_population_result,
-					strategy_1, strategy_1_text, strategy_2, strategy_2_text, strategy_3, strategy_3_text, strategy_4, strategy_4_text, strategy_5, strategy_5_text )
-				VALUES ( %s, %d, %d, %s, %d, %s, %d, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s )
+					effectiveness_general, multi_component, complexity, participation_exposure, result_evaluation_population, result_subpopulationYN, result_subpopulation, result_population_result,
+					strategy_1, strategy_1_text, strategy_2, strategy_2_text, strategy_3, strategy_3_text, strategy_4, strategy_4_text, strategy_5, strategy_5_text,
+					hr_black)
+				VALUES ( %s, %d, %d, %s, %d, %s, %d, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %d, %d, %d, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %d )
 			", 
 			$analysis_index,
 			$study_group_id,
@@ -1553,6 +1611,9 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 			$type,
 			$strategies,
 			$effectiveness_gen,
+			$multi_component,
+			$complexities,
+			$participation_exposure,
 			$evalpop,
 			$subpopYN,
 			$subpop,
@@ -1566,7 +1627,8 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 			$strategy_4,
 			$strategy_4_text,
 			$strategy_5,
-			$strategy_5_text
+			$strategy_5_text,
+			$hr_black_calc
 		);
 		
 		$help_me = $wpdb->query( $spartacus );

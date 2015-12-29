@@ -86,7 +86,7 @@ $objPHPExcel->setActiveSheetIndex(0);
 
 	//number of columns
 	$column_num_seq = "SELECT COUNT(`COLUMN_NAME`) FROM `INFORMATION_SCHEMA`.`COLUMNS` WHERE `TABLE_SCHEMA`='" . $schema . "' AND `TABLE_NAME`='wp_transtria_analysis'";
-	$column_name_seq = "SELECT `COLUMN_NAME` FROM `INFORMATION_SCHEMA`.`COLUMNS` WHERE `TABLE_SCHEMA`='ccmembers_17jun2' AND `TABLE_NAME`='wp_transtria_analysis'";
+	$column_name_seq = "SELECT `COLUMN_NAME` FROM `INFORMATION_SCHEMA`.`COLUMNS` WHERE `TABLE_SCHEMA`='" . $schema . "' AND `TABLE_NAME`='wp_transtria_analysis'";
 	//var_dump( $column_num_seq );
 	$column_num = $wpdb->get_var( $column_num_seq );
 	$column_names = $wpdb->get_results( $column_name_seq, ARRAY_A );
