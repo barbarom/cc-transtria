@@ -297,9 +297,6 @@ function get_unique_ims_for_study_group( $study_group_id ){
 
 	global $wpdb;
 	
-	//get studies in this group
-	//$study_ids = get_study_ids_in_study_group( $study_group_id );
-	
 	//$all_ims = array();
 	$unique_ims = array();
 	
@@ -435,14 +432,6 @@ function get_unique_ims_for_study_group( $study_group_id ){
 				
 	}
 	
-	//Go through each unique 
-	
-	//TODO: make this efficient when Transtria stops changing their minds about things. crap.
-	//var_dump( $unique_ims );
-	
-	
-	
-	//var_dump( $unique_ims );
 	return $unique_ims;
 	
 }
@@ -931,10 +920,9 @@ function get_study_level_for_intermediate( $study_group_id ){
 	//get all study data
 	foreach( $study_ids as $s_id ){
 	
-		//$this_s_id = current( $s_id );
 		$this_s_id = $s_id["StudyID"];
 		
-		//get study-level vars for intermediate tab
+		//get study-level vars for intermediate tab from STUDIES table
 		$study_sql = $wpdb->prepare( 
 			"
 			SELECT      StudyDesignID, otherStudyDesign, intervention_purpose, intervention_summary, support, opposition, other_setting_type, sustainability_flag,
@@ -970,7 +958,7 @@ function get_study_level_for_intermediate( $study_group_id ){
 			"
 			SELECT      ParticipationRate, ExposureFrequency, rateofparticipation_notreported, freqofexposure_notreported, Representativeness, representativeness_notreported,
 				racepercentages_notreported, percenthispanic_notreported, percentlowerincome_notreported,
-				PctBlack, PctAsian, PctNativeAmerican, PctPacificIslander, PctHispanic, PctLowerIncome
+				PctBlack, PctAsian, PctNativeAmerican, PctPacificIslander, PctHispanic, PctLowerIncome, ApplicabilityHRPopulations
 			FROM        $wpdb->transtria_population
 			WHERE		StudyID = %d 
 			AND			PopulationType = %s
@@ -1068,9 +1056,6 @@ function calc_and_set_dyads_primary_intermediate_analysis( $study_group_id ){
 			)
 		);
 		
-		
-		//var_dump( $new_study_id );
-		//var_dump( $ea_data );
 		
 		$info_id_count = 1; //reset info id count w each study
 	
@@ -1212,6 +1197,57 @@ function calc_and_set_dyads_primary_intermediate_analysis( $study_group_id ){
 							$intermediate_calcs["complexity"] = 0; //no complexity checked
 						}
 						
+						var_dump( $this_study_data["multi"]["pse_components"] );
+						
+						//pse components - serialized string of which strings selected or 999 if 
+						if( ) {
+						
+						} else if( $this_study_data["sustainability_flag"] == "Y" ){
+							$intermediate_calcs["sustainability"] == 1;
+						} else if( $this_study_data["sustainability_flag"] == "N" ){
+							$intermediate_calcs["sustainability"] == 2;
+						} else {
+							$intermediate_calcs["sustainability"] == 999;
+						} 
+						
+						if( $this_study_data["psecomponents_notreported"] == "Y" ){ //if "interventioncomponents_notreported" checkbox checked, that trumps selections
+							$intermediate_calcs["psecomponents"] = "999";
+						} 
+						
+						//STAGE calculation
+						else if( !empty( $this_study_data["multi"]["pse_components"] ) ){
+							$temp_vals = array();
+							foreach( $this_study_data["multi"]["pse_components"] as $in => $in_val ){
+								//var_dump( $in );
+								//var_dump( $in_val );
+								$in_val = current( $in_val );
+								//var_dump( $in_val["value"] );
+								array_push( $temp_vals, $in_val["value"] );
+							}
+							
+							//if we only have 1 element
+							if( count( $temp_vals ) == 1 ){
+								//if the val = 1 (policy change), 2 Practice/system change, 3 (Environment change)
+								if( in_array( 1, $temp_vals ) || in_array( "1", $temp_vals ) ||
+									in_array( 2, $temp_vals ) || in_array( "2", $temp_vals ) ){
+									$intermediate_calcs["psecomponents"] = "1";
+								} else {
+									//val = 3 or 4, no multi
+									$intermediate_calcs["psecomponents"] = "0";
+								}
+								//var_dump( $intermediate_calcs );
+							} else if( count( $temp_vals ) > 1 ){ //we have more than one value, yes multi
+								$intermediate_calcs["psecomponents"] = "1";
+							} 
+						} else { //no psa components.  999.
+							$intermediate_calcs["psecomponents"] = "999";
+						}
+						
+						
+						
+						
+						
+						
 						//ipe - rate of participation
 						if( $this_study_data["ipe"]["rateofparticipation_notreported"] == "Y" ){
 							$intermediate_calcs["ParticipationRate"] = 999; //rate of participation "not reported" is checked
@@ -1274,8 +1310,6 @@ function calc_and_set_dyads_primary_intermediate_analysis( $study_group_id ){
 							$intermediate_calcs["ipe_pctlowerincome"] = $this_study_data["ipe"]["PctLowerIncome"];
 						} 
 
-						
-						
 						
 									
 						//calc the transtria value for indicator
@@ -1425,7 +1459,7 @@ function run_secondary_intermediate_analysis( $study_group_id ){
 		if( $values["ipe"]["representativeness_notreported"] == "Y" ){
 			$intermediate_calcs[$study_id]["Representativeness"] = 999; //no complexity checked
 		} else if( !empty( $values["ipe"]["Representativeness"] ) ){
-			if( (int)$values["ipe"]["Representativeness"] == "Y" ){
+			if( $values["ipe"]["Representativeness"] == "Y" ){
 				$intermediate_calcs[$study_id]["Representativeness"] = 1;
 			} else {
 				$intermediate_calcs[$study_id]["Representativeness"] = 2;
@@ -1493,8 +1527,10 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 	//representativeness calc
 	$representativeness_calc = calculate_representativeness_ims( $component_complexity_ims ); 
 	
+	//analysis calcs based on analysis-calc'd vars
+	$potential_reach = calculate_pop_potential_reach_ims( $participation_exposure, $representativeness_calc );
+	$potential_hr_reach = calculate_hr_pop_potential_reach_ims( $representativeness_calc, $hr_black_calc, $hr_asian_calc, $hr_nativeamerican_calc, $hr_pacificislander_calc, $hr_hispanic_calc, $hr_lowincome_calc );
 
-		
 	$outcome_types_hr = array(); //will hold analysis_index => outcome type (since type is tied to measure, nothing hr there)
 	$result_populations_hr = array(); //will hold analysis_index => population calc result
 	
@@ -1601,18 +1637,21 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 					info_id_list, info_id_list_hr, duplicate_ims, study_design, net_effects, duration, outcome_type, indicator_strategies, 
 					effectiveness_general, multi_component, complexity, participation_exposure, result_evaluation_population, result_subpopulationYN, result_subpopulation, result_population_result,
 					strategy_1, strategy_1_text, strategy_2, strategy_2_text, strategy_3, strategy_3_text, strategy_4, strategy_4_text, strategy_5, strategy_5_text,
-					hr_black, hr_asian, hr_nativeamerican, hr_pacificislander, hr_hispanic, hr_lowerincome, representativeness)
+					hr_black, hr_asian, hr_nativeamerican, hr_pacificislander, hr_hispanic, hr_lowerincome, representativeness, 
+					potential_pop_reach, potential_hr_pop_reach )
 				VALUES ( %s, %d, %d, %s, %d, %s, %d, %s, 
 					%s, %s, %s, %s, %s, %s, %s, %s, 
 					%s, %d, %d, %d, %s, %s, %s, %s, 
 					%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
-					%d, %d, %d, %d, %d, %d, %d )
+					%d, %d, %d, %d, %d, %d, %d, 
+					%d, %d )
 			", 
 			$analysis_index, $study_group_id, $domestic_intl, $indicator_val, $indicator_val_tt, $indicator, $measure_val, $measure,
 			$info_id_list, $info_id_list_hr, $duplicate_im, $study_design, $ea_direction, $duration, $type, $strategies,
 			$effectiveness_gen, $multi_component, $complexities, $participation_exposure, $evalpop, $subpopYN, $subpop, $result_pop_result["population_calc"],
 			$strategy_1, $strategy_1_text, $strategy_2, $strategy_2_text, $strategy_3, $strategy_3_text, $strategy_4, $strategy_4_text, $strategy_5, $strategy_5_text,
-			$hr_black_calc, $hr_asian_calc, $hr_nativeamerican_calc, $hr_pacificislander_calc, $hr_hispanic_calc, $hr_lowincome_calc, $representativeness_calc
+			$hr_black_calc, $hr_asian_calc, $hr_nativeamerican_calc, $hr_pacificislander_calc, $hr_hispanic_calc, $hr_lowincome_calc, $representativeness_calc,
+			$potential_reach, $potential_hr_reach
 		);
 		
 		$help_me = $wpdb->query( $spartacus );

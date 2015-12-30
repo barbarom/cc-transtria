@@ -484,10 +484,6 @@ function calculate_multi_component_ims( $all_ims ){
 */ 
 function calculate_complexity_ims( $all_ims ){
 
-	global $wpdb;
-	
-	//Get Measures and outcome types for each
-	//$all_ims = get_all_ims_for_study_group( $study_group_id );
 	$complexities = array();
 	
 	//populate array of mcs; return 1 is ANY are one
@@ -521,8 +517,6 @@ function calculate_complexity_ims( $all_ims ){
 */ 
 function calculate_participation_exposure_ims( $all_ims ){
 
-	global $wpdb;
-	
 	$participations = array();
 	$exposures = array();
 	
@@ -564,8 +558,6 @@ function calculate_participation_exposure_ims( $all_ims ){
 */ 
 function calculate_hr_black_ims( $all_ims ){
 
-	global $wpdb;
-	
 	$ipe_data_highest = floatval( 999 );
 	
 	//populate ipe_data_highest with highest percents;
@@ -576,13 +568,13 @@ function calculate_hr_black_ims( $all_ims ){
 		//var_dump( $this_pct );
 		
 		//1 = High, if IPE “pctblack” = 100 (for any Unique ID in grouping)
-		if( ( $this_pct == 100 ) || ( $this_pct == "100" ) ){ 
+		if( (int)$this_pct == 100 ){ 
 			return 1; //return 1 if IPE “pctblack” = 100 (for any Unique ID in grouping)
 		} 
 		
 		//otherwise, if current percent > ipe_data_highest, put higher val in ipe_data_highest (unless 999)
 		//if we HAVE a percent, that trumps 999
-		if( ( ( $ipe_data_highest == "999" ) || ( $ipe_data_highest == 999 ) ) && ( ( $this_pct != 0 ) || ( $this_pct != "0" ) || ( $this_pct != "NULL" ) || ( $this_pct != NULL ) ) ) {
+		if( ( (int)$ipe_data_highest == 999 ) && ( ( $this_pct != 0 ) || ( $this_pct != "0" ) || ( $this_pct != "NULL" ) || ( $this_pct != NULL ) ) ) {
 			$ipe_data_highest = $this_pct;
 		}			
 		if( ( $this_pct > $ipe_data_highest ) && ( ( $this_pct != 999 ) || ( $this_pct != "999" ) ) ){
@@ -617,8 +609,6 @@ function calculate_hr_black_ims( $all_ims ){
 */ 
 function calculate_hr_asian_ims( $all_ims ){
 
-	global $wpdb;
-	
 	$ipe_data_highest = floatval( 999 ); //default is "not reported" = 999
 	
 	//populate ipe_data_highest with highest percents;
@@ -670,8 +660,6 @@ function calculate_hr_asian_ims( $all_ims ){
 */ 
 function calculate_hr_nativeamerican_ims( $all_ims ){
 
-	global $wpdb;
-	
 	$ipe_data_highest = floatval( 999 ); //default is "not reported" = 999
 	
 	//populate ipe_data_highest with highest percents;
@@ -723,8 +711,6 @@ function calculate_hr_nativeamerican_ims( $all_ims ){
 */ 
 function calculate_hr_pacificislander_ims( $all_ims ){
 
-	global $wpdb;
-	
 	$ipe_data_highest = floatval( 999 ); //default is "not reported" = 999
 	
 	//populate ipe_data_highest with highest percents;
@@ -776,8 +762,6 @@ function calculate_hr_pacificislander_ims( $all_ims ){
 */ 
 function calculate_hr_hispanic_ims( $all_ims ){
 
-	global $wpdb;
-	
 	$ipe_data_highest = floatval( 999 ); //default is "not reported" = 999
 	
 	//populate ipe_data_highest with highest percents;
@@ -829,8 +813,6 @@ function calculate_hr_hispanic_ims( $all_ims ){
 */ 
 function calculate_hr_lowincome_ims( $all_ims ){
 
-	global $wpdb;
-	
 	$ipe_data_highest = floatval( 999 ); //default is "not reported" = 999
 	
 	//populate ipe_data_highest with highest percents;
@@ -882,8 +864,6 @@ function calculate_hr_lowincome_ims( $all_ims ){
 */ 
 function calculate_representativeness_ims( $all_ims ){
 
-	global $wpdb;
-	
 	$reps = array(); //array to hold ALL IM values, if 1 does not occur
 	
 	//populate ipe_data_highest with highest percents;
@@ -911,6 +891,62 @@ function calculate_representativeness_ims( $all_ims ){
 	return 0;
 
 }
+
+/**
+ * Returns the Potential Population Reach value for incoming IM data
+ *
+ * @param int, int. Analysis participation/potential exposure value, analysis representativeness value
+ * @return int.
+*/ 
+function calculate_pop_potential_reach_ims( $participation_exposure, $representativeness ){
+
+	//return 999 = Insufficient information, if Participation/ Potential Exposure = 999 OR Representativeness = 999
+	if( (int)$participation_exposure == 999 || (int)$representativeness == 999 ){
+		return 999;
+	} else if( ( (int)$participation_exposure == 1 && (int)$representativeness == 1 ) ) { //return 1 = High, else if Participation/ Potential Exposure = 1 AND Representativeness = 1
+		return 1;
+	} else if( ( (int)$participation_exposure == 1 || (int)$participation_exposure == 2 ) && 
+		( (int)$representativeness == 1 || (int)$representativeness == 2 ) ) {
+		return 2;
+	} 
+	
+	//else, return 0 (combo of 2s and 999s, TODO: Laura, what do we return in this case?)
+	return 0;
+
+}
+
+/**
+ * Returns the Potential HR Population Reach value for incoming IM data
+ *
+ * @param int, int, int, int, int, int, int, int. Analysis participation/potential exposure value, analysis representativeness value, hr_black, hr_asian, hr_nativeamerican, hr_pacificislander, hr_hispanic, hr_lowerincome
+ * @return int.
+*/ 
+function calculate_hr_pop_potential_reach_ims( $representativeness, $hr_black_calc, $hr_asian_calc, $hr_nativeamerican_calc, $hr_pacificislander_calc, $hr_hispanic_calc, $hr_lowincome_calc ){
+
+	//999 = Insufficient information, if <ALL above high-risk racial or ethnic population>  = 999 OR Representativeness = 999
+	if( (int)$representativeness == 999 && (int)$hr_black_calc == 999 && (int)$hr_asian_calc == 999 && (int)$hr_nativeamerican_calc == 999 && 
+		(int)$hr_pacificislander_calc == 999 && (int)$hr_hispanic_calc == 999 && (int)$hr_lowincome_calc == 999 ){
+		return 999;
+	} else if( ( (int)$representativeness == 1 ) && ( (int)$hr_black_calc == 1 || (int)$hr_asian_calc == 1 || (int)$hr_nativeamerican_calc == 1 || 
+		(int)$hr_pacificislander_calc == 1 || (int)$hr_hispanic_calc == 1 || (int)$hr_lowincome_calc == 1 ) ){ //1 = High, else if <any above high-risk racial or ethnic population> = 1 AND Representativeness = 1
+		return 1;
+	} else if( (int)$hr_black_calc == 1 || (int)$hr_black_calc == 2 || (int)$hr_asian_calc == 1 || (int)$hr_asian_calc == 2 || (int)$hr_nativeamerican_calc == 1 || (int)$hr_nativeamerican_calc == 2 || 
+		(int)$hr_pacificislander_calc == 1 || (int)$hr_pacificislander_calc == 2 || (int)$hr_hispanic_calc == 1 || (int)$hr_hispanic_calc == 2 || (int)$hr_lowincome_calc == 1 || (int)$hr_lowincome_calc == 2 ){
+		return 2;
+	} else if( (int)$hr_black_calc == 3 || (int)$hr_asian_calc == 3 || (int)$hr_nativeamerican_calc == 3 || 
+		(int)$hr_pacificislander_calc == 3 || (int)$hr_hispanic_calc == 3 || (int)$hr_lowincome_calc == 3 ){ //1 = High, else if <any above high-risk racial or ethnic population> = 1 AND Representativeness = 1
+		return 3;
+	} else if( (int)$hr_black_calc == 4 || (int)$hr_asian_calc == 4 || (int)$hr_nativeamerican_calc == 4 || 
+		(int)$hr_pacificislander_calc == 4 || (int)$hr_hispanic_calc == 4 || (int)$hr_lowincome_calc == 4 ){ //1 = High, else if <any above high-risk racial or ethnic population> = 1 AND Representativeness = 1
+		return 4;
+	} 
+	
+	//else, return 0 (combo of 2s and 999s, TODO: Laura, what do we return in this case?)
+	return 0;
+
+}
+
+
 
 
 
