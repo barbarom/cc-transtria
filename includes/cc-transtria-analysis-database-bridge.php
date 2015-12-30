@@ -274,7 +274,7 @@ function get_all_ims_for_study_group( $study_group_id ){
 	$im_sql = $wpdb->prepare( 
 		"
 		SELECT      info_id, indicator_value, indicator, measure, outcome_type, multi_component, complexity, exposure_frequency, rate_of_participation,
-			ipe_pctblack, ipe_pctasian, ipe_pctnativeamerican, ipe_pctpacificislander, ipe_pcthispanic, ipe_pctlowerincome
+			ipe_pctblack, ipe_pctasian, ipe_pctnativeamerican, ipe_pctpacificislander, ipe_pcthispanic, ipe_pctlowerincome, ipe_representativeness
 		FROM        $wpdb->transtria_analysis_intermediate
 		WHERE		StudyGroupingID = %d 
 		",
@@ -1315,11 +1315,12 @@ function calc_and_set_dyads_primary_intermediate_analysis( $study_group_id ){
 								'ipe_pctnativeamerican' => $intermediate_calcs["ipe_pctnativeamerican"],
 								'ipe_pctpacificislander' => $intermediate_calcs["ipe_pctpacificislander"],
 								'ipe_pcthispanic' => $intermediate_calcs["ipe_pcthispanic"],
-								'ipe_pctlowerincome' => $intermediate_calcs["ipe_pctlowerincome"]
+								'ipe_pctlowerincome' => $intermediate_calcs["ipe_pctlowerincome"],
+								'ipe_representativeness' => $intermediate_calcs["Representativeness"]
 							), 
 							array( '%d', '%s', '%d', '%d', '%s', '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
 							'%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
-							'%s', '%s', '%s', '%s', '%s', '%s' ) 
+							'%s', '%s', '%s', '%s', '%s', '%s', '%d' ) 
 						);
 						
 						//reset placeholders 
@@ -1479,12 +1480,17 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 	$complexities = calculate_complexity_ims( $component_complexity_ims );
 	$measures_outcome_types = calculate_outcome_types_ims( $component_complexity_ims ); //get measures => outcome types for study group/analysis
 	$participation_exposure = calculate_participation_exposure_ims( $component_complexity_ims ); //calculate participation_exposure
+	
+	//population calcs
 	$hr_black_calc = calculate_hr_black_ims( $component_complexity_ims ); 
 	$hr_asian_calc = calculate_hr_asian_ims( $component_complexity_ims ); 
 	$hr_nativeamerican_calc = calculate_hr_nativeamerican_ims( $component_complexity_ims ); 
 	$hr_pacificislander_calc = calculate_hr_pacificislander_ims( $component_complexity_ims ); 
 	$hr_hispanic_calc = calculate_hr_hispanic_ims( $component_complexity_ims ); 
 	$hr_lowincome_calc = calculate_hr_lowincome_ims( $component_complexity_ims ); 
+	
+	//representativeness calc
+	$representativeness_calc = calculate_representativeness_ims( $component_complexity_ims ); 
 	
 
 		
@@ -1594,18 +1600,18 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 					info_id_list, info_id_list_hr, duplicate_ims, study_design, net_effects, duration, outcome_type, indicator_strategies, 
 					effectiveness_general, multi_component, complexity, participation_exposure, result_evaluation_population, result_subpopulationYN, result_subpopulation, result_population_result,
 					strategy_1, strategy_1_text, strategy_2, strategy_2_text, strategy_3, strategy_3_text, strategy_4, strategy_4_text, strategy_5, strategy_5_text,
-					hr_black, hr_asian, hr_nativeamerican, hr_pacificislander, hr_hispanic, hr_lowerincome)
+					hr_black, hr_asian, hr_nativeamerican, hr_pacificislander, hr_hispanic, hr_lowerincome, representativeness)
 				VALUES ( %s, %d, %d, %s, %d, %s, %d, %s, 
 					%s, %s, %s, %s, %s, %s, %s, %s, 
 					%s, %d, %d, %d, %s, %s, %s, %s, 
 					%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
-					%s, %s, %s, %s, %s, %s )
+					%d, %d, %d, %d, %d, %d, %d )
 			", 
 			$analysis_index, $study_group_id, $domestic_intl, $indicator_val, $indicator_val_tt, $indicator, $measure_val, $measure,
 			$info_id_list, $info_id_list_hr, $duplicate_im, $study_design, $ea_direction, $duration, $type, $strategies,
 			$effectiveness_gen, $multi_component, $complexities, $participation_exposure, $evalpop, $subpopYN, $subpop, $result_pop_result["population_calc"],
 			$strategy_1, $strategy_1_text, $strategy_2, $strategy_2_text, $strategy_3, $strategy_3_text, $strategy_4, $strategy_4_text, $strategy_5, $strategy_5_text,
-			$hr_black_calc, $hr_asian_calc, $hr_nativeamerican_calc, $hr_pacificislander_calc, $hr_hispanic_calc, $hr_lowincome_calc
+			$hr_black_calc, $hr_asian_calc, $hr_nativeamerican_calc, $hr_pacificislander_calc, $hr_hispanic_calc, $hr_lowincome_calc, $representativeness_calc
 		);
 		
 		$help_me = $wpdb->query( $spartacus );
@@ -1752,6 +1758,7 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 	//unset some things
 	unset( $all_ims );
 	
+	return 1;
 	
 }
 

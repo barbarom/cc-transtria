@@ -874,7 +874,43 @@ function calculate_hr_lowincome_ims( $all_ims ){
 
 }
 
+/**
+ * Returns the Representativeness values for incoming IM data
+ *
+ * @param array. IM data for all IMs in a study group.
+ * @return int.
+*/ 
+function calculate_representativeness_ims( $all_ims ){
 
+	global $wpdb;
+	
+	$reps = array(); //array to hold ALL IM values, if 1 does not occur
+	
+	//populate ipe_data_highest with highest percents;
+	foreach( $all_ims as $one_im ){
+		$this_rep = $one_im["ipe_representativeness"];
+		
+		//If representativeness = 1 (for any Unique ID in grouping), then representativeness = 1, yes
+		if( ( $this_rep == 1 ) || ( $this_rep == "1" ) ){ 
+			return 1; //return 1 if IPE “pcthispanic” = 100 (for any Unique ID in grouping)
+		} 
+		
+		//otherwise, we will calc after all have been iterated over
+		array_push( $reps, $this_rep );
+
+	}
+	
+	//calculate representativenss, if !1:  Else If representativeness = 2 (for ALL Unique IDs in grouping), then representativeness = 0, no
+	if( count( array_unique( $reps ) ) === 1 && ( end( $reps ) == "2" || ( end( $reps ) == 2 ) ) ){
+		return 2; 
+	} else if( ( count( array_unique( $reps ) ) === 1 ) && ( end( $reps ) == "999" || ( end( $reps ) == 999 ) ) ){
+		return 999; 
+	} 
+	
+	//else, return 0 (combo of 2s and 999s, TODO: Laura, what do we return in this case?)
+	return 0;
+
+}
 
 
 

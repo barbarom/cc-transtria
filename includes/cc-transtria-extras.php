@@ -377,14 +377,14 @@ class CC_Transtria_Extras {
 			
 			//wp_enqueue_script( $this->plugin_slug . 'dynamic_page_components', plugins_url( 'js/dynamic_components.js', __FILE__ ), array( 'jquery' ), '1.1' );
 			//wp_enqueue_script( $this->plugin_slug . 'transtria_basic_js', plugins_url( 'js/transtria_basic.js', __FILE__ ), array( 'jquery' ), '1.1' );
-			wp_enqueue_script( $this->plugin_slug . 'transtria_revamp_js', plugins_url( 'js/transtria_revamp.js', __FILE__ ), array( 'jquery' ), '1.4' );
+			wp_enqueue_script( $this->plugin_slug . 'transtria_revamp_js', plugins_url( 'js/transtria_revamp.js', __FILE__ ), array( 'jquery' ), '1.6' );
 			
 			if( cc_transtria_on_assignments_screen() ){
 				wp_enqueue_script( $this->plugin_slug . 'transtria_revamp_assignments_js', plugins_url( 'js/transtria_revamp_assignments.js', __FILE__ ), array( 'jquery' ), '1.0' );
 			}
 			
 			if( cc_transtria_on_analysis_screen() ){
-				wp_enqueue_script( $this->plugin_slug . 'transtria_revamp_analysis_js', plugins_url( 'js/transtria_revamp_analysis.js', __FILE__ ), array( 'jquery' ), '1.1' );
+				wp_enqueue_script( $this->plugin_slug . 'transtria_revamp_analysis_js', plugins_url( 'js/transtria_revamp_analysis.js', __FILE__ ), array( 'jquery' ), '1.3' );
 			}
 			
 			wp_localize_script( 
@@ -802,7 +802,7 @@ class CC_Transtria_Extras {
 		
 		$unique_ims = calc_and_set_unique_analysis_ids_for_group( $study_group );
 		
-		echo json_encode( $unique_ims );
+		//echo json_encode( $unique_ims );
 		echo json_encode( 'ran analysis' );
 		
 		die();
