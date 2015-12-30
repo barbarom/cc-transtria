@@ -1237,7 +1237,7 @@ function calc_and_set_dyads_primary_intermediate_analysis( $study_group_id ){
 						if( $this_study_data["ipe"]["representativeness_notreported"] == "Y" ){
 							$intermediate_calcs["Representativeness"] = 999; //no complexity checked
 						} else if( !empty( $this_study_data["ipe"]["Representativeness"] ) ){
-							if( (int)$this_study_data["ipe"]["Representativeness"] == "Y" ){
+							if( $this_study_data["ipe"]["Representativeness"] == "Y" ){
 								$intermediate_calcs["Representativeness"] = 1;
 							} else {
 								$intermediate_calcs["Representativeness"] = 2;
@@ -1355,6 +1355,7 @@ function calc_and_set_dyads_primary_intermediate_analysis( $study_group_id ){
 	return $study_ids; 
 }
 
+//TODO: UPDATE THIS!
 /**
  * Calculates secondary intermediate variables to return to front end.  TODO: add these to table
  *
