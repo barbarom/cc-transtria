@@ -791,7 +791,7 @@ class CC_Transtria_Extras {
 	
 	//ajax run analysis
 	public function run_analysis(){
-		set_time_limit(600);
+		set_time_limit(1600);
 		// Is the nonce good?
 		if ( ! check_ajax_referer( 'cc_transtria_ajax_nonce', 'transtria_nonce' ) ) {
 			return false;
