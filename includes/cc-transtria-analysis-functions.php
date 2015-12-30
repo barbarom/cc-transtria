@@ -566,22 +566,32 @@ function calculate_hr_black_ims( $all_ims ){
 
 	global $wpdb;
 	
-	$ipe_data_highest = 999;
+	$ipe_data_highest = floatval( 999 );
 	
 	//populate ipe_data_highest with highest percents;
 	foreach( $all_ims as $one_im ){
-		$this_pct = $one_im["ipe_pctblack"];
+		$this_pct_string = $one_im["ipe_pctblack"];
+		$this_pct = floatval ( $this_pct_string );
+		
+		//var_dump( $this_pct );
 		
 		//1 = High, if IPE “pctblack” = 100 (for any Unique ID in grouping)
 		if( ( $this_pct == 100 ) || ( $this_pct == "100" ) ){ 
 			return 1; //return 1 if IPE “pctblack” = 100 (for any Unique ID in grouping)
 		} 
+		
 		//otherwise, if current percent > ipe_data_highest, put higher val in ipe_data_highest (unless 999)
+		//if we HAVE a percent, that trumps 999
+		if( ( ( $ipe_data_highest == "999" ) || ( $ipe_data_highest == 999 ) ) && ( ( $this_pct != 0 ) || ( $this_pct != "0" ) || ( $this_pct != "NULL" ) || ( $this_pct != NULL ) ) ) {
+			$ipe_data_highest = $this_pct;
+		}			
 		if( ( $this_pct > $ipe_data_highest ) && ( ( $this_pct != 999 ) || ( $this_pct != "999" ) ) ){
 			$ipe_data_highest = $this_pct;
 		}
 
 	}
+	
+	//var_dump( $ipe_data_highest );
 
 	//calculate population score based on highest percentage
 	if( ( ( $ipe_data_highest >= 50 ) || ( $ipe_data_highest >= "50" ) ) && ( ( $ipe_data_highest < 100 ) || ( $ipe_data_highest < "100" ) ) ){ //2 = Moderate, else if IPE “pctblack” < 100 and >= 50, (for any Unique ID in grouping)
@@ -598,6 +608,272 @@ function calculate_hr_black_ims( $all_ims ){
 	return 999;
 
 }
+
+/**
+ * Returns the HR Asian values for incoming IM data
+ *
+ * @param array. IM data for all IMs in a study group.
+ * @return int.
+*/ 
+function calculate_hr_asian_ims( $all_ims ){
+
+	global $wpdb;
+	
+	$ipe_data_highest = floatval( 999 ); //default is "not reported" = 999
+	
+	//populate ipe_data_highest with highest percents;
+	foreach( $all_ims as $one_im ){
+		$this_pct_string = $one_im["ipe_pctasian"];
+		$this_pct = floatval ( $this_pct_string );
+		
+		//var_dump( $this_pct );
+		
+		//1 = High, if IPE pctasian = 100 (for any Unique ID in grouping)
+		if( ( $this_pct == 100 ) || ( $this_pct == "100" ) ){ 
+			return 1; //return 1 if IPE pctasian = 100 (for any Unique ID in grouping)
+		} 
+		
+		//otherwise, if current percent > ipe_data_highest, put higher val in ipe_data_highest (unless 999)
+		//if we HAVE a percent, that trumps 999
+		if( ( ( $ipe_data_highest == "999" ) || ( $ipe_data_highest == 999 ) ) && ( ( $this_pct != 0 ) || ( $this_pct != "0" ) || ( $this_pct != "NULL" ) || ( $this_pct != NULL ) ) ) {
+			$ipe_data_highest = $this_pct;
+		}			
+		if( ( $this_pct > $ipe_data_highest ) && ( ( $this_pct != 999 ) || ( $this_pct != "999" ) ) ){
+			$ipe_data_highest = $this_pct;
+		}
+
+	}
+	
+	//var_dump( $ipe_data_highest );
+
+	//calculate population score based on highest percentage
+	if( ( ( $ipe_data_highest >= 50 ) || ( $ipe_data_highest >= "50" ) ) && ( ( $ipe_data_highest < 100 ) || ( $ipe_data_highest < "100" ) ) ){ //2 = Moderate, else if IPE pctasian < 100 and >= 50, (for any Unique ID in grouping)
+		return 2; 
+	} else if( ( ( $ipe_data_highest >= 5.3 ) || ( $ipe_data_highest >= "5.3" ) ) && ( ( $ipe_data_highest < 50 ) || ( $ipe_data_highest < "50" ) ) ){ //3 = Low, else if IPE pctasian < 50 and >= 5.3
+		return 3; 
+	} else if( ( $ipe_data_highest < 5.3 ) || ( $ipe_data_highest < "5.3" ) ) { //4 = No, else if IPE pctasian < 5.3
+		return 4;
+	} else { //999 = Insufficient information, else if IPE pctasian = not reported (for ALL Unique IDs in grouping)
+		return 999;
+	}
+	
+	//else, if we are still in this function:
+	return 999;
+
+}
+
+/**
+ * Returns the HR Native American values for incoming IM data
+ *
+ * @param array. IM data for all IMs in a study group.
+ * @return int.
+*/ 
+function calculate_hr_nativeamerican_ims( $all_ims ){
+
+	global $wpdb;
+	
+	$ipe_data_highest = floatval( 999 ); //default is "not reported" = 999
+	
+	//populate ipe_data_highest with highest percents;
+	foreach( $all_ims as $one_im ){
+		$this_pct_string = $one_im["ipe_pctnativeamerican"];
+		$this_pct = floatval ( $this_pct_string );
+		
+		//var_dump( $this_pct );
+		
+		//1 = High, if IPE pctnativeamerican = 100 (for any Unique ID in grouping)
+		if( ( $this_pct == 100 ) || ( $this_pct == "100" ) ){ 
+			return 1; //return 1 if IPE pctnativeamerican = 100 (for any Unique ID in grouping)
+		} 
+		
+		//otherwise, if current percent > ipe_data_highest, put higher val in ipe_data_highest (unless 999)
+		//if we HAVE a percent, that trumps 999
+		if( ( ( $ipe_data_highest == "999" ) || ( $ipe_data_highest == 999 ) ) && ( ( $this_pct != 0 ) || ( $this_pct != "0" ) || ( $this_pct != "NULL" ) || ( $this_pct != NULL ) ) ) {
+			$ipe_data_highest = $this_pct;
+		}			
+		if( ( $this_pct > $ipe_data_highest ) && ( ( $this_pct != 999 ) || ( $this_pct != "999" ) ) ){
+			$ipe_data_highest = $this_pct;
+		}
+
+	}
+	
+	//var_dump( $ipe_data_highest );
+
+	//calculate population score based on highest percentage
+	if( ( ( $ipe_data_highest >= 50 ) || ( $ipe_data_highest >= "50" ) ) && ( ( $ipe_data_highest < 100 ) || ( $ipe_data_highest < "100" ) ) ){ //2 = Moderate, else if IPE pctnativeamerican < 100 and >= 50, (for any Unique ID in grouping)
+		return 2; 
+	} else if( ( ( $ipe_data_highest >= 1.2 ) || ( $ipe_data_highest >= "1.2" ) ) && ( ( $ipe_data_highest < 50 ) || ( $ipe_data_highest < "50" ) ) ){ //3 = Low, else if IPE pctnativeamerican < 50 and >= 1.2
+		return 3; 
+	} else if( ( $ipe_data_highest < 1.2 ) || ( $ipe_data_highest < "1.2" ) ) { //4 = No, else if IPE pctnativeamerican < 1.2
+		return 4;
+	} else { //999 = Insufficient information, else if IPE pctnativeamerican = not reported (for ALL Unique IDs in grouping)
+		return 999;
+	}
+	
+	//else, if we are still in this function:
+	return 999;
+
+}
+
+/**
+ * Returns the HR Pacific Islander values for incoming IM data
+ *
+ * @param array. IM data for all IMs in a study group.
+ * @return int.
+*/ 
+function calculate_hr_pacificislander_ims( $all_ims ){
+
+	global $wpdb;
+	
+	$ipe_data_highest = floatval( 999 ); //default is "not reported" = 999
+	
+	//populate ipe_data_highest with highest percents;
+	foreach( $all_ims as $one_im ){
+		$this_pct_string = $one_im["ipe_pctpacificislander"];
+		$this_pct = floatval ( $this_pct_string );
+		
+		//var_dump( $this_pct );
+		
+		//1 = High, if IPE “pctpacificislander” = 100 (for any Unique ID in grouping)
+		if( ( $this_pct == 100 ) || ( $this_pct == "100" ) ){ 
+			return 1; //return 1 if IPE “pctpacificislander” = 100 (for any Unique ID in grouping)
+		} 
+		
+		//otherwise, if current percent > ipe_data_highest, put higher val in ipe_data_highest (unless 999)
+		//if we HAVE a percent, that trumps 999
+		if( ( ( $ipe_data_highest == "999" ) || ( $ipe_data_highest == 999 ) ) && ( ( $this_pct != 0 ) || ( $this_pct != "0" ) || ( $this_pct != "NULL" ) || ( $this_pct != NULL ) ) ) {
+			$ipe_data_highest = $this_pct;
+		}			
+		if( ( $this_pct > $ipe_data_highest ) && ( ( $this_pct != 999 ) || ( $this_pct != "999" ) ) ){
+			$ipe_data_highest = $this_pct;
+		}
+
+	}
+	
+	//var_dump( $ipe_data_highest );
+
+	//calculate population score based on highest percentage
+	if( ( ( $ipe_data_highest >= 50 ) || ( $ipe_data_highest >= "50" ) ) && ( ( $ipe_data_highest < 100 ) || ( $ipe_data_highest < "100" ) ) ){ //2 = Moderate, else if IPE “pctpacificislander” < 100 and >= 50, (for any Unique ID in grouping)
+		return 2; 
+	} else if( ( ( $ipe_data_highest >= 0.2 ) || ( $ipe_data_highest >= "0.2" ) ) && ( ( $ipe_data_highest < 50 ) || ( $ipe_data_highest < "50" ) ) ){ //3 = Low, else if IPE “pctpacificislander” < 50 and >= 0.2
+		return 3; 
+	} else if( ( $ipe_data_highest < 0.2 ) || ( $ipe_data_highest < "0.2" ) ) { //4 = No, else if IPE “pctpacificislander” < 0.2
+		return 4;
+	} else { //999 = Insufficient information, else if IPE “pctpacificislander” = not reported (for ALL Unique IDs in grouping)
+		return 999;
+	}
+	
+	//else, if we are still in this function:
+	return 999;
+
+}
+
+/**
+ * Returns the HR Hispanic values for incoming IM data
+ *
+ * @param array. IM data for all IMs in a study group.
+ * @return int.
+*/ 
+function calculate_hr_hispanic_ims( $all_ims ){
+
+	global $wpdb;
+	
+	$ipe_data_highest = floatval( 999 ); //default is "not reported" = 999
+	
+	//populate ipe_data_highest with highest percents;
+	foreach( $all_ims as $one_im ){
+		$this_pct_string = $one_im["ipe_pcthispanic"];
+		$this_pct = floatval ( $this_pct_string );
+		
+		//var_dump( $this_pct );
+		
+		//1 = High, if IPE “pcthispanic” = 100 (for any Unique ID in grouping)
+		if( ( $this_pct == 100 ) || ( $this_pct == "100" ) ){ 
+			return 1; //return 1 if IPE “pcthispanic” = 100 (for any Unique ID in grouping)
+		} 
+		
+		//otherwise, if current percent > ipe_data_highest, put higher val in ipe_data_highest (unless 999)
+		//if we HAVE a percent, that trumps 999
+		if( ( ( $ipe_data_highest == "999" ) || ( $ipe_data_highest == 999 ) ) && ( ( $this_pct != 0 ) || ( $this_pct != "0" ) || ( $this_pct != "NULL" ) || ( $this_pct != NULL ) ) ) {
+			$ipe_data_highest = $this_pct;
+		}			
+		if( ( $this_pct > $ipe_data_highest ) && ( ( $this_pct != 999 ) || ( $this_pct != "999" ) ) ){
+			$ipe_data_highest = $this_pct;
+		}
+
+	}
+	
+	//var_dump( $ipe_data_highest );
+
+	//calculate population score based on highest percentage
+	if( ( ( $ipe_data_highest >= 50 ) || ( $ipe_data_highest >= "50" ) ) && ( ( $ipe_data_highest < 100 ) || ( $ipe_data_highest < "100" ) ) ){ //2 = Moderate, else if IPE “pcthispanic” < 100 and >= 50, (for any Unique ID in grouping)
+		return 2; 
+	} else if( ( ( $ipe_data_highest >= 17.1 ) || ( $ipe_data_highest >= "17.1" ) ) && ( ( $ipe_data_highest < 50 ) || ( $ipe_data_highest < "50" ) ) ){ //3 = Low, else if IPE “pcthispanic” < 50 and >= 17.1
+		return 3; 
+	} else if( ( $ipe_data_highest < 17.1 ) || ( $ipe_data_highest < "17.1" ) ) { //4 = No, else if IPE “pcthispanic” < 17.1
+		return 4;
+	} else { //999 = Insufficient information, else if IPE “pcthispanic” = not reported (for ALL Unique IDs in grouping)
+		return 999;
+	}
+	
+	//else, if we are still in this function:
+	return 999;
+
+}
+
+/**
+ * Returns the HR Hispanic values for incoming IM data
+ *
+ * @param array. IM data for all IMs in a study group.
+ * @return int.
+*/ 
+function calculate_hr_lowincome_ims( $all_ims ){
+
+	global $wpdb;
+	
+	$ipe_data_highest = floatval( 999 ); //default is "not reported" = 999
+	
+	//populate ipe_data_highest with highest percents;
+	foreach( $all_ims as $one_im ){
+		$this_pct_string = $one_im["ipe_pctlowerincome"];
+		$this_pct = floatval ( $this_pct_string );
+		
+		//var_dump( $this_pct );
+		
+		//1 = High, if IPE pctlowerincome = 100 (for any Unique ID in grouping)
+		if( ( $this_pct == 100 ) || ( $this_pct == "100" ) ){ 
+			return 1; //return 1 if IPE pctlowerincome = 100 (for any Unique ID in grouping)
+		} 
+		
+		//otherwise, if current percent > ipe_data_highest, put higher val in ipe_data_highest (unless 999)
+		//if we HAVE a percent, that trumps 999
+		if( ( ( $ipe_data_highest == "999" ) || ( $ipe_data_highest == 999 ) ) && ( ( $this_pct != 0 ) || ( $this_pct != "0" ) || ( $this_pct != "NULL" ) || ( $this_pct != NULL ) ) ) {
+			$ipe_data_highest = $this_pct;
+		}			
+		if( ( $this_pct > $ipe_data_highest ) && ( ( $this_pct != 999 ) || ( $this_pct != "999" ) ) ){
+			$ipe_data_highest = $this_pct;
+		}
+
+	}
+	
+	//var_dump( $ipe_data_highest );
+
+	//calculate population score based on highest percentage
+	if( ( ( $ipe_data_highest >= 50 ) || ( $ipe_data_highest >= "50" ) ) && ( ( $ipe_data_highest < 100 ) || ( $ipe_data_highest < "100" ) ) ){ //2 = Moderate, else if IPE pctlowerincome < 100 and >= 50, (for any Unique ID in grouping)
+		return 2; 
+	} else if( ( ( $ipe_data_highest >= 14.5 ) || ( $ipe_data_highest >= "14.5" ) ) && ( ( $ipe_data_highest < 50 ) || ( $ipe_data_highest < "50" ) ) ){ //3 = Low, else if IPE pctlowerincome < 50 and >= 14.5
+		return 3; 
+	} else if( ( $ipe_data_highest < 14.5 ) || ( $ipe_data_highest < "14.5" ) ) { //4 = No, else if IPE pctlowerincome < 14.5
+		return 4;
+	} else { //999 = Insufficient information, else if IPE pctlowerincome = not reported (for ALL Unique IDs in grouping)
+		return 999;
+	}
+	
+	//else, if we are still in this function:
+	return 999;
+
+}
+
 
 
 

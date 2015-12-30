@@ -791,6 +791,7 @@ class CC_Transtria_Extras {
 	
 	//ajax run analysis
 	public function run_analysis(){
+		set_time_limit(600);
 		// Is the nonce good?
 		if ( ! check_ajax_referer( 'cc_transtria_ajax_nonce', 'transtria_nonce' ) ) {
 			return false;
@@ -800,8 +801,8 @@ class CC_Transtria_Extras {
 		$study_group = $_POST["this_study_group"];
 		
 		$unique_ims = calc_and_set_unique_analysis_ids_for_group( $study_group );
-				
-		//echo json_encode( $unique_ims );
+		
+		echo json_encode( $unique_ims );
 		echo json_encode( 'ran analysis' );
 		
 		die();

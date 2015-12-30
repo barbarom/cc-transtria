@@ -328,8 +328,8 @@ function get_unique_ims_for_study_group( $study_group_id ){
 	
 	$effects = cc_transtria_calculate_ea_direction_for_studygrouping( $study_group_id );
 		//$effects = $one_intermediate_im["calc_ea_direction"];
-		var_dump( $next_info_id );
-		var_dump( $effects );
+		//var_dump( $next_info_id );
+		//var_dump( $effects );
 		
 	//iterate through im rows
 	foreach( $im_rows as $one_intermediate_im ){
@@ -1246,12 +1246,13 @@ function calc_and_set_dyads_primary_intermediate_analysis( $study_group_id ){
 									
 						/*** IPE Population calculations ***/
 						//Race percentages
+						
 						if( $this_study_data["ipe"]["racepercentages_notreported"] == "Y" ){
 							//all race percentages are 999
 							$intermediate_calcs["ipe_pctblack"] = "999";
-							$intermediate_calcs["ipe_pctasian"] = 999;
-							$intermediate_calcs["ipe_pctnativeamerican"] = 999;
-							$intermediate_calcs["ipe_pctpacificislander"] = 999;
+							$intermediate_calcs["ipe_pctasian"] = "999";
+							$intermediate_calcs["ipe_pctnativeamerican"] = "999";
+							$intermediate_calcs["ipe_pctpacificislander"] = "999";
 						} else {
 							$intermediate_calcs["ipe_pctblack"] = $this_study_data["ipe"]["PctBlack"];
 							$intermediate_calcs["ipe_pctasian"] = $this_study_data["ipe"]["PctAsian"];
@@ -1261,14 +1262,14 @@ function calc_and_set_dyads_primary_intermediate_analysis( $study_group_id ){
 						//IPE Hispanic
 						if( $this_study_data["ipe"]["percenthispanic_notreported"] == "Y" ){
 							//all race percentages are 999
-							$intermediate_calcs["ipe_pcthispanic"] = 999;
+							$intermediate_calcs["ipe_pcthispanic"] = "999";
 						} else {
 							$intermediate_calcs["ipe_pcthispanic"] = $this_study_data["ipe"]["PctHispanic"];
 						}
 						//IPE Low income
 						if( $this_study_data["ipe"]["percentlowerincome_notreported"] == "Y" ){
 							//all race percentages are 999
-							$intermediate_calcs["ipe_pctlowerincome"] = 999;
+							$intermediate_calcs["ipe_pctlowerincome"] = "999";
 						} else {
 							$intermediate_calcs["ipe_pctlowerincome"] = $this_study_data["ipe"]["PctLowerIncome"];
 						} 
@@ -1328,7 +1329,7 @@ function calc_and_set_dyads_primary_intermediate_analysis( $study_group_id ){
 						
 						if( $did_it_work === false ){
 						
-							var_dump( $wpdb->last_query );
+							//var_dump( $wpdb->last_query );
 						}
 						//var_dump( $did_it_work );
 						//update the count
@@ -1479,7 +1480,14 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 	$measures_outcome_types = calculate_outcome_types_ims( $component_complexity_ims ); //get measures => outcome types for study group/analysis
 	$participation_exposure = calculate_participation_exposure_ims( $component_complexity_ims ); //calculate participation_exposure
 	$hr_black_calc = calculate_hr_black_ims( $component_complexity_ims ); 
+	$hr_asian_calc = calculate_hr_asian_ims( $component_complexity_ims ); 
+	$hr_nativeamerican_calc = calculate_hr_nativeamerican_ims( $component_complexity_ims ); 
+	$hr_pacificislander_calc = calculate_hr_pacificislander_ims( $component_complexity_ims ); 
+	$hr_hispanic_calc = calculate_hr_hispanic_ims( $component_complexity_ims ); 
+	$hr_lowincome_calc = calculate_hr_lowincome_ims( $component_complexity_ims ); 
 	
+
+		
 	$outcome_types_hr = array(); //will hold analysis_index => outcome type (since type is tied to measure, nothing hr there)
 	$result_populations_hr = array(); //will hold analysis_index => population calc result
 	
@@ -1487,7 +1495,6 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 	//calculate duration, duplicate, effectiveness_general for each unique im; INSERT INTO analysis table
 	foreach( $all_ims as $analysis_index => $one_im ){
 	
-		//var_dump( $one_im );
 		$measure = $one_im[ "measure" ];
 		$measure_val = $one_im[ "measure_value" ];
 		
@@ -1509,16 +1516,13 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 		$type = $measures_outcome_types[ $measure ];
 		$outcome_types_hr[ $analysis_index ] = $type; //for later usage
 		
-		
 		/***** CALCULATE AND UPDATE W POPULATION VARS; calculate HR vars (HR info_id list comes from population calc) *****/
 		$result_pop_result = calculate_pop_subpop_analysis( $pop_data_by_study_id, $info_id_list, $evalpop, $subpopYN, $subpop, $study_group_id );
 		$info_id_list_hr = $result_pop_result['info_id_list_hr'];
 		$result_populations_hr[ $analysis_index ] = $result_pop_result;
 		
-		//return "interrupted";
 		//calculate direction, duration
 		//Only ONE I-M dyad, no duplicates: set ea_direction, duration
-		//var_dump( $info_id_list );
 		if( strpos( $info_id_list, "," ) === false ){
 			$duplicate_im = "N";
 			
@@ -1536,14 +1540,12 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 			$new_infos = array_unique( $exploded_infos );
 			$info_id_list = implode( ", ", $new_infos );
 			
-			//var_dump( $info_id_list );
 			//get ea data for each study here (to send to calc functions)
 			$parsed_id_array = parse_study_seq_id_list( $info_id_list );
 			$studygroup_ea_data = array();
 			foreach( $parsed_id_array as $s_id => $vals ){
 				//get ea data (seq) for this study
 				$studygroup_ea_data[ $s_id ] = get_ea_analysis_data( $s_id );
-			
 			}
 			
 			//calculate duration, net_effect, etc, based on info_id_list - modulate
@@ -1552,7 +1554,8 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 			
 		}
 		
-		//parse strategies into up-to-5 individual ones
+		
+		//parse strategies (serialized) into up-to-5 individual ones
 		$uncereal_strats = unserialize( $strategies );
 		$strategy_1 = "";
 		$strategy_2 = "";
@@ -1591,52 +1594,24 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 					info_id_list, info_id_list_hr, duplicate_ims, study_design, net_effects, duration, outcome_type, indicator_strategies, 
 					effectiveness_general, multi_component, complexity, participation_exposure, result_evaluation_population, result_subpopulationYN, result_subpopulation, result_population_result,
 					strategy_1, strategy_1_text, strategy_2, strategy_2_text, strategy_3, strategy_3_text, strategy_4, strategy_4_text, strategy_5, strategy_5_text,
-					hr_black)
-				VALUES ( %s, %d, %d, %s, %d, %s, %d, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %d, %d, %d, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %d )
+					hr_black, hr_asian, hr_nativeamerican, hr_pacificislander, hr_hispanic, hr_lowerincome)
+				VALUES ( %s, %d, %d, %s, %d, %s, %d, %s, 
+					%s, %s, %s, %s, %s, %s, %s, %s, 
+					%s, %d, %d, %d, %s, %s, %s, %s, 
+					%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
+					%s, %s, %s, %s, %s, %s )
 			", 
-			$analysis_index,
-			$study_group_id,
-			$domestic_intl,
-			$indicator_val, 
-			$indicator_val_tt, 
-			$indicator,
-			$measure_val,
-			$measure,
-			$info_id_list,
-			$info_id_list_hr,
-			$duplicate_im,
-			$study_design,
-			$ea_direction,
-			$duration,
-			$type,
-			$strategies,
-			$effectiveness_gen,
-			$multi_component,
-			$complexities,
-			$participation_exposure,
-			$evalpop,
-			$subpopYN,
-			$subpop,
-			$result_pop_result["population_calc"],
-			$strategy_1,
-			$strategy_1_text,
-			$strategy_2,
-			$strategy_2_text,
-			$strategy_3,
-			$strategy_3_text,
-			$strategy_4,
-			$strategy_4_text,
-			$strategy_5,
-			$strategy_5_text,
-			$hr_black_calc
+			$analysis_index, $study_group_id, $domestic_intl, $indicator_val, $indicator_val_tt, $indicator, $measure_val, $measure,
+			$info_id_list, $info_id_list_hr, $duplicate_im, $study_design, $ea_direction, $duration, $type, $strategies,
+			$effectiveness_gen, $multi_component, $complexities, $participation_exposure, $evalpop, $subpopYN, $subpop, $result_pop_result["population_calc"],
+			$strategy_1, $strategy_1_text, $strategy_2, $strategy_2_text, $strategy_3, $strategy_3_text, $strategy_4, $strategy_4_text, $strategy_5, $strategy_5_text,
+			$hr_black_calc, $hr_asian_calc, $hr_nativeamerican_calc, $hr_pacificislander_calc, $hr_hispanic_calc, $hr_lowincome_calc
 		);
 		
 		$help_me = $wpdb->query( $spartacus );
-		//var_dump( $help_me );
 		
 	
 	}
-	
 	/*****  UPDATE Study Grouping table/vars *****/
 	//remove all rows of this study group from studygrouping table
 	$sg_del_row = $wpdb->delete( 
@@ -1758,7 +1733,7 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 	
 	}
 	
-		
+	
 	//Update Studygrouping-level vars: Study Design
 	$spartacus_designed = $wpdb->prepare( 
 		"
