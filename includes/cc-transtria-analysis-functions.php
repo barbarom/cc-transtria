@@ -1009,6 +1009,42 @@ function calculate_hr_pop_potential_reach_ims( $representativeness, $hr_black_ca
 
 }
 
+/**
+ * Returns the Applicability for HR pops value for incoming IM data
+ *
+ * @param array. IM data for all IMs in a study group.
+ * @return int.
+*/ 
+function calculate_applicability_hr_pops_ims( $all_ims ){
+
+	$applicabilities = array(); //array to hold ALL IM values, if 1 does not occur
+	
+	//get applicability_hr_pops values; put into array for algorthming
+	foreach( $all_ims as $one_im ){
+		$this_appl = (int)$one_im["applicability_hr_pops"];
+		
+		//If applicability = 1 (for any Unique ID in grouping), then applicability = 1, yes
+		if( $this_appl == 1 ){ 
+			return 1;
+		}
+		//otherwise, we will calc after all have been iterated over
+		array_push( $applicabilities, $this_appl );
+
+	}
+	
+	//Else If applicability = 2 (for ALL Unique IDs in grouping), then applicability = 0, no
+	if( count( array_unique( $applicabilities ) ) === 1 && ( end( $applicabilities ) == 2 ) ){
+		return 0; 
+	} 
+	//Else If applicability = 999 or NULL/0 (for ALL Unique IDs in grouping), then applicability = 999, insufficient information
+	else if( ( count( array_unique( $applicabilities ) ) === 1 ) && ( end( $applicabilities ) == 999 ) ){
+		return 999; 
+	}
+	
+	//else, return 0 (combo of 2s and 999s, TODO: Laura, what do we return in this case?)
+	return 0;
+
+}
 
 
 

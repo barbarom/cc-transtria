@@ -1523,6 +1523,7 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 	
 	//calculate IM-level analysis variables: stage
 	$stage = calculate_stage_ims( $component_complexity_ims ); 
+	$applicability_hr_pops = calculate_applicability_hr_pops_ims( $component_complexity_ims ); 
 	
 	//analysis calcs based on analysis-calc'd vars
 	$potential_reach = calculate_pop_potential_reach_ims( $participation_exposure, $representativeness_calc );
@@ -1531,6 +1532,8 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 	
 	$outcome_types_hr = array(); //will hold analysis_index => outcome type (since type is tied to measure, nothing hr there)
 	$result_populations_hr = array(); //will hold analysis_index => population calc result
+	
+	
 	
 	/***** UPDATE Analysis table w/vars *****/
 	//calculate duration, duplicate, effectiveness_general for each unique im; INSERT INTO analysis table
@@ -1636,20 +1639,20 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 					effectiveness_general, multi_component, complexity, participation_exposure, result_evaluation_population, result_subpopulationYN, result_subpopulation, result_population_result,
 					strategy_1, strategy_1_text, strategy_2, strategy_2_text, strategy_3, strategy_3_text, strategy_4, strategy_4_text, strategy_5, strategy_5_text,
 					hr_black, hr_asian, hr_nativeamerican, hr_pacificislander, hr_hispanic, hr_lowerincome, representativeness, 
-					potential_pop_reach, potential_hr_pop_reach, stage )
+					potential_pop_reach, potential_hr_pop_reach, stage, applicability_hr_pops )
 				VALUES ( %s, %d, %d, %s, %d, %s, %d, %s, 
 					%s, %s, %s, %s, %s, %s, %s, %s, 
 					%s, %d, %d, %d, %s, %s, %s, %s, 
 					%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
 					%d, %d, %d, %d, %d, %d, %d, 
-					%d, %d, %d )
+					%d, %d, %d, %d )
 			", 
 			$analysis_index, $study_group_id, $domestic_intl, $indicator_val, $indicator_val_tt, $indicator, $measure_val, $measure,
 			$info_id_list, $info_id_list_hr, $duplicate_im, $study_design, $ea_direction, $duration, $type, $strategies,
 			$effectiveness_gen, $multi_component, $complexities, $participation_exposure, $evalpop, $subpopYN, $subpop, $result_pop_result["population_calc"],
 			$strategy_1, $strategy_1_text, $strategy_2, $strategy_2_text, $strategy_3, $strategy_3_text, $strategy_4, $strategy_4_text, $strategy_5, $strategy_5_text,
 			$hr_black_calc, $hr_asian_calc, $hr_nativeamerican_calc, $hr_pacificislander_calc, $hr_hispanic_calc, $hr_lowincome_calc, $representativeness_calc,
-			$potential_reach, $potential_hr_reach, $stage
+			$potential_reach, $potential_hr_reach, $stage, $applicability_hr_pops
 		);
 		
 		$help_me = $wpdb->query( $spartacus );
