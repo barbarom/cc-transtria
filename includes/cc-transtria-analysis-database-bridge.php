@@ -957,7 +957,7 @@ function get_study_level_for_intermediate( $study_group_id ){
 		$pops_sql = $wpdb->prepare(
 			"
 			SELECT      ParticipationRate, ExposureFrequency, rateofparticipation_notreported, freqofexposure_notreported, Representativeness, representativeness_notreported,
-				racepercentages_notreported, percenthispanic_notreported, percentlowerincome_notreported,
+				racepercentages_notreported, percenthispanic_notreported, percentlowerincome_notreported, applicabilityhrpops_notreported, 
 				PctBlack, PctAsian, PctNativeAmerican, PctPacificIslander, PctHispanic, PctLowerIncome, ApplicabilityHRPopulations
 			FROM        $wpdb->transtria_population
 			WHERE		StudyID = %d 
@@ -1197,55 +1197,34 @@ function calc_and_set_dyads_primary_intermediate_analysis( $study_group_id ){
 							$intermediate_calcs["complexity"] = 0; //no complexity checked
 						}
 						
-						var_dump( $this_study_data["multi"]["pse_components"] );
 						
-						//pse components - serialized string of which strings selected or 999 if 
-						if( ) {
-						
+						//sustainability intermediate var calculation
+						if( $this_study_data["sustainabilityplan_notreported"] == "Y" ) {
+							$intermediate_calcs["sustainability"] = 999;
 						} else if( $this_study_data["sustainability_flag"] == "Y" ){
-							$intermediate_calcs["sustainability"] == 1;
+							$intermediate_calcs["sustainability"] = 1;
 						} else if( $this_study_data["sustainability_flag"] == "N" ){
-							$intermediate_calcs["sustainability"] == 2;
+							$intermediate_calcs["sustainability"] = 2;
 						} else {
-							$intermediate_calcs["sustainability"] == 999;
+							$intermediate_calcs["sustainability"] = 999;
 						} 
 						
+						//pse_componetne intermediate var calculation
 						if( $this_study_data["psecomponents_notreported"] == "Y" ){ //if "interventioncomponents_notreported" checkbox checked, that trumps selections
-							$intermediate_calcs["psecomponents"] = "999";
-						} 
-						
-						//STAGE calculation
-						else if( !empty( $this_study_data["multi"]["pse_components"] ) ){
+							$intermediate_calcs["pse_components"] = "999";
+						} else if( !empty( $this_study_data["multi"]["pse_components"] ) ){
 							$temp_vals = array();
 							foreach( $this_study_data["multi"]["pse_components"] as $in => $in_val ){
-								//var_dump( $in );
-								//var_dump( $in_val );
 								$in_val = current( $in_val );
-								//var_dump( $in_val["value"] );
-								array_push( $temp_vals, $in_val["value"] );
+								array_push( $temp_vals, $in_val["descr"] ); //get the descr: this is what we'll use in Analysis ID
 							}
 							
-							//if we only have 1 element
-							if( count( $temp_vals ) == 1 ){
-								//if the val = 1 (policy change), 2 Practice/system change, 3 (Environment change)
-								if( in_array( 1, $temp_vals ) || in_array( "1", $temp_vals ) ||
-									in_array( 2, $temp_vals ) || in_array( "2", $temp_vals ) ){
-									$intermediate_calcs["psecomponents"] = "1";
-								} else {
-									//val = 3 or 4, no multi
-									$intermediate_calcs["psecomponents"] = "0";
-								}
-								//var_dump( $intermediate_calcs );
-							} else if( count( $temp_vals ) > 1 ){ //we have more than one value, yes multi
-								$intermediate_calcs["psecomponents"] = "1";
-							} 
+							//serialize array of values
+							$intermediate_calcs["pse_components"] = serialize( $temp_vals );
+							
 						} else { //no psa components.  999.
-							$intermediate_calcs["psecomponents"] = "999";
+							$intermediate_calcs["pse_components"] = "999";
 						}
-						
-						
-						
-						
 						
 						
 						//ipe - rate of participation
@@ -1309,7 +1288,18 @@ function calc_and_set_dyads_primary_intermediate_analysis( $study_group_id ){
 						} else {
 							$intermediate_calcs["ipe_pctlowerincome"] = $this_study_data["ipe"]["PctLowerIncome"];
 						} 
-
+						
+						//ipe applicability to HR pops //applicabilityhrpops_notreported ("N", "Y" or empty string) //ApplicabilityHRPopulations ("Y" or "N" or empty string)
+						if( $this_study_data["ipe"]["applicabilityhrpops_notreported"] == "Y" ){
+							//all race percentages are 999
+							$intermediate_calcs["applicabilityhrpops"] = "999";
+						} else if( $this_study_data["ipe"]["ApplicabilityHRPopulations"] == "Y" ) {
+							$intermediate_calcs["applicabilityhrpops"] = "1";
+						} else if( $this_study_data["ipe"]["ApplicabilityHRPopulations"] == "N" ) {
+							$intermediate_calcs["applicabilityhrpops"] = "2";
+						} else {
+							$intermediate_calcs["applicabilityhrpops"] = "999";
+						}
 						
 									
 						//calc the transtria value for indicator
@@ -1350,11 +1340,13 @@ function calc_and_set_dyads_primary_intermediate_analysis( $study_group_id ){
 								'ipe_pctpacificislander' => $intermediate_calcs["ipe_pctpacificislander"],
 								'ipe_pcthispanic' => $intermediate_calcs["ipe_pcthispanic"],
 								'ipe_pctlowerincome' => $intermediate_calcs["ipe_pctlowerincome"],
-								'ipe_representativeness' => $intermediate_calcs["Representativeness"]
+								'ipe_representativeness' => $intermediate_calcs["Representativeness"],
+								'sustainability' => $intermediate_calcs["sustainability"],
+								'pse_components' => $intermediate_calcs["pse_components"]
 							), 
 							array( '%d', '%s', '%d', '%d', '%s', '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
 							'%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
-							'%s', '%s', '%s', '%s', '%s', '%s', '%d' ) 
+							'%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%s' ) 
 						);
 						
 						//reset placeholders 
