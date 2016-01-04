@@ -79,7 +79,7 @@ $objPHPExcel = new PHPExcel();
 $objPHPExcel->getProperties()
     ->setCreator("Transtria")
     ->setLastModifiedBy("Transtria")
-    ->setTitle("EI Num - Strategies");
+    ->setTitle("Analysis vars");
 	
 	
 $objPHPExcel->setActiveSheetIndex(0);
@@ -171,4 +171,4 @@ for( $k = 0; $k < $row_count; $k++ ){
 $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
 //$objWriter->save('php://output'); //meeeeeeh?
 //$objWriter->save( dirname( __FILE__ ) .'\downloads\write.xls');
-$objWriter->save( $root_ish . '/PHPExcel/transtria/strategies.xls');
+$objWriter->save( $root_ish . '/PHPExcel/transtria/analysis.xls');

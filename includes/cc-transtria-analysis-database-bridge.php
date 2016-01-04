@@ -1292,13 +1292,13 @@ function calc_and_set_dyads_primary_intermediate_analysis( $study_group_id ){
 						//ipe applicability to HR pops //applicabilityhrpops_notreported ("N", "Y" or empty string) //ApplicabilityHRPopulations ("Y" or "N" or empty string)
 						if( $this_study_data["ipe"]["applicabilityhrpops_notreported"] == "Y" ){
 							//all race percentages are 999
-							$intermediate_calcs["applicabilityhrpops"] = "999";
+							$intermediate_calcs["applicability_hr_pops"] = "999";
 						} else if( $this_study_data["ipe"]["ApplicabilityHRPopulations"] == "Y" ) {
-							$intermediate_calcs["applicabilityhrpops"] = "1";
+							$intermediate_calcs["applicability_hr_pops"] = "1";
 						} else if( $this_study_data["ipe"]["ApplicabilityHRPopulations"] == "N" ) {
-							$intermediate_calcs["applicabilityhrpops"] = "2";
+							$intermediate_calcs["applicability_hr_pops"] = "2";
 						} else {
-							$intermediate_calcs["applicabilityhrpops"] = "999";
+							$intermediate_calcs["applicability_hr_pops"] = "999";
 						}
 						
 									
@@ -1342,11 +1342,12 @@ function calc_and_set_dyads_primary_intermediate_analysis( $study_group_id ){
 								'ipe_pctlowerincome' => $intermediate_calcs["ipe_pctlowerincome"],
 								'ipe_representativeness' => $intermediate_calcs["Representativeness"],
 								'sustainability' => $intermediate_calcs["sustainability"],
-								'pse_components' => $intermediate_calcs["pse_components"]
+								'pse_components' => $intermediate_calcs["pse_components"],
+								'applicability_hr_pops' => $intermediate_calcs["applicability_hr_pops"]
 							), 
 							array( '%d', '%s', '%d', '%d', '%s', '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
 							'%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
-							'%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%s' ) 
+							'%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%s', '%d' ) 
 						);
 						
 						//reset placeholders 
