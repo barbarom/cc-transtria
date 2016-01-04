@@ -274,7 +274,8 @@ function get_all_ims_for_study_group( $study_group_id ){
 	$im_sql = $wpdb->prepare( 
 		"
 		SELECT      info_id, indicator_value, indicator, measure, outcome_type, multi_component, complexity, exposure_frequency, rate_of_participation,
-			ipe_pctblack, ipe_pctasian, ipe_pctnativeamerican, ipe_pctpacificislander, ipe_pcthispanic, ipe_pctlowerincome, ipe_representativeness
+			ipe_pctblack, ipe_pctasian, ipe_pctnativeamerican, ipe_pctpacificislander, ipe_pcthispanic, ipe_pctlowerincome, ipe_representativeness,
+			sustainability, pse_components
 		FROM        $wpdb->transtria_analysis_intermediate
 		WHERE		StudyGroupingID = %d 
 		",
@@ -1509,7 +1510,7 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 	$measures_outcome_types = calculate_outcome_types_ims( $component_complexity_ims ); //get measures => outcome types for study group/analysis
 	$participation_exposure = calculate_participation_exposure_ims( $component_complexity_ims ); //calculate participation_exposure
 	
-	//population calcs
+	//calculate IM-level analysis variables: population calcs
 	$hr_black_calc = calculate_hr_black_ims( $component_complexity_ims ); 
 	$hr_asian_calc = calculate_hr_asian_ims( $component_complexity_ims ); 
 	$hr_nativeamerican_calc = calculate_hr_nativeamerican_ims( $component_complexity_ims ); 
@@ -1517,13 +1518,17 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 	$hr_hispanic_calc = calculate_hr_hispanic_ims( $component_complexity_ims ); 
 	$hr_lowincome_calc = calculate_hr_lowincome_ims( $component_complexity_ims ); 
 	
-	//representativeness calc
+	//calculate IM-level analysis variables: representativeness calc
 	$representativeness_calc = calculate_representativeness_ims( $component_complexity_ims ); 
+	
+	//calculate IM-level analysis variables: stage
+	$stage = calculate_stage_ims( $component_complexity_ims ); 
 	
 	//analysis calcs based on analysis-calc'd vars
 	$potential_reach = calculate_pop_potential_reach_ims( $participation_exposure, $representativeness_calc );
 	$potential_hr_reach = calculate_hr_pop_potential_reach_ims( $representativeness_calc, $hr_black_calc, $hr_asian_calc, $hr_nativeamerican_calc, $hr_pacificislander_calc, $hr_hispanic_calc, $hr_lowincome_calc );
 
+	
 	$outcome_types_hr = array(); //will hold analysis_index => outcome type (since type is tied to measure, nothing hr there)
 	$result_populations_hr = array(); //will hold analysis_index => population calc result
 	
@@ -1631,20 +1636,20 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 					effectiveness_general, multi_component, complexity, participation_exposure, result_evaluation_population, result_subpopulationYN, result_subpopulation, result_population_result,
 					strategy_1, strategy_1_text, strategy_2, strategy_2_text, strategy_3, strategy_3_text, strategy_4, strategy_4_text, strategy_5, strategy_5_text,
 					hr_black, hr_asian, hr_nativeamerican, hr_pacificislander, hr_hispanic, hr_lowerincome, representativeness, 
-					potential_pop_reach, potential_hr_pop_reach )
+					potential_pop_reach, potential_hr_pop_reach, stage )
 				VALUES ( %s, %d, %d, %s, %d, %s, %d, %s, 
 					%s, %s, %s, %s, %s, %s, %s, %s, 
 					%s, %d, %d, %d, %s, %s, %s, %s, 
 					%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
 					%d, %d, %d, %d, %d, %d, %d, 
-					%d, %d )
+					%d, %d, %d )
 			", 
 			$analysis_index, $study_group_id, $domestic_intl, $indicator_val, $indicator_val_tt, $indicator, $measure_val, $measure,
 			$info_id_list, $info_id_list_hr, $duplicate_im, $study_design, $ea_direction, $duration, $type, $strategies,
 			$effectiveness_gen, $multi_component, $complexities, $participation_exposure, $evalpop, $subpopYN, $subpop, $result_pop_result["population_calc"],
 			$strategy_1, $strategy_1_text, $strategy_2, $strategy_2_text, $strategy_3, $strategy_3_text, $strategy_4, $strategy_4_text, $strategy_5, $strategy_5_text,
 			$hr_black_calc, $hr_asian_calc, $hr_nativeamerican_calc, $hr_pacificislander_calc, $hr_hispanic_calc, $hr_lowincome_calc, $representativeness_calc,
-			$potential_reach, $potential_hr_reach
+			$potential_reach, $potential_hr_reach, $stage
 		);
 		
 		$help_me = $wpdb->query( $spartacus );

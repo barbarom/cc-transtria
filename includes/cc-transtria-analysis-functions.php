@@ -866,7 +866,7 @@ function calculate_representativeness_ims( $all_ims ){
 
 	$reps = array(); //array to hold ALL IM values, if 1 does not occur
 	
-	//populate ipe_data_highest with highest percents;
+	//get representativeness values; analyze
 	foreach( $all_ims as $one_im ){
 		$this_rep = $one_im["ipe_representativeness"];
 		
@@ -891,6 +891,69 @@ function calculate_representativeness_ims( $all_ims ){
 	return 0;
 
 }
+
+/**
+ * Returns the Stage value for incoming IM data
+ *
+ * @param array. IM data for all IMs in a study group.
+ * @return int.
+*/ 
+function calculate_stage_ims( $all_ims ){
+
+	$sustainabilities = array(); //array to hold ALL IM values, if 1 does not occur
+	$pse_components = array(); //array to hold ALL IM values, if 1 does not occur
+	$policy_only_flag = false; //if true for JUST ONE IM, it's totally true for analysis
+	
+	//get all values for sustainability and pse_components for these IMs
+	foreach( $all_ims as $one_im ){
+		
+		$this_sustain = (int)$one_im["sustainability"];
+		
+		//arg, can be multiple (serialized)
+		$this_pse = unserialize( $one_im["pse_components"] );
+		
+		//policy only check
+		if( in_array( "Policy change", $this_pse ) && !( in_array( "Environment change", $this_pse ) ) && !( in_array( "Practice/System change", $this_pse ) ) ){
+			$policy_only_flag = true;
+		}
+		
+		foreach( $this_pse as $one_pse ){
+			array_push( $pse_components, $one_pse );
+		}
+	
+		//populate array for sustainability
+		array_push( $sustainabilities, $this_sustain );
+		
+
+	}
+	
+	//calculate stage
+	//999 = Insufficient information, if PSE component = 999 AND Plan for sustainability = 999 (for ALL Unique IDs in grouping)
+	if( ( count( array_unique( $pse_components ) ) === 1 && ( (int)end( $pse_components ) == 999 ) ) && 
+		( count( array_unique( $sustainabilities ) ) === 1 && ( (int)end( $sustainabilities ) == 999 ) ) ){
+		return 999; 
+	} 
+	//3 = Enforcement/ maintenance, else if Plan for Sustainability = 1 (for any Unique ID in grouping)
+	else if( in_array( 1, $sustainabilities ) ){
+		return 3; 
+	} 
+	//2 = Implementation, else if PSE Component practice change = 1 OR PSE Component environmental change = 1 (for any Unique ID in grouping)
+	else if( in_array( "Practice/System change", $pse_components ) || in_array( "Environment change", $pse_components ) ){
+		return 2; 
+	}
+	//1 = Adoption, else if PSE Component policy change = 1 AND PSE Component practice change = 2 (not in there 
+	//	AND PSE Component environmental change = (not in there) (for any Unique ID in grouping)
+	else if( $policy_only_flag == true ){
+		return 1; 
+	}
+	
+	
+	//else, return 0 (combo of 2s and 999s, TODO: Laura, what do we return in this case?)
+	return 0;
+
+}
+
+
 
 /**
  * Returns the Potential Population Reach value for incoming IM data
