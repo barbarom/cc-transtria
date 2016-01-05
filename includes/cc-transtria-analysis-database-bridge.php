@@ -1019,7 +1019,15 @@ function calc_and_set_dyads_primary_intermediate_analysis( $study_group_id ){
 	$intermediate_calcs = array();
 	$temp_vals = array();
 	
-	
+		
+	//Part I: remove all IM dyads w/ this study grouping id form intermediate table
+	$intermediate_del_row = $wpdb->delete( 
+		$wpdb->transtria_analysis_intermediate, 
+		array( 
+			'StudyGroupingID' => (int)$study_group_id
+		)
+	);
+		
 	//what's our highest index (for unique id int)?  //TODO: is there a better way for this?  OR does it even matter?
 	$index_sql = 
 		"
@@ -1048,14 +1056,6 @@ function calc_and_set_dyads_primary_intermediate_analysis( $study_group_id ){
 		$this_study_data = $study_data[ $new_study_id ];
 		//var_dump( $this_study_data );
 	
-		
-		//Part I: remove all IM dyads w/ this study id form intermediate table
-		$intermediate_del_row = $wpdb->delete( 
-			$wpdb->transtria_analysis_intermediate, 
-			array( 
-				'StudyID' => (int)$new_study_id
-			)
-		);
 		
 		
 		$info_id_count = 1; //reset info id count w each study
