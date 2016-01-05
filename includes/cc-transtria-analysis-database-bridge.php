@@ -1538,7 +1538,7 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 	/***** UPDATE Analysis table w/vars *****/
 	//calculate duration, duplicate, effectiveness_general for each unique im; INSERT INTO analysis table
 	foreach( $all_ims as $analysis_index => $one_im ){
-	
+		
 		$measure = $one_im[ "measure" ];
 		$measure_val = $one_im[ "measure_value" ];
 		
@@ -1748,10 +1748,7 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 		} else {
 			$effectiveness_hr = "outcome type: " . $this_outcome_type;
 		}
-	
-	
-	
-	
+		
 		//insert these hr values into analysis table
 		$spartacus_two = $wpdb->prepare(
 			"
@@ -1772,11 +1769,6 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 		
 		$help_me = $wpdb->query( $spartacus_two );
 		
-		
-		
-	
-	
-	
 	
 	}
 	
@@ -1838,6 +1830,17 @@ function recalc_analysis_vars_form_data( $study_group_id ){
 		$effect = $a_vals[ "net_effects" ];
 		$type = $a_vals[ "outcome_type" ];
 		$result_pop = $a_vals[ "result_population_result" ];
+		
+		//info for implementation
+		$stage = (int)$a_vals[ "stage" ];
+		$state = (int)$a_vals[ "state" ];
+		$quality = (int)$a_vals[ "quality" ];
+		$inclusiveness = (int)$a_vals[ "inclusiveness" ];
+		
+		//info for scale, hr scale, dose, pop impact, hr pop impact
+		$access = (int)$a_vals[ "access" ];
+		$size = (int)$a_vals[ "size" ];
+		$applicability = (int)$a_vals[ "applicability_hr_pops" ];
 		
 		//HR calc stuff
 		$which_info_ids = get_info_id_list_hr_studygroup( $study_group_id );
@@ -1904,10 +1907,23 @@ function recalc_analysis_vars_form_data( $study_group_id ){
 		
 		$new_effectiveness = calc_general_effectiveness_analysis( $design, $duration, $effect, $type );
 		
+		//var_dump( $this_info_id );
+		//implementation, implementation inclusiveness (based on analysis data set on screen)
+		$implementation = calculate_implementation( $stage, $state, $quality );
+		$implementation_inclusiveness = calculate_implementation_inclusiveness( $stage, $state, $quality, $inclusiveness );
+		
+		$scale = calculate_scale( $access, $size );
+		$hr_scale = calculate_hr_scale( $access, $size, $applicability );
+		
+	
 		//insert new vals by info_id
 		$data = array(
-			"effectiveness_general" => $new_effectiveness,
-			"effectiveness_hr" => $effectiveness_hr
+			"effectiveness_general" 		=> $new_effectiveness,
+			"effectiveness_hr" 				=> $effectiveness_hr,
+			"implementation"				=> $implementation,
+			"implementation_inclusiveness"	=> $implementation_inclusiveness,
+			"scale"							=> $scale,
+			"hr_scale"						=> $hr_scale
 			);
 			
 		$where = array( 

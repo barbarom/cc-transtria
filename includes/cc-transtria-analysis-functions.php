@@ -954,6 +954,7 @@ function calculate_stage_ims( $all_ims ){
 }
 
 
+/******* SECONDARY ANALYSIS CALCS (from input data on Analysis tab) ***/
 
 /**
  * Returns the Potential Population Reach value for incoming IM data
@@ -1043,6 +1044,106 @@ function calculate_applicability_hr_pops_ims( $all_ims ){
 	
 	//else, return 0 (combo of 2s and 999s, TODO: Laura, what do we return in this case?)
 	return 0;
+
+}
+
+/** 
+ * Returns inclusiveness measure
+ *
+ * @param int, int, int. Stage, State, Quality
+ * @return int.
+ */
+function calculate_implementation( $stage, $state, $quality ) {
+
+	//999 = Insufficient information, if Stage = 999 OR State = 999  OR Quality = 999 
+	if( ( $stage == 999 ) || ( $state == 999 ) || ( $quality == 999 ) ){
+		return 999;
+	} 
+	//1 = High, else if Stage = 2 or 3 AND State = 1 AND Quality = 1
+	else if( ( ( $stage == 2 ) || ( $stage == 3 ) ) && ( $state == 1 ) && ( $quality == 1 ) ){
+		return 1;
+	} 
+	//2 = Weak, else if Stage = 1 OR State = 2 OR Quality = 2
+	else if( ( $stage == 1 ) || ( $state == 2 ) || ( $quality == 2 ) ){
+		return 2;
+	} 
+	
+	return 999; //should never happen, but if it does there's insufficient info SOMEwhere, amiright?
+
+}
+
+/** 
+ * Returns inclusiveness-inclusiveness measure
+ *
+ * @param int, int, int. Stage, State, Quality
+ * @return int.
+ */
+function calculate_implementation_inclusiveness( $stage, $state, $quality, $inclusiveness ) {
+
+	//999 = Insufficient information, if Stage = 999 OR State = 999 OR Quality = 999 OR Inclusiveness = 999 
+	if( ( $stage == 999 ) || ( $state == 999 ) || ( $quality == 999 ) || ( $inclusiveness == 999 ) ){
+		return 999;
+	} 
+	//1 = High, else if Stage = 2 or 3 AND State = 1 AND Quality = 1 AND Inclusiveness = 1 or 2
+	else if( ( ( $stage == 2 ) || ( $stage == 3 ) ) && ( $state == 1 ) && ( $quality == 1 ) && ( ( $inclusiveness == 1 ) || ( $inclusiveness == 2 ) ) ){
+		return 1;
+	} 
+	//2 = Weak, else if Stage = 1 OR State = 2 OR Quality = 2 OR Inclusiveness = 3
+	else if( ( $stage == 1 ) || ( $state == 2 ) || ( $quality == 2 ) || ( $inclusiveness == 2 ) ){
+		return 2;
+	} 
+	
+	return 999; //should never happen, but if it does there's insufficient info SOMEwhere, amiright?
+
+}
+
+/** 
+ * Returns scale measure
+ *
+ * @param int, int, int. Stage, State, Quality
+ * @return int.
+ */
+function calculate_scale( $access, $size ) {
+
+	//999 = Insufficient information, if Access = 999  OR Size = 999 
+	if( ( $access == 999 ) || ( $size == 999 ) ){
+		return 999;
+	} 
+	//1 = Large, else if Access = 1 AND Size = 1
+	else if( ( $access == 1 ) && ( $size == 1 ) ){
+		return 1;
+	} 
+	//2 = Small, else if Access = 2 OR Size = 2
+	else if( ( $access == 2 ) || ( $size == 2 ) ){
+		return 2;
+	} 
+	
+	return 999; //should never happen, but if it does there's insufficient info SOMEwhere, amiright?
+
+}
+
+/** 
+ * Returns hr scale measure
+ *
+ * @param int, int, int. Stage, State, Quality
+ * @return int.
+ */
+function calculate_hr_scale( $access, $size, $applicability ) {
+
+	//999 = Insufficient information, if Access = 999 OR Size = 999 OR Applicability = 999
+	if( ( $access == 999 ) || ( $size == 999 ) || ( $applicability == 999 ) ){
+		return 999;
+	} 
+	//1 = Large, else if Access = 1 AND Size = 1 AND Applicability = 1
+	else if( ( $access == 1 ) && ( $size == 1 ) && ( $applicability == 1 ) ){
+		return 1;
+	} 
+	//2 = Small, else if (Access = 2 OR Size = 2) AND Applicability = 1
+	else if( ( ( $access == 2 ) || ( $size == 2 ) ) && ( $applicability == 1 ) ){
+		return 2;
+	} 
+	
+	return 999; //should never happen, but if it does there's insufficient info SOMEwhere, amiright?
 
 }
 

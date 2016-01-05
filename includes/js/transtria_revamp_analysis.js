@@ -118,6 +118,26 @@ function get_vars_by_grouping(){
 	which_tr_parent_analysis_effect = jQuery("table#analysis_vars_effect tr#data_parent");
 	which_tr_parent_analysis_pops = jQuery("table#analysis_vars_population tr#data_parent");
 	which_tr_parent_effectiveness_hr = jQuery("table#analysis_vars_effectiveness_hr tr#data_parent");
+	which_tr_parent_domestic = jQuery("table#analysis_vars_domestic tr#data_parent");
+	which_tr_parent_multi_component = jQuery("table#analysis_vars_multi_component tr#data_parent");
+	which_tr_parent_complex = jQuery("table#analysis_vars_complex tr#data_parent");
+	which_tr_parent_participation = jQuery("table#analysis_vars_participation tr#data_parent");
+	
+	which_tr_parent_hr_black = jQuery("table#analysis_vars_hr_black tr#data_parent");
+	which_tr_parent_hr_asian = jQuery("table#analysis_vars_hr_asian tr#data_parent");
+	which_tr_parent_hr_nativeamerican = jQuery("table#analysis_vars_hr_nativeamerican tr#data_parent");
+	which_tr_parent_hr_pacisland = jQuery("table#analysis_vars_hr_pacificislander tr#data_parent");
+	which_tr_parent_hr_hispanic = jQuery("table#analysis_vars_hr_hispanic tr#data_parent");
+	which_tr_parent_hr_lowincome = jQuery("table#analysis_vars_hr_lowincome tr#data_parent");
+	
+	which_tr_parent_popreach = jQuery("table#analysis_vars_popreach tr#data_parent");
+	which_tr_parent_hr_popreach = jQuery("table#analysis_vars_hr_popreach tr#data_parent");
+	
+	which_tr_parent_state = jQuery("table#analysis_vars_state tr#data_parent");
+	which_tr_parent_quality = jQuery("table#analysis_vars_quality tr#data_parent");
+	which_tr_parent_inclusiveness = jQuery("table#analysis_vars_inclusiveness tr#data_parent");
+	which_tr_parent_access = jQuery("table#analysis_vars_access tr#data_parent");
+	which_tr_parent_size = jQuery("table#analysis_vars_size tr#data_parent");
 	
 	//ajax data
 	var ajax_action = 'get_im_dyads_and_data_by_group';
@@ -142,7 +162,7 @@ function get_vars_by_grouping(){
 			usrmsgshell.fadeIn();
 			spinny.fadeIn();
 			
-			//clear taable
+			//clear tables: intermediate
 			jQuery("table#intermediate_vars_im tr").not(".no_remove").remove();
 			jQuery("table#intermediate_vars_direction tr").not(".no_remove").remove();
 			jQuery("table#intermediate_vars_design tr").not(".no_remove").remove();
@@ -156,6 +176,7 @@ function get_vars_by_grouping(){
 			jQuery("table#intermediate_vars_opposition tr").not(".no_remove").remove();
 			jQuery("table#intermediate_vars_sustainability tr").not(".no_remove").remove();
 			
+			//clear tables: analysis
 			jQuery("table#analysis_vars_im tr").not(".no_remove").remove();
 			jQuery("table#analysis_vars_effect tr").not(".no_remove").remove();
 			jQuery("table#analysis_vars_population tr").not(".no_remove").remove();
@@ -164,6 +185,25 @@ function get_vars_by_grouping(){
 			jQuery("table#analysis_vars_multi_component tr").not(".no_remove").remove();
 			jQuery("table#analysis_vars_complex tr").not(".no_remove").remove();
 			jQuery("table#analysis_vars_participation tr").not(".no_remove").remove();
+			
+			//clear table: analysis hr populations
+			jQuery("table#analysis_vars_hr_black tr").not(".no_remove").remove();
+			jQuery("table#analysis_vars_hr_asian tr").not(".no_remove").remove();
+			jQuery("table#analysis_vars_hr_nativeamerican tr").not(".no_remove").remove();
+			jQuery("table#analysis_vars_hr_pacificislander tr").not(".no_remove").remove();
+			jQuery("table#analysis_vars_hr_hispanic tr").not(".no_remove").remove();
+			jQuery("table#analysis_vars_hr_lowincome tr").not(".no_remove").remove();
+			
+			//population reaches
+			jQuery("table#analysis_vars_popreach tr").not(".no_remove").remove();
+			jQuery("table#analysis_vars_hr_popreach tr").not(".no_remove").remove();
+			
+			//state, quality, inclusiveness
+			jQuery("table#analysis_vars_state tr").not(".no_remove").remove();
+			jQuery("table#analysis_vars_quality tr").not(".no_remove").remove();
+			jQuery("table#analysis_vars_inclusiveness tr").not(".no_remove").remove();
+			jQuery("table#analysis_vars_access tr").not(".no_remove").remove();
+			jQuery("table#analysis_vars_size tr").not(".no_remove").remove();
 			
 		}
 	}).success( function( data ) {
@@ -192,6 +232,29 @@ function get_vars_by_grouping(){
 			var txt_a_effects = "";
 			var txt_a_effects_hr = "";
 			var txt_a_pops = "";
+			var txt_a_domestic = "";
+			var txt_a_multicomp = "";
+			var txt_a_complex = "";
+			var txt_a_participation = "";
+			
+			var txt_a_hr_black = "";
+			var txt_a_hr_asian = "";
+			var txt_a_hr_nativeamerican = "";
+			var txt_a_hr_pacisland = "";
+			var txt_a_hr_hispanic = "";
+			var txt_a_hr_lowincome = "";
+			
+			//population reaches
+			var txt_a_popreach = "";
+			var txt_a_hr_popreach = "";
+			
+			//editables: stage, state, quality, inclusiveness
+			var txt_a_stage = "";
+			var txt_a_state = "";
+			var txt_a_quality = "";
+			var txt_a_inclusiveness = "";
+			var txt_a_access = "";
+			var txt_a_size = "";
 			
 			
 			//for each study
@@ -410,8 +473,7 @@ function get_vars_by_grouping(){
 						
 						txt_a_im += "</tr>";
 						
-						//TODO: populate the net effects table
-						
+						//populate the net effects table
 						txt_a_effects += "<tr>";
 						txt_a_effects += "<td class='analysis_id'>" + this.info_id + "</td>";
 						txt_a_effects += "<td>" + this.indicator + "</td>";
@@ -453,7 +515,7 @@ function get_vars_by_grouping(){
 						txt_a_effects_hr += "</tr>";
 						
 						
-						//TODO: populate the populations table
+						//populate the populations table
 						txt_a_pops += "<tr>";
 						txt_a_pops += "<td class='analysis_id'>" + this.info_id + "</td>";
 						txt_a_pops += "<td>" + this.info_id_list_hr + "</td>";
@@ -474,8 +536,208 @@ function get_vars_by_grouping(){
 						}
 						//txt_a_pops += "<td>" + this.result_subpopulation + "</td>";
 						txt_a_pops += "<td>" + this.result_population_result + "</td>";
-						
 						txt_a_pops += "</tr>";
+						
+						//domestic
+						txt_a_domestic += "<tr>";
+						txt_a_domestic += "<td class='analysis_id'>" + this.info_id + "</td>";
+						txt_a_domestic += "<td>" + this.domestic_international + "</td>";
+						txt_a_domestic += "<td>" + domestic_lookup( this.domestic_international ) + "</td>";
+						txt_a_domestic += "</tr>";
+						
+						//multicomponent //which_tr_parent_multi_component
+						txt_a_multicomp += "<tr>";
+						txt_a_multicomp += "<td class='analysis_id'>" + this.info_id + "</td>";
+						txt_a_multicomp += "<td>" + this.multi_component + "</td>";
+						txt_a_multicomp += "<td>" + multi_component_lookup( this.multi_component ) + "</td>";
+						txt_a_multicomp += "</tr>";
+						
+						//complex_lookup
+						txt_a_complex += "<tr>";
+						txt_a_complex += "<td class='analysis_id'>" + this.info_id + "</td>";
+						txt_a_complex += "<td>" + this.complexity + "</td>";
+						txt_a_complex += "<td>" + complex_lookup( this.complexity ) + "</td>";
+						txt_a_complex += "</tr>";
+						
+						//participation
+						txt_a_participation += "<tr>";
+						txt_a_participation += "<td class='analysis_id'>" + this.info_id + "</td>";
+						txt_a_participation += "<td>" + this.participation_exposure + "</td>";
+						txt_a_participation += "<td>" + participation_lookup( this.participation_exposure ) + "</td>";
+						txt_a_participation += "</tr>";
+						
+						//hr population: black
+						txt_a_hr_black += "<tr>";
+						txt_a_hr_black += "<td class='analysis_id'>" + this.info_id + "</td>";
+						txt_a_hr_black += "<td>" + this.hr_black + "</td>";
+						txt_a_hr_black += "<td>" + hr_population_lookup( this.hr_black ) + "</td>";
+						txt_a_hr_black += "</tr>";
+						
+						//hr population: asian
+						txt_a_hr_asian += "<tr>";
+						txt_a_hr_asian += "<td class='analysis_id'>" + this.info_id + "</td>";
+						txt_a_hr_asian += "<td>" + this.hr_asian + "</td>";
+						txt_a_hr_asian += "<td>" + hr_population_lookup( this.hr_asian ) + "</td>";
+						txt_a_hr_asian += "</tr>";
+						
+						//hr population: native american
+						txt_a_hr_nativeamerican += "<tr>";
+						txt_a_hr_nativeamerican += "<td class='analysis_id'>" + this.info_id + "</td>";
+						txt_a_hr_nativeamerican += "<td>" + this.hr_nativeamerican + "</td>";
+						txt_a_hr_nativeamerican += "<td>" + hr_population_lookup( this.hr_nativeamerican ) + "</td>";
+						txt_a_hr_nativeamerican += "</tr>";
+						
+						//hr population: pacific islander
+						txt_a_hr_pacisland += "<tr>";
+						txt_a_hr_pacisland += "<td class='analysis_id'>" + this.info_id + "</td>";
+						txt_a_hr_pacisland += "<td>" + this.hr_pacificislander + "</td>";
+						txt_a_hr_pacisland += "<td>" + hr_population_lookup( this.hr_pacificislander ) + "</td>";
+						txt_a_hr_pacisland += "</tr>";
+						
+						//hr population: hispanic
+						txt_a_hr_hispanic += "<tr>";
+						txt_a_hr_hispanic += "<td class='analysis_id'>" + this.info_id + "</td>";
+						txt_a_hr_hispanic += "<td>" + this.hr_hispanic + "</td>";
+						txt_a_hr_hispanic += "<td>" + hr_population_lookup( this.hr_hispanic ) + "</td>";
+						txt_a_hr_hispanic += "</tr>";
+						
+						//hr population: low income
+						txt_a_hr_lowincome += "<tr>";
+						txt_a_hr_lowincome += "<td class='analysis_id'>" + this.info_id + "</td>";
+						txt_a_hr_lowincome += "<td>" + this.hr_lowerincome + "</td>";
+						txt_a_hr_lowincome += "<td>" + hr_population_lookup( this.hr_lowerincome ) + "</td>";
+						txt_a_hr_lowincome += "</tr>";
+						
+						//population reach
+						txt_a_popreach += "<tr>";
+						txt_a_popreach += "<td class='analysis_id'>" + this.info_id + "</td>";
+						txt_a_popreach += "<td>" + this.potential_pop_reach + "</td>";
+						txt_a_popreach += "<td>" + popreach_lookup( this.potential_pop_reach ) + "</td>";
+						txt_a_popreach += "</tr>";
+						
+						//hr population: low income
+						txt_a_hr_popreach += "<tr>";
+						txt_a_hr_popreach += "<td class='analysis_id'>" + this.info_id + "</td>";
+						txt_a_hr_popreach += "<td>" + this.potential_hr_pop_reach + "</td>";
+						txt_a_hr_popreach += "<td>" + hr_population_lookup( this.potential_hr_pop_reach ) + "</td>"; //hr pops has same vals/descr as hr popreach!
+						txt_a_hr_popreach += "</tr>";
+						
+						//state:
+						txt_a_state += "<tr>";
+						txt_a_state += "<td class='analysis_id'>" + this.info_id + "</td>";
+						//dropdown
+						txt_a_state += "<td><select class='state'><option value='-1'> -- Select State -- </option>";
+						var state_var = this.state;
+						jQuery.each( transtria_ajax.state_lookup, function( i, v ){
+							//console.log( v.descr );
+							if( parseInt( state_var ) == parseInt( v.value ) ){
+								var selected = true;
+							} else {
+								var selected = false;
+							}
+							txt_a_state += "<option value='" + v.value + "'";
+							//if we are on our selected value
+							if( selected == true ){
+								txt_a_state += " selected='selected' ";
+							}
+							txt_a_state += ">" + v.value + " - " + v.descr + "</option>";
+						});
+						txt_a_state += "</select></td>";
+						txt_a_state += "</tr>";
+						
+						//quality
+						txt_a_quality += "<tr>";
+						txt_a_quality += "<td class='analysis_id'>" + this.info_id + "</td>";
+						//dropdown
+						txt_a_quality += "<td><select class='quality'><option value='-1'> -- Select Quality -- </option>";
+						var quality_var = this.quality;
+						jQuery.each( transtria_ajax.quality_lookup, function( i, v ){
+							//console.log( v.descr );
+							if( parseInt( quality_var ) == parseInt( v.value ) ){
+								var selected = true;
+							} else {
+								var selected = false;
+							}
+							txt_a_quality += "<option value='" + v.value + "'";
+							//if we are on our selected value
+							if( selected == true ){
+								txt_a_quality += " selected='selected' ";
+							}
+							txt_a_quality += ">" + v.value + " - " + v.descr + "</option>";
+						});
+						txt_a_quality += "</select></td>";
+						txt_a_quality += "</tr>";
+						
+						//inclusiveness
+						txt_a_inclusiveness += "<tr>";
+						txt_a_inclusiveness += "<td class='analysis_id'>" + this.info_id + "</td>";
+						//dropdown
+						txt_a_inclusiveness += "<td><select class='inclusiveness'><option value='-1'> -- Select Inclusiveness -- </option>";
+						var inclu_var = this.inclusiveness;
+						jQuery.each( transtria_ajax.inclusiveness_lookup, function( i, v ){
+							//console.log( v.descr );
+							if( parseInt( inclu_var ) == parseInt( v.value ) ){
+								var selected = true;
+							} else {
+								var selected = false;
+							}
+							txt_a_inclusiveness += "<option value='" + v.value + "'";
+							//if we are on our selected value
+							if( selected == true ){
+								txt_a_inclusiveness += " selected='selected' ";
+							}
+							txt_a_inclusiveness += ">" + v.value + " - " + v.descr + "</option>";
+						});
+						txt_a_inclusiveness += "</select></td>";
+						txt_a_inclusiveness += "</tr>";
+						
+						//access
+						txt_a_access += "<tr>";
+						txt_a_access += "<td class='analysis_id'>" + this.info_id + "</td>";
+						//dropdown
+						txt_a_access += "<td><select class='access'><option value='-1'> -- Select Access -- </option>";
+						var access_var = this.access;
+						jQuery.each( transtria_ajax.access_lookup, function( i, v ){
+							//console.log( v.descr );
+							if( parseInt( access_var ) == parseInt( v.value ) ){
+								var selected = true;
+							} else {
+								var selected = false;
+							}
+							txt_a_access += "<option value='" + v.value + "'";
+							//if we are on our selected value
+							if( selected == true ){
+								txt_a_access += " selected='selected' ";
+							}
+							txt_a_access += ">" + v.value + " - " + v.descr + "</option>";
+						});
+						txt_a_access += "</select></td>";
+						txt_a_access += "</tr>";
+						
+						//size
+						txt_a_size += "<tr>";
+						txt_a_size += "<td class='analysis_id'>" + this.info_id + "</td>";
+						//dropdown
+						txt_a_size += "<td><select class='size'><option value='-1'> -- Select Size -- </option>";
+						var size_var = this.size;
+						jQuery.each( transtria_ajax.size_lookup, function( i, v ){
+							//console.log( v.descr );
+							if( parseInt( size_var ) == parseInt( v.value ) ){
+								var selected = true;
+							} else {
+								var selected = false;
+							}
+							txt_a_size += "<option value='" + v.value + "'";
+							//if we are on our selected value
+							if( selected == true ){
+								txt_a_size += " selected='selected' ";
+							}
+							txt_a_size += ">" + v.value + " - " + v.descr + "</option>";
+						});
+						txt_a_size += "</select></td>";
+						txt_a_size += "</tr>";
+						
+						
 						
 						
 						
@@ -523,6 +785,28 @@ function get_vars_by_grouping(){
 			which_tr_parent_analysis_effect.after( txt_a_effects );
 			which_tr_parent_analysis_pops.after( txt_a_pops );
 			which_tr_parent_effectiveness_hr.after( txt_a_effects_hr );
+			which_tr_parent_domestic.after( txt_a_domestic );
+			which_tr_parent_multi_component.after( txt_a_multicomp );
+			which_tr_parent_complex.after( txt_a_complex );
+			which_tr_parent_participation.after( txt_a_participation );
+			
+			which_tr_parent_hr_black.after( txt_a_hr_black );
+			which_tr_parent_hr_asian.after( txt_a_hr_asian );
+			which_tr_parent_hr_nativeamerican.after( txt_a_hr_nativeamerican );
+			which_tr_parent_hr_pacisland.after( txt_a_hr_pacisland );
+			which_tr_parent_hr_hispanic.after( txt_a_hr_hispanic );
+			which_tr_parent_hr_lowincome.after( txt_a_hr_lowincome );
+			
+			which_tr_parent_popreach.after( txt_a_popreach );
+			which_tr_parent_hr_popreach.after( txt_a_hr_popreach );
+		
+			which_tr_parent_state.after( txt_a_state );
+			which_tr_parent_quality.after( txt_a_quality );
+			which_tr_parent_inclusiveness.after( txt_a_inclusiveness );
+			which_tr_parent_access.after( txt_a_access );
+			which_tr_parent_size.after( txt_a_size );
+			
+			
 			
 		}
 		
@@ -703,6 +987,7 @@ function save_analysis_vars(){
 	//which analysis save button did we touch?
 	var which_var_raw = jQuery(this).attr('data-whichvars'); //should match the select(s) that need savin'
 	
+	//save BOTH designs at once
 	//tODO: make this more efficient on the front-end.
 	if( which_var_raw == "analysis_study_design" ){
 		var which_vars = ["analysis_study_design", "analysis_study_design_hr"];
@@ -723,7 +1008,8 @@ function save_analysis_vars(){
 	var all_save_vars = {};
 	
 	if( which_action == "save_analysis_vars" ){
-		//get all the selects of this class
+	
+		//get all the selects of this class (b/c multiple analysis ids)
 		jQuery.each( jQuery('select.' + which_vars ), function(){
 			//get analysis id
 			which_id = jQuery(this).parent('td').siblings('td.analysis_id').html();
@@ -813,12 +1099,107 @@ function save_analysis_vars(){
 }
 
 
+/** LOOKUPS for display ***/
+function domestic_lookup( domestic_value ){
+	switch ( parseInt( domestic_value ) ){
+		case 3:
+			return "Both";
+			break;
+		case 1:
+			return "D";
+			break;
+		case 2:
+			return "I";
+			break;
+		default:
+			return domestic_value;
+			break;
+		
+	}
+}
 
+//multi_component_lookup
+function multi_component_lookup( incoming_value ){
+	switch ( parseInt( incoming_value ) ){
+		case 1:
+			return "Yes";
+			break;
+		case 0:
+		default:
+			return "No";
+			break;		
+	}
+}
 
+//complex lookup
+function complex_lookup( incoming_value ){
+	switch ( parseInt( incoming_value ) ){
+		case 1:
+			return "Yes";
+			break;
+		case 0:
+			return "No";
+			break;		
+		case 999:
+		default:
+			return "Insufficient Information";
+			break;	
+	}
+}
 
+//participation lookup
+function participation_lookup( incoming_value ){
+	switch ( parseInt( incoming_value ) ){
+		case 1:
+			return "High";
+			break;
+		case 2:
+			return "Low";
+			break;		
+		case 999:
+		default:
+			return "Insufficient Information";
+			break;	
+	}
+}
 
+//hr population lookup
+function hr_population_lookup( incoming_value ){
+	switch ( parseInt( incoming_value ) ){
+		case 1:
+			return "High";
+			break;
+		case 2:
+			return "Moderate";
+			break;	
+		case 3:
+			return "Low";
+			break;	
+		case 4:
+			return "No";
+			break;		
+		case 999:
+		default:
+			return "Insufficient Information";
+			break;	
+	}
+}
 
-
+//population reach lookup
+function popreach_lookup( incoming_value ){
+	switch ( parseInt( incoming_value ) ){
+		case 1:
+			return "High";
+			break;
+		case 2:
+			return "Low";
+			break;		
+		case 999:
+		default:
+			return "Insufficient Information";
+			break;	
+	}
+}
 
 
 

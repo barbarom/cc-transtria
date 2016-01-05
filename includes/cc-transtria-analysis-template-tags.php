@@ -265,7 +265,7 @@ function cc_transtria_render_analysis_page(){
 			
 				<h3 id="analysis_vars_header_text">Analysis Variables</h3>
 				
-				<h4>Indicator-Measure Dyad(s):</h4>
+				<h4>Indicator-Measure Dyad:</h4>
 				<a id="hide_analysis_im_table" class="button" data-whichlabel="ANALYSIS IDs" data-whichtable="analysis_vars_im">HIDE ANALYSIS IDs</a>
 				<table id="analysis_vars_im">
 					<tr class="no_remove">
@@ -351,7 +351,7 @@ function cc_transtria_render_analysis_page(){
 				<a id="hide_analysis_hrpops_table" class="button">HIDE HR POPS</a>
 				<table id="analysis_vars_effectiveness_hr">
 					<tr class="no_remove">
-						<th>Analysis ID (Study ID _ seq _ unique ID)</th>
+						<th>Analysis ID</th>
 						<th>Population or Subpopulation</th>
 						<th>Indicator</th>
 						<th>Measure</th>		
@@ -364,7 +364,9 @@ function cc_transtria_render_analysis_page(){
 				<h4>Domestic/International:</h4> 
 				<table id="analysis_vars_domestic">
 					<tr class="no_remove">
-					
+						<th>Analysis ID</th>
+						<th>Value</th>
+						<th>Description</th>	
 					</tr>
 					<tr id="data_parent" class="no_remove"></tr>
 				
@@ -373,7 +375,9 @@ function cc_transtria_render_analysis_page(){
 				<h4>Multi-Component:</h4> 
 				<table id="analysis_vars_multi_component">
 					<tr class="no_remove">
-					
+						<th>Analysis ID</th>
+						<th>Value</th>
+						<th>Description</th>
 					</tr>
 					<tr id="data_parent" class="no_remove"></tr>
 				
@@ -382,7 +386,9 @@ function cc_transtria_render_analysis_page(){
 				<h4>Complex:</h4> 
 				<table id="analysis_vars_complex">
 					<tr class="no_remove">
-					
+						<th>Analysis ID</th>
+						<th>Value</th>
+						<th>Description</th>				
 					</tr>
 					<tr id="data_parent" class="no_remove"></tr>
 				
@@ -391,11 +397,166 @@ function cc_transtria_render_analysis_page(){
 				<h4>Participation or Exposure:</h4> 
 				<table id="analysis_vars_participation">
 					<tr class="no_remove">
-					
+						<th>Analysis ID</th>
+						<th>Value</th>
+						<th>Description</th>
 					</tr>
 					<tr id="data_parent" class="no_remove"></tr>
 				
 				</table>
+				
+				<h4>High-risk African American population:</h4> 
+				<table id="analysis_vars_hr_black">
+					<tr class="no_remove">
+						<th>Analysis ID</th>
+						<th>Value</th>
+						<th>Description</th>
+					</tr>
+					<tr id="data_parent" class="no_remove"></tr>
+				</table>
+				
+				<h4>High-risk Asian population:</h4> 
+				<table id="analysis_vars_hr_asian">
+					<tr class="no_remove">
+						<th>Analysis ID</th>
+						<th>Value</th>
+						<th>Description</th>
+					</tr>
+					<tr id="data_parent" class="no_remove"></tr>
+				</table>
+				
+				<h4>High-risk Native American/ Alaskan Native population:</h4> 
+				<table id="analysis_vars_hr_nativeamerican">
+					<tr class="no_remove">
+						<th>Analysis ID</th>
+						<th>Value</th>
+						<th>Description</th>
+					</tr>
+					<tr id="data_parent" class="no_remove"></tr>
+				</table>
+				
+				<h4>High-risk Native Hawaiian/ Pacific Islander population:</h4> 
+				<table id="analysis_vars_hr_pacificislander">
+					<tr class="no_remove">
+						<th>Analysis ID</th>
+						<th>Value</th>
+						<th>Description</th>
+					</tr>
+					<tr id="data_parent" class="no_remove"></tr>
+				</table>
+				
+				<h4>High-risk Hispanic/ Latino population:</h4> 
+				<table id="analysis_vars_hr_hispanic">
+					<tr class="no_remove">
+						<th>Analysis ID</th>
+						<th>Value</th>
+						<th>Description</th>
+					</tr>
+					<tr id="data_parent" class="no_remove"></tr>
+				</table>
+				
+				<h4>High-risk Lower Income population:</h4> 
+				<table id="analysis_vars_hr_lowincome">
+					<tr class="no_remove">
+						<th>Analysis ID</th>
+						<th>Value</th>
+						<th>Description</th>
+					</tr>
+					<tr id="data_parent" class="no_remove"></tr>
+				</table>
+				
+				<h4>Potential Population Reach:</h4> 
+				<table id="analysis_vars_popreach">
+					<tr class="no_remove">
+						<th>Analysis ID</th>
+						<th>Value</th>
+						<th>Description</th>
+					</tr>
+					<tr id="data_parent" class="no_remove"></tr>
+				</table>
+				
+				<h4>Potential High-risk Population Reach:</h4> 
+				<table id="analysis_vars_hr_popreach">
+					<tr class="no_remove">
+						<th>Analysis ID</th>
+						<th>Value</th>
+						<th>Description</th>
+					</tr>
+					<tr id="data_parent" class="no_remove"></tr>
+				</table>
+				
+				<h4>State:</h4> 
+				<table id="analysis_vars_state">
+					<tr class="no_remove">
+						<th>Analysis ID</th>
+						<th>Value</th>
+					</tr>
+					<tr id="data_parent" class="no_remove"></tr>
+				</table>
+				<span>
+					<a id="save_analysis_state" class="button alignright analysis_save" data-whichvars="state" data-whichsave="save_analysis_vars" data-whichmsg="state_msg">SAVE STATE</a>
+					<div id="state_msg" class="save_analysis_msg"></div>
+				</span>
+				<br />
+				
+				<h4>Quality:</h4> 
+				<table id="analysis_vars_quality">
+					<tr class="no_remove">
+						<th>Analysis ID</th>
+						<th>Value</th>
+					</tr>
+					<tr id="data_parent" class="no_remove"></tr>
+				</table>
+				<span>
+					<a id="save_analysis_quality" class="button alignright analysis_save" data-whichvars="quality" data-whichsave="save_analysis_vars" data-whichmsg="quality_msg">SAVE QUALITY</a>
+					<div id="quality_msg" class="save_analysis_msg"></div>
+				</span>
+				<br />
+				
+				<h4>Inclusiveness:</h4> 
+				<table id="analysis_vars_inclusiveness">
+					<tr class="no_remove">
+						<th>Analysis ID</th>
+						<th>Value</th>
+					</tr>
+					<tr id="data_parent" class="no_remove"></tr>
+				</table>
+				<span>
+					<a id="save_analysis_inclusiveness" class="button alignright analysis_save" data-whichvars="inclusiveness" data-whichsave="save_analysis_vars" data-whichmsg="inclusiveness_msg">SAVE INCLUSIVENESSS</a>
+					<div id="inclusiveness_msg" class="save_analysis_msg"></div>
+				</span>
+				<br />
+				
+				
+				
+				
+				<h4>Access:</h4> 
+				<table id="analysis_vars_access">
+					<tr class="no_remove">
+						<th>Analysis ID</th>
+						<th>Value</th>
+					</tr>
+					<tr id="data_parent" class="no_remove"></tr>
+				</table>
+				<span>
+					<a id="save_analysis_access" class="button alignright analysis_save" data-whichvars="access" data-whichsave="save_analysis_vars" data-whichmsg="access_msg">SAVE ACCESS</a>
+					<div id="access_msg" class="save_analysis_msg"></div>
+				</span>
+				<br />
+				
+				<h4>Size:</h4> 
+				<table id="analysis_vars_size">
+					<tr class="no_remove">
+						<th>Analysis ID</th>
+						<th>Value</th>
+					</tr>
+					<tr id="data_parent" class="no_remove"></tr>
+				</table>
+				<span>
+					<a id="save_analysis_size" class="button alignright analysis_save" data-whichvars="size" data-whichsave="save_analysis_vars" data-whichmsg="size_msg">SAVE SIZE</a>
+					<div id="size_msg" class="save_analysis_msg"></div>
+				</span>
+				<br />
 				
 			</div>
 		

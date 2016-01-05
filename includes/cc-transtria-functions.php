@@ -1088,3 +1088,130 @@ function cc_transtria_get_basic_pops_types(){
 	return array( 'tp', 'ipe', 'ipu', 'ese', 'esu' );
 
 }
+
+/**
+ * State lookup table
+ *
+ * @return array.  Array of values and descriptions
+ */
+function cc_transtria_state_lookup(){
+
+	return array( 
+		0 => array( 
+			"value" => 1,
+			"descr" => "Fully complete"
+			),
+		1 => array( 
+			"value" => 2,
+			"descr" => "Partially complete"
+			),
+		2 => array( 
+			"value" => 999,
+			"descr" => "Insufficient Information"
+			),
+		
+		);
+
+}
+
+/**
+ * Quality lookup table
+ *
+ * @return array.  Array of values and descriptions
+ */
+function cc_transtria_quality_lookup(){
+
+	return array( 
+		0 => array( 
+			"value" => 1,
+			"descr" => "High"
+			),
+		1 => array( 
+			"value" => 2,
+			"descr" => "Low"
+			),
+		2 => array( 
+			"value" => 999,
+			"descr" => "Insufficient Information"
+			),
+		
+		);
+
+}
+
+/**
+ * Inclusiveness lookup table
+ *
+ * @return array.  Array of values and descriptions
+ */
+function cc_transtria_inclusiveness_lookup(){
+
+	return array( 
+		0 => array( 
+			"value" => 1,
+			"descr" => "Full"
+			),
+		1 => array( 
+			"value" => 2,
+			"descr" => "Partial"
+			),
+		2 => array( 
+			"value" => 3,
+			"descr" => "No"
+			),
+		3 => array( 
+			"value" => 999,
+			"descr" => "Insufficient Information"
+			),
+		
+		);
+
+}
+
+/**
+ * Access lookup table
+ *
+ * @return array.  Array of values and descriptions
+ */
+function cc_transtria_access_lookup(){
+
+	return array( 
+		0 => array( 
+			"value" => 1,
+			"descr" => "Strong"
+			),
+		1 => array( 
+			"value" => 2,
+			"descr" => "Weak"
+			),
+		3 => array( 
+			"value" => 999,
+			"descr" => "Insufficient Information"
+			),
+		);
+
+}
+
+/**
+ * Access lookup table
+ *
+ * @return array.  Array of values and descriptions
+ */
+function cc_transtria_size_lookup(){
+
+	return array( 
+		0 => array( 
+			"value" => 1,
+			"descr" => "Large"
+			),
+		1 => array( 
+			"value" => 2,
+			"descr" => "Small"
+			),
+		3 => array( 
+			"value" => 999,
+			"descr" => "Insufficient Information"
+			),
+		);
+
+}
