@@ -80,7 +80,20 @@ function cc_transtria_render_analysis_page(){
 					<tr class="no_remove">
 						<th>Study ID</th>
 						<th>Study Design</th>
-						<th>Study Design, Other</th>		
+						<th>Study Design, Other</th>	
+					</tr>
+					<tr id="data_parent" class="no_remove"></tr>
+				
+				</table>
+				
+				<h4>Intervention Duration</h4>
+				<a id="hide_duration_table" class="button" data-whichtable="intermediate_vars_duration" data-whichlabel="INTERVENTION DURATION">HIDE INTERVENTION DURATION</a>
+				<table id="intermediate_vars_duration">
+					<tr class="no_remove">
+						<th>Unique ID</th>
+						<th>Indicator</th>
+						<th>Measure</th>		
+						<th>Intervention Duration</th>			
 					</tr>
 					<tr id="data_parent" class="no_remove"></tr>
 				
@@ -107,7 +120,7 @@ function cc_transtria_render_analysis_page(){
 				</div>
 				<table id="intermediate_vars_direction">
 					<tr class="no_remove">
-						<th>Unique ID (Study ID _ seq _ unique ID)</th>
+						<th>Unique ID</th>
 						<th>Indicator</th>
 						<th>Measure</th>		
 						<th>Outcome Type</th>		
@@ -116,6 +129,29 @@ function cc_transtria_render_analysis_page(){
 					<tr id="data_parent" class="no_remove"></tr>
 				
 				</table>
+				
+				<h4>Result Evaluation Population</h4>
+				<a id="hide_result_evaluation_pop_table" class="button" data-whichtable="intermediate_vars_result_evaluation_pop" data-whichlabel="RESULT EVALUATION POPULATION">HIDE RESULT EVALUATION POPULATION</a>
+				<table id="intermediate_vars_result_evaluation_pop">
+					<tr class="no_remove">
+						<th>Study ID</th>
+						<th>Result Evaluation Population</th>
+					</tr>
+					<tr id="data_parent" class="no_remove"></tr>
+				
+				</table>
+				
+				<h4>Result Subpopulation</h4>
+				<a id="hide_result_evaluation_pop_table" class="button" data-whichtable="intermediate_vars_result_subpop" data-whichlabel="RESULT SUBPOPULATION">HIDE RESULT SUBPOPULATION</a>
+				<table id="intermediate_vars_result_subpop">
+					<tr class="no_remove">
+						<th>Study ID</th>
+						<th>Result Subopulation</th>
+					</tr>
+					<tr id="data_parent" class="no_remove"></tr>
+				
+				</table>
+				
 				
 				
 				<h4>Intervention Components</h4>

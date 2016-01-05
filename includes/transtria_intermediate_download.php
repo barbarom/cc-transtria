@@ -98,7 +98,7 @@ $objPHPExcel->setActiveSheetIndex(0);
 	$question_sql = 
 		"
 		SELECT *
-		FROM $wpdb->transtria_analysis
+		FROM $wpdb->transtria_analysis_intermediate
 		"
 		;
 		
