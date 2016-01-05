@@ -361,6 +361,42 @@ function cc_transtria_render_analysis_page(){
 				
 				</table>
 				
+				<h4>Domestic/International:</h4> 
+				<table id="analysis_vars_domestic">
+					<tr class="no_remove">
+					
+					</tr>
+					<tr id="data_parent" class="no_remove"></tr>
+				
+				</table>
+
+				<h4>Multi-Component:</h4> 
+				<table id="analysis_vars_multi_component">
+					<tr class="no_remove">
+					
+					</tr>
+					<tr id="data_parent" class="no_remove"></tr>
+				
+				</table>
+				
+				<h4>Complex:</h4> 
+				<table id="analysis_vars_complex">
+					<tr class="no_remove">
+					
+					</tr>
+					<tr id="data_parent" class="no_remove"></tr>
+				
+				</table>
+				
+				<h4>Participation or Exposure:</h4> 
+				<table id="analysis_vars_participation">
+					<tr class="no_remove">
+					
+					</tr>
+					<tr id="data_parent" class="no_remove"></tr>
+				
+				</table>
+				
 			</div>
 		
 		</div>

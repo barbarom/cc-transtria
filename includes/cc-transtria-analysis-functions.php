@@ -293,7 +293,7 @@ function calculate_domestic_intl_for_analysis( $studygrouping_id ){
 	//get domestic/intl settings for this list of study ids (all three are Y/N in db)
 	$domestic_sql = 
 		"
-		SELECT StudyID, domestic_setting, international_setting, domeesticintlsetting_notreported
+		SELECT StudyID, domestic_setting, international_setting, domesticintlsetting_notreported
 		FROM $wpdb->transtria_studies
 		WHERE StudyID in ($study_list)
 		ORDER BY StudyID
@@ -309,11 +309,11 @@ function calculate_domestic_intl_for_analysis( $studygrouping_id ){
 	//put domestic international in a few arrays, to evaluate per the algorithm
 	foreach( $form_rows as $study_id => $values ){
 		//if "Not reported" ISN'T checked
-		if( $values->domeesticintlsetting_notreported != "Y" ){
+		if( $values->domesticintlsetting_notreported != "Y" ){
 			array_push( $all_domestics, $values->domestic_setting );
 			array_push( $all_intls, $values->international_setting );
 		} else {
-			array_push( $all_notreported, $values->domeesticintlsetting_notreported );
+			array_push( $all_notreported, $values->domesticintlsetting_notreported );
 		}
 	}
 	

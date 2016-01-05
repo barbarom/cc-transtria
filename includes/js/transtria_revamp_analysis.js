@@ -160,6 +160,10 @@ function get_vars_by_grouping(){
 			jQuery("table#analysis_vars_effect tr").not(".no_remove").remove();
 			jQuery("table#analysis_vars_population tr").not(".no_remove").remove();
 			jQuery("table#analysis_vars_effectiveness_hr tr").not(".no_remove").remove();
+			jQuery("table#analysis_vars_domestic tr").not(".no_remove").remove();
+			jQuery("table#analysis_vars_multi_component tr").not(".no_remove").remove();
+			jQuery("table#analysis_vars_complex tr").not(".no_remove").remove();
+			jQuery("table#analysis_vars_participation tr").not(".no_remove").remove();
 			
 		}
 	}).success( function( data ) {
