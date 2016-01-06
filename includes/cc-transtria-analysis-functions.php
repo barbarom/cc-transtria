@@ -1147,6 +1147,82 @@ function calculate_hr_scale( $access, $size, $applicability ) {
 
 }
 
+/** 
+ * Returns dose measure
+ *
+ * @param int, int. Implementation, Scale.
+ * @return int.
+ */
+function calculate_dose( $implementation, $scale ){
+
+	//999 = Insufficient information, if Implementation = 999 OR Scale = 999
+	if( ( $implementation == 999 ) || ( $scale == 999 ) ){
+		return 999;
+	} 
+	//1 = High, else if Implementation = 1 AND Scale = 1
+	else if( ( $implementation == 1 ) && ( $scale == 1 ) ){
+		return 1;
+	} 
+	//2 = Low, else if Implementation = 2 OR Scale = 2
+	else if( ( $implementation == 2 ) || ( $scale == 2 ) ){
+		return 2;
+	} 
+	
+	return 999; //should never happen, but if it does there's insufficient info SOMEwhere, amiright?
+	
+}
+
+/** 
+ * Returns Population Impact measure
+ *
+ * @param int, int. Implementation, Scale.
+ * @return int.
+ */
+function calculate_population_impact( $effectiveness, $pop_reach, $dose ){
+
+	//1 = High, if Effectiveness = 1 AND Population Reach = 1 AND Dose = 1
+	if( ( $effectiveness == 1 ) && ( $pop_reach == 1 ) && ( $dose == 1 ) ){
+		return 1;
+	} 
+	//2 = Low, else if Effectiveness = 1 or 2 AND Population Reach = 1 or 2 AND Dose = 1 or 2
+	else if( (( $effectiveness == 1 ) || ( $effectiveness == 2 )) && (( $pop_reach == 1 ) || ( $pop_reach == 2 )) && (( $dose == 1 ) || ( $dose == 2 )) ){
+		return 2;
+	} 
+	//3 = No, else if (Effectiveness = 2 AND Population Reach = 2 AND Dose = 2) OR Effectiveness = 3
+	else if( (( $effectiveness == 2 ) && ( $pop_reach == 2 ) && ( $dose == 2 )) || ( $effectiveness == 3 ) ){
+		return 3;
+	} 
+	
+	return 999; //should never happen, but if it does there's insufficient info SOMEwhere, amiright?
+	
+}
+
+/** 
+ * Returns HR Population Impact measure
+ *
+ * @param int, int. Implementation, Scale.
+ * @return int.
+ */
+function calculate_hr_population_impact( $effectiveness_hr, $pop_reach, $dose ){
+
+	//1 = High, if Effectiveness for High-risk Populations = 1 AND Population Reach = 1 AND Dose = 1
+	if( ( $effectiveness_hr == 1 ) && ( $pop_reach == 1 ) && ( $dose == 1 ) ){
+		return 1;
+	} 
+	//2 = Low, else if Effectiveness for High-risk Populations = 1 or 2 AND Population Reach = 1 or 2 AND Dose = 1 or 2
+	else if( (( $effectiveness_hr == 1 ) || ( $effectiveness_hr == 2 )) && (( $pop_reach == 1 ) || ( $pop_reach == 2 )) && (( $dose == 1 ) || ( $dose == 2 )) ){
+		return 2;
+	} 
+	//3 = No, else if (Effectiveness for High-risk Populations = 2 AND Population Reach = 2 AND Dose = 2) OR Effectiveness for High-risk Populations = 3
+	else if( (( $effectiveness_hr == 2 ) && ( $pop_reach == 2 ) && ( $dose == 2 )) || ( $effectiveness_hr == 3 ) ){
+		return 3;
+	} 
+	
+	return 999; //should never happen, but if it does there's insufficient info SOMEwhere, amiright?
+	
+}
+
+
 
 
 

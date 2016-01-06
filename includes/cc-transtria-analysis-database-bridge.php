@@ -1841,6 +1841,24 @@ function recalc_analysis_vars_form_data( $study_group_id ){
 		$access = (int)$a_vals[ "access" ];
 		$size = (int)$a_vals[ "size" ];
 		$applicability = (int)$a_vals[ "applicability_hr_pops" ];
+		$pop_reach = (int)$a_vals[ "potential_pop_reach" ];
+		
+		//get and massage effectiveness data (TODO: make this an int and let Transtria find their own data errors)
+		$effectiveness = $a_vals[ "effectiveness_general" ]; 
+		//if > 1 char, is error message (poor planning Mel!), else is int
+		if( strlen( $effectiveness > 1 ) || strlen( $effectiveness == 0 ) ){ //error
+			$effectiveness = 0;
+		} else {
+			$effectiveness = (int)$effectiveness;
+		}
+		$effectiveness_hr = $a_vals[ "effectiveness_hr" ]; 
+		//if > 1 char, is error message (poor planning Mel!), else is int
+		if( strlen( $effectiveness_hr > 1 ) || strlen( $effectiveness_hr == 0 ) ){ //error
+			$effectiveness_hr = 0;
+		} else {
+			$effectiveness_hr = (int)$effectiveness_hr;
+		}
+		
 		
 		//HR calc stuff
 		$which_info_ids = get_info_id_list_hr_studygroup( $study_group_id );
@@ -1914,6 +1932,9 @@ function recalc_analysis_vars_form_data( $study_group_id ){
 		
 		$scale = calculate_scale( $access, $size );
 		$hr_scale = calculate_hr_scale( $access, $size, $applicability );
+		$dose = calculate_dose( $implementation, $scale );
+		$population_impact = calculate_population_impact( $effectiveness, $pop_reach, $dose );
+		$population_impact_hr = calculate_hr_population_impact( $effectiveness_hr, $pop_reach, $dose );
 		
 	
 		//insert new vals by info_id
@@ -1923,7 +1944,10 @@ function recalc_analysis_vars_form_data( $study_group_id ){
 			"implementation"				=> $implementation,
 			"implementation_inclusiveness"	=> $implementation_inclusiveness,
 			"scale"							=> $scale,
-			"hr_scale"						=> $hr_scale
+			"hr_scale"						=> $hr_scale,
+			"dose"							=> $dose,
+			"population_impact"				=> $population_impact,
+			"hr_population_impact"			=> $population_impact_hr
 			);
 			
 		$where = array( 
