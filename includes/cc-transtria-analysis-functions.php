@@ -1143,7 +1143,7 @@ function calculate_hr_scale( $access, $size, $applicability ) {
 		return 2;
 	} 
 	
-	return 999; //should never happen, but if it does there's insufficient info SOMEwhere, amiright?
+	return 888; //should never happen, but if it does there's insufficient info SOMEwhere, amiright?
 
 }
 

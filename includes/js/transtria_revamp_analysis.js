@@ -114,6 +114,11 @@ function get_vars_by_grouping(){
 	which_tr_parent_intermediate_opposition = jQuery("table#intermediate_vars_opposition tr#data_parent");
 	which_tr_parent_intermediate_sustainability = jQuery("table#intermediate_vars_sustainability tr#data_parent");
 	
+	which_tr_parent_intermediate_domestic = jQuery("table#intermediate_vars_domestic tr#data_parent");
+	which_tr_parent_intermediate_intl = jQuery("table#intermediate_vars_intl tr#data_parent");
+	
+	which_tr_parent_intermediate_duration = jQuery("table#intermediate_vars_duration tr#data_parent");
+	
 	which_tr_parent_analysis_im = jQuery("table#analysis_vars_im tr#data_parent");
 	which_tr_parent_analysis_effect = jQuery("table#analysis_vars_effect tr#data_parent");
 	which_tr_parent_analysis_pops = jQuery("table#analysis_vars_population tr#data_parent");
@@ -176,6 +181,11 @@ function get_vars_by_grouping(){
 			jQuery("table#intermediate_vars_opposition tr").not(".no_remove").remove();
 			jQuery("table#intermediate_vars_sustainability tr").not(".no_remove").remove();
 			
+			jQuery("table#intermediate_vars_domestic tr").not(".no_remove").remove();
+			jQuery("table#intermediate_vars_intl tr").not(".no_remove").remove();
+			
+			jQuery("table#intermediate_vars_duration tr").not(".no_remove").remove();
+			
 			//clear tables: analysis
 			jQuery("table#analysis_vars_im tr").not(".no_remove").remove();
 			jQuery("table#analysis_vars_effect tr").not(".no_remove").remove();
@@ -227,6 +237,11 @@ function get_vars_by_grouping(){
 			var txt_support = "";
 			var txt_opposition = "";
 			var txt_sustainability = "";
+			var txt_domestic = "";
+			var txt_intl = "";
+			
+			var txt_duration = "";
+			var txt_strat = "";
 			
 			var txt_a_im = "";
 			var txt_a_effects = "";
@@ -278,7 +293,7 @@ function get_vars_by_grouping(){
 							if( this.result_subpop_unserial[0].descr != undefined ){
 								txt += "<td>" + this.result_subpop_unserial[0].descr + "</td>";
 							} else {
-								txt += "<tdsubpop error</td>";
+								txt += "<td>subpop error</td>";
 							}
 						}
 						if( this.result_eval_unserial == false ){
@@ -287,7 +302,7 @@ function get_vars_by_grouping(){
 							if( this.result_eval_unserial[0].descr != undefined ){
 								txt += "<td>" + this.result_eval_unserial[0].descr + "</td>";
 							} else {
-								txt += "<tdeval pop error</td>";
+								txt += "<td>eval pop error</td>";
 							}
 						}
 						
@@ -302,6 +317,21 @@ function get_vars_by_grouping(){
 						txt_dir += "<td>" + this.calc_ea_direction + "</td>";
 						
 						txt_dir += "</tr>";
+						
+						
+						//duration
+						txt_duration += "<tr><td>" + this.info_id + "</td>";
+						txt_duration += "<td>" + this.indicator + "</td>";
+						txt_duration += "<td>" + this.measure + "</td>";
+						txt_duration += "<td>" + this.outcome_duration + "</td></tr>";
+						
+						//strategies
+						txt_strat += "<tr><td>" + this.info_id + "</td>";
+						txt_strat += "<td>" + this.indicator + "</td>";
+						txt_strat += "<td>" + this.measure + "</td>";
+						
+						txt_strat += "<td>" + this.indicator_strategies_unserial + "</td></tr>";
+						
 					
 					});
 					//console.log( jQuery(this ) );
@@ -337,6 +367,17 @@ function get_vars_by_grouping(){
 					txt_sustainability += "<tr><td>" + index + "</td>";
 					txt_sustainability += "<td>" + this.sustainability_flag + "</td>";
 					txt_sustainability += "<td>" + this.sustainabilityplan_notreported + "</td></tr>";
+					
+					
+					//domestic
+					txt_domestic += "<tr><td>" + index + "</td>";
+					txt_domestic += "<td>" + this.domestic_setting + "</td>";
+					txt_domestic += "<td>" + this.domesticintlsetting_notreported + "</td></tr>";
+					
+					//intl
+					txt_intl += "<tr><td>" + index + "</td>";
+					txt_intl += "<td>" + this.international_setting + "</td>";
+					txt_intl += "<td>" + this.domesticintlsetting_notreported + "</td></tr>";
 					
 					//multis
 					if( this_inter_study_data.multi != undefined ){
@@ -780,6 +821,11 @@ function get_vars_by_grouping(){
 			which_tr_parent_intermediate_support.after( txt_support );
 			which_tr_parent_intermediate_opposition.after( txt_opposition );
 			which_tr_parent_intermediate_sustainability.after( txt_sustainability );
+			
+			which_tr_parent_intermediate_domestic.after( txt_domestic );
+			which_tr_parent_intermediate_intl.after( txt_intl );
+			
+			which_tr_parent_intermediate_duration.after( txt_duration );
 	
 			which_tr_parent_analysis_im.after( txt_a_im );
 			which_tr_parent_analysis_effect.after( txt_a_effects );
@@ -977,8 +1023,8 @@ function run_second_analysis(){
 		//var post_meat = data['single']; // = JSON.parse(data);
 	}).complete( function( data ) {
 		//console.log( data );
-		//usrmsgshell.fadeOut();
-		//spinny.fadeOut();
+		usrmsgshell.fadeOut();
+		spinny.fadeOut();
 	});
 }
 

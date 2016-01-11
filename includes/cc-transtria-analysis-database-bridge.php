@@ -224,6 +224,7 @@ function get_dyads_for_study_group( $study_group_id ){
 	
 	//get studies in this group
 	$study_ids = get_study_ids_in_study_group( $study_group_id );
+	$strategies_lookup = get_codetbl_by_codetype( 98 ); 
 	
 	$all_dyads = array();
 	
@@ -245,6 +246,20 @@ function get_dyads_for_study_group( $study_group_id ){
 		
 			$one_dyad['result_eval_unserial'] = unserialize( $one_dyad['result_evaluation_population'] );
 			$one_dyad['result_subpop_unserial'] = unserialize( $one_dyad['result_subpopulation'] );
+			
+			
+			//strategies will be harder
+			//	unserialize the values; for each value, get text in codetbl
+			$indexed_strats = array();
+			$unserial_strats = unserialize( $one_dyad['indicator_strategies'] );
+			
+			foreach( $unserial_strats as $i => $strat_val ){
+				//go through and create indexed strategies with value/description pairs
+				$indexed_strats[ $strat_val ] = $strategies_lookup[ $strat_val ];
+			
+			}
+		
+			$one_dyad['indicator_strategies_unserial'] = $indexed_strats;
 			
 			$form_rows[ $index ] = $one_dyad;
 		
@@ -928,7 +943,8 @@ function get_study_level_for_intermediate( $study_group_id ){
 			"
 			SELECT      StudyDesignID, otherStudyDesign, intervention_purpose, intervention_summary, support, opposition, other_setting_type, sustainability_flag,
 				sustainabilityplan_notreported, interventioncomponents_notreported, complexity_notreported, support_notreported, opposition_notreported,
-				interventionpurpose_notreported, interventionsummary_notreported, settingtype_notreported, psecomponents_notreported
+				interventionpurpose_notreported, interventionsummary_notreported, settingtype_notreported, psecomponents_notreported, domestic_setting, 
+				international_setting, domesticintlsetting_notreported
 			FROM        $wpdb->transtria_studies
 			WHERE		StudyID = %d 
 			",
@@ -1842,6 +1858,7 @@ function recalc_analysis_vars_form_data( $study_group_id ){
 		$size = (int)$a_vals[ "size" ];
 		$applicability = (int)$a_vals[ "applicability_hr_pops" ];
 		$pop_reach = (int)$a_vals[ "potential_pop_reach" ];
+		$hr_pop_reach = (int)$a_vals[ "potential_pop_reach" ];
 		
 		//get and massage effectiveness data (TODO: make this an int and let Transtria find their own data errors)
 		$effectiveness = $a_vals[ "effectiveness_general" ]; 
@@ -1931,10 +1948,11 @@ function recalc_analysis_vars_form_data( $study_group_id ){
 		$implementation_inclusiveness = calculate_implementation_inclusiveness( $stage, $state, $quality, $inclusiveness );
 		
 		$scale = calculate_scale( $access, $size );
+		var_dump($access, $size);
 		$hr_scale = calculate_hr_scale( $access, $size, $applicability );
 		$dose = calculate_dose( $implementation, $scale );
 		$population_impact = calculate_population_impact( $effectiveness, $pop_reach, $dose );
-		$population_impact_hr = calculate_hr_population_impact( $effectiveness_hr, $pop_reach, $dose );
+		$population_impact_hr = calculate_hr_population_impact( $effectiveness_hr, $hr_pop_reach, $dose );
 		
 	
 		//insert new vals by info_id

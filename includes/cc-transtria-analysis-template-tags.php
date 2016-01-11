@@ -152,7 +152,39 @@ function cc_transtria_render_analysis_page(){
 				
 				</table>
 				
+				<h4>Domestic</h4>
+				<table id="intermediate_vars_domestic">
+					<tr class="no_remove">
+						<th>Study ID</th>
+						<th>Domestic</th>
+						<th>Domestic/Intl not reported</th>
+					</tr>
+					<tr id="data_parent" class="no_remove"></tr>
 				
+				</table>
+				
+				<h4>International</h4>
+				<table id="intermediate_vars_intl">
+					<tr class="no_remove">
+						<th>Study ID</th>
+						<th>International</th>
+						<th>Domestic/Intl not reported</th>
+					</tr>
+					<tr id="data_parent" class="no_remove"></tr>
+				
+				</table>
+				
+				<h4>Strategies</h4>
+				<table id="intermediate_vars_strategies">
+					<tr class="no_remove">
+						<th>Unique ID</th>
+						<th>Indicator</th>
+						<th>Measure</th>
+						<th>Strategy</th>
+					</tr>
+					<tr id="data_parent" class="no_remove"></tr>
+				
+				</table>
 				
 				<h4>Intervention Components</h4>
 				<a id="hide_component_table" class="button" data-whichtable="intermediate_vars_components" data-whichlabel="INTERVENTION COMPONENTS">HIDE INTERVENTION COMPONENTS</a>

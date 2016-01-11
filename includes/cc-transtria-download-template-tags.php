@@ -25,39 +25,19 @@ function cc_transtria_render_download_page(){
 	$path = $root_ish . "/PHPExcel/transtria/";
 	$analysis_vars_path = $path . "analysis.xls";
 	$intermediate_vars_path = $path . "intermediate.xls";
+	$strat_vars_path = $path . "strategies.xls";
 	//$path = "../../PHPExcel/transtria/strategies.xls";
 	//echo $path;
 	
 	echo "<h2>Reloading this page refreshes the following Excel documents:</h2>";
 	echo "<a href=\"$analysis_vars_path\">$analysis_vars_path</a><br>";
 	echo "<a href=\"$intermediate_vars_path\">$intermediate_vars_path</a><br>";
-     
-	/*
-    // Open the folder
-    $dir_handle = opendir($path) or die("Unable to open $path");
-     
-    // Loop through the files
-    while ($file = readdir($dir_handle)) {
-     
-		if($file == "." || $file == ".." || $file == "index.php" )
-     
-		continue;
-     
-		echo "<a href=\"$file\">$file</a><br>&gt;";
-     
-    }
-     
-     
-    // Close
-     
-    closedir($dir_handle);
-     
-     
-    */
+	echo "<a href=\"$strat_vars_path\">$strat_vars_path</a><br>";
 
 	//include the csv file....GATKNGEKTREA TN
 	require_once( dirname( __FILE__ ) . '\transtria_analysis_download.php' );	
 	require_once( dirname( __FILE__ ) . '\transtria_intermediate_download.php' );	
+	require_once( dirname( __FILE__ ) . '\transtria_strategies_download.php' );	
 	//require_once( $root_ish . '/PHPExcel/transtria/transtria_strategies.php' );	
 	
 }
