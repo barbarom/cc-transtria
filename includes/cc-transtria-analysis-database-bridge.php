@@ -253,10 +253,14 @@ function get_dyads_for_study_group( $study_group_id ){
 			$indexed_strats = array();
 			$unserial_strats = unserialize( $one_dyad['indicator_strategies'] );
 			
-			foreach( $unserial_strats as $i => $strat_val ){
-				//go through and create indexed strategies with value/description pairs
-				$indexed_strats[ $strat_val ] = $strategies_lookup[ $strat_val ];
-			
+			if( !empty( $unserial_strats ) ){
+				foreach( $unserial_strats as $i => $strat_val ){
+					//go through and create indexed strategies with value/description pairs
+					$indexed_strats[ $strat_val ] = $strategies_lookup[ $strat_val ];
+				
+				}
+			} else {
+				$indexed_strats = "";
 			}
 		
 			$one_dyad['indicator_strategies_unserial'] = $indexed_strats;
@@ -1080,7 +1084,8 @@ function calc_and_set_dyads_primary_intermediate_analysis( $study_group_id ){
 		$num_ea = cc_transtria_get_num_ea_tabs_for_study( $new_study_id );
 		$this_im = get_dyads_by_study( (int) $new_study_id ); //array index = seq number (ea tab number)
 		
-		//var_dump( $this_im );
+		//var_dump( $new_study_id );
+		//var_dump( $num_ea );
 		//return false;
 		
 		$info_id = ""; //TODO: this...how, what?
@@ -1093,7 +1098,7 @@ function calc_and_set_dyads_primary_intermediate_analysis( $study_group_id ){
 		$study_design = $this_study_data["StudyDesignID"];
 		
 		//cycle through the EA tabs
-		if( $num_ea > 0 ){ //if we even HAVE ea tabs
+		if( (int) $num_ea > 0 ){ //if we even HAVE ea tabs
 			for( $i=1; $i <= $num_ea; $i++ ){ //$i = seq
 			
 				//var_dump( $i );
@@ -1153,7 +1158,7 @@ function calc_and_set_dyads_primary_intermediate_analysis( $study_group_id ){
 							if( !empty( $ind_directions[ $ind_index ] ) ){ //if we HAVE a direction, else let them know 
 								
 								$ind_dir = $ind_directions[ $ind_index ];
-								var_dump( $ind_dir );
+								//var_dump( $ind_dir );
 								$ea_direction = cc_transtria_calculate_ea_direction( $ind_dir, $outcome_direction );
 							} else {
 								$ind_dir = "no ind. direction set";
@@ -1374,7 +1379,7 @@ function calc_and_set_dyads_primary_intermediate_analysis( $study_group_id ){
 						
 						if( $did_it_work === false ){
 						
-							//var_dump( $wpdb->last_query );
+							var_dump( $wpdb->last_query );
 						}
 						//var_dump( $did_it_work );
 						//update the count

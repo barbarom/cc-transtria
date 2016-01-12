@@ -1023,7 +1023,7 @@ function run_second_analysis(){
 		//var post_meat = data['single']; // = JSON.parse(data);
 	}).complete( function( data ) {
 		//console.log( data );
-		usrmsgshell.fadeOut();
+		usrmsgshell.html("Secondary Analysis Complete for Study Group: <strong>" + this_study_group + "</strong>" );
 		spinny.fadeOut();
 	});
 }
