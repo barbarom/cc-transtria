@@ -1827,8 +1827,10 @@ function calculate_pop_subpop_analysis( $pop_data_by_study_id, $info_id_list, $e
 			//what are the ipe subpops?
 			$this_pop_subpops = $sub_pop_data[ $which_study ][ "ipe" ];
 			$pop_subpop_array = array(); //to hold the subpop strings (i.e. "Adults", "Families", "Youth")
-			foreach( $this_pop_subpops as $this_pop_subpop ){
-				array_push( $pop_subpop_array, $this_pop_subpop->descr );
+			if( !empty( $this_pop_subpops ) ){
+				foreach( $this_pop_subpops as $this_pop_subpop ){
+					array_push( $pop_subpop_array, $this_pop_subpop->descr );
+				}
 			}
 			//do we have "F" and Youth for IPE?
 			if( ( trim( $gender ) == "F" )  && in_array( "Youth", $pop_subpop_array ) ){ //yes!
@@ -1881,9 +1883,12 @@ function calculate_pop_subpop_analysis( $pop_data_by_study_id, $info_id_list, $e
 			//what are the ipe subpops?
 			$this_pop_subpops = $sub_pop_data[ $which_study ][ "ipe" ];
 			$pop_subpop_array = array(); //to hold the subpop strings (i.e. "Adults", "Families", "Youth")
-			foreach( $this_pop_subpops as $this_pop_subpop ){
-				array_push( $pop_subpop_array, $this_pop_subpop->descr );
+			if( !empty( $this_pop_subpops ) ){
+				foreach( $this_pop_subpops as $this_pop_subpop ){
+					array_push( $pop_subpop_array, $this_pop_subpop->descr );
+				}
 			}
+	
 			//do we have "F" and Youth for IPE?
 			if( ( trim( $gender ) == "M" )  && in_array( "Youth", $pop_subpop_array ) ){ //yes!
 				$return_data['population_calc'] = 2;
@@ -2024,8 +2029,11 @@ function calculate_pop_subpop_analysis( $pop_data_by_study_id, $info_id_list, $e
 		//what are the pops subpops strings?
 		$this_pop_subpops = $sub_pop_data[ $this_study ][ "ipe" ];
 		$pop_subpop_array = array(); //to hold the subpop strings (i.e. "Adults", "Families", "Youth")
-		foreach( $this_pop_subpops as $this_pop_subpop ){
-			array_push( $pop_subpop_array, $this_pop_subpop->descr );
+
+		if( !empty( $this_pop_subpops ) ){
+			foreach( $this_pop_subpops as $this_pop_subpop ){
+				array_push( $pop_subpop_array, $this_pop_subpop->descr );
+			}
 		}
 		
 		if( in_array( "Youth", $pop_subpop_array ) ){ //if this pop subpop contains "Youth"...
