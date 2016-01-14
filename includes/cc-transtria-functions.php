@@ -46,7 +46,7 @@ function cc_transtria_get_group_id(){
             $group_id = 597;  //Mike's machine
             break;
 		case 'http://localhost/cc_local':
-            $group_id = 690;  //Mel's compy
+            $group_id = 697;  //Mel's compy
             break;
         case 'http://dev.communitycommons.org':
             $group_id = 5321; //TODO
