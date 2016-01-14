@@ -1834,6 +1834,11 @@ function recalc_analysis_vars_form_data( $study_group_id ){
 	//get design (Study Grouping level)
 	$sg_vars = get_studygrouping_vars( $study_group_id );
 	$design = $sg_vars["study_design"];
+	$state = $sg_vars["state"];
+	$quality = $sg_vars["quality"];
+	$inclusiveness = $sg_vars["inclusiveness"];
+	$access = $sg_vars["access"];
+	$size = $sg_vars["size"];
 	
 	$duration = 0;
 	$effect = 0;
@@ -1854,13 +1859,13 @@ function recalc_analysis_vars_form_data( $study_group_id ){
 		
 		//info for implementation
 		$stage = (int)$a_vals[ "stage" ];
-		$state = (int)$a_vals[ "state" ];
-		$quality = (int)$a_vals[ "quality" ];
-		$inclusiveness = (int)$a_vals[ "inclusiveness" ];
+		//$state = (int)$a_vals[ "state" ];  //moved to sg table (sg-level var, not analysis-level): 14Jan2016
+		//$quality = (int)$a_vals[ "quality" ];   //moved to sg table (sg-level var, not analysis-level): 14Jan2016
+		//$inclusiveness = (int)$a_vals[ "inclusiveness" ];   //moved to sg table (sg-level var, not analysis-level): 14Jan2016
 		
 		//info for scale, hr scale, dose, pop impact, hr pop impact
-		$access = (int)$a_vals[ "access" ];
-		$size = (int)$a_vals[ "size" ];
+		//$access = (int)$a_vals[ "access" ];  //moved to sg table (sg-level var, not analysis-level): 14Jan2016
+		//$size = (int)$a_vals[ "size" ];  //moved to sg table (sg-level var, not analysis-level): 14Jan2016
 		$applicability = (int)$a_vals[ "applicability_hr_pops" ];
 		$pop_reach = (int)$a_vals[ "potential_pop_reach" ];
 		$hr_pop_reach = (int)$a_vals[ "potential_pop_reach" ];

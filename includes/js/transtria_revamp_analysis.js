@@ -663,6 +663,9 @@ function get_vars_by_grouping(){
 						txt_a_hr_popreach += "<td>" + hr_population_lookup( this.potential_hr_pop_reach ) + "</td>"; //hr pops has same vals/descr as hr popreach!
 						txt_a_hr_popreach += "</tr>";
 						
+						
+						/* //this is now a Study-grouping level variable (14Jan2016)
+						
 						//state:
 						txt_a_state += "<tr>";
 						txt_a_state += "<td class='analysis_id'>" + this.info_id + "</td>";
@@ -778,7 +781,7 @@ function get_vars_by_grouping(){
 						txt_a_size += "</select></td>";
 						txt_a_size += "</tr>";
 						
-						
+						*/
 						
 						
 						
@@ -797,6 +800,12 @@ function get_vars_by_grouping(){
 				//update StudyDesign select for this study group
 				jQuery("select.analysis_study_design").val( data.study_grouping.study_design );
 				jQuery("select.analysis_study_design_hr").val( data.study_grouping.study_design_hr );
+				
+				jQuery("select.state").val( data.study_grouping.state );
+				jQuery("select.quality").val( data.study_grouping.quality );
+				jQuery("select.inclusiveness").val( data.study_grouping.inclusiveness );
+				jQuery("select.access").val( data.study_grouping.access );
+				jQuery("select.size").val( data.study_grouping.size );
 				
 				//update text
 				if( data.study_grouping.study_design == 0 ){
@@ -846,11 +855,11 @@ function get_vars_by_grouping(){
 			which_tr_parent_popreach.after( txt_a_popreach );
 			which_tr_parent_hr_popreach.after( txt_a_hr_popreach );
 		
-			which_tr_parent_state.after( txt_a_state );
+			/*which_tr_parent_state.after( txt_a_state );
 			which_tr_parent_quality.after( txt_a_quality );
 			which_tr_parent_inclusiveness.after( txt_a_inclusiveness );
 			which_tr_parent_access.after( txt_a_access );
-			which_tr_parent_size.after( txt_a_size );
+			which_tr_parent_size.after( txt_a_size );*/
 			
 			
 			
@@ -1038,7 +1047,7 @@ function save_analysis_vars(){
 	if( which_var_raw == "analysis_study_design" ){
 		var which_vars = ["analysis_study_design", "analysis_study_design_hr"];
 	} else {
-		var which_vars = which_var_raw;
+		var which_vars = [ which_var_raw ];
 	}
 	
 	var which_action = jQuery(this).attr('data-whichsave'); //let's us know at which level to save this analysis var
