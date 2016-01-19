@@ -114,9 +114,12 @@ function get_vars_by_grouping(){
 	which_tr_parent_intermediate_opposition = jQuery("table#intermediate_vars_opposition tr#data_parent");
 	which_tr_parent_intermediate_sustainability = jQuery("table#intermediate_vars_sustainability tr#data_parent");
 	
+	which_tr_parent_intermediate_result_eval = jQuery("table#intermediate_vars_result_evaluation_pop tr#data_parent");
+	which_tr_parent_intermediate_result_subpop = jQuery("table#intermediate_vars_result_subpop tr#data_parent");
 	which_tr_parent_intermediate_domestic = jQuery("table#intermediate_vars_domestic tr#data_parent");
 	which_tr_parent_intermediate_intl = jQuery("table#intermediate_vars_intl tr#data_parent");
 	
+	which_tr_parent_intermediate_strat = jQuery("table#intermediate_vars_strategies tr#data_parent");
 	which_tr_parent_intermediate_duration = jQuery("table#intermediate_vars_duration tr#data_parent");
 	
 	which_tr_parent_analysis_im = jQuery("table#analysis_vars_im tr#data_parent");
@@ -181,10 +184,14 @@ function get_vars_by_grouping(){
 			jQuery("table#intermediate_vars_opposition tr").not(".no_remove").remove();
 			jQuery("table#intermediate_vars_sustainability tr").not(".no_remove").remove();
 			
+			jQuery("table#intermediate_vars_result_evaluation_pop tr").not(".no_remove").remove();
+			jQuery("table#intermediate_vars_result_subpop tr").not(".no_remove").remove();
+			
 			jQuery("table#intermediate_vars_domestic tr").not(".no_remove").remove();
 			jQuery("table#intermediate_vars_intl tr").not(".no_remove").remove();
 			
 			jQuery("table#intermediate_vars_duration tr").not(".no_remove").remove();
+			jQuery("table#intermediate_vars_strategies tr").not(".no_remove").remove();
 			
 			//clear tables: analysis
 			jQuery("table#analysis_vars_im tr").not(".no_remove").remove();
@@ -237,6 +244,9 @@ function get_vars_by_grouping(){
 			var txt_support = "";
 			var txt_opposition = "";
 			var txt_sustainability = "";
+			
+			var txt_result_eval = "";
+			var txt_result_subpop = "";
 			var txt_domestic = "";
 			var txt_intl = "";
 			
@@ -271,6 +281,7 @@ function get_vars_by_grouping(){
 			var txt_a_access = "";
 			var txt_a_size = "";
 			
+			var strat_count = 0;
 			
 			//for each study
 			if( data.intermediate_vars != undefined ){
@@ -279,6 +290,7 @@ function get_vars_by_grouping(){
 					var this_study_data = jQuery( this );
 					jQuery.each( this_study_data, function(){
 						//console.log( this );
+						strat_count = 0;
 						
 						txt += "<tr>";
 						//txt += "<td>" + this.StudyID + "</td>";
@@ -330,7 +342,17 @@ function get_vars_by_grouping(){
 						txt_strat += "<td>" + this.indicator + "</td>";
 						txt_strat += "<td>" + this.measure + "</td>";
 						
-						txt_strat += "<td>" + this.indicator_strategies_unserial + "</td></tr>";
+						txt_strat += "<td>"
+						jQuery.each( this.indicator_strategies_unserial, function(){
+							strat_count++;
+							//add comma if > 1
+							if( strat_count > 1 ){
+								txt_strat += ", ";
+							}
+							txt_strat += this.value + ": " + this.descr;
+							
+						});
+						txt_strat += "</td></tr>";
 						
 					
 					});
@@ -835,6 +857,7 @@ function get_vars_by_grouping(){
 			which_tr_parent_intermediate_intl.after( txt_intl );
 			
 			which_tr_parent_intermediate_duration.after( txt_duration );
+			which_tr_parent_intermediate_strat.after( txt_strat );
 	
 			which_tr_parent_analysis_im.after( txt_a_im );
 			which_tr_parent_analysis_effect.after( txt_a_effects );

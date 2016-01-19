@@ -141,6 +141,7 @@ function cc_transtria_render_analysis_page(){
 				
 				</table>
 				
+				<!--
 				<h4>Result Subpopulation</h4>
 				<a id="hide_result_evaluation_pop_table" class="button" data-whichtable="intermediate_vars_result_subpop" data-whichlabel="RESULT SUBPOPULATION">HIDE RESULT SUBPOPULATION</a>
 				<table id="intermediate_vars_result_subpop">
@@ -150,7 +151,7 @@ function cc_transtria_render_analysis_page(){
 					</tr>
 					<tr id="data_parent" class="no_remove"></tr>
 				
-				</table>
+				</table>-->
 				
 				<h4>Domestic</h4>
 				<table id="intermediate_vars_domestic">

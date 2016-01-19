@@ -713,7 +713,7 @@ function get_unique_ims_for_study_group_pop( $study_group_id ){
 			$analysis_id_count++;
 		}
 		
-				
+	
 	}
 	
 	$temp_im_list = array(); //new temp im list next time we iterate
@@ -1500,12 +1500,12 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 
 	global $wpdb;
 	
-	//get all dyads for this group
+	//get all dyads for this group: lookup + calc
 	$all_ims = get_unique_ims_for_study_group_pop( $study_group_id );
 	
-	//get specific info to calculate multi_component, complexity, outcome types, participation or exposure
+	//get specific intermediate table info to calculate multi_component, complexity, outcome types, participation or exposure
 	$component_complexity_ims = get_all_ims_for_study_group( $study_group_id ); //get specific im data for these calcs, input to calc functions
-		
+	
 	//remove all analysis rows of this study group from analysis table
 	$analysis_del_row = $wpdb->delete( 
 			$wpdb->transtria_analysis, 
@@ -1513,7 +1513,6 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 				'StudyGroupingID' => (int)$study_group_id 
 			)
 		);
-	
 	
 	//var_dump( $all_ims );
 	$placeholder = 0;
@@ -1693,7 +1692,9 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 	unset( $measures_outcome_types );
 	unset( $pop_data_by_study_id );
 	
-	/***** UPDATE Analysis table w/ HR vars *****/
+	
+	
+	////// UPDATE Analysis table w/ HR vars 
 	//Run secondary analysis, calculating hr variables from info_id_list_hr set above
 	foreach( $all_ims as $analysis_index => $one_im ){
 		
@@ -1722,8 +1723,10 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 			$studygroup_ea_data = array();
 			foreach( $parsed_id_array as $s_id => $vals ){
 				//get ea data (seq) for this study
-				$studygroup_ea_data[ $s_id ] = get_ea_analysis_data( $s_id );
-			
+				if( !empty( $studygroup_ea_data[ $s_id ] ) ){
+					$studygroup_ea_data[ $s_id ] = get_ea_analysis_data( $s_id );
+				}
+				
 			}
 			
 			//calculate duration, net_effect, etc, based on info_id_list - modulate
@@ -1731,7 +1734,7 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 			
 		}
 	
-	
+		
 		//calculate effectiveness hr and insert into table
 		$this_outcome_type = $outcome_types_hr[ $analysis_index ];
 		$this_pop = $result_populations_hr[ $analysis_index ]["population_calc"];
@@ -1790,8 +1793,10 @@ function calc_and_set_unique_analysis_ids_for_group( $study_group_id ){
 		
 		$help_me = $wpdb->query( $spartacus_two );
 		
-	
+		
 	}
+	
+	
 	
 	
 	//Update Studygrouping-level vars: Study Design

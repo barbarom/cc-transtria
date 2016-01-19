@@ -384,7 +384,7 @@ class CC_Transtria_Extras {
 			}
 			
 			if( cc_transtria_on_analysis_screen() ){
-				wp_enqueue_script( $this->plugin_slug . 'transtria_revamp_analysis_js', plugins_url( 'js/transtria_revamp_analysis.js', __FILE__ ), array( 'jquery' ), '1.5' );
+				wp_enqueue_script( $this->plugin_slug . 'transtria_revamp_analysis_js', plugins_url( 'js/transtria_revamp_analysis.js', __FILE__ ), array( 'jquery' ), '1.6' );
 			}
 			
 			wp_localize_script( 
@@ -774,7 +774,6 @@ class CC_Transtria_Extras {
 	
 	//ajax run analysis
 	public function run_intermediate_analysis(){
-		set_time_limit(1600);
 		// Is the nonce good?
 		if ( ! check_ajax_referer( 'cc_transtria_ajax_nonce', 'transtria_nonce' ) ) {
 			return false;
@@ -797,7 +796,7 @@ class CC_Transtria_Extras {
 	
 	//ajax run analysis
 	public function run_analysis(){
-		set_time_limit(1600);
+		set_time_limit(400);
 		// Is the nonce good?
 		if ( ! check_ajax_referer( 'cc_transtria_ajax_nonce', 'transtria_nonce' ) ) {
 			return false;
@@ -838,7 +837,7 @@ class CC_Transtria_Extras {
 	
 	//ajax run SECONDARY analysis
 	public function run_second_analysis(){
-		set_time_limit(1600);
+		set_time_limit(120);
 		// Is the nonce good?
 		if ( ! check_ajax_referer( 'cc_transtria_ajax_nonce', 'transtria_nonce' ) ) {
 			return false;
