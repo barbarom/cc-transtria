@@ -27,7 +27,7 @@ function cc_transtria_calculate_ea_direction( $ind_dir, $out_dir ){
 }
 
 /**
- * Calculats the EA direction across unique ids in a given Analysis ID/Study grouping
+ * Calculats the EA direction across unique ids in a given Analysis ID/Study grouping; significant var taken into consideration prior to this calc
  */
 function cc_transtria_calculate_ea_direction_for_studygrouping( $study_group_id ){
 
@@ -124,7 +124,9 @@ function calculate_net_effect_for_info_id_list( $info_id_list ){
 	if( $num_directions > 0 ){
 		if( ( $instance_directions[1] / $num_directions ) > 0.5 ){
 			return 1;
-		} else if ( ( ( $instance_directions[1] / $num_directions ) == 0.5 ) && ( ( $instance_directions[2] / $num_directions ) == 0.5 ) ||
+		} else if ( ( ( ( $instance_directions[1] / $num_directions ) == 0.5 ) && ( ( $instance_directions[2] / $num_directions ) == 0.5 ) ) ||
+			( ( ( $instance_directions[1] / $num_directions ) == 0.5 ) && ( ( $instance_directions[3] / $num_directions ) == 0.5 ) ) ||
+			( ( ( $instance_directions[2] / $num_directions ) == 0.5 ) && ( ( $instance_directions[3] / $num_directions ) == 0.5 ) ) ||
 			( ( $instance_directions[3] / $num_directions ) > 0.5 ) ){
 			return 2;
 		} else if ( ( $instance_directions[2] / $num_directions ) > 0.5 ){

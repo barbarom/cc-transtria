@@ -1145,7 +1145,7 @@ function calc_and_set_dyads_primary_intermediate_analysis( $study_group_id ){
 						$info_id = $new_study_id . "_" . $i . "_" . $info_id_count;
 						
 						//calc ea_direction
-						if( $significant == "N" ){
+						if( ( $significant == "N" ) || ( $significant == "" ) ){
 							$ea_direction = "3";
 							
 							//ind direction will go in the db, so capture them anyway
