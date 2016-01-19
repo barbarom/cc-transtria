@@ -106,6 +106,8 @@ function get_vars_by_grouping(){
 	which_tr_parent_intermediate_design = jQuery("table#intermediate_vars_design tr#data_parent");
 	which_tr_parent_intermediate_components = jQuery("table#intermediate_vars_components tr#data_parent");
 	which_tr_parent_intermediate_complexity = jQuery("table#intermediate_vars_complexity tr#data_parent");
+	which_tr_parent_intermediate_participation = jQuery("table#intermediate_vars_participation tr#data_parent");
+	
 	which_tr_parent_intermediate_purpose = jQuery("table#intermediate_vars_purpose tr#data_parent");
 	which_tr_parent_intermediate_summary = jQuery("table#intermediate_vars_summary tr#data_parent");
 	which_tr_parent_intermediate_settingtype = jQuery("table#intermediate_vars_settingtype tr#data_parent");
@@ -176,6 +178,8 @@ function get_vars_by_grouping(){
 			jQuery("table#intermediate_vars_design tr").not(".no_remove").remove();
 			jQuery("table#intermediate_vars_components tr").not(".no_remove").remove();
 			jQuery("table#intermediate_vars_complexity tr").not(".no_remove").remove();
+			jQuery("table#intermediate_vars_participation tr").not(".no_remove").remove();
+			
 			jQuery("table#intermediate_vars_purpose tr").not(".no_remove").remove();
 			jQuery("table#intermediate_vars_summary tr").not(".no_remove").remove();
 			jQuery("table#intermediate_vars_settingtype tr").not(".no_remove").remove();
@@ -236,6 +240,8 @@ function get_vars_by_grouping(){
 			var txt_design = "";
 			var txt_components = "";
 			var txt_complexity = "";
+			var txt_participation = "";
+			
 			var txt_representativeness = "";
 			var txt_purpose = "";
 			var txt_summary = "";
@@ -330,6 +336,14 @@ function get_vars_by_grouping(){
 						
 						txt_dir += "</tr>";
 						
+						//participation
+						txt_participation += "<tr>";
+						txt_participation += "<td>" + this.info_id + "</td>";
+						txt_participation += "<td>" + this.rate_of_participation + "</td>";
+						txt_participation += "<td>" + this.rate_of_participation + "</td>";
+						txt_participation += "<td>" + this.exposure_frequency + "</td>";
+						txt_participation += "<td>" + this.exposure_frequency + "</td>";
+						txt_participation += "</tr>";
 						
 						//duration
 						txt_duration += "<tr><td>" + this.info_id + "</td>";
@@ -845,6 +859,8 @@ function get_vars_by_grouping(){
 			which_tr_parent_intermediate_design.after( txt_design );
 			which_tr_parent_intermediate_components.after( txt_components );
 			which_tr_parent_intermediate_complexity.after( txt_complexity );
+			which_tr_parent_intermediate_participation.after( txt_participation );
+			
 			which_tr_parent_intermediate_purpose.after( txt_purpose );
 			which_tr_parent_intermediate_summary.after( txt_summary );
 			which_tr_parent_intermediate_settingtype.after( txt_settingtype );

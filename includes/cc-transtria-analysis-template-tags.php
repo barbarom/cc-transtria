@@ -211,6 +211,18 @@ function cc_transtria_render_analysis_page(){
 				</table>
 				
 				<!-- insert participation/potention exposure here - WHERE FROM? -->	
+				<h4>Participation or Potential Exposure</h4>
+				<table id="intermediate_vars_participation">
+					<tr class="no_remove">
+						<th>Unique ID</th>
+						<th>Rate of Participation</th>
+						<th>Participation</th>
+						<th>Frequency of Exposure</th>		
+						<th>Potential Exposure</th>		
+					</tr>
+					<tr id="data_parent" class="no_remove"></tr>
+				
+				</table>
 				
 				<!-- insert Representativeness here - WHERE FROM? -->	
 				
