@@ -107,6 +107,7 @@ function get_vars_by_grouping(){
 	which_tr_parent_intermediate_components = jQuery("table#intermediate_vars_components tr#data_parent");
 	which_tr_parent_intermediate_complexity = jQuery("table#intermediate_vars_complexity tr#data_parent");
 	which_tr_parent_intermediate_participation = jQuery("table#intermediate_vars_participation tr#data_parent");
+	which_tr_parent_intermediate_applicability = jQuery("table#intermediate_vars_applicability_hr tr#data_parent");
 	
 	which_tr_parent_intermediate_purpose = jQuery("table#intermediate_vars_purpose tr#data_parent");
 	which_tr_parent_intermediate_summary = jQuery("table#intermediate_vars_summary tr#data_parent");
@@ -179,6 +180,7 @@ function get_vars_by_grouping(){
 			jQuery("table#intermediate_vars_components tr").not(".no_remove").remove();
 			jQuery("table#intermediate_vars_complexity tr").not(".no_remove").remove();
 			jQuery("table#intermediate_vars_participation tr").not(".no_remove").remove();
+			jQuery("table#intermediate_vars_applicability_hr tr").not(".no_remove").remove();
 			
 			jQuery("table#intermediate_vars_purpose tr").not(".no_remove").remove();
 			jQuery("table#intermediate_vars_summary tr").not(".no_remove").remove();
@@ -241,6 +243,7 @@ function get_vars_by_grouping(){
 			var txt_components = "";
 			var txt_complexity = "";
 			var txt_participation = "";
+			var txt_applicability = "";
 			
 			var txt_representativeness = "";
 			var txt_purpose = "";
@@ -373,6 +376,19 @@ function get_vars_by_grouping(){
 						txt_participation += "</td>";
 						txt_participation += "</tr>";
 						
+						//applicability to hr pops
+					
+						txt_applicability += "<tr><td>" + this.info_id + "</td>";
+						txt_applicability += "<td>";
+						if( parseInt( this.applicability_hr_pops ) == 1 ){
+							txt_applicability += "Yes";
+						} else if( parseInt( this.applicability_hr_pops ) == 2 ){
+							txt_applicability += "No";
+						} else {
+							txt_applicability += this.applicability_hr_pops;
+						}
+						txt_applicability += "</td></tr>";
+						
 						//duration
 						txt_duration += "<tr><td>" + this.info_id + "</td>";
 						txt_duration += "<td>" + this.indicator + "</td>";
@@ -427,11 +443,11 @@ function get_vars_by_grouping(){
 					txt_opposition += "<tr><td>" + index + "</td>";
 					txt_opposition += "<td>" + this.opposition + "</td>";
 					txt_opposition += "<td>" + this.opposition_notreported + "</td></tr>";
+					
 					//sustainability
 					txt_sustainability += "<tr><td>" + index + "</td>";
 					txt_sustainability += "<td>" + this.sustainability_flag + "</td>";
 					txt_sustainability += "<td>" + this.sustainabilityplan_notreported + "</td></tr>";
-					
 					
 					//domestic
 					txt_domestic += "<tr><td>" + index + "</td>";
@@ -888,6 +904,7 @@ function get_vars_by_grouping(){
 			which_tr_parent_intermediate_components.after( txt_components );
 			which_tr_parent_intermediate_complexity.after( txt_complexity );
 			which_tr_parent_intermediate_participation.after( txt_participation );
+			which_tr_parent_intermediate_applicability.after( txt_applicability );
 			
 			which_tr_parent_intermediate_purpose.after( txt_purpose );
 			which_tr_parent_intermediate_summary.after( txt_summary );

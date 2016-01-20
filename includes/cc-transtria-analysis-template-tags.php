@@ -226,6 +226,15 @@ function cc_transtria_render_analysis_page(){
 				
 				<!-- insert Representativeness here - WHERE FROM? -->	
 				
+				<h4>Applicability to high-risk populations</h4>
+				<table id="intermediate_vars_applicability_hr">
+					<tr class="no_remove">
+						<th>Study ID</th>
+						<th>Applicability HR Populations?</th>
+					</tr>
+					<tr id="data_parent" class="no_remove"></tr>
+				
+				</table>
 				
 				<h4>Intervention Purpose</h4>
 				<table id="intermediate_vars_purpose">

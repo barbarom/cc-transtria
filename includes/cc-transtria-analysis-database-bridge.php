@@ -1869,13 +1869,8 @@ function recalc_analysis_vars_form_data( $study_group_id ){
 		
 		//info for implementation
 		$stage = (int)$a_vals[ "stage" ];
-		//$state = (int)$a_vals[ "state" ];  //moved to sg table (sg-level var, not analysis-level): 14Jan2016
-		//$quality = (int)$a_vals[ "quality" ];   //moved to sg table (sg-level var, not analysis-level): 14Jan2016
-		//$inclusiveness = (int)$a_vals[ "inclusiveness" ];   //moved to sg table (sg-level var, not analysis-level): 14Jan2016
 		
 		//info for scale, hr scale, dose, pop impact, hr pop impact
-		//$access = (int)$a_vals[ "access" ];  //moved to sg table (sg-level var, not analysis-level): 14Jan2016
-		//$size = (int)$a_vals[ "size" ];  //moved to sg table (sg-level var, not analysis-level): 14Jan2016
 		$applicability = (int)$a_vals[ "applicability_hr_pops" ];
 		$pop_reach = (int)$a_vals[ "potential_pop_reach" ];
 		$hr_pop_reach = (int)$a_vals[ "potential_pop_reach" ];
