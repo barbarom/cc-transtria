@@ -55,7 +55,7 @@ switch ( get_home_url() ) {
 		$schema = "";  //Mike's machine
 		break;
 	case 'http://localhost/cc_local':
-		$schema = 'ccmembers_17jun2';  //Mel's compy
+		$schema = 'cclocal_db';  //Mel's compy
 		break;
 	case 'http://dev.communitycommons.org':
 		$schema = 'ccdevelopment'; //TODO
@@ -91,14 +91,24 @@ $objPHPExcel->setActiveSheetIndex(0);
 	$column_num = $wpdb->get_var( $column_num_seq );
 	$column_names = $wpdb->get_results( $column_name_seq, ARRAY_A );
 
-	//var_dump( $column_names[0]["COLUMN_NAME"] );
+	//add 5 because we are taking them from studygrouping table
+	$column_num = $column_num + 5;
+	$column_names[] = array( "COLUMN_NAME" => "state");
+	$column_names[] = array( "COLUMN_NAME" => "quality");
+	$column_names[] = array( "COLUMN_NAME" => "inclusiveness");
+	$column_names[] = array( "COLUMN_NAME" => "access");
+	$column_names[] = array( "COLUMN_NAME" => "size");
+	//var_dump( $column_names );
 
 //the query...for now
 //TODO, use wp->prepare
 	$question_sql = 
+		//"SELECT * FROM $wpdb->transtria_analysis";
 		"
-		SELECT *
-		FROM $wpdb->transtria_analysis
+		SELECT $wpdb->transtria_analysis.*, $wpdb->transtria_analysis_studygrouping.state, $wpdb->transtria_analysis_studygrouping.quality, 
+		$wpdb->transtria_analysis_studygrouping.inclusiveness, $wpdb->transtria_analysis_studygrouping.access, $wpdb->transtria_analysis_studygrouping.size 
+		FROM $wpdb->transtria_analysis, $wpdb->transtria_analysis_studygrouping 
+		WHERE $wpdb->transtria_analysis.StudyGroupingID = $wpdb->transtria_analysis_studygrouping.StudyGroupingID 
 		"
 		;
 		
