@@ -339,10 +339,38 @@ function get_vars_by_grouping(){
 						//participation
 						txt_participation += "<tr>";
 						txt_participation += "<td>" + this.info_id + "</td>";
-						txt_participation += "<td>" + this.rate_of_participation + "</td>";
-						txt_participation += "<td>" + this.rate_of_participation + "</td>";
-						txt_participation += "<td>" + this.exposure_frequency + "</td>";
-						txt_participation += "<td>" + this.exposure_frequency + "</td>";
+						txt_participation += "<td>" + this.ipe_rate_of_participation + "</td>";
+						
+						//parse rate of participation into transtria 
+						txt_participation += "<td>";
+						if( parseInt( this.rate_of_participation ) == 1 ){
+							txt_participation += "High";
+						} else if ( parseInt( this.rate_of_participation ) == 2 ){
+							txt_participation += "Low";
+						} else {
+							txt_participation += this.rate_of_participation;
+						}
+						txt_participation += "</td>";
+						
+						txt_participation += "<td>";
+						//parse into Transtria values
+						if( parseInt( this.exposure_frequency ) == 1 ){
+							txt_participation += "daily/weekly";
+						} else if ( parseInt( this.exposure_frequency ) == 2 ){
+							txt_participation += "periodic";
+						} else {
+							txt_participation += this.exposure_frequency;
+						}
+						txt_participation += "</td>";
+						txt_participation += "<td>";
+						if( parseInt( this.exposure_frequency ) == 1 ){
+							txt_participation += "High";
+						} else if ( parseInt( this.exposure_frequency ) == 2 ){
+							txt_participation += "Low";
+						} else {
+							txt_participation += this.exposure_frequency;
+						}
+						txt_participation += "</td>";
 						txt_participation += "</tr>";
 						
 						//duration

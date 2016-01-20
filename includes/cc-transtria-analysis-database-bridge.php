@@ -1249,7 +1249,10 @@ function calc_and_set_dyads_primary_intermediate_analysis( $study_group_id ){
 						}
 						
 						
-						//ipe - rate of participation
+						//ipe - rate of participation (copy over for analysis tab display)
+						$intermediate_calc["ipe_rate_of_participation"] = (int)$this_study_data["ipe"]["ParticipationRate"];
+						
+						//rate of participation calc
 						if( $this_study_data["ipe"]["rateofparticipation_notreported"] == "Y" ){
 							$intermediate_calcs["ParticipationRate"] = 999; //rate of participation "not reported" is checked
 						} else if( !empty( $this_study_data["ipe"]["ParticipationRate"] ) ){
@@ -1352,6 +1355,8 @@ function calc_and_set_dyads_primary_intermediate_analysis( $study_group_id ){
 								'multi_component' => $intermediate_calcs["multi_component"],
 								'complexity' => $intermediate_calcs["complexity"],
 								'exposure_frequency' => $intermediate_calcs["ExposureFrequency"],
+								
+								'ipe_rate_of_participation' => $intermediate_calc["ipe_rate_of_participation"],
 								'rate_of_participation' => $intermediate_calcs["ParticipationRate"],
 								'result_evaluation_population' => $result_eval_pop,
 								'result_subpopulationYN' => $result_sub_pop_yn,
@@ -1368,7 +1373,7 @@ function calc_and_set_dyads_primary_intermediate_analysis( $study_group_id ){
 								'applicability_hr_pops' => $intermediate_calcs["applicability_hr_pops"]
 							), 
 							array( '%d', '%s', '%d', '%d', '%s', '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
-							'%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
+							'%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%s', '%s', '%s',
 							'%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%s', '%d' ) 
 						);
 						
