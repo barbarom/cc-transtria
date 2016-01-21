@@ -419,8 +419,20 @@ function cc_transtria_render_analysis_page(){
 				
 				</table>
 				
+				<h4>Effectiveness (General)</h4>
+				<table id="analysis_vars_effectiveness">
+					<tr class="no_remove">
+						<th>Analysis ID</th>
+						<th>Population or Subpopulation</th>
+						<th>Indicator</th>
+						<th>Measure</th>		
+						<th>Effectiveness</th>	
+					</tr>
+					<tr id="data_parent" class="no_remove"></tr>
+				
+				</table>
+				
 				<h4>Effectiveness, High Risk Populations</h4>
-				<a id="hide_analysis_hrpops_table" class="button">HIDE HR POPS</a>
 				<table id="analysis_vars_effectiveness_hr">
 					<tr class="no_remove">
 						<th>Analysis ID</th>
@@ -556,6 +568,28 @@ function cc_transtria_render_analysis_page(){
 					</tr>
 					<tr id="data_parent" class="no_remove"></tr>
 				</table>
+				
+				<h4>Stage</h4>
+				<table id="analysis_vars_stage">
+					<tr class="no_remove">
+						<th>Analysis ID</th>
+						<th>Value</th>
+					</tr>
+					<tr id="data_parent" class="no_remove"></tr>
+				
+				</table>
+				<!--
+				<select class="analysis_stage">
+					<option value="-1"> -- Select Stage -- </option>
+					<option value="1"> 1 = Adoption </option>
+					<option value="2"> 2 = Implementation </option>
+					<option value="2"> 3 = Enforcement/ maintenance </option>
+				</select>
+				-->
+				<span>
+					<a id="save_analysis_stage" class="button alignright analysis_save" data-whichvars="stage" data-whichsave="save_analysis_vars" data-whichmsg="stage_msg">SAVE STAGE</a>
+					<div id="stage_msg" class="save_analysis_msg"></div>
+				</span>
 				
 				<h4>State</h4> 
 				<select class="state">

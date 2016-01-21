@@ -130,6 +130,7 @@ function get_vars_by_grouping(){
 	which_tr_parent_analysis_duration = jQuery("table#analysis_vars_duration tr#data_parent");
 	which_tr_parent_analysis_effect = jQuery("table#analysis_vars_effect tr#data_parent");
 	which_tr_parent_analysis_pops = jQuery("table#analysis_vars_population tr#data_parent");
+	which_tr_parent_effectiveness = jQuery("table#analysis_vars_effectiveness tr#data_parent");
 	which_tr_parent_effectiveness_hr = jQuery("table#analysis_vars_effectiveness_hr tr#data_parent");
 	which_tr_parent_domestic = jQuery("table#analysis_vars_domestic tr#data_parent");
 	which_tr_parent_multi_component = jQuery("table#analysis_vars_multi_component tr#data_parent");
@@ -142,6 +143,8 @@ function get_vars_by_grouping(){
 	which_tr_parent_hr_pacisland = jQuery("table#analysis_vars_hr_pacificislander tr#data_parent");
 	which_tr_parent_hr_hispanic = jQuery("table#analysis_vars_hr_hispanic tr#data_parent");
 	which_tr_parent_hr_lowincome = jQuery("table#analysis_vars_hr_lowincome tr#data_parent");
+	
+	which_tr_parent_stage = jQuery("table#analysis_vars_stage tr#data_parent");
 	
 	which_tr_parent_popreach = jQuery("table#analysis_vars_popreach tr#data_parent");
 	which_tr_parent_hr_popreach = jQuery("table#analysis_vars_hr_popreach tr#data_parent");
@@ -214,6 +217,7 @@ function get_vars_by_grouping(){
 			jQuery("table#analysis_vars_duration tr").not(".no_remove").remove();
 			jQuery("table#analysis_vars_effect tr").not(".no_remove").remove();
 			jQuery("table#analysis_vars_population tr").not(".no_remove").remove();
+			jQuery("table#analysis_vars_effectiveness tr").not(".no_remove").remove();
 			jQuery("table#analysis_vars_effectiveness_hr tr").not(".no_remove").remove();
 			jQuery("table#analysis_vars_domestic tr").not(".no_remove").remove();
 			jQuery("table#analysis_vars_multi_component tr").not(".no_remove").remove();
@@ -227,6 +231,8 @@ function get_vars_by_grouping(){
 			jQuery("table#analysis_vars_hr_pacificislander tr").not(".no_remove").remove();
 			jQuery("table#analysis_vars_hr_hispanic tr").not(".no_remove").remove();
 			jQuery("table#analysis_vars_hr_lowincome tr").not(".no_remove").remove();
+			
+			jQuery("table#analysis_vars_stage tr").not(".no_remove").remove();
 			
 			//population reaches
 			jQuery("table#analysis_vars_popreach tr").not(".no_remove").remove();
@@ -283,6 +289,7 @@ function get_vars_by_grouping(){
 			var txt_a_im = "";
 			var txt_a_duration = "";
 			var txt_a_effects = "";
+			var txt_a_effectiveness = "";
 			var txt_a_effects_hr = "";
 			var txt_a_pops = "";
 			var txt_a_domestic = "";
@@ -297,12 +304,13 @@ function get_vars_by_grouping(){
 			var txt_a_hr_hispanic = "";
 			var txt_a_hr_lowincome = "";
 			
+			var txt_a_stage = "";
+			
 			//population reaches
 			var txt_a_popreach = "";
 			var txt_a_hr_popreach = "";
 			
-			//editables: stage, state, quality, inclusiveness
-			var txt_a_stage = "";
+			//editables: state, quality, inclusiveness
 			var txt_a_state = "";
 			var txt_a_quality = "";
 			var txt_a_inclusiveness = "";
@@ -669,7 +677,16 @@ function get_vars_by_grouping(){
 						txt_a_effects += "</tr>";
 						//console.log( txt_a_effects );
 						
+						//Effectiveness, General
+						txt_a_effectiveness += "<tr>";
+						txt_a_effectiveness += "<td class='analysis_id'>" + this.info_id + "</td>";
+						txt_a_effectiveness += "<td>" + this.result_population_result + "</td>";
+						txt_a_effectiveness += "<td>" + this.indicator + "</td>";
+						txt_a_effectiveness += "<td>" + this.measure + "</td>";
+						txt_a_effectiveness += "<td>" + this.effectiveness_general + "</td>";
+						txt_a_effectiveness += "</tr>";
 						
+						//Effectiveness, HR
 						txt_a_effects_hr += "<tr>";
 						txt_a_effects_hr += "<td class='analysis_id'>" + this.info_id + "</td>";
 						txt_a_effects_hr += "<td>" + this.result_population_result + "</td>";
@@ -786,6 +803,28 @@ function get_vars_by_grouping(){
 						txt_a_hr_popreach += "<td>" + hr_population_lookup( this.potential_hr_pop_reach ) + "</td>"; //hr pops has same vals/descr as hr popreach!
 						txt_a_hr_popreach += "</tr>";
 						
+						//stage //analysis_vars_stage
+						txt_a_stage += "<tr>";
+						txt_a_stage += "<td class='analysis_id'>" + this.info_id + "</td>";
+						txt_a_stage += "<td><select class='stage'><option value='-1'> -- Select Stage -- </option>";
+						var incoming_stage_var = this.stage;
+						jQuery.each( transtria_ajax.stage_lookup, function( i, v ){
+							//console.log( v.descr );
+							if( parseInt( incoming_stage_var ) == parseInt( v.value ) ){
+								var selected = true;
+							} else {
+								var selected = false;
+							}
+							txt_a_stage += "<option value='" + v.value + "'";
+							//if we are on our selected value
+							if( selected == true ){
+								txt_a_stage += " selected='selected' ";
+							}
+							txt_a_stage += ">" + v.value + " - " + v.descr + "</option>";
+						});
+						txt_a_stage += "</select></td>";
+						txt_a_stage += "</tr>";
+						
 						//scale
 						txt_a_scale += "<tr>";
 						txt_a_scale += "<td class='analysis_id'>" + this.info_id + "</td>";
@@ -883,6 +922,7 @@ function get_vars_by_grouping(){
 			which_tr_parent_analysis_duration.after( txt_a_duration );
 			which_tr_parent_analysis_effect.after( txt_a_effects );
 			which_tr_parent_analysis_pops.after( txt_a_pops );
+			which_tr_parent_effectiveness.after( txt_a_effectiveness );
 			which_tr_parent_effectiveness_hr.after( txt_a_effects_hr );
 			which_tr_parent_domestic.after( txt_a_domestic );
 			which_tr_parent_multi_component.after( txt_a_multicomp );
@@ -895,6 +935,8 @@ function get_vars_by_grouping(){
 			which_tr_parent_hr_pacisland.after( txt_a_hr_pacisland );
 			which_tr_parent_hr_hispanic.after( txt_a_hr_hispanic );
 			which_tr_parent_hr_lowincome.after( txt_a_hr_lowincome );
+			
+			which_tr_parent_stage.after( txt_a_stage );
 			
 			which_tr_parent_popreach.after( txt_a_popreach );
 			which_tr_parent_hr_popreach.after( txt_a_hr_popreach );

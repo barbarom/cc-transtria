@@ -398,6 +398,12 @@ class CC_Transtria_Extras {
 					'measures_w_text' => cc_transtria_measures_w_extra_text(),
 					'measures_w_text_short' => cc_transtria_measures_w_extra_text( false ),
 					'effect_direction_lookup' => get_codetbl_by_codetype( 63 ),
+					'stage_lookup' => array(
+						array( "value" => 1, "descr" => "Adoption"),
+						array( "value" => 2, "descr" => "Implementation"),
+						array( "value" => 3, "descr" => "Enforcement/ maintenance"),
+						array( "value" => 999, "descr" => "Insufficient information"),
+						),
 					'state_lookup' => cc_transtria_state_lookup(),
 					'quality_lookup' => cc_transtria_quality_lookup(),
 					'inclusiveness_lookup' => cc_transtria_inclusiveness_lookup(),

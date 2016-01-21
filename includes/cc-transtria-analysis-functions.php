@@ -1343,7 +1343,7 @@ function calc_general_effectiveness_analysis( $study_design, $duration, $net_eff
 	
 	//first, check that study design != 0 (means not set!)
 	if( $study_design == 0 ){
-		return "no study design";
+		return 999;
 	}
 	
 	// check for string values where there should be an int (means that net_effects, type, duration are not right )
