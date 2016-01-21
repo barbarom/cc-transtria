@@ -224,7 +224,15 @@ function cc_transtria_render_analysis_page(){
 				
 				</table>
 				
-				<!-- insert Representativeness here - WHERE FROM? -->	
+				<h4>Representativeness</h4>
+				<table id="intermediate_vars_representativeness">
+					<tr class="no_remove">
+						<th>Study ID</th>
+						<th>Representativeness</th>
+					</tr>
+					<tr id="data_parent" class="no_remove"></tr>
+				
+				</table>
 				
 				<h4>Applicability to high-risk populations</h4>
 				<table id="intermediate_vars_applicability_hr">
@@ -319,7 +327,7 @@ function cc_transtria_render_analysis_page(){
 			
 				<h3 id="analysis_vars_header_text">Analysis Variables</h3>
 				
-				<h4>Indicator-Measure Dyad:</h4>
+				<h4>Indicator-Measure Dyad</h4>
 				<a id="hide_analysis_im_table" class="button" data-whichlabel="ANALYSIS IDs" data-whichtable="analysis_vars_im">HIDE ANALYSIS IDs</a>
 				<table id="analysis_vars_im">
 					<tr class="no_remove">
@@ -335,7 +343,7 @@ function cc_transtria_render_analysis_page(){
 				
 				</table>
 				
-				<h4 id="study_design_label">Study Designs:</h4>
+				<h4 id="study_design_label">Study Designs</h4>
 				<h5>Study Design</h5>
 				<select class="analysis_study_design">
 					<option value="-1"> -- Select Study Design -- </option>
@@ -354,8 +362,19 @@ function cc_transtria_render_analysis_page(){
 					<div id="studydesign_msg" class="save_analysis_msg"></div>
 				</span>
 				
+				<h4>Intervention Duration</h4>
+				<table id="analysis_vars_duration">
+					<tr class="no_remove">
+						<th>Analysis ID</th>
+						<th>Indicator</th>
+						<th>Measure</th>
+						<th>Intervention Duration</th>
+					</tr>
+					<tr id="data_parent" class="no_remove"></tr>
 				
-				<h4>Net Effects or Associations:</h4>
+				</table>
+				
+				<h4>Net Effects or Associations</h4>
 				<a id="hide_analysis_effect_table" class="button" data-whichlabel="NET EFFECTS" data-whichtable="analysis_vars_effect">HIDE NET EFFECTS</a>
 				<a id="show_effect_algorithm" class="button alignright" data-whichalgorithm="analysis_effect_algorithm">SHOW ALGORITHM DETAILS</a>
 				<div id="analysis_effect_algorithm" class="show_algorithm">
@@ -365,14 +384,13 @@ function cc_transtria_render_analysis_page(){
 							&nbsp;Net Effect = I-M effect/association direction;<br />
 						} ELSE { <br />
 							&nbsp;DROPDOWN to save direction value to analysis_id<br />
-							&nbsp;TODO: implement intermediate algorithm to auto-generate if duplicates<br />
 						}<br />
 					</p>
 				</div>
 				
 				<table id="analysis_vars_effect">
 					<tr class="no_remove">
-						<th>Analysis ID (Study ID _ seq _ unique ID)</th>
+						<th>Analysis ID</th>
 						<th>Indicator</th>
 						<th>Measure</th>		
 						<th>Net Effect or Association</th>		
@@ -386,11 +404,11 @@ function cc_transtria_render_analysis_page(){
 				</span>
 				<br />
 				
-				<h4>Populations:</h4>
+				<h4>Populations</h4>
 				<a id="hide_analysis_population_table" class="button" data-whichlabel="POPULATIONS" data-whichtable="analysis_vars_population">HIDE POPULATIONS</a>
 				<table id="analysis_vars_population">
 					<tr class="no_remove">
-						<th>Analysis ID (Study ID _ seq _ unique ID)</th>
+						<th>Analysis ID</th>
 						<th>Unique IDs - HR</th>
 						<th>Evaluation Population</th>
 						<th>Result Subpopulation YN?</th>
@@ -401,7 +419,7 @@ function cc_transtria_render_analysis_page(){
 				
 				</table>
 				
-				<h4>Effectiveness, High Risk Populations:</h4>
+				<h4>Effectiveness, High Risk Populations</h4>
 				<a id="hide_analysis_hrpops_table" class="button">HIDE HR POPS</a>
 				<table id="analysis_vars_effectiveness_hr">
 					<tr class="no_remove">
@@ -415,7 +433,7 @@ function cc_transtria_render_analysis_page(){
 				
 				</table>
 				
-				<h4>Domestic/International:</h4> 
+				<h4>Domestic/International</h4> 
 				<table id="analysis_vars_domestic">
 					<tr class="no_remove">
 						<th>Analysis ID</th>
@@ -426,7 +444,7 @@ function cc_transtria_render_analysis_page(){
 				
 				</table>
 
-				<h4>Multi-Component:</h4> 
+				<h4>Multi-Component</h4> 
 				<table id="analysis_vars_multi_component">
 					<tr class="no_remove">
 						<th>Analysis ID</th>
@@ -437,7 +455,7 @@ function cc_transtria_render_analysis_page(){
 				
 				</table>
 				
-				<h4>Complex:</h4> 
+				<h4>Complex</h4> 
 				<table id="analysis_vars_complex">
 					<tr class="no_remove">
 						<th>Analysis ID</th>
@@ -448,7 +466,7 @@ function cc_transtria_render_analysis_page(){
 				
 				</table>
 				
-				<h4>Participation or Exposure:</h4> 
+				<h4>Participation or Exposure</h4> 
 				<table id="analysis_vars_participation">
 					<tr class="no_remove">
 						<th>Analysis ID</th>
@@ -459,7 +477,7 @@ function cc_transtria_render_analysis_page(){
 				
 				</table>
 				
-				<h4>High-risk African American population:</h4> 
+				<h4>High-risk African American population</h4> 
 				<table id="analysis_vars_hr_black">
 					<tr class="no_remove">
 						<th>Analysis ID</th>
@@ -469,7 +487,7 @@ function cc_transtria_render_analysis_page(){
 					<tr id="data_parent" class="no_remove"></tr>
 				</table>
 				
-				<h4>High-risk Asian population:</h4> 
+				<h4>High-risk Asian population</h4> 
 				<table id="analysis_vars_hr_asian">
 					<tr class="no_remove">
 						<th>Analysis ID</th>
@@ -479,7 +497,7 @@ function cc_transtria_render_analysis_page(){
 					<tr id="data_parent" class="no_remove"></tr>
 				</table>
 				
-				<h4>High-risk Native American/ Alaskan Native population:</h4> 
+				<h4>High-risk Native American/ Alaskan Native population</h4> 
 				<table id="analysis_vars_hr_nativeamerican">
 					<tr class="no_remove">
 						<th>Analysis ID</th>
@@ -489,7 +507,7 @@ function cc_transtria_render_analysis_page(){
 					<tr id="data_parent" class="no_remove"></tr>
 				</table>
 				
-				<h4>High-risk Native Hawaiian/ Pacific Islander population:</h4> 
+				<h4>High-risk Native Hawaiian/ Pacific Islander population</h4> 
 				<table id="analysis_vars_hr_pacificislander">
 					<tr class="no_remove">
 						<th>Analysis ID</th>
@@ -499,7 +517,7 @@ function cc_transtria_render_analysis_page(){
 					<tr id="data_parent" class="no_remove"></tr>
 				</table>
 				
-				<h4>High-risk Hispanic/ Latino population:</h4> 
+				<h4>High-risk Hispanic/ Latino population</h4> 
 				<table id="analysis_vars_hr_hispanic">
 					<tr class="no_remove">
 						<th>Analysis ID</th>
@@ -509,7 +527,7 @@ function cc_transtria_render_analysis_page(){
 					<tr id="data_parent" class="no_remove"></tr>
 				</table>
 				
-				<h4>High-risk Lower Income population:</h4> 
+				<h4>High-risk Lower Income population</h4> 
 				<table id="analysis_vars_hr_lowincome">
 					<tr class="no_remove">
 						<th>Analysis ID</th>
@@ -519,7 +537,7 @@ function cc_transtria_render_analysis_page(){
 					<tr id="data_parent" class="no_remove"></tr>
 				</table>
 				
-				<h4>Potential Population Reach:</h4> 
+				<h4>Potential Population Reach</h4> 
 				<table id="analysis_vars_popreach">
 					<tr class="no_remove">
 						<th>Analysis ID</th>
@@ -529,7 +547,7 @@ function cc_transtria_render_analysis_page(){
 					<tr id="data_parent" class="no_remove"></tr>
 				</table>
 				
-				<h4>Potential High-risk Population Reach:</h4> 
+				<h4>Potential High-risk Population Reach</h4> 
 				<table id="analysis_vars_hr_popreach">
 					<tr class="no_remove">
 						<th>Analysis ID</th>
@@ -539,7 +557,7 @@ function cc_transtria_render_analysis_page(){
 					<tr id="data_parent" class="no_remove"></tr>
 				</table>
 				
-				<h4>State:</h4> 
+				<h4>State</h4> 
 				<select class="state">
 					<option value="-1"> -- Select State -- </option>
 					<option value="1">1 - Fully complete</option>
@@ -552,7 +570,7 @@ function cc_transtria_render_analysis_page(){
 				</span>
 				<br />
 				
-				<h4>Quality:</h4> 
+				<h4>Quality</h4> 
 				<select class="quality">
 					<option value="-1"> -- Select Quality -- </option>
 					<option value="1">1 - High</option>
@@ -565,7 +583,7 @@ function cc_transtria_render_analysis_page(){
 				</span>
 				<br />
 				
-				<h4>Inclusiveness:</h4> 
+				<h4>Inclusiveness</h4> 
 				<select class="inclusiveness">
 					<option value="-1"> -- Select Inclusiveness -- </option>
 					<option value="1">1 - Full</option>
@@ -579,7 +597,7 @@ function cc_transtria_render_analysis_page(){
 				</span>
 				<br />
 				
-				<h4>Access:</h4> 
+				<h4>Access</h4> 
 				<select class="access">
 					<option value="-1"> -- Select Access -- </option>
 					<option value="1">1 - Strong</option>
@@ -592,7 +610,7 @@ function cc_transtria_render_analysis_page(){
 				</span>
 				<br />
 				
-				<h4>Size:</h4> 
+				<h4>Size</h4> 
 				<select class="size">
 					<option value="-1"> -- Select Size -- </option>
 					<option value="1">1 - Large</option>
@@ -606,8 +624,7 @@ function cc_transtria_render_analysis_page(){
 				<br />
 				
 				<!-- end input variables -->
-				
-				<h4>Scale:</h4> 
+				<h4>Scale</h4> 
 				<table id="analysis_vars_scale">
 					<tr class="no_remove">
 						<th>Analysis ID</th>
@@ -617,7 +634,7 @@ function cc_transtria_render_analysis_page(){
 					<tr id="data_parent" class="no_remove"></tr>
 				</table>
 				
-				<h4>High-risk Scale:</h4> 
+				<h4>High-risk Scale</h4> 
 				<table id="analysis_vars_hr_scale">
 					<tr class="no_remove">
 						<th>Analysis ID</th>
@@ -627,7 +644,7 @@ function cc_transtria_render_analysis_page(){
 					<tr id="data_parent" class="no_remove"></tr>
 				</table>
 				
-				<h4>Dose:</h4> 
+				<h4>Dose</h4> 
 				<table id="analysis_vars_dose">
 					<tr class="no_remove">
 						<th>Analysis ID</th>
@@ -637,7 +654,7 @@ function cc_transtria_render_analysis_page(){
 					<tr id="data_parent" class="no_remove"></tr>
 				</table>
 				
-				<h4>Population Impact:</h4> 
+				<h4>Population Impact</h4> 
 				<table id="analysis_vars_pop_impact">
 					<tr class="no_remove">
 						<th>Analysis ID</th>
@@ -647,7 +664,7 @@ function cc_transtria_render_analysis_page(){
 					<tr id="data_parent" class="no_remove"></tr>
 				</table>
 				
-				<h4>Hish-risk Population Impact:</h4> 
+				<h4>Hish-risk Population Impact</h4> 
 				<table id="analysis_vars_hr_pop_impact">
 					<tr class="no_remove">
 						<th>Analysis ID</th>

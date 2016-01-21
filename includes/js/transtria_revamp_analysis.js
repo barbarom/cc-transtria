@@ -108,6 +108,7 @@ function get_vars_by_grouping(){
 	which_tr_parent_intermediate_complexity = jQuery("table#intermediate_vars_complexity tr#data_parent");
 	which_tr_parent_intermediate_participation = jQuery("table#intermediate_vars_participation tr#data_parent");
 	which_tr_parent_intermediate_applicability = jQuery("table#intermediate_vars_applicability_hr tr#data_parent");
+	which_tr_parent_intermediate_representativeness = jQuery("table#intermediate_vars_representativeness tr#data_parent");
 	
 	which_tr_parent_intermediate_purpose = jQuery("table#intermediate_vars_purpose tr#data_parent");
 	which_tr_parent_intermediate_summary = jQuery("table#intermediate_vars_summary tr#data_parent");
@@ -126,6 +127,7 @@ function get_vars_by_grouping(){
 	which_tr_parent_intermediate_duration = jQuery("table#intermediate_vars_duration tr#data_parent");
 	
 	which_tr_parent_analysis_im = jQuery("table#analysis_vars_im tr#data_parent");
+	which_tr_parent_analysis_duration = jQuery("table#analysis_vars_duration tr#data_parent");
 	which_tr_parent_analysis_effect = jQuery("table#analysis_vars_effect tr#data_parent");
 	which_tr_parent_analysis_pops = jQuery("table#analysis_vars_population tr#data_parent");
 	which_tr_parent_effectiveness_hr = jQuery("table#analysis_vars_effectiveness_hr tr#data_parent");
@@ -188,6 +190,7 @@ function get_vars_by_grouping(){
 			jQuery("table#intermediate_vars_complexity tr").not(".no_remove").remove();
 			jQuery("table#intermediate_vars_participation tr").not(".no_remove").remove();
 			jQuery("table#intermediate_vars_applicability_hr tr").not(".no_remove").remove();
+			jQuery("table#intermediate_vars_representativeness tr").not(".no_remove").remove();
 			
 			jQuery("table#intermediate_vars_purpose tr").not(".no_remove").remove();
 			jQuery("table#intermediate_vars_summary tr").not(".no_remove").remove();
@@ -208,6 +211,7 @@ function get_vars_by_grouping(){
 			
 			//clear tables: analysis
 			jQuery("table#analysis_vars_im tr").not(".no_remove").remove();
+			jQuery("table#analysis_vars_duration tr").not(".no_remove").remove();
 			jQuery("table#analysis_vars_effect tr").not(".no_remove").remove();
 			jQuery("table#analysis_vars_population tr").not(".no_remove").remove();
 			jQuery("table#analysis_vars_effectiveness_hr tr").not(".no_remove").remove();
@@ -277,6 +281,7 @@ function get_vars_by_grouping(){
 			var txt_strat = "";
 			
 			var txt_a_im = "";
+			var txt_a_duration = "";
 			var txt_a_effects = "";
 			var txt_a_effects_hr = "";
 			var txt_a_pops = "";
@@ -396,8 +401,7 @@ function get_vars_by_grouping(){
 						txt_participation += "</td>";
 						txt_participation += "</tr>";
 						
-						//applicability to hr pops
-					
+						//applicability to hr pop
 						txt_applicability += "<tr><td>" + this.info_id + "</td>";
 						txt_applicability += "<td>";
 						if( parseInt( this.applicability_hr_pops ) == 1 ){
@@ -408,6 +412,18 @@ function get_vars_by_grouping(){
 							txt_applicability += this.applicability_hr_pops;
 						}
 						txt_applicability += "</td></tr>";
+						
+						//representativeness
+						txt_representativeness += "<tr><td>" + this.info_id + "</td>";
+						txt_representativeness += "<td>";
+						if( parseInt( this.ipe_representativeness ) == 1 ){
+							txt_representativeness += "Yes";
+						} else if( parseInt( this.ipe_representativeness ) == 2 ){
+							txt_representativeness += "No";
+						} else {
+							txt_representativeness += this.ipe_representativeness;
+						}
+						txt_representativeness += "</td></tr>";
 						
 						//duration
 						txt_duration += "<tr><td>" + this.info_id + "</td>";
@@ -611,8 +627,15 @@ function get_vars_by_grouping(){
 						txt_a_im += "<td>" + this.net_effects + "</td>";
 						txt_a_im += "<td>" + this.outcome_type + "</td>";
 						txt_a_im += "<td>" + this.effectiveness_general + "</td>";
-						
 						txt_a_im += "</tr>";
+						
+						//intervention duration
+						txt_a_duration += "<tr>";
+						txt_a_duration += "<td>" + this.info_id + "</td>";
+						txt_a_duration += "<td>" + this.indicator + "</td>";
+						txt_a_duration += "<td>" + this.measure + "</td>";
+						txt_a_duration += "<td>" + this.duration + "</td>";
+						txt_a_duration += "</tr>";
 						
 						//populate the net effects table
 						txt_a_effects += "<tr>";
@@ -840,6 +863,7 @@ function get_vars_by_grouping(){
 			which_tr_parent_intermediate_complexity.after( txt_complexity );
 			which_tr_parent_intermediate_participation.after( txt_participation );
 			which_tr_parent_intermediate_applicability.after( txt_applicability );
+			which_tr_parent_intermediate_representativeness.after( txt_representativeness );
 			
 			which_tr_parent_intermediate_purpose.after( txt_purpose );
 			which_tr_parent_intermediate_summary.after( txt_summary );
@@ -856,6 +880,7 @@ function get_vars_by_grouping(){
 			which_tr_parent_intermediate_strat.after( txt_strat );
 	
 			which_tr_parent_analysis_im.after( txt_a_im );
+			which_tr_parent_analysis_duration.after( txt_a_duration );
 			which_tr_parent_analysis_effect.after( txt_a_effects );
 			which_tr_parent_analysis_pops.after( txt_a_pops );
 			which_tr_parent_effectiveness_hr.after( txt_a_effects_hr );
