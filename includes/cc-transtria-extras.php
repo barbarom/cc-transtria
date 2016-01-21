@@ -765,7 +765,6 @@ class CC_Transtria_Extras {
 		$data[ 'analysis_vars' ] = $analysis_data;
 		$data[ 'study_grouping' ] = $sg_data;
 		
-		//echo json_encode( $data );
 		echo json_encode( $data );
 		
 		die();
@@ -847,9 +846,22 @@ class CC_Transtria_Extras {
 		$study_group = $_POST["this_study_group"];
 		
 		$unique_ims = recalc_analysis_vars_form_data( $study_group );
-				
+			
+		$dyad_array = get_dyads_for_study_group( $study_group );
+		$study_data = get_study_level_for_intermediate( $study_group );
+		$analysis_data = get_analysis_vars_for_group( $study_group );
+		$sg_data = get_studygrouping_vars( $study_group );
+		
+		//set data
+		$data[ 'intermediate_vars' ] = $dyad_array;
+		$data[ 'intermediate_vars_study' ] = $study_data;
+		$data[ 'analysis_vars' ] = $analysis_data;
+		$data[ 'study_grouping' ] = $sg_data;
+		
+		echo json_encode( $data );
+		
 		//echo json_encode( $unique_ims );
-		echo json_encode( 'ran second analysis' );
+		//echo json_encode( 'ran second analysis' );
 		
 		die();
 	

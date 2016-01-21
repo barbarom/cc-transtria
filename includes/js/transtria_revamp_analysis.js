@@ -150,6 +150,13 @@ function get_vars_by_grouping(){
 	which_tr_parent_access = jQuery("table#analysis_vars_access tr#data_parent");
 	which_tr_parent_size = jQuery("table#analysis_vars_size tr#data_parent");
 	
+	//scale, hr scale, dose, pop impact,hr pop impact
+	which_tr_parent_scale = jQuery("table#analysis_vars_scale tr#data_parent");
+	which_tr_parent_hr_scale = jQuery("table#analysis_vars_hr_scale tr#data_parent");
+	which_tr_parent_dose = jQuery("table#analysis_vars_dose tr#data_parent");
+	which_tr_parent_pop_impact = jQuery("table#analysis_vars_pop_impact tr#data_parent");
+	which_tr_parent_hr_pop_impact = jQuery("table#analysis_vars_hr_pop_impact tr#data_parent");
+	
 	//ajax data
 	var ajax_action = 'get_im_dyads_and_data_by_group';
 	var ajax_data = {
@@ -228,6 +235,13 @@ function get_vars_by_grouping(){
 			jQuery("table#analysis_vars_access tr").not(".no_remove").remove();
 			jQuery("table#analysis_vars_size tr").not(".no_remove").remove();
 			
+			//scale, hr scale, dose, pop impact, hr pop impact
+			jQuery("table#analysis_vars_scale tr").not(".no_remove").remove();
+			jQuery("table#analysis_vars_hr_scale tr").not(".no_remove").remove();
+			jQuery("table#analysis_vars_dose tr").not(".no_remove").remove();
+			jQuery("table#analysis_vars_pop_impact tr").not(".no_remove").remove();
+			jQuery("table#analysis_vars_hr_pop_impact tr").not(".no_remove").remove();
+			
 		}
 	}).success( function( data ) {
 		
@@ -289,6 +303,12 @@ function get_vars_by_grouping(){
 			var txt_a_inclusiveness = "";
 			var txt_a_access = "";
 			var txt_a_size = "";
+			
+			var txt_a_scale = "";
+			var txt_a_hr_scale = "";
+			var txt_a_dose = "";
+			var txt_a_pop_impact = "";
+			var txt_a_hr_pop_impact = "";
 			
 			var strat_count = 0;
 			
@@ -743,125 +763,40 @@ function get_vars_by_grouping(){
 						txt_a_hr_popreach += "<td>" + hr_population_lookup( this.potential_hr_pop_reach ) + "</td>"; //hr pops has same vals/descr as hr popreach!
 						txt_a_hr_popreach += "</tr>";
 						
+						//scale
+						txt_a_scale += "<tr>";
+						txt_a_scale += "<td class='analysis_id'>" + this.info_id + "</td>";
+						txt_a_scale += "<td>" + this.scale + "</td>";
+						txt_a_scale += "<td>" + scale_lookup( this.scale ) + "</td>"; //hr pops has same vals/descr as hr popreach!
+						txt_a_scale += "</tr>";
 						
-						/* //this is now a Study-grouping level variable (14Jan2016)
+						//hr scale
+						txt_a_hr_scale += "<tr>";
+						txt_a_hr_scale += "<td class='analysis_id'>" + this.info_id + "</td>";
+						txt_a_hr_scale += "<td>" + this.hr_scale + "</td>";
+						txt_a_hr_scale += "<td>" + scale_lookup( this.hr_scale ) + "</td>"; //hr pops has same vals/descr as hr popreach!
+						txt_a_hr_scale += "</tr>";
 						
-						//state:
-						txt_a_state += "<tr>";
-						txt_a_state += "<td class='analysis_id'>" + this.info_id + "</td>";
-						//dropdown
-						txt_a_state += "<td><select class='state'><option value='-1'> -- Select State -- </option>";
-						var state_var = this.state;
-						jQuery.each( transtria_ajax.state_lookup, function( i, v ){
-							//console.log( v.descr );
-							if( parseInt( state_var ) == parseInt( v.value ) ){
-								var selected = true;
-							} else {
-								var selected = false;
-							}
-							txt_a_state += "<option value='" + v.value + "'";
-							//if we are on our selected value
-							if( selected == true ){
-								txt_a_state += " selected='selected' ";
-							}
-							txt_a_state += ">" + v.value + " - " + v.descr + "</option>";
-						});
-						txt_a_state += "</select></td>";
-						txt_a_state += "</tr>";
+						//dose
+						txt_a_dose += "<tr>";
+						txt_a_dose += "<td class='analysis_id'>" + this.info_id + "</td>";
+						txt_a_dose += "<td>" + this.dose + "</td>";
+						txt_a_dose += "<td>" + dose_pop_impact_lookup( this.dose ) + "</td>"; //hr pops has same vals/descr as hr popreach!
+						txt_a_dose += "</tr>";
 						
-						//quality
-						txt_a_quality += "<tr>";
-						txt_a_quality += "<td class='analysis_id'>" + this.info_id + "</td>";
-						//dropdown
-						txt_a_quality += "<td><select class='quality'><option value='-1'> -- Select Quality -- </option>";
-						var quality_var = this.quality;
-						jQuery.each( transtria_ajax.quality_lookup, function( i, v ){
-							//console.log( v.descr );
-							if( parseInt( quality_var ) == parseInt( v.value ) ){
-								var selected = true;
-							} else {
-								var selected = false;
-							}
-							txt_a_quality += "<option value='" + v.value + "'";
-							//if we are on our selected value
-							if( selected == true ){
-								txt_a_quality += " selected='selected' ";
-							}
-							txt_a_quality += ">" + v.value + " - " + v.descr + "</option>";
-						});
-						txt_a_quality += "</select></td>";
-						txt_a_quality += "</tr>";
+						//pop impact
+						txt_a_pop_impact += "<tr>";
+						txt_a_pop_impact += "<td class='analysis_id'>" + this.info_id + "</td>";
+						txt_a_pop_impact += "<td>" + this.population_impact + "</td>";
+						txt_a_pop_impact += "<td>" + dose_pop_impact_lookup( this.population_impact ) + "</td>"; //hr pops has same vals/descr as hr popreach!
+						txt_a_pop_impact += "</tr>";
 						
-						//inclusiveness
-						txt_a_inclusiveness += "<tr>";
-						txt_a_inclusiveness += "<td class='analysis_id'>" + this.info_id + "</td>";
-						//dropdown
-						txt_a_inclusiveness += "<td><select class='inclusiveness'><option value='-1'> -- Select Inclusiveness -- </option>";
-						var inclu_var = this.inclusiveness;
-						jQuery.each( transtria_ajax.inclusiveness_lookup, function( i, v ){
-							//console.log( v.descr );
-							if( parseInt( inclu_var ) == parseInt( v.value ) ){
-								var selected = true;
-							} else {
-								var selected = false;
-							}
-							txt_a_inclusiveness += "<option value='" + v.value + "'";
-							//if we are on our selected value
-							if( selected == true ){
-								txt_a_inclusiveness += " selected='selected' ";
-							}
-							txt_a_inclusiveness += ">" + v.value + " - " + v.descr + "</option>";
-						});
-						txt_a_inclusiveness += "</select></td>";
-						txt_a_inclusiveness += "</tr>";
-						
-						//access
-						txt_a_access += "<tr>";
-						txt_a_access += "<td class='analysis_id'>" + this.info_id + "</td>";
-						//dropdown
-						txt_a_access += "<td><select class='access'><option value='-1'> -- Select Access -- </option>";
-						var access_var = this.access;
-						jQuery.each( transtria_ajax.access_lookup, function( i, v ){
-							//console.log( v.descr );
-							if( parseInt( access_var ) == parseInt( v.value ) ){
-								var selected = true;
-							} else {
-								var selected = false;
-							}
-							txt_a_access += "<option value='" + v.value + "'";
-							//if we are on our selected value
-							if( selected == true ){
-								txt_a_access += " selected='selected' ";
-							}
-							txt_a_access += ">" + v.value + " - " + v.descr + "</option>";
-						});
-						txt_a_access += "</select></td>";
-						txt_a_access += "</tr>";
-						
-						//size
-						txt_a_size += "<tr>";
-						txt_a_size += "<td class='analysis_id'>" + this.info_id + "</td>";
-						//dropdown
-						txt_a_size += "<td><select class='size'><option value='-1'> -- Select Size -- </option>";
-						var size_var = this.size;
-						jQuery.each( transtria_ajax.size_lookup, function( i, v ){
-							//console.log( v.descr );
-							if( parseInt( size_var ) == parseInt( v.value ) ){
-								var selected = true;
-							} else {
-								var selected = false;
-							}
-							txt_a_size += "<option value='" + v.value + "'";
-							//if we are on our selected value
-							if( selected == true ){
-								txt_a_size += " selected='selected' ";
-							}
-							txt_a_size += ">" + v.value + " - " + v.descr + "</option>";
-						});
-						txt_a_size += "</select></td>";
-						txt_a_size += "</tr>";
-						
-						*/
+						//hr pop impact
+						txt_a_hr_pop_impact += "<tr>";
+						txt_a_hr_pop_impact += "<td class='analysis_id'>" + this.info_id + "</td>";
+						txt_a_hr_pop_impact += "<td>" + this.hr_population_impact + "</td>";
+						txt_a_hr_pop_impact += "<td>" + dose_pop_impact_lookup( this.hr_population_impact ) + "</td>"; //hr pops has same vals/descr as hr popreach!
+						txt_a_hr_pop_impact += "</tr>";
 						
 						
 						
@@ -939,11 +874,11 @@ function get_vars_by_grouping(){
 			which_tr_parent_popreach.after( txt_a_popreach );
 			which_tr_parent_hr_popreach.after( txt_a_hr_popreach );
 		
-			/*which_tr_parent_state.after( txt_a_state );
-			which_tr_parent_quality.after( txt_a_quality );
-			which_tr_parent_inclusiveness.after( txt_a_inclusiveness );
-			which_tr_parent_access.after( txt_a_access );
-			which_tr_parent_size.after( txt_a_size );*/
+			which_tr_parent_scale.after( txt_a_scale );
+			which_tr_parent_hr_scale.after( txt_a_hr_scale );
+			which_tr_parent_dose.after( txt_a_dose );
+			which_tr_parent_pop_impact.after( txt_a_pop_impact );
+			which_tr_parent_hr_pop_impact.after( txt_a_hr_pop_impact );
 			
 			
 			
@@ -1332,6 +1267,41 @@ function popreach_lookup( incoming_value ){
 			break;
 		case 2:
 			return "Low";
+			break;		
+		case 999:
+		default:
+			return "Insufficient Information";
+			break;	
+	}
+}
+
+//scale lookup
+function scale_lookup( incoming_value ){
+	switch ( parseInt( incoming_value ) ){
+		case 1:
+			return "Large";
+			break;
+		case 2:
+			return "Small";
+			break;		
+		case 999:
+		default:
+			return "Insufficient Information";
+			break;	
+	}
+}
+
+//dose lookup
+function dose_pop_impact_lookup( incoming_value ){
+	switch ( parseInt( incoming_value ) ){
+		case 1:
+			return "High";
+			break;
+		case 2:
+			return "Low";
+			break;	
+		case 3:
+			return "No";
 			break;		
 		case 999:
 		default:

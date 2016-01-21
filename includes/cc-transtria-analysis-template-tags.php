@@ -540,13 +540,6 @@ function cc_transtria_render_analysis_page(){
 				</table>
 				
 				<h4>State:</h4> 
-				<!--<table id="analysis_vars_state">
-					<tr class="no_remove">
-						<th>Analysis ID</th>
-						<th>Value</th>
-					</tr>
-					<tr id="data_parent" class="no_remove"></tr>
-				</table>-->
 				<select class="state">
 					<option value="-1"> -- Select State -- </option>
 					<option value="1">1 - Fully complete</option>
@@ -557,20 +550,9 @@ function cc_transtria_render_analysis_page(){
 					<a id="save_analysis_state" class="button alignright analysis_save" data-whichvars="state" data-whichsave="save_studygroup_vars" data-whichmsg="state_msg">SAVE STATE</a>
 					<div id="state_msg" class="save_analysis_msg"></div>
 				</span>
-				<!--<span>
-					<a id="save_analysis_state" class="button alignright analysis_save" data-whichvars="state" data-whichsave="save_analysis_vars" data-whichmsg="state_msg">SAVE STATE</a>
-					<div id="state_msg" class="save_analysis_msg"></div>
-				</span>-->
 				<br />
 				
 				<h4>Quality:</h4> 
-				<!--<table id="analysis_vars_quality">
-					<tr class="no_remove">
-						<th>Analysis ID</th>
-						<th>Value</th>
-					</tr>
-					<tr id="data_parent" class="no_remove"></tr>
-				</table>-->
 				<select class="quality">
 					<option value="-1"> -- Select Quality -- </option>
 					<option value="1">1 - High</option>
@@ -581,20 +563,9 @@ function cc_transtria_render_analysis_page(){
 					<a id="save_analysis_quality" class="button alignright analysis_save" data-whichvars="quality" data-whichsave="save_studygroup_vars" data-whichmsg="quality_msg">SAVE QUALITY</a>
 					<div id="quality_msg" class="save_analysis_msg"></div>
 				</span>
-				<!--<span>
-					<a id="save_analysis_quality" class="button alignright analysis_save" data-whichvars="quality" data-whichsave="save_analysis_vars" data-whichmsg="quality_msg">SAVE QUALITY</a>
-					<div id="quality_msg" class="save_analysis_msg"></div>
-				</span>-->
 				<br />
 				
 				<h4>Inclusiveness:</h4> 
-				<!--<table id="analysis_vars_inclusiveness">
-					<tr class="no_remove">
-						<th>Analysis ID</th>
-						<th>Value</th>
-					</tr>
-					<tr id="data_parent" class="no_remove"></tr>
-				</table>-->
 				<select class="inclusiveness">
 					<option value="-1"> -- Select Inclusiveness -- </option>
 					<option value="1">1 - Full</option>
@@ -606,20 +577,9 @@ function cc_transtria_render_analysis_page(){
 					<a id="save_analysis_inclusiveness" class="button alignright analysis_save" data-whichvars="inclusiveness" data-whichsave="save_studygroup_vars" data-whichmsg="inclusiveness_msg">SAVE INCLUSIVENESSS</a>
 					<div id="inclusiveness_msg" class="save_analysis_msg"></div>
 				</span>
-				<!--<span>
-					<a id="save_analysis_inclusiveness" class="button alignright analysis_save" data-whichvars="inclusiveness" data-whichsave="save_analysis_vars" data-whichmsg="inclusiveness_msg">SAVE INCLUSIVENESSS</a>
-					<div id="inclusiveness_msg" class="save_analysis_msg"></div>
-				</span>-->
 				<br />
 				
 				<h4>Access:</h4> 
-				<!--<table id="analysis_vars_access">
-					<tr class="no_remove">
-						<th>Analysis ID</th>
-						<th>Value</th>
-					</tr>
-					<tr id="data_parent" class="no_remove"></tr>
-				</table>-->
 				<select class="access">
 					<option value="-1"> -- Select Access -- </option>
 					<option value="1">1 - Strong</option>
@@ -630,20 +590,9 @@ function cc_transtria_render_analysis_page(){
 					<a id="save_analysis_access" class="button alignright analysis_save" data-whichvars="access" data-whichsave="save_studygroup_vars" data-whichmsg="access_msg">SAVE ACCESS</a>
 					<div id="access_msg" class="save_analysis_msg"></div>
 				</span>
-				<!--<span>
-					<a id="save_analysis_access" class="button alignright analysis_save" data-whichvars="access" data-whichsave="save_analysis_vars" data-whichmsg="access_msg">SAVE ACCESS</a>
-					<div id="access_msg" class="save_analysis_msg"></div>
-				</span>-->
 				<br />
 				
 				<h4>Size:</h4> 
-				<!--<table id="analysis_vars_size">
-					<tr class="no_remove">
-						<th>Analysis ID</th>
-						<th>Value</th>
-					</tr>
-					<tr id="data_parent" class="no_remove"></tr>
-				</table>-->
 				<select class="size">
 					<option value="-1"> -- Select Size -- </option>
 					<option value="1">1 - Large</option>
@@ -654,11 +603,59 @@ function cc_transtria_render_analysis_page(){
 					<a id="save_analysis_size" class="button alignright analysis_save" data-whichvars="size" data-whichsave="save_studygroup_vars" data-whichmsg="size_msg">SAVE SIZE</a>
 					<div id="size_msg" class="save_analysis_msg"></div>
 				</span>
-				<!--<span>
-					<a id="save_analysis_size" class="button alignright analysis_save" data-whichvars="size" data-whichsave="save_analysis_vars" data-whichmsg="size_msg">SAVE SIZE</a>
-					<div id="size_msg" class="save_analysis_msg"></div>
-				</span>-->
 				<br />
+				
+				<!-- end input variables -->
+				
+				<h4>Scale:</h4> 
+				<table id="analysis_vars_scale">
+					<tr class="no_remove">
+						<th>Analysis ID</th>
+						<th>Value</th>
+						<th>Description</th>
+					</tr>
+					<tr id="data_parent" class="no_remove"></tr>
+				</table>
+				
+				<h4>High-risk Scale:</h4> 
+				<table id="analysis_vars_hr_scale">
+					<tr class="no_remove">
+						<th>Analysis ID</th>
+						<th>Value</th>
+						<th>Description</th>
+					</tr>
+					<tr id="data_parent" class="no_remove"></tr>
+				</table>
+				
+				<h4>Dose:</h4> 
+				<table id="analysis_vars_dose">
+					<tr class="no_remove">
+						<th>Analysis ID</th>
+						<th>Value</th>
+						<th>Description</th>
+					</tr>
+					<tr id="data_parent" class="no_remove"></tr>
+				</table>
+				
+				<h4>Population Impact:</h4> 
+				<table id="analysis_vars_pop_impact">
+					<tr class="no_remove">
+						<th>Analysis ID</th>
+						<th>Value</th>
+						<th>Description</th>
+					</tr>
+					<tr id="data_parent" class="no_remove"></tr>
+				</table>
+				
+				<h4>Hish-risk Population Impact:</h4> 
+				<table id="analysis_vars_hr_pop_impact">
+					<tr class="no_remove">
+						<th>Analysis ID</th>
+						<th>Value</th>
+						<th>Description</th>
+					</tr>
+					<tr id="data_parent" class="no_remove"></tr>
+				</table>
 				
 			</div>
 		

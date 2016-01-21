@@ -1850,6 +1850,9 @@ function recalc_analysis_vars_form_data( $study_group_id ){
 	$access = $sg_vars["access"];
 	$size = $sg_vars["size"];
 	
+	//var_dump( $access );
+	//var_dump( $size );
+	
 	$duration = 0;
 	$effect = 0;
 	$type = 0;
@@ -1963,7 +1966,7 @@ function recalc_analysis_vars_form_data( $study_group_id ){
 		$implementation_inclusiveness = calculate_implementation_inclusiveness( $stage, $state, $quality, $inclusiveness );
 		
 		$scale = calculate_scale( $access, $size );
-		var_dump($access, $size);
+		//var_dump($access, $size);
 		$hr_scale = calculate_hr_scale( $access, $size, $applicability );
 		$dose = calculate_dose( $implementation, $scale );
 		$population_impact = calculate_population_impact( $effectiveness, $pop_reach, $dose );
