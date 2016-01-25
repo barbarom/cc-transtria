@@ -129,6 +129,7 @@ class CC_Transtria_Extras {
 		
 		//get/save data for assigments tab
 		add_action( 'wp_ajax_get_assignments' , array( $this, 'get_assignments' ) );
+		add_action( 'wp_ajax_get_assignment_strategies' , array( $this, 'get_assignment_strategies' ) );
 		add_action( 'wp_ajax_save_assignments' , array( $this, 'save_assignments' ) );
 		
 		add_action( 'wp_ajax_create_evaluation_sample_div' , array( $this, 'create_evaluation_sample_div' ) );		
@@ -380,7 +381,7 @@ class CC_Transtria_Extras {
 			wp_enqueue_script( $this->plugin_slug . 'transtria_revamp_js', plugins_url( 'js/transtria_revamp.js', __FILE__ ), array( 'jquery' ), '1.6' );
 			
 			if( cc_transtria_on_assignments_screen() ){
-				wp_enqueue_script( $this->plugin_slug . 'transtria_revamp_assignments_js', plugins_url( 'js/transtria_revamp_assignments.js', __FILE__ ), array( 'jquery' ), '1.0' );
+				wp_enqueue_script( $this->plugin_slug . 'transtria_revamp_assignments_js', plugins_url( 'js/transtria_revamp_assignments.js', __FILE__ ), array( 'jquery' ), '1.1' );
 			}
 			
 			if( cc_transtria_on_analysis_screen() ){
@@ -618,6 +619,7 @@ class CC_Transtria_Extras {
 		}
 
 		$data['assignments_info'] = cc_transtria_get_assignments_info();
+		//$data['strategies_info'] = cc_transtria_get_assignments_strategies();
 		$data['endnotes_info'] = cc_transtria_get_endnote_for_assignments();
 		
 		echo json_encode( $data );
@@ -626,6 +628,26 @@ class CC_Transtria_Extras {
 	
 	}
 	
+	/**
+	 * Returns citation info for a given endnote id
+	 *
+	 *
+	*/
+	public function get_assignment_strategies(){
+	
+		// Is the nonce good?
+		if ( ! check_ajax_referer( 'cc_transtria_ajax_nonce', 'transtria_nonce' ) ) {
+			return false;
+		}
+
+		$data['strategies_info'] = cc_transtria_get_assignments_strategies();
+		$data['strategies_all'] = cc_transtria_get_options_from_db("Strategies");
+		
+		echo json_encode( $data );
+		
+		die();
+	
+	}
 		
 	/**
 	 * Returns citation info for a given endnote id

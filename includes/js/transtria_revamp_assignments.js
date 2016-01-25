@@ -37,160 +37,206 @@ function get_assignment_data_basic( ){
 	
 	//now take json data and turn into Main table on Assignments tab		
 		if( data.assignments_info ){
-		//console.log( data.assignments_info );
+			
 			var len = data.assignments_info.length;
+			var endnotesEmptyBool = jQuery.isEmptyObject( data.endnotes_info);
+			
+			var assignmentTable = document.getElementById('assignment-table');
+			var assignmentTableBody = document.getElementById('assignment-table').getElementsByTagName('tbody')[0];
+			var tdHolder = document.createDocumentFragment();
+			var sg_assigment_dd = jQuery("#StudyGroupingIDAssignment");
+			
+			//cell holders
+			var row = document.createElement('tr');
+			var sgid_cell_txt = "";
+			var studyid_cell_txt = "";
+			var recnumber_cell_txt = "";
+			var phase_cell_txt = "";
+			var author_cell_txt = "";
+			var date_cell_txt = "";
+			var title_cell_txt = "";
+			var abstract_cell_txt = "";
+			var assigned_cell_txt = "";
+			var validcomplete_cell_txt = "";
+			var readyanalysis_cell_txt = "";
+			var sgcomplete_cell_txt = "";
+			
 			var txt = "";
-       
+			
+			//clone the Study Grouping IDdropdown
+			var sgid_clone;
+			sgid_clone = sg_assigment_dd.clone();
+			sgid_clone.addClass("sgid_dd");
+			sgid_clone.removeAttr('id');
+			
+			sg_assigment_dd.hide();
+
+			//get html of sgid_options; two methods, since Chrome shows empty for html()
+			var sgid_html = sgid_clone.html();
+			if( sgid_html == "" ){
+				var childs = sgid_clone.children();
+				var childs_html = "";
+				var childs_temp;
+
+				jQuery.each( childs, function( index, value ) {
+					childs_temp = jQuery( value ).html();
+					childs_html += "<option value ='" + childs_temp + "'>" + childs_temp + "</option>"; 
+
+				});
+				sgid_html = childs_html;
+
+			}
+			
+			//parse text to add dropdown to table, adding null option
+			var studygroup = "<select class='StudyGroupingClass'>";
+			studygroup += sgid_html + "</select>";
+			studygroup_obj = jQuery( studygroup );
+			
 			if( len > 0 ){
 				for( var i=0; i<len; i++ ){
-                //if( data[i].StudyGroupingID && data[i].StudyID && data[i].AbstractionComplete){
+					
+					//adding rows 
+					var row = assignmentTableBody.insertRow(i);
+					var sgid_cell = row.insertCell(0);
+					var studyid_cell = row.insertCell(1);
+					var recnumber_cell = row.insertCell(2);
+					var phase_cell = row.insertCell(3);
+					var author_cell = row.insertCell(4);
+					author_cell.className = "author";
+					var date_cell = row.insertCell(5);
+					var title_cell = row.insertCell(6);
+					title_cell.className = "title";
+					var abstract_cell = row.insertCell(7);
+					var assigned_cell = row.insertCell(8);
+					var validcomplete_cell = row.insertCell(9);
+					var readyanalysis_cell = row.insertCell(10);
+					var sgcomplete_cell = row.insertCell(11);
+					
 					//placeholders
-					var studygroup;
 					var studygroup_val;
 					
 					//get endnoteid and summary; TODO: add to __CARES__.used_endnoteids
 					endnoteid = data.assignments_info[i].EndNoteID || ""; 
 					
 					var endnoteobject = {};
-					if( ! jQuery.isEmptyObject( data.endnotes_info) ){
+					if( ! endnotesEmptyBool ){
 						endnoteobject = data.endnotes_info;
 					} 
 					var readyanalysis;
 					var readyanalysis_checked;
-					var sgid_clone;
 					var this_phase = get_phase_by_endnoteid( endnoteid );
 
 					//for table links
 					var basepath = transtria_ajax.study_home;
 
+					//we got some assignment data back from the server, woo.
 					if( data.assignments_info[i] ){
-					//console.log(i);
-					//handle null/empty data
-					if ( data.assignments_info[i].StudyGroupingID != undefined ) { 
-						studygroup_val = (String( data.assignments_info[i].StudyGroupingID.length > 0 )) ? parseInt( data.assignments_info[i].StudyGroupingID ) : ""; 
-					} else {
-						studygroup_val = 0;
-					} 
+						//console.log(i);
+						//handle null/empty data
+						if ( data.assignments_info[i].StudyGroupingID != undefined ) {
+							studygroup_val = (String( data.assignments_info[i].StudyGroupingID.length > 0 )) ? parseInt( data.assignments_info[i].StudyGroupingID ) : ""; 
+						} else {
+							studygroup_val = 0;
+						} 
 
-					studygroup = ""; //null prev value
-					//Study Group here as clone of AssignmentSGID, so we don't have to render all the comboboxes
-					sgid_clone = jQuery("#StudyGroupingIDAssignment").clone();
-					sgid_clone.addClass("sgid_dd");
-					sgid_clone.removeAttr('id');
+						studygroup_obj.val( String(studygroup_val) ).change();
+						studygroup_obj.attr("data-whichsg", studygroup_val );
+						var studygroup_string = studygroup_obj.prop('outerHTML');
+						
+						//if ReadyAnalysis is null, mark as N
+						if (data.assignments_info[i].readyAnalysis != undefined) {
+							readyanalysis = (String( data.assignments_info[i].readyAnalysis.length > 0 )) ? data.assignments_info[i].readyAnalysis : "N"; 
+						} else { //there is no val in db
+							readyanalysis = "N";
+						}
 
-					//hide original combobox, just a placeholder for cloning
-					//jQuery("#StudyGroupingIDAssignment").combobox("hide");
-					jQuery("#StudyGroupingIDAssignment").hide();
+						//set checked property
+						if( ( readyanalysis == "Y" ) || ( readyanalysis == "true" ) ){
+							readyanalysis_checked = 'checked';
+						} else {
+							readyanalysis_checked = '';
+						}
 
-					//get html of sgid_options; two methods, since Chrome shows empty for html()
-					var sgid_html = sgid_clone.html();
-					if( sgid_html == "" ){
-						var childs = sgid_clone.children();
-						var childs_html = "";
-						var childs_temp;
+						//have tr hold phase and study id info as class
+						row.className = ""; //reset row classname
+						row.className += "assignment-study"; 
 
-						jQuery.each( childs, function( index, value ) {
-							childs_temp = jQuery( value ).html();
-							childs_html += "<option value ='" + childs_temp + "'>" + childs_temp + "</option>"; 
+						if( endnoteobject != null && endnoteid > 0 && endnoteobject != undefined ){
+							row.className += " phase_" + this_phase; //add class to row
+						}
+						row.className += " " + data.assignments_info[i].StudyID;
+						row.className += " studyid_" + data.assignments_info[i].StudyID;
+						row.dataset.studyid = data.assignments_info[i].StudyID;
 
-						});
-						sgid_html = childs_html;
-
-					}
-
-					//parse text to add dropdown to table, adding null option
-					studygroup = "<select class='StudyGroupingClass'>";
-					studygroup += sgid_html + "</select>";
-
+						
+						//sgid_cell_text = studygroup;
+						sgid_cell_text = studygroup_string;
+						sgid_cell.innerHTML = sgid_cell_text;
+						
+						studyid_cell.className = ""; //reset class name
+						studyid_cell.className = "studyid_val"; //reset class name
+						studyid_cell_txt = "<a class='link' href='" + basepath + "?study_id=" + data.assignments_info[i].StudyID + "'>" + data.assignments_info[i].StudyID + "</a>";
+						studyid_cell.innerHTML = studyid_cell_txt;
+						
+						//EndNote rec number, for now since Mel see that as unique
+						recnumber_cell_txt = endnoteid;
+						recnumber_cell.innerHTML = recnumber_cell_txt;
 					
-					/*					if( endnoteid != "" ){
-					  endnoteobject = __CARES__.endnote_summaries[ endnoteid ];
-					  __CARES__.used_endnoteids.push(endnoteid);
-					}
-					*/
-					//if ReadyAnalysis is null, mark as N
-					if (data.assignments_info[i].readyAnalysis != undefined) {
-						readyanalysis = (String( data.assignments_info[i].readyAnalysis.length > 0 )) ? data.assignments_info[i].readyAnalysis : "N"; 
-					} else { //there is no val in db
-						readyanalysis = "N";
-					}
+						//phase
+						if( endnoteobject != null && endnoteid > 0 && endnoteobject != undefined ){
+							phase_cell_txt = this_phase;
+							phase_cell.innerHTML = phase_cell_txt;
+						} else {
+							phase_cell_txt = ""; //reset phase
+							phase_cell.innerHTML = phase_cell_txt;
+						}
+						
+						if( endnoteobject[ endnoteid ] != null && endnoteid > 0 && endnoteobject[ endnoteid ] != undefined ){
+						//from endnote: author, year, title
+						
+							author_cell_txt = endnoteobject[ endnoteid ][ 'contributors_authors_author' ];
+							author_cell.innerHTML = author_cell_txt;
+							date_cell_txt = endnoteobject[ endnoteid ][ 'dates_pub-dates_date' ] + " " + endnoteobject[ endnoteid ][ 'dates_year' ];
+							date_cell.innerHTML = date_cell_txt;
+							title_cell_txt = endnoteobject[ endnoteid ][ 'titles_title' ];
+							title_cell.innerHTML = title_cell_txt;
+							
+						} else {
+						  //placeholders for author, year, title
+							author_cell_txt = "----";
+							author_cell.innerHTML = author_cell_txt;
+							date_cell_txt = "----";
+							date_cell.innerHTML = date_cell_txt;
+							title_cell_txt = "----";
+							title_cell.innerHTML = title_cell_txt;
 
-					//set checked property
-					if( ( readyanalysis == "Y" ) || ( readyanalysis == "true" ) ){
-						readyanalysis_checked = 'checked';
-					} else {
-						readyanalysis_checked = '';
-					}
+						}
+						
+						//abstraction complete, assignment Y/N, validation complete tds
+						abstract_cell_txt = data.assignments_info[i].abstraction_complete;
+						abstract_cell.innerHTML = abstract_cell_txt;
+						assigned_cell_txt = "";
+						assigned_cell.innerHTML = assigned_cell_txt;
+						validcomplete_cell_txt = data.assignments_info[i].validation_complete;
+						validcomplete_cell.innerHTML = validcomplete_cell_txt;
+						
+						
+						//new checkbox field with study id in value..
+						readyanalysis_cell_txt = "<input type='checkbox' name='ready-analysis' value='" + studygroup_val + "' " + readyanalysis_checked + "></input>";
+						readyanalysis_cell.innerHTML = readyanalysis_cell_txt;
+						
 
-					//have tr hold phase and study id info as class
-					txt += "<tr class='assignment-study phase_";
-
-					if( endnoteobject != null && endnoteid > 0 && endnoteobject != undefined ){
-						txt += this_phase
-					}
-					txt += " " + data.assignments_info[i].StudyID + "' data-studyid='" + data.assignments_info[i].StudyID + "'>"; 
-					txt += "<td>" + studygroup + "</td>";
-					txt += "<td class='studyid_val' style='font-weight:bold;'><a class='link' href='" + basepath + "?study_id=" + data.assignments_info[i].StudyID + "'>" + data.assignments_info[i].StudyID + "</a></td>";
-
-					//EndNote rec number, for now since Mel see that as unique
-					txt += "<td>" + endnoteid + "</td>";
-					txt += "<td>";
-
-					if( endnoteobject != null && endnoteid > 0 && endnoteobject != undefined ){
-						txt += this_phase;
-					}				   
-					txt += "</td>";
-
-					if( endnoteobject[ endnoteid ] != null && endnoteid > 0 && endnoteobject[ endnoteid ] != undefined ){
-					//from endnote: author, year, title
-						txt += "<td class='author'>" + endnoteobject[ endnoteid ][ 'contributors_authors_author' ] + "</td>";
-						txt += "<td>" + endnoteobject[ endnoteid ][ 'dates_pub-dates_date' ] + " " + endnoteobject[ endnoteid ][ 'dates_year' ] + "</td>";
-						txt += "<td class='title'>" + endnoteobject[ endnoteid ][ 'titles_title' ] + "</td>";
-					} else {
-                      //placeholders for author, year, title
-						txt += "<td>----</td>";
-						txt += "<td>----</td>";
-						txt += "<td>----</td>";
-					}
-					txt += "<td>" + data.assignments_info[i].abstraction_complete + "</td>";
-					txt += "<td>----</td>";
-					txt += "<td>" + data.assignments_info[i].validation_complete + "</td>";
-					//new checkbox field with study id in value..
-					txt += "<td><input type='checkbox' name='ready-analysis' value='" + studygroup_val + "' " + readyanalysis_checked + "></input></td>";
-
-                   txt += "</tr>";
-
-                   data_studyids.push( data.assignments_info[i].StudyID );
-                }
-            // }
-					if( txt != "" ){
-						//console.log(studygroup_val);
-						//jQuery("#assignment-table tbody").append(txt);
-						var appendD = jQuery(txt).appendTo(jQuery("#assignment-table tbody"));
-						if (studygroup_val != 0) { //we have a prior SG value
-						   //console.log(appendD);
-						   var f = appendD.find('.StudyGroupingClass');
-						   //console.log(f);
-
-						   f.val(studygroup_val);
-						}                    
-						//appendD.find('.StudyGroupingClass').console.log(appendD);
+						data_studyids.push( data.assignments_info[i].StudyID );
+						
 						
 					}
-					txt = "";
+					
+		
 				} //end foreach
 
-			}
+			} //end if len > 0
+			
 		}
-
-		//now, add strategy search drop down (clone from intevention page)
-		var strategy_clone = jQuery("#strategies").clone();
-		var strategy_html="";
-		strategy_clone.addClass("strategy_filter");
-		strategy_clone.removeAttr('id');
-		strategy_html = "<select>";
-		strategy_html += "<option value=''></option>" + strategy_clone.html() + "</select>";
-		jQuery("#assignment-strategy").html( strategy_html );
 
 		jQuery.tablesorter.addParser({
 			id:'select',
@@ -215,21 +261,31 @@ function get_assignment_data_basic( ){
 			}
 		);
 
-       //make all studygroupid checkboxes "Ready for Analysis" update together (if same #)
-       //turn on listeners for analysis checkbox and searches/filters
-       phaseFilterButtonListen();
-       searchButtonListen();
+		//make all studygroupid checkboxes "Ready for Analysis" update together (if same #)
+		//turn on listeners for analysis checkbox and searches/filters
+		phaseFilterButtonListen();
+		searchButtonListen();
 	   
 	   
- /*      readyAnalysisListen();
-       getAssignmentDataNext();
-       strategyFilterListen();
-*/
+		//readyAnalysisListen();
+		//getAssignmentDataNext();
+		//
+		
+		
+		//go through the Study Grouping ID selects and get the right one selected (having trouble doing it above, maybe b/c not displayed yet?)
+		jQuery('select.StudyGroupingClass').each( function(){
+			jQuery(this).val( jQuery(this).attr("data-whichsg") );
+			
+		});
+
     }).complete( function( ) {
 		
 		spinny.css("display", "none");
 		usrmsg.html("Assignments Loaded!");
 		usrmsgshell.fadeOut(4000);
+		
+		//get moving on strategies
+		get_strategy_data();
 		
 		console.log( data_studyids );
        
@@ -289,46 +345,86 @@ function save_assignment_data(){
 
     //return readyAnalysis;
 
-  }
+}
 
+//function to get, parse to trs in assignments table and display dropdown to strategies
+function get_strategy_data(){
 
-  //function to ajax-get study strategy data for main assignment table
-  function get_assignment_strategies_js( data, url ){
-
-    var strategies = [];
-
-    jQuery.ajax({
-       url: url,
-       dataType: "json",
-       data: {
-          action: 'get_assignment_strategies',
-          data:JSON.stringify({ data: data }) 
-       }
+	//user message things
+	var usrmsg = jQuery(".assignments_messages .usr-msg");
+	var usrmsgshell = jQuery(".assignments_messages");
+	var spinny = jQuery(".assignments_messages .spinny");
+	
+	//ajax data
+	var ajax_action = 'get_assignment_strategies';
+	var ajax_data = {
+		'action': ajax_action,
+		'transtria_nonce' : transtria_ajax.ajax_nonce
+		//'data': JSON.stringify({ 'studygrouping_data' : studyGroupings, 'assignment_data' : readyAnalysis })
+	};
+	
+	jQuery.ajax({
+		url: transtria_ajax.ajax_url, 
+		data: ajax_data, 
+		type: "POST",
+		dataType: "json",
+		beforeSend: function() {
+			//show user message and spinny
+			usrmsg.html("Preparing Strategies" );
+			usrmsgshell.fadeIn();
+			spinny.fadeIn();
+			
+		}
     }).success( function( data ) {
-       //now take json data and turn into Main table on Assignments tab
 
-       data = data.strategies;
-       if(data){
-          var len = data.length;
-          var whichDataRow; 
+		//console.log(data);
+		//set up strategies
+		if( data ){
+			
+			//put all the strategies in a drop down for filtering
+			if( data.strategies_all ){
 
-          if(len > 0){
-             //iterate through strategies data from ajax
-             for( var i=0; i<len; i++ ){
-                //assign strategies to data-class in main assignment table row
-                whichDataRow = jQuery("#assignment-table").find("tr[data-studyid='" + data[i].StudyID + "']");                
-                //jQuery.data( whichDataRow, "strategies", data[i].CodeResult );
-                //whichDataRow.data( "strategies", parseInt(data[i].CodeResult) );
-                whichDataRow.addClass("strategy_" + data[i].CodeResult );
-                //console.log( data[i].StudyID ); 
-             }  
-          }
-          //console.log( data);
-       }
+				//todo - return this in the same way as assignments returns.  Punting for now, b/c time
 
+				var sel = document.getElementById('strategy_select');
+				jQuery.each( data.strategies_all, function( i,v ){
+					//create new option element
+					var opt = document.createElement('option'); 
+					// create text node to add to option element (opt)
+					opt.appendChild( document.createTextNode( v.value + ": " + v.descr ) );
+					opt.value = v.value; // set value property of opt
+					sel.appendChild(opt); // add opt to end of select box (sel)
+					
+				});
+
+			}
+			
+			//put strategies in tr classes by study id
+			if( data.strategies_info ){
+				//iterate through and assign classes to study ids
+				jQuery.each( data.strategies_info, function( i,v ){
+					jQuery.each( v, function( v_i, v_v ){
+						jQuery( "tr.studyid_" + i ).addClass("strategy_" + v_v );
+					});
+					
+					
+					
+				});
+			}
+		}
+
+    }).complete( function( ) {
+		
+		spinny.css("display", "none");
+		usrmsg.html("Strategies Loaded!");
+		usrmsgshell.fadeOut(4000);
+		
+		//listen for select change
+		strategyFilterListen();
     });
 
-  }
+
+}
 
 
 //add phase filter listener to Main table on Assignments Tab
@@ -461,36 +557,36 @@ function addMainTableHighlight(element, textToHighlight){
 	element.html(newText);
 }
 
-  function removeMainTableHighlight(highlightedElements){
+function removeMainTableHighlight(highlightedElements){
     highlightedElements.each( function() {
-       var element = jQuery(this);
-       element.replaceWith( element.html() );
+		var element = jQuery(this);
+		element.replaceWith( element.html() );
     });
-  }
+}
 
-  function strategyFilterListen(){
+function strategyFilterListen(){
     //listen to strategy dropdown change
-    jQuery("#assignment-strategy").on("change", function(){
-       selectedStrategy = parseInt( jQuery("#assignment-strategy option:selected").val() );
-       if( selectedStrategy > 0 ){
-          strategyFilterAssignmentTable( selectedStrategy );
-       } else { //show all
-          strategyFilterAssignmentTable( 'all' ); 
-       }
-       jQuery("#assignment-tab .filters button").removeClass("active");
+    jQuery("select#strategy_select").on("change", function(){
+		selectedStrategy = parseInt( jQuery("#strategy_select option:selected").val() );
+		if( selectedStrategy > 0 ){
+			strategyFilterAssignmentTable( selectedStrategy );
+		} else { //show all
+			strategyFilterAssignmentTable( 'all' ); 
+		}
+		jQuery(".filters button").removeClass("active");
     });
 
     //implement 'clear strategy' button
-    jQuery("#assignment-tab .filters .clear_strategy").on("click", function(){
-       strategyFilterAssignmentTable( 'all' );
-       jQuery("#assignment-tab .filters button").removeClass("active");
+    jQuery(".filters .clear_strategy").on("click", function(){
+		strategyFilterAssignmentTable( 'all' );
+		jQuery(".filters button").removeClass("active");
     });
 
-  }
+}
 
-  function strategyFilterAssignmentTable( strategy_num ){
+function strategyFilterAssignmentTable( strategy_num ){
 
-    if( ( strategy_num != 'all' ) && (strategy_num != undefined ) ){
+    if( ( strategy_num != 'all' ) && ( strategy_num != undefined ) ){
 
        strategy_num = "strategy_" + strategy_num;
 
@@ -504,8 +600,9 @@ function addMainTableHighlight(element, textToHighlight){
 
     } else {
        jQuery("tr.assignment-study").show();
+	   jQuery("select#strategy_select").val("-1");
     }
-  }
+}
 
   //populate 'next' table/dropdowns on assignment tab: 
   //   showing phase 1 next, phase 2 next and list of endnotes not in use 
@@ -610,6 +707,7 @@ function get_phase_by_endnoteid( which_endnoteid ){
 jQuery( document ).ready(function() {
 
 	get_assignment_data_basic();
+	
 	nextAssignmentButtonListen();
 
 

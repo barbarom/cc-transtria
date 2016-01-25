@@ -59,7 +59,7 @@ function cc_transtria_render_assignments_form(){
 
 		<div class="search-strategies">
 			<label>Filter by Strategy</label>
-			<span id="assignment-strategy"></span>
+			<span id="assignment-strategy"><select id="strategy_select"><option value="-1"> -- Select Strategy -- </option></select></span>
 			<button class="clear_strategy">Clear Strategy Filter</button>
 		</div>
 

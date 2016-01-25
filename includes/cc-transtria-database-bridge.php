@@ -1108,8 +1108,64 @@ function cc_transtria_get_assignments_info(){
 	$all_assignment_studies = array_merge( $studies_rows_has_sg, $studies_rows_no_sg, $studies_rows_no_endnote_has_sg, $studies_rows_no_endnote_no_sg );
 	return $all_assignment_studies;
 
+}
 
-
+/** 
+ * Returns strategies by studyid
+ *
+ */
+function cc_transtria_get_assignments_strategies(){
+	
+	global $wpdb;
+	
+	$question_sql = 
+		"
+		SELECT StudyID, seq, indicator_strategies_directions
+		FROM $wpdb->transtria_effect_association
+		";
+		
+	$form_rows = $wpdb->get_results( $question_sql, OBJECT );
+	$return_info = array();
+	
+	//unserialize the data; flatten strategies up (since child of indicator) and relate to StudyID
+	foreach( $form_rows as $form_row ){
+		if( empty( $return_info[ $form_row->StudyID ] ) ){
+			$return_info[ $form_row->StudyID ] = array();
+		} 
+		//var_dump( $form_row );
+		//$return_info[ $form_row->StudyID ][ $form_row->seq ] = unserialize( $form_row->indicator_strategies_directions );
+		$flattened_inds = unserialize( $form_row->indicator_strategies_directions );
+		//who loves nested foreachs??????? MEEEEEE
+		if( !empty( $flattened_inds ) ){
+			//var_dump( $flattened_inds );
+			foreach( $flattened_inds as $indicators => $ind_vals ){
+				//var_dump( $ind_vals );
+				foreach( $ind_vals as $one_ind => $one_ind_vals ){
+					//add to strategies array
+					if( !empty( $one_ind_vals["strategies"] ) ){
+						foreach( $one_ind_vals["strategies"] as $i => $strat_val ){
+							array_push( $return_info[ $form_row->StudyID ], $strat_val );
+							
+						}
+					}
+				}
+				
+			}
+			//add to studyid return array
+			
+		}
+		
+		//var_dump( $flattened_inds )
+	}
+	
+	//now, need to make uniques on the studyid-indexed arrays
+	foreach( $return_info as $study_id => $vals ){
+		$unique_strats = array_unique( $vals );
+		$return_info[ $study_id ] = $unique_strats;
+	}
+	
+	return $return_info;
+	
 }
 
 /**
