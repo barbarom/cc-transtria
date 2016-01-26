@@ -381,7 +381,7 @@ class CC_Transtria_Extras {
 			wp_enqueue_script( $this->plugin_slug . 'transtria_revamp_js', plugins_url( 'js/transtria_revamp.js', __FILE__ ), array( 'jquery' ), '1.6' );
 			
 			if( cc_transtria_on_assignments_screen() ){
-				wp_enqueue_script( $this->plugin_slug . 'transtria_revamp_assignments_js', plugins_url( 'js/transtria_revamp_assignments.js', __FILE__ ), array( 'jquery' ), '1.1' );
+				wp_enqueue_script( $this->plugin_slug . 'transtria_revamp_assignments_js', plugins_url( 'js/transtria_revamp_assignments.js', __FILE__ ), array( 'jquery' ), '1.2' );
 			}
 			
 			if( cc_transtria_on_analysis_screen() ){

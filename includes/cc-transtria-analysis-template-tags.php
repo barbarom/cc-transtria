@@ -130,12 +130,12 @@ function cc_transtria_render_analysis_page(){
 				
 				</table>
 				
-				<h4>Result Evaluation Population</h4>
-				<a id="hide_result_evaluation_pop_table" class="button" data-whichtable="intermediate_vars_result_evaluation_pop" data-whichlabel="RESULT EVALUATION POPULATION">HIDE RESULT EVALUATION POPULATION</a>
+				<h4 id="result_eval_title">Result Evaluation Population</h4>
 				<table id="intermediate_vars_result_evaluation_pop">
 					<tr class="no_remove">
-						<th>Study ID</th>
-						<th>Result Evaluation Population</th>
+						<th>Unique ID</th>
+						<th>Evaluation Population</th>
+						<th>Subgroups/Values:</th>
 					</tr>
 					<tr id="data_parent" class="no_remove"></tr>
 				

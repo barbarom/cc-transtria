@@ -243,13 +243,14 @@ function get_dyads_for_study_group( $study_group_id ){
 		$form_rows = $wpdb->get_results( $ea_sql, ARRAY_A );
 		
 		foreach ( $form_rows as $index => $one_dyad ){
-		
+			//unserialize the Result Evaluation Pop and Result Subpops
 			$one_dyad['result_eval_unserial'] = unserialize( $one_dyad['result_evaluation_population'] );
 			$one_dyad['result_subpop_unserial'] = unserialize( $one_dyad['result_subpopulation'] );
 			
+			//get the race percentages of the Evaluation Population(s) 
+			$one_dyad['race_percentages'] = get_race_percents_population( $s_id, $one_dyad['info_id'], $one_dyad['result_eval_unserial'] );
 			
-			//strategies will be harder
-			//	unserialize the values; for each value, get text in codetbl
+			//Strategies: unserialize the values; for each value, get text in codetbl
 			$indexed_strats = array();
 			$unserial_strats = unserialize( $one_dyad['indicator_strategies'] );
 			
@@ -2356,6 +2357,137 @@ function get_single_study_analysis_data( $study_id ){
 
 }
 
+/**
+ * Returns serialized array of race percentages for identified population tab and study id
+ *
+ * @param int, string. Study ID, unserialized array of population tab ID(s)
+ *
+ */
+function get_race_percents_population( $study_id, $inter_index, $population_string ){
+	
+	global $wpdb;
+	
+	//although there should only be ONE eval pop, it's a multi-select dropdown (implemented early, w/ no time to correct the data)
+	//	we therefore have to evaluate arrays
+	foreach( $population_string as $index => $eval_pop ){
+		$this_pop_string = $eval_pop['value'];
+		$this_pop_string_db = "";
+		$this_youthpop_code = 0;
+		
+		//for selected eval pop, get the
+		switch( $this_pop_string ){
+			case "TP":
+				$this_pop_string_db = "tp";
+				$this_youthpop_code = 109;
+				break;
+			case "IE":
+				$this_pop_string_db = "ipe";
+				$this_youthpop_code = 110;
+				break;
+			case "EU":
+				$this_pop_string_db = "ipu";
+				$this_youthpop_code = 111;
+				break;
+			case "SE":
+				$this_pop_string_db = "ese";
+				$this_youthpop_code = 112;
+				break;
+			case "SU":
+				$this_pop_string_db = "esu";
+				$this_youthpop_code = 113;
+				break;
+			case "E0":
+				$this_pop_string_db = "ese0";
+				$this_youthpop_code = 1005;
+				break;
+			case "E1":
+				$this_pop_string_db = "ese1";
+				$this_youthpop_code = 1015;
+				break;
+			case "E2":
+				$this_pop_string_db = "ese2";
+				$this_youthpop_code = 1025;
+				break;
+			case "E3":
+				$this_pop_string_db = "ese3";
+				$this_youthpop_code = 1035;
+				break;
+			case "E4":
+				$this_pop_string_db = "ese4";
+				$this_youthpop_code = 1045;
+				break;
+			case "E5":
+				$this_pop_string_db = "ese5";
+				$this_youthpop_code = 1055;
+				break;
+			case "E6":
+				$this_pop_string_db = "ese6";
+				$this_youthpop_code = 1065;
+				break;
+			case "E7":
+				$this_pop_string_db = "ese7";
+				$this_youthpop_code = 1075;
+				break;
+			case "E8":
+				$this_pop_string_db = "ese8";
+				$this_youthpop_code = 1085;
+				break;
+			case "E9":
+				$this_pop_string_db = "ese9";
+				$this_youthpop_code = 1095;
+				break;
+			
+		}
+		//var_dump( $eval_pop );
+	}
+	
+	//now that we have a population, go into population table for this study id and get race %s
+	$pop_percent_sql = $wpdb->prepare( 
+		"
+		SELECT		PctBlack, PctAsian, PctNativeAmerican, PctPacificIslander, PctOtherRace, PctLowerIncome, PctHispanic,
+					GenderCode, isGeneralPopulation, youthpopulations_notreported
+		FROM		$wpdb->transtria_population
+		WHERE		StudyID = %d
+		AND			PopulationType = %s
+		",
+		$study_id,
+		$this_pop_string_db
+	); 
+	
+	$form_rows = $wpdb->get_results( $pop_percent_sql, ARRAY_A );
+	$this_form_row = current( $form_rows );
+	
+	//now, get the youth populations if not reported != Y
+	if( $this_form_row['youthpopulations_notreported'] != "Y" ){
+		if( $this_youthpop_code != 0 ){
+			$youth_sql = $wpdb->prepare( 
+				"
+				SELECT		*
+				FROM		$wpdb->code_results
+				WHERE		ID = %d
+				AND			codetypeID = %d
+				",
+				$study_id,
+				$this_youthpop_code
+			); 
+			
+			$youth_rows = $wpdb->get_results( $youth_sql, ARRAY_A );
+			
+			if( empty( $youth_rows ) ){
+				//var_dump( 'no kids' );
+				$this_form_row['Youth'] = false;
+			} else {
+				$this_form_row['Youth'] = true;
+			} 
+		}
+	}
+	
+	$this_form_row['which_eval_pop'] = $this_pop_string_db;
+	
+	//var_dump( $this_form_row );
+	return $this_form_row;
+	
+}
 
 
 

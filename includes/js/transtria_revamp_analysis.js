@@ -369,8 +369,65 @@ function get_vars_by_grouping(){
 						txt_dir += "<td>" + this.measure + "</td>";
 						txt_dir += "<td>" + this.outcome_type + "</td>";
 						txt_dir += "<td>" + this.calc_ea_direction + "</td>";
-						
 						txt_dir += "</tr>";
+						
+						//result evaluation (nested tables)
+						if( this.race_percentages != undefined){
+							txt_result_eval += "<tr>";
+							txt_result_eval += "<td>" + this.info_id + "</td>";
+							txt_result_eval += "<td>" + this.race_percentages.which_eval_pop + "</td>";
+							
+							txt_result_eval += "<td>";
+							txt_result_eval += "<table class='intermediate_vars_result_evaluation_pop_single'>";
+							txt_result_eval += "<tr class=''><th>Pop type</th>";
+							txt_result_eval += "<th>Value</th></tr>";
+							
+							txt_result_eval += "<tr><td>% African American</td><td>";
+							txt_result_eval += this.race_percentages.PctBlack == "" ? "0%" : this.race_percentages.PctBlack + "%";
+							txt_result_eval += "</td></tr>";
+							
+							txt_result_eval += "<tr><td>% Asian</td><td>";
+							txt_result_eval += this.race_percentages.PctAsian == "" ? "0%" : this.race_percentages.PctAsian + "%";
+							txt_result_eval += "</td></tr>";
+							
+							txt_result_eval += "<tr><td>% Native American/ Alaskan Native</td><td>";
+							txt_result_eval += this.race_percentages.PctNativeAmerican == "" ? "0%" : this.race_percentages.PctNativeAmerican + "%";
+							txt_result_eval += "</td></tr>";
+							
+							txt_result_eval += "<tr><td>% Native Hawaiian/ Pacific Islander: </td><td>";
+							txt_result_eval += this.race_percentages.PctPacificIslander == "" ? "0%" : this.race_percentages.PctPacificIslander + "%";
+							txt_result_eval += "</td></tr>";
+							
+							txt_result_eval += "<tr><td>% Other Race</td><td>";
+							txt_result_eval += this.race_percentages.PctOtherRace == "" ? "0%" : this.race_percentages.PctOtherRace + "%";
+							txt_result_eval += "</td></tr>";
+							
+							txt_result_eval += "<tr><td>% Hispanic/ Latino</td><td>";
+							txt_result_eval += this.race_percentages.PctHispanic == "" ? "0%" : this.race_percentages.PctHispanic + "%";
+							txt_result_eval += "</td></tr>";
+							
+							txt_result_eval += "<tr><td>% Lower Income</td><td>";
+							txt_result_eval += this.race_percentages.PctLowerIncome == "" ? "0%" : this.race_percentages.PctLowerIncome + "%";
+							txt_result_eval += "</td></tr>";
+							
+							txt_result_eval += "<tr><td>Gender</td><td>";
+							txt_result_eval += this.race_percentages.GenderCode;
+							txt_result_eval += "</td></tr>";
+							
+							txt_result_eval += "<tr><td>Youth</td><td>";
+							txt_result_eval += this.race_percentages.Youth == true ? "Yes" : "No";
+							txt_result_eval += "</td></tr>";
+							
+							txt_result_eval += "<tr><td>General Population</td><td>";
+							txt_result_eval += this.race_percentages.isGeneralPopulation == "Y" ? "Yes" : "No";
+							txt_result_eval += "</td></tr>";
+							
+							
+							txt_result_eval += "</table></td></tr>";
+							
+							
+						
+						}
 						
 						//participation
 						txt_participation += "<tr>";
@@ -912,6 +969,7 @@ function get_vars_by_grouping(){
 			which_tr_parent_intermediate_opposition.after( txt_opposition );
 			which_tr_parent_intermediate_sustainability.after( txt_sustainability );
 			
+			which_tr_parent_intermediate_result_eval.after( txt_result_eval );
 			which_tr_parent_intermediate_domestic.after( txt_domestic );
 			which_tr_parent_intermediate_intl.after( txt_intl );
 			
