@@ -655,7 +655,7 @@ class CC_Transtria_Extras {
 	 *
 	*/
 	public function save_assignments(){
-	
+		set_time_limit(400);
 		global $wpdb;
 		
 		// Is the nonce good?

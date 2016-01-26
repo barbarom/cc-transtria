@@ -1206,7 +1206,8 @@ function cc_transtria_update_study_groupings( $incoming ){
 	
 	//iterate through incoming data and assign study groupings to studies
 	foreach( $incoming as $i => $v ){
-			
+		
+		//var_dump( $v );
 		$data = array( 
 			'StudyGroupingID' => $v 
 		);

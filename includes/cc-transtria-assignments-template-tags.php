@@ -97,7 +97,9 @@ function cc_transtria_render_assignments_form(){
 
 
 	<div class="assign-save-button">
-		<button onclick="save_assignment_data()">Save Assignments</button>
+		<span><button onclick="save_assignment_data()">Save Assignments</button>
+		<span class="spinny"></span>
+		</span>
 	</div>
 
 	<br />

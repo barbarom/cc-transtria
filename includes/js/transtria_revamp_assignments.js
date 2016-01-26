@@ -238,6 +238,7 @@ function get_assignment_data_basic( ){
 			
 		}
 
+		/*
 		jQuery.tablesorter.addParser({
 			id:'select',
 			is: function() {
@@ -261,6 +262,9 @@ function get_assignment_data_basic( ){
 			}
 		);
 
+		*/
+		
+		
 		//make all studygroupid checkboxes "Ready for Analysis" update together (if same #)
 		//turn on listeners for analysis checkbox and searches/filters
 		phaseFilterButtonListen();
@@ -287,7 +291,7 @@ function get_assignment_data_basic( ){
 		//get moving on strategies
 		get_strategy_data();
 		
-		console.log( data_studyids );
+		//console.log( data_studyids );
        
     });
 
