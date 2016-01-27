@@ -288,21 +288,29 @@ table#assignment-table th{
 	cursor:pointer;
 }
 
-.filters{
+#filters{
 	border: 3px solid #cccccc;
     margin-bottom: 2em;
     padding: 0 2em 2em;
     width: auto;
 }
 
-.filters .search{
+#filters .search, #filters .search-strategies{
 	margin: 1em 0;
 }
 
-.filters button.active {
+#filters button.active {
 	background-color: #008eaa;
     background-image: none;
     color: white;
+}
+
+#filters .sort-status{
+	min-height:28px;
+	background-color: #d6d6d6;
+    font-weight: bold;
+    margin-top: 1em;
+    padding: 1em;
 }
 
 #assignment-table td .yellow{

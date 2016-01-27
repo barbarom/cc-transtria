@@ -47,7 +47,6 @@ function get_assignment_data_basic( ){
 			var sg_assigment_dd = jQuery("#StudyGroupingIDAssignment");
 			
 			//cell holders
-			var row = document.createElement('tr');
 			var sgid_cell_txt = "";
 			var studyid_cell_txt = "";
 			var recnumber_cell_txt = "";
@@ -95,8 +94,9 @@ function get_assignment_data_basic( ){
 			if( len > 0 ){
 				for( var i=0; i<len; i++ ){
 					
+					var row = document.createElement('tr');
 					//adding rows 
-					var row = assignmentTableBody.insertRow(i);
+					//var row = assignmentTableBody.insertRow(i);
 					var sgid_cell = row.insertCell(0);
 					var studyid_cell = row.insertCell(1);
 					var recnumber_cell = row.insertCell(2);
@@ -229,8 +229,15 @@ function get_assignment_data_basic( ){
 						data_studyids.push( data.assignments_info[i].StudyID );
 						
 						
+						if ( i > 30 ){
+							break;
+						}
+						
+						
 					}
 					
+					
+					assignmentTableBody.appendChild(row);
 		
 				} //end foreach
 
@@ -436,19 +443,19 @@ function phaseFilterButtonListen(){
 	jQuery("#phase1_filter").off("click", phaseFilterAssignmentsTable);
 	jQuery("#phase1_filter").on("click", function() {
 		phaseFilterAssignmentsTable("1");
-		jQuery(".filters button").removeClass("active");
+		jQuery("#filters button").removeClass("active");
 		jQuery(this).addClass("active");
 	});
 	jQuery("#phase2_filter").off("click", phaseFilterAssignmentsTable);
 	jQuery("#phase2_filter").on("click", function() {
 		phaseFilterAssignmentsTable("2");
-		jQuery(".filters button").removeClass("active");
+		jQuery("#filters button").removeClass("active");
 		jQuery(this).addClass("active");
 	});
 	jQuery("#phaseall_filter").off("click", phaseFilterAssignmentsTable);
 	jQuery("#phaseall_filter").on("click", function() {
 		phaseFilterAssignmentsTable("all");
-		jQuery(".filters button").removeClass("active");
+		jQuery("#filters button").removeClass("active");
 		jQuery(this).addClass("active");
 	});
 } 
@@ -475,21 +482,27 @@ function phaseFilterAssignmentsTable( phase_num ){
 		jQuery("tr.assignment-study:not(." + phase_num + " )").hide();
 	} else { //or, show all
 		jQuery("tr.assignment-study").show();
+		
+		//clear search terms and strategies
+		jQuery("#search_text").val("");
+		jQuery("#filters .sort-status-message").html("No search terms" );
+		jQuery("select#strategy_select").val("-1");
 	}
 
 }
 
 function searchButtonListen(){
-	jQuery(".filters .search_button").on("click", function() {
+	jQuery("#filters .search_button").on("click", function() {
 		var searchterm = jQuery("#search_text").val();
 		searchMainAssignmentTable( searchterm );
-		jQuery(".filters button").removeClass("active");
+		jQuery("#filters button").removeClass("active");
 		jQuery(this).addClass("active");
 	});
-	jQuery(".filters .clear_search").on("click", function() {
+	jQuery("#filters .clear_search").on("click", function() {
+		
 		searchMainAssignmentTable( "" );
-		jQuery(".filters .search_button").removeClass("active");
-		jQuery(".filters button").removeClass("active");
+		jQuery("#filters .search_button").removeClass("active");
+		jQuery("#filters button").removeClass("active");
 	});
 }
 
@@ -542,12 +555,17 @@ function searchMainAssignmentTable( searchterm ){
 		});
 		if( count <= 0 ){
 			//display a message saying no results found
-			jQuery(".filters .no-results").show();
-			jQuery(".filters .no-results").html('No Results Found for searchterm: ' + searchterm ).show();
+			//jQuery("#filters .no-results").show();
+			jQuery("#filters .sort-status-message").html('No Results Found for search term: ' + searchterm );
 		} else {
-			jQuery(".filters .no-results").hide();
+			jQuery("#filters .sort-status-message").html("Results for search term: " + searchterm );
 		}
+	} else {
+		//clear out!
+		jQuery("#search_text").val("");
+		jQuery("#filters .sort-status-message").html("No search terms" );
 	}
+		
 }
  
 function addMainTableHighlight(element, textToHighlight){
@@ -570,20 +588,23 @@ function removeMainTableHighlight(highlightedElements){
 
 function strategyFilterListen(){
     //listen to strategy dropdown change
-    jQuery("select#strategy_select").on("change", function(){
+    //jQuery("select#strategy_select").on("change", function(){
+    jQuery("button#strategy_button").on("click", function(){
 		selectedStrategy = parseInt( jQuery("#strategy_select option:selected").val() );
 		if( selectedStrategy > 0 ){
 			strategyFilterAssignmentTable( selectedStrategy );
+			jQuery("#filters button").removeClass("active");
+			jQuery(this).addClass("active");
 		} else { //show all
 			strategyFilterAssignmentTable( 'all' ); 
+			jQuery("#filters button").removeClass("active");
 		}
-		jQuery(".filters button").removeClass("active");
     });
 
     //implement 'clear strategy' button
-    jQuery(".filters .clear_strategy").on("click", function(){
+    jQuery("#filters .clear_strategy").on("click", function(){
 		strategyFilterAssignmentTable( 'all' );
-		jQuery(".filters button").removeClass("active");
+		jQuery("#filters button").removeClass("active");
     });
 
 }
@@ -595,9 +616,10 @@ function strategyFilterAssignmentTable( strategy_num ){
        strategy_num = "strategy_" + strategy_num;
 
        //make sure appropriate rows are visible, all else will be hidden
-       if( !( jQuery("tr.assignment-study." + strategy_num + "").is(":visible") )){
-          jQuery("tr.assignment-study." + strategy_num + "").show();
-       }
+		if( !( jQuery("tr.assignment-study." + strategy_num + "").is(":visible") )){
+			jQuery("tr.assignment-study." + strategy_num + "").show();
+			//jQuery("#filters .sort-status-message").html('Sort by Strategy number: ' + strategy_num );
+		}
 
        //now, hide by tr.class, or show 'all' 
        jQuery("tr.assignment-study:not(." + strategy_num + " )").hide();
@@ -605,6 +627,7 @@ function strategyFilterAssignmentTable( strategy_num ){
     } else {
        jQuery("tr.assignment-study").show();
 	   jQuery("select#strategy_select").val("-1");
+	  // jQuery("#filters .sort-status-message").html('No sort/search params' );
     }
 }
 

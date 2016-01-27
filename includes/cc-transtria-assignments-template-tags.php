@@ -42,25 +42,30 @@ function cc_transtria_render_assignments_form(){
 
 	<label class="table-label"><h2>View Studies Completed and In Progress; Assign Study Groupings</h2></label>
 
-	<div class="filters">
+	<div id="filters">
 		<h3>Filter and Search</h3>
 		<label>Filter by Phase</label>
 		<button id="phase1_filter">Show Phase 1 only</button>
 		<button id="phase2_filter">Show Phase 2 only</button>
-		<button id="phaseall_filter">Show All Phases</button>
+		<button id="phaseall_filter">Show All</button>
 
+		<div class="search-strategies">
+			<label>Filter by Strategy</label>
+			<span id="assignment-strategy"><select id="strategy_select"><option value="-1"> -- Select Strategy -- </option></select></span>
+			<button id="strategy_button">Filter by Strategy</button>
+			<button class="clear_strategy">Clear Strategy Filter</button>
+		</div>
+	
 		<div class="search">
 			<label>Search Text in Title, Author</label>
 			<input id="search_text" type="text"></input>
 			<button class="search_button">Search (just Author, Title at the moment)</button>
 			<button class="clear_search">Clear Search</button>
-			<div class="no-results">No Results Found</div>
-		</div>
-
-		<div class="search-strategies">
-			<label>Filter by Strategy</label>
-			<span id="assignment-strategy"><select id="strategy_select"><option value="-1"> -- Select Strategy -- </option></select></span>
-			<button class="clear_strategy">Clear Strategy Filter</button>
+			<!--<div class="no-results">No Results Found</div>-->
+		</div>	
+		
+		<div class="sort-status">
+			<span class="sort-status-message">No search terms</span>
 		</div>
 
 
