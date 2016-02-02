@@ -1118,6 +1118,7 @@ function cc_transtria_get_assignments_strategies(){
 	
 	global $wpdb;
 	
+	/*
 	$question_sql = 
 		"
 		SELECT StudyID, seq, indicator_strategies_directions
@@ -1163,8 +1164,35 @@ function cc_transtria_get_assignments_strategies(){
 		$unique_strats = array_unique( $vals );
 		$return_info[ $study_id ] = $unique_strats;
 	}
+	*/
 	
-	return $return_info;
+	$question_sql = 
+		"
+		SELECT DISTINCT `wp_transtria_code_results`.`ID` AS ID, `wp_transtria_code_results`.`result` AS result
+		FROM $wpdb->transtria_code_results, $wpdb->transtria_codetbl, $wpdb->transtria_studies
+		WHERE `wp_transtria_code_results`.`result` = `wp_transtria_codetbl`.`value` 
+		AND `wp_transtria_code_results`.`codetypeID` = 98 
+		AND `wp_transtria_codetbl`.`codetypeID` = 98 
+		AND `wp_transtria_studies`.`StudyID` = `wp_transtria_code_results`.`ID` 
+		ORDER BY `wp_transtria_code_results`.`ID` 
+		"
+		;
+		
+	$results = $wpdb->get_results( $question_sql, ARRAY_A );
+	
+	$all_strats = array();
+	
+	foreach( $results as $result ){
+			//var_dump ($result);
+		if( empty( $all_strats[ $result["ID"] ] ) ){
+			$all_strats[ $result["ID"] ] = array();
+		} 
+		
+		array_push( $all_strats[ $result["ID"] ], $result["result"]);
+		
+	}
+	
+	return $all_strats;
 	
 }
 

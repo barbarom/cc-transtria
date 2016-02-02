@@ -91,156 +91,185 @@ function get_assignment_data_basic( ){
 			studygroup += sgid_html + "</select>";
 			studygroup_obj = jQuery( studygroup );
 			
+			
+			var endnoteobject = {};
+			if( ! endnotesEmptyBool ){
+				endnoteobject = data.endnotes_info;
+			} 
+			
+			
+			
 			if( len > 0 ){
-				for( var i=0; i<len; i++ ){
-					
-					var row = document.createElement('tr');
-					//adding rows 
-					//var row = assignmentTableBody.insertRow(i);
-					var sgid_cell = row.insertCell(0);
-					var studyid_cell = row.insertCell(1);
-					var recnumber_cell = row.insertCell(2);
-					var phase_cell = row.insertCell(3);
-					var author_cell = row.insertCell(4);
-					author_cell.className = "author";
-					var date_cell = row.insertCell(5);
-					var title_cell = row.insertCell(6);
-					title_cell.className = "title";
-					var abstract_cell = row.insertCell(7);
-					var assigned_cell = row.insertCell(8);
-					var validcomplete_cell = row.insertCell(9);
-					var readyanalysis_cell = row.insertCell(10);
-					var sgcomplete_cell = row.insertCell(11);
-					
-					//placeholders
-					var studygroup_val;
-					
-					//get endnoteid and summary; TODO: add to __CARES__.used_endnoteids
-					endnoteid = data.assignments_info[i].EndNoteID || ""; 
-					
-					var endnoteobject = {};
-					if( ! endnotesEmptyBool ){
-						endnoteobject = data.endnotes_info;
-					} 
-					var readyanalysis;
-					var readyanalysis_checked;
-					var this_phase = get_phase_by_endnoteid( endnoteid );
-
-					//for table links
-					var basepath = transtria_ajax.study_home;
-
-					//we got some assignment data back from the server, woo.
-					if( data.assignments_info[i] ){
-						//console.log(i);
-						//handle null/empty data
-						if ( data.assignments_info[i].StudyGroupingID != undefined ) {
-							studygroup_val = (String( data.assignments_info[i].StudyGroupingID.length > 0 )) ? parseInt( data.assignments_info[i].StudyGroupingID ) : ""; 
-						} else {
-							studygroup_val = 0;
-						} 
-
-						studygroup_obj.val( String(studygroup_val) ).change();
-						studygroup_obj.attr("data-whichsg", studygroup_val );
-						var studygroup_string = studygroup_obj.prop('outerHTML');
+				//1 Feb try parsing out into blocks of 100?
+				var block_size = 25;
+				var start_counter = 0;
+				var end_counter = block_size > len ? len : block_size; //initialize our end point
+				var num_iters = Math.ceil( len / block_size ); //how many times we go through the draw loop
+				
+				
+				var tableFragment = document.createDocumentFragment();
+				for( var loop=0; loop < num_iters; loop++ ){
+					start_counter = block_size * loop;
+					end_counter =  (start_counter + block_size ) > len ? len : start_counter + block_size; //move end point
+					//console.log( start_counter);
+					//console.log( end_counter);
+				
+				
+				
+					for( var i=start_counter; i<end_counter; i++ ){
 						
-						//if ReadyAnalysis is null, mark as N
-						if (data.assignments_info[i].readyAnalysis != undefined) {
-							readyanalysis = (String( data.assignments_info[i].readyAnalysis.length > 0 )) ? data.assignments_info[i].readyAnalysis : "N"; 
-						} else { //there is no val in db
-							readyanalysis = "N";
-						}
+						var row = document.createElement('tr');
+						//adding rows 
+						//var row = assignmentTableBody.insertRow(i);
+						var sgid_cell = row.insertCell(0);
+						var studyid_cell = row.insertCell(1);
+						var recnumber_cell = row.insertCell(2);
+						var phase_cell = row.insertCell(3);
+						var author_cell = row.insertCell(4);
+						author_cell.className = "author";
+						var date_cell = row.insertCell(5);
+						var title_cell = row.insertCell(6);
+						title_cell.className = "title";
+						var abstract_cell = row.insertCell(7);
+						var assigned_cell = row.insertCell(8);
+						var validcomplete_cell = row.insertCell(9);
+						var readyanalysis_cell = row.insertCell(10);
+						var sgcomplete_cell = row.insertCell(11);
+						
+						//placeholders
+						var studygroup_val;
+						
+						//get endnoteid and summary; TODO: add to __CARES__.used_endnoteids
+						endnoteid = data.assignments_info[i].EndNoteID || ""; 
+						
+						var readyanalysis;
+						var readyanalysis_checked;
+						var this_phase = get_phase_by_endnoteid( endnoteid );
 
-						//set checked property
-						if( ( readyanalysis == "Y" ) || ( readyanalysis == "true" ) ){
-							readyanalysis_checked = 'checked';
-						} else {
-							readyanalysis_checked = '';
-						}
+						//for table links
+						var basepath = transtria_ajax.study_home;
 
-						//have tr hold phase and study id info as class
-						row.className = ""; //reset row classname
-						row.className += "assignment-study"; 
+						//we got some assignment data back from the server, woo.
+						if( data.assignments_info[i] ){
+							//console.log(i);
+							//handle null/empty data
+							if ( data.assignments_info[i].StudyGroupingID != undefined ) {
+								studygroup_val = (String( data.assignments_info[i].StudyGroupingID.length > 0 )) ? parseInt( data.assignments_info[i].StudyGroupingID ) : ""; 
+							} else {
+								studygroup_val = 0;
+							} 
 
-						if( endnoteobject != null && endnoteid > 0 && endnoteobject != undefined ){
-							row.className += " phase_" + this_phase; //add class to row
-						}
-						row.className += " " + data.assignments_info[i].StudyID;
-						row.className += " studyid_" + data.assignments_info[i].StudyID;
-						row.dataset.studyid = data.assignments_info[i].StudyID;
-
-						
-						//sgid_cell_text = studygroup;
-						sgid_cell_text = studygroup_string;
-						sgid_cell.innerHTML = sgid_cell_text;
-						
-						studyid_cell.className = ""; //reset class name
-						studyid_cell.className = "studyid_val"; //reset class name
-						studyid_cell_txt = "<a class='link' href='" + basepath + "?study_id=" + data.assignments_info[i].StudyID + "'>" + data.assignments_info[i].StudyID + "</a>";
-						studyid_cell.innerHTML = studyid_cell_txt;
-						
-						//EndNote rec number, for now since Mel see that as unique
-						recnumber_cell_txt = endnoteid;
-						recnumber_cell.innerHTML = recnumber_cell_txt;
-					
-						//phase
-						if( endnoteobject != null && endnoteid > 0 && endnoteobject != undefined ){
-							phase_cell_txt = this_phase;
-							phase_cell.innerHTML = phase_cell_txt;
-						} else {
-							phase_cell_txt = ""; //reset phase
-							phase_cell.innerHTML = phase_cell_txt;
-						}
-						
-						if( endnoteobject[ endnoteid ] != null && endnoteid > 0 && endnoteobject[ endnoteid ] != undefined ){
-						//from endnote: author, year, title
-						
-							author_cell_txt = endnoteobject[ endnoteid ][ 'contributors_authors_author' ];
-							author_cell.innerHTML = author_cell_txt;
-							date_cell_txt = endnoteobject[ endnoteid ][ 'dates_pub-dates_date' ] + " " + endnoteobject[ endnoteid ][ 'dates_year' ];
-							date_cell.innerHTML = date_cell_txt;
-							title_cell_txt = endnoteobject[ endnoteid ][ 'titles_title' ];
-							title_cell.innerHTML = title_cell_txt;
+							//studygroup_obj.val( String(studygroup_val) ).change();
+							studygroup_obj.attr("data-whichsg", studygroup_val );
+							var studygroup_string = studygroup_obj.prop('outerHTML');
 							
-						} else {
-						  //placeholders for author, year, title
-							author_cell_txt = "----";
-							author_cell.innerHTML = author_cell_txt;
-							date_cell_txt = "----";
-							date_cell.innerHTML = date_cell_txt;
-							title_cell_txt = "----";
-							title_cell.innerHTML = title_cell_txt;
+							//if ReadyAnalysis is null, mark as N
+							if (data.assignments_info[i].readyAnalysis != undefined) {
+								readyanalysis = (String( data.assignments_info[i].readyAnalysis.length > 0 )) ? data.assignments_info[i].readyAnalysis : "N"; 
+							} else { //there is no val in db
+								readyanalysis = "N";
+							}
 
+							//set checked property
+							if( ( readyanalysis == "Y" ) || ( readyanalysis == "true" ) ){
+								readyanalysis_checked = 'checked';
+							} else {
+								readyanalysis_checked = '';
+							}
+
+							//have tr hold phase and study id info as class
+							row.className = "assignment-study"; 
+
+							if( endnoteobject != null && endnoteid > 0 && endnoteobject != undefined ){
+								row.className += " phase_" + this_phase; //add class to row
+							}
+							row.className += " " + data.assignments_info[i].StudyID;
+							row.className += " studyid_" + data.assignments_info[i].StudyID;
+							row.dataset.studyid = data.assignments_info[i].StudyID;
+
+							
+							//sgid_cell_text = studygroup;
+							sgid_cell_text = studygroup_string;
+							sgid_cell.innerHTML = sgid_cell_text;
+							
+							studyid_cell.className = "studyid_val"; //reset class name
+							studyid_cell_txt = "<a class='link' href='" + basepath + "?study_id=" + data.assignments_info[i].StudyID + "'>" + data.assignments_info[i].StudyID + "</a>";
+							//var txtNode = document.createTextNode( studyid_cell_txt);
+							//studyid_cell.appendChild( txtNode );
+							studyid_cell.innerHTML = studyid_cell_txt;
+							
+							//EndNote rec number, for now since Mel see that as unique
+							recnumber_cell_txt = endnoteid;
+							recnumber_cell.innerHTML = recnumber_cell_txt;
+						
+							//phase
+							if( endnoteobject != null && endnoteid > 0 && endnoteobject != undefined ){
+								phase_cell_txt = this_phase;
+								phase_cell.innerHTML = phase_cell_txt;
+							} else {
+								phase_cell_txt = ""; //reset phase
+								phase_cell.innerHTML = phase_cell_txt;
+							}
+							
+							if( endnoteobject[ endnoteid ] != null && endnoteid > 0 && endnoteobject[ endnoteid ] != undefined ){
+							//from endnote: author, year, title
+							
+								author_cell_txt = endnoteobject[ endnoteid ][ 'contributors_authors_author' ];
+								author_cell.innerHTML = author_cell_txt;
+								date_cell_txt = endnoteobject[ endnoteid ][ 'dates_pub-dates_date' ] + " " + endnoteobject[ endnoteid ][ 'dates_year' ];
+								date_cell.innerHTML = date_cell_txt;
+								title_cell_txt = endnoteobject[ endnoteid ][ 'titles_title' ];
+								title_cell.innerHTML = title_cell_txt;
+								
+							} else {
+							  //placeholders for author, year, title
+								author_cell_txt = "----";
+								author_cell.innerHTML = author_cell_txt;
+								date_cell_txt = "----";
+								date_cell.innerHTML = date_cell_txt;
+								title_cell_txt = "----";
+								title_cell.innerHTML = title_cell_txt;
+
+							}
+							
+							//abstraction complete, assignment Y/N, validation complete tds
+							abstract_cell_txt = data.assignments_info[i].abstraction_complete;
+							abstract_cell.innerHTML = abstract_cell_txt;
+							assigned_cell_txt = "";
+							assigned_cell.innerHTML = assigned_cell_txt;
+							validcomplete_cell_txt = data.assignments_info[i].validation_complete;
+							validcomplete_cell.innerHTML = validcomplete_cell_txt;
+							
+							
+							//new checkbox field with study id in value..
+							readyanalysis_cell_txt = "<input type='checkbox' name='ready-analysis' value='" + studygroup_val + "' " + readyanalysis_checked + "></input>";
+							readyanalysis_cell.innerHTML = readyanalysis_cell_txt;
+							
+
+							data_studyids.push( data.assignments_info[i].StudyID );
+							
+							/*
+							if ( i > 30 ){
+								break;
+							}
+							*/
+							
 						}
 						
-						//abstraction complete, assignment Y/N, validation complete tds
-						abstract_cell_txt = data.assignments_info[i].abstraction_complete;
-						abstract_cell.innerHTML = abstract_cell_txt;
-						assigned_cell_txt = "";
-						assigned_cell.innerHTML = assigned_cell_txt;
-						validcomplete_cell_txt = data.assignments_info[i].validation_complete;
-						validcomplete_cell.innerHTML = validcomplete_cell_txt;
-						
-						
-						//new checkbox field with study id in value..
-						readyanalysis_cell_txt = "<input type='checkbox' name='ready-analysis' value='" + studygroup_val + "' " + readyanalysis_checked + "></input>";
-						readyanalysis_cell.innerHTML = readyanalysis_cell_txt;
-						
-
-						data_studyids.push( data.assignments_info[i].StudyID );
-						
-						
-						if ( i > 30 ){
-							break;
-						}
-						
-						
-					}
+						tableFragment.appendChild(row);
+						//assignmentTableBody.appendChild(row);
+			
+					} //end foreach
+					
+	
+				}
 					
 					
-					assignmentTableBody.appendChild(row);
-		
-				} //end foreach
-
+				assignmentTableBody.appendChild( tableFragment );
+				tableFragment = null;
+				endnoteobject = null;
+				
+				
 			} //end if len > 0
 			
 		}
