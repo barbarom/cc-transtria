@@ -26,6 +26,7 @@ function cc_transtria_render_download_page(){
 	$analysis_vars_path = $path . "analysis.xls";
 	$intermediate_vars_path = $path . "intermediate.xls";
 	$strat_vars_path = $path . "strategies.xls";
+	$studies_vars_path = $path . "single_studies.xls";
 	//$path = "../../PHPExcel/transtria/strategies.xls";
 	//echo $path;
 	
@@ -33,11 +34,15 @@ function cc_transtria_render_download_page(){
 	echo "<a href=\"$analysis_vars_path\">$analysis_vars_path</a><br>";
 	echo "<a href=\"$intermediate_vars_path\">$intermediate_vars_path</a><br>";
 	echo "<a href=\"$strat_vars_path\">$strat_vars_path</a><br>";
+	
+	//make button to refresh raw data since it's a process to build these spreadsheets
+	echo "<a id='studies_download_refresh' class='button'>Refresh Raw Studies Data</a><br />";
+	echo "<a href=\"$studies_vars_path\">$studies_vars_path</a><br>";
 
 	//include the csv file....GATKNGEKTREA TN
 	require_once( dirname( __FILE__ ) . '\transtria_analysis_download.php' );	
 	require_once( dirname( __FILE__ ) . '\transtria_intermediate_download.php' );	
 	require_once( dirname( __FILE__ ) . '\transtria_strategies_download.php' );	
-	//require_once( $root_ish . '/PHPExcel/transtria/transtria_strategies.php' );	
+	//require_once( dirname( __FILE__ ) . '\transtria_studies_download.php' );	
 	
 }

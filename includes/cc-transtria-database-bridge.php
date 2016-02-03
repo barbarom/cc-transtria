@@ -62,7 +62,6 @@ function cc_transtria_get_single_study_data( $study_id = null ){
 	
 	global $wpdb;
 	
-	//TODO, use wp->prepare
 	$question_sql = 
 		"
 		SELECT * 
@@ -79,6 +78,59 @@ function cc_transtria_get_single_study_data( $study_id = null ){
 	return $reindexed_form_rows;
 
 }
+
+/**
+ * Returns array of string->values for single data in studies table; gets codetbl->descr for coded values
+ *
+ * @since    1.0.0
+ * @return 	array
+ */
+function cc_transtria_get_single_study_data_verbose( $study_id = null ){
+	
+	global $wpdb;
+	
+	//lookups
+	$abstractor_lookup = cc_transtria_get_options_from_db_by_num( 2 ); //also validator list
+	$domestic_fund_source_lookup = cc_transtria_get_options_from_db_by_num( 7 );
+	$funding_purpose_lookup = cc_transtria_get_options_from_db_by_num( 17 );
+	$study_design_lookup = cc_transtria_get_options_from_db_by_num( 99 );
+	
+	//var_dump( $abstractor_lookup );
+	
+	
+	$question_sql = 
+		"
+		SELECT * 
+		FROM $wpdb->transtria_studies
+		WHERE `StudyID` = $study_id
+		";
+		
+	$form_rows = $wpdb->get_results( $question_sql, ARRAY_A ); //TODO: is ARRAY the best type to use here?
+	
+	foreach( $form_rows as $index => $row ){
+		
+		if( ( $row["abstractor"] != NULL ) && ( $row["abstractor"] != "-1" ) ) 
+			$row["abstractor"] = $abstractor_lookup[ $row["abstractor"] ]->descr ;
+		if( ( $row["validator"] != NULL ) && ( $row["validator"] != "-1" ) ) 	
+			$row["validator"] =  $abstractor_lookup[ $row["validator"] ]->descr ;
+		if( ( $row["domesticfundingsources"] != NULL ) && ( $row["domesticfundingsources"] != "-1" ) ) 
+			$row["domesticfundingsources"] =  $domestic_fund_source_lookup[ $row["domesticfundingsources"] ]->descr ;
+		if( ( $row["StudyDesignID"] != NULL ) && ( $row["StudyDesignID"] != "-1" ) ) 
+			$row["StudyDesignID"] =  $study_design_lookup[ $row["StudyDesignID"] ]->descr ;
+		
+		
+		$form_rows[ $index ] = $row;
+		//var_dump( $index );
+		
+	//return 0;
+		
+	}
+		
+	//return current($form_rows);
+	return $form_rows;
+
+}
+
 
 /**
  * Returns 'special data'
@@ -1490,6 +1542,34 @@ function cc_transtria_get_options_from_db( $code_name = NULL ){
 }
 
 /**
+ *
+ *
+ *
+ */
+function cc_transtria_get_options_from_db_by_num( $codetype_id = 0 ){
+	
+	global $wpdb;
+	
+	//take that codetypeid and get all the options for it in the transtria_codetbl
+	$codetype_sql = $wpdb->prepare( 
+		"
+		SELECT      value, descr
+		FROM        $wpdb->transtria_codetbl
+		WHERE		codetypeID = %d
+		AND			inactive_flag != 'Y'
+		ORDER BY	sequence
+		",
+		$codetype_id
+	); 
+	
+	$codetype_array = $wpdb->get_results( $codetype_sql, OBJECT_K ); //OBJECT_K - result will be output as an associative array of row objects, using first column's values as keys (duplicates will be discarded). 
+	
+	return $codetype_array;
+	
+}
+
+
+/**
  * Gets all population types given a study id
  *
  * @param int. Study ID
@@ -1751,6 +1831,48 @@ function cc_transtria_get_all_code_results_by_study_id( $study_id = null ){
 	
 }
 
+
+/**
+ * Get all code_results values (2-char string) and descr given a study id
+ *
+ * @param int. Study ID
+ * @return array
+ *
+ */
+function cc_transtria_get_all_code_results_values_by_study_id( $study_id = null ){
+
+	global $wpdb;
+	
+	//ok, this works, but can we join w/codetype table to get names?
+	/*$results_sql = $wpdb->prepare( 
+		"
+		SELECT      t1.codetypeID, t1.result
+		FROM        $wpdb->transtria_code_results t1
+		WHERE		ID = %s 
+		",
+		$study_id
+	); */
+	
+	$results_sql = $wpdb->prepare(
+		"
+		SELECT t2.codetype, t1.result, t3.descr
+		FROM $wpdb->transtria_code_results t1,
+			$wpdb->transtria_codetype t2,
+			$wpdb->transtria_codetbl t3
+		WHERE t1.codetypeID = t2.codetypeID
+		AND t1.codetypeID = t3.codetypeID
+		AND t1.result = t3.value
+		AND t1.ID = %s
+		order by t2.codetype
+		",
+		$study_id
+	);
+	
+	$results = $wpdb->get_results( $results_sql, ARRAY_A );
+	
+	return $results;
+	
+}
 
 
 
