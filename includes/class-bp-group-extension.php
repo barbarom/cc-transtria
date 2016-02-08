@@ -56,6 +56,10 @@ class CC_Transtria_Extras_Extension extends BP_Group_Extension {
         } else if ( cc_transtria_on_download_screen() ) {
 		
 			cc_transtria_render_download_page();
+			
+		} else if ( cc_transtria_on_raw_download_screen() ) {
+		
+			cc_transtria_render_raw_download_page();
 		}
     }
 

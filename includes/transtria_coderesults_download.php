@@ -2,27 +2,7 @@
 /**
  * PHPExcel
  *
- * Copyright (C) 2006 - 2014 PHPExcel
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- *
- * @category   PHPExcel
- * @package    PHPExcel
- * @copyright  Copyright (c) 2006 - 2014 PHPExcel (http://www.codeplex.com/PHPExcel)
- * @license    http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt	LGPL
- * @version    1.8.0, 2014-03-02
+ * Transtria: Code lookup data
  */
 
 global $wpdb;
@@ -79,23 +59,30 @@ $objPHPExcel = new PHPExcel();
 $objPHPExcel->getProperties()
     ->setCreator("Transtria")
     ->setLastModifiedBy("Transtria")
-    ->setTitle("Study table data: raw");
+    ->setTitle("Code table data");
 	
 	
 $objPHPExcel->setActiveSheetIndex(0);
 
-	//number of columns
-	$column_num_seq = "SELECT COUNT(`COLUMN_NAME`) FROM `INFORMATION_SCHEMA`.`COLUMNS` WHERE `TABLE_SCHEMA`='" . $schema . "' AND `TABLE_NAME`='wp_transtria_studies'";
-	$column_name_seq = "SELECT `COLUMN_NAME` FROM `INFORMATION_SCHEMA`.`COLUMNS` WHERE `TABLE_SCHEMA`='" . $schema . "' AND `TABLE_NAME`='wp_transtria_studies'";
+	//number/names of columns
+	$column_names = array();
 
-	$column_num = $wpdb->get_var( $column_num_seq );
-	$column_names = $wpdb->get_results( $column_name_seq, ARRAY_A );
+	$column_num = 4;
+	$column_names[] = array( "COLUMN_NAME" => "StudyID");
+	$column_names[] = array( "COLUMN_NAME" => "codetypeID");
+	$column_names[] = array( "COLUMN_NAME" => "codetype");
+	$column_names[] = array( "COLUMN_NAME" => "result");
+	//var_dump( $column_names );
 
-	//the query...for now
+//the query...for now
+//TODO, use wp->prepare
 	$question_sql = 
+		//"SELECT * FROM $wpdb->transtria_analysis";
 		"
-		SELECT *
-		FROM $wpdb->transtria_studies
+		SELECT $wpdb->transtria_code_results.ID, $wpdb->transtria_code_results.codetypeID, 
+		$wpdb->transtria_codetype.codetype, $wpdb->transtria_code_results.result
+		FROM $wpdb->transtria_code_results, $wpdb->transtria_codetype 
+		WHERE $wpdb->transtria_code_results.codetypeID = $wpdb->transtria_codetype.codetypeID
 		"
 		;
 		
@@ -143,4 +130,4 @@ for( $k = 0; $k < $row_count; $k++ ){
 
 //save to excel sheet
 $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
-$objWriter->save( $root_ish . '/PHPExcel/transtria/single_studies.xls');
+$objWriter->save( $root_ish . '/PHPExcel/transtria/code_results.xls');

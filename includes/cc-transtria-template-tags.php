@@ -47,6 +47,9 @@ function cc_transtria_render_tab_subnav(){
                 <li <?php if ( cc_transtria_on_download_screen() ) { echo 'class="current"'; } ?>>
                     <a href="<?php echo cc_transtria_get_download_permalink(); ?>">Downloads</a>
                 </li>
+                <li <?php if ( cc_transtria_on_raw_download_screen() ) { echo 'class="current"'; } ?>>
+                    <a href="<?php echo cc_transtria_get_raw_download_permalink(); ?>">Raw Data Downloads</a>
+                </li>
 
 			
 

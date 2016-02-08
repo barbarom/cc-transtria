@@ -90,6 +90,9 @@ function cc_transtria_get_analysis_slug(){
 function cc_transtria_get_download_slug(){
     return 'download';
 }
+function cc_transtria_get_raw_download_slug(){
+    return 'raw-download';
+}
 
 /**
  * Get URIs for the various pieces of this tab
@@ -117,6 +120,10 @@ function cc_transtria_get_analysis_permalink( $section = false, $group_id = fals
 function cc_transtria_get_download_permalink( $section = false, $group_id = false ) {
     $permalink = cc_transtria_get_home_permalink( $group_id ) . cc_transtria_get_download_slug() . '/';
     return apply_filters( "cc_transtria_download_permalink", $permalink, $group_id);
+}
+function cc_transtria_get_raw_download_permalink( $section = false, $group_id = false ) {
+    $permalink = cc_transtria_get_home_permalink( $group_id ) . cc_transtria_get_raw_download_slug() . '/';
+    return apply_filters( "cc_transtria_raw_download_permalink", $permalink, $group_id);
 }
 
 
@@ -159,6 +166,13 @@ function cc_transtria_on_analysis_screen( $section = null ){
 }
 function cc_transtria_on_download_screen(){
     if ( cc_transtria_is_component() && bp_is_action_variable( cc_transtria_get_download_slug(), 0 ) ){
+        return true;
+    } else {
+        return false;
+    }
+}
+function cc_transtria_on_raw_download_screen(){
+    if ( cc_transtria_is_component() && bp_is_action_variable( cc_transtria_get_raw_download_slug(), 0 ) ){
         return true;
     } else {
         return false;
