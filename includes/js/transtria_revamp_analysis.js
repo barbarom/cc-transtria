@@ -328,6 +328,7 @@ function get_vars_by_grouping(){
 			//for each study
 			if( data.intermediate_vars != undefined ){
 				jQuery.each( data.intermediate_vars, function (){
+					console.log('hola int');
 					//for each row in intermediate table for this study
 					var this_study_data = jQuery( this );
 					jQuery.each( this_study_data, function(){
@@ -502,16 +503,19 @@ function get_vars_by_grouping(){
 						txt_strat += "<td>" + this.measure + "</td>";
 						
 						txt_strat += "<td>"
-						jQuery.each( this.indicator_strategies_unserial, function(){
-							strat_count++;
-							//add comma if > 1
-							if( strat_count > 1 ){
-								txt_strat += ", ";
-							}
-							txt_strat += this.value + ": " + this.descr;
-							
-						});
-						txt_strat += "</td></tr>";
+						
+						if( ( this.indicator_strategies_unserial != undefined ) && ( this.indicator_strategies_unserial != "" ) ){
+							jQuery.each( this.indicator_strategies_unserial, function(){
+								strat_count++;
+								//add comma if > 1
+								if( strat_count > 1 ){
+									txt_strat += ", ";
+								}
+								txt_strat += this.value + ": " + this.descr;
+								
+							});
+							txt_strat += "</td></tr>";
+						}
 						
 					
 					});
@@ -521,6 +525,7 @@ function get_vars_by_grouping(){
 			} //end if intermediate_vars
 			
 			if( data.intermediate_vars_study != undefined ){
+					console.log('hola int study');
 				//update header label
 				jQuery("#intermediate_vars_content h3#intermediate_vars_header_text").html("Intermediate Variables: Study Grouping " + this_study_group );
 				jQuery.each( data.intermediate_vars_study, function ( index, this_inter_study_data){
@@ -676,6 +681,7 @@ function get_vars_by_grouping(){
 			} //end if intermedaite_vars_study
 			
 			if( data.analysis_vars != undefined ){
+					console.log('hola int ana');
 				//update header label
 				jQuery("#analysis_vars_content h3#analysis_vars_header_text").html("Analysis Variables: Study Grouping " + this_study_group );
 				jQuery.each( data.analysis_vars, function (){
@@ -929,6 +935,7 @@ function get_vars_by_grouping(){
 			
 			//do we have study grouping-level vars we need to show (study design)
 			if( data.study_grouping != undefined ){
+					console.log('hola sg');
 				//console.log( data.study_grouping );
 				
 				//update StudyDesign select for this study group
