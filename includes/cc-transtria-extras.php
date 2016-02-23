@@ -775,6 +775,7 @@ class CC_Transtria_Extras {
 	
 	//ajax get all study ids in a study group
 	public function get_im_dyads_and_data_by_group(){
+		set_time_limit(1400);
 		// Is the nonce good?
 		if ( ! check_ajax_referer( 'cc_transtria_ajax_nonce', 'transtria_nonce' ) ) {
 			return false;

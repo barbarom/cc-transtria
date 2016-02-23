@@ -309,7 +309,7 @@ function get_all_ims_for_study_group( $study_group_id ){
 }
 
 /**
- * NOT USED RIGHT NOW: Returns all UNIQUE Indicator-Measure dyads for EACH ea tab (seq) in a given study GROUP from table.  No dups.
+ * DEPRECATED: Returns all UNIQUE Indicator-Measure dyads for EACH ea tab (seq) in a given study GROUP from table.  No dups.
  *
  * @param int. Study ID.
  * @return array?
@@ -495,7 +495,7 @@ function get_unique_ims_for_study_group_pop( $study_group_id ){
 	
 	$info_id_list = ""; //init our info id list
 	
-	$temp_im_list = array(); //to hold temporary im info_id values that match SO FAR in the mathcing process (5 properties to match)
+	$temp_im_list = array(); //to hold temporary im info_id values that match SO FAR in the matching process (5 properties to match)
 	
 	//iterate through all intermediate im rows to get the 5-point I-M dyad!!
 	foreach( $im_rows as $one_intermediate_im ){
@@ -980,7 +980,7 @@ function get_study_level_for_intermediate( $study_group_id ){
 			"
 			SELECT      ParticipationRate, ExposureFrequency, rateofparticipation_notreported, freqofexposure_notreported, Representativeness, representativeness_notreported,
 				racepercentages_notreported, percenthispanic_notreported, percentlowerincome_notreported, applicabilityhrpops_notreported, 
-				PctBlack, PctAsian, PctNativeAmerican, PctPacificIslander, PctHispanic, PctLowerIncome, ApplicabilityHRPopulations
+				PctBlack, PctAsian, PctNativeAmerican, PctPacificIslander, PctHispanic, PctLowerIncome, ApplicabilityHRPopulations, GenderCode
 			FROM        $wpdb->transtria_population
 			WHERE		StudyID = %d 
 			AND			PopulationType = %s
@@ -1031,7 +1031,6 @@ function calc_and_set_dyads_primary_intermediate_analysis( $study_group_id ){
 	$study_ids = get_study_ids_in_study_group( $study_group_id );
 	$all_dyads = array();
 	$values_string = "";  //for the impending massive INSERT INTO statement..
-	
 	
 	//get all intermediate study-level variables for this study group
 	$study_data = get_study_level_for_intermediate( $study_group_id ); //indexed by study id
@@ -1129,7 +1128,7 @@ function calc_and_set_dyads_primary_intermediate_analysis( $study_group_id ){
 				
 				//go through each measure - should be one, might not be
 				foreach( $this_im[ "measures" ][$i] as $measure_val => $single_measure ){
-					//var_dump( $single_measure );
+				//var_dump( $single_measure );
 					
 					//for each measure, cycle through all indicators on this EA tab
 					foreach( $this_im[ "indicators" ][$i] as $ind_index => $single_ind ){
@@ -1327,9 +1326,36 @@ function calc_and_set_dyads_primary_intermediate_analysis( $study_group_id ){
 							$intermediate_calcs["applicability_hr_pops"] = "999";
 						}
 						
-									
+						//get gender for ipe: added 23Feb2016
+						$this_gender = $this_study_data["ipe"]["GenderCode"];
+						
 						//calc the transtria value for indicator
 						$indicator_tt_val = cc_transtria_analysis_val_lookup( "indicator_value", $ind_index );
+						
+						
+						//Add in calculated info, for downloading goodness (22 Feb 2016)
+						//unserialize the Result Evaluation Pop and Result Subpops
+						$intermediate_calcs['result_eval_unserial'] = unserialize( $result_eval_pop );
+						//$intermediate_calcs['result_subpop_unserial'] = unserialize( $result_sub_pop );
+						
+						//get the race percentages of the Evaluation Population(s) 
+						$race_percents_raw = get_race_percents_population( $new_study_id, $info_id, $intermediate_calcs['result_eval_unserial'] );
+						$intermediate_calcs['race_percentages'] = serialize( $race_percents_raw );
+						
+						//parse out the individual sociodemographics
+						$intermediate_calcs['result_eval_pct_black'] = $race_percents_raw['PctBlack'];
+						$intermediate_calcs['result_eval_pct_asian'] = $race_percents_raw['PctAsian'];
+						$intermediate_calcs['result_eval_pct_nativeamerican'] = $race_percents_raw['PctNativeAmerican'];
+						$intermediate_calcs['result_eval_pct_islander'] = $race_percents_raw['PctPacificIslander'];
+						$intermediate_calcs['result_eval_pct_otherrace'] = $race_percents_raw['PctOtherRace'];
+						$intermediate_calcs['result_eval_pct_hispanic'] = $race_percents_raw['PctHispanic'];
+						$intermediate_calcs['result_eval_pct_lowincome'] = $race_percents_raw['PctLowerIncome'];
+						$intermediate_calcs['result_eval_pct_white'] = $race_percents_raw['PctWhite'];
+						$intermediate_calcs['result_eval_gender'] = $race_percents_raw['GenderCode'];
+						$intermediate_calcs['result_eval_youth'] = $race_percents_raw['youthpopulations_notreported'];
+						$intermediate_calcs['result_eval_pct_gen_pop'] = $race_percents_raw['isGeneralPopulation'];
+						
+						
 						
 						//add this IM-ness to the intermediate table
 						$did_it_work = $wpdb->insert( 
@@ -1348,6 +1374,7 @@ function calc_and_set_dyads_primary_intermediate_analysis( $study_group_id ){
 								'indicator_strategies' => $ind_strat,
 								'measure_value' => $measure_val,
 								'measure' => $single_measure,
+								
 								'outcome_direction' => $outcome_direction,
 								'outcome_type' => $outcome_type,
 								'outcome_duration' => $outcome_duration,
@@ -1356,12 +1383,12 @@ function calc_and_set_dyads_primary_intermediate_analysis( $study_group_id ){
 								'multi_component' => $intermediate_calcs["multi_component"],
 								'complexity' => $intermediate_calcs["complexity"],
 								'exposure_frequency' => $intermediate_calcs["ExposureFrequency"],
-								
 								'ipe_rate_of_participation' => $intermediate_calc["ipe_rate_of_participation"],
 								'rate_of_participation' => $intermediate_calcs["ParticipationRate"],
 								'result_evaluation_population' => $result_eval_pop,
 								'result_subpopulationYN' => $result_sub_pop_yn,
 								'result_subpopulation' => $result_sub_pop,
+								
 								'ipe_pctblack' => $intermediate_calcs["ipe_pctblack"],
 								'ipe_pctasian' => $intermediate_calcs["ipe_pctasian"],
 								'ipe_pctnativeamerican' => $intermediate_calcs["ipe_pctnativeamerican"],
@@ -1369,14 +1396,31 @@ function calc_and_set_dyads_primary_intermediate_analysis( $study_group_id ){
 								'ipe_pcthispanic' => $intermediate_calcs["ipe_pcthispanic"],
 								'ipe_pctlowerincome' => $intermediate_calcs["ipe_pctlowerincome"],
 								'ipe_representativeness' => $intermediate_calcs["Representativeness"],
+								'ipe_gender' => $this_gender,
 								'sustainability' => $intermediate_calcs["sustainability"],
 								'pse_components' => $intermediate_calcs["pse_components"],
-								'applicability_hr_pops' => $intermediate_calcs["applicability_hr_pops"]
+	
+								'applicability_hr_pops' => $intermediate_calcs["applicability_hr_pops"],
+								'result_eval_pct_black' => $intermediate_calcs["result_eval_pct_black"],
+								'result_eval_pct_asian' => $intermediate_calcs["result_eval_pct_asian"],
+								'result_eval_pct_nativeamerican' => $intermediate_calcs['result_eval_pct_nativeamerican'],
+								'result_eval_pct_islander' => $intermediate_calcs['result_eval_pct_islander'],
+								'result_eval_pct_otherrace' => $intermediate_calcs['result_eval_pct_otherrace'],
+								'result_eval_pct_hispanic' => $intermediate_calcs['result_eval_pct_hispanic'],
+								'result_eval_pct_lowincome' => $intermediate_calcs['result_eval_pct_lowincome'],
+								'result_eval_pct_white' => $intermediate_calcs['result_eval_pct_white'],
+								'result_eval_gender' => $intermediate_calcs['result_eval_gender'],
+								'result_eval_youth' => $intermediate_calcs['result_eval_youth'],
+								'result_eval_pct_gen_pop' => $intermediate_calcs['result_eval_pct_gen_pop']
+								
 							), 
-							array( '%d', '%s', '%d', '%d', '%s', '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
+							array( '%d', '%s', '%d', '%d', '%s', '%d', '%s', '%d', '%s', '%s', '%s', '%d', '%s',
 							'%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%s', '%s', '%s',
-							'%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%s', '%d' ) 
+							'%s', '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%d', '%s',
+							'%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s') 
 						);
+						
+						//var_dump( $this_gender );
 						
 						//reset placeholders 
 						$intermediate_calcs = array();
@@ -2444,7 +2488,7 @@ function get_race_percents_population( $study_id, $inter_index, $population_stri
 	//now that we have a population, go into population table for this study id and get race %s
 	$pop_percent_sql = $wpdb->prepare( 
 		"
-		SELECT		PctBlack, PctAsian, PctNativeAmerican, PctPacificIslander, PctOtherRace, PctLowerIncome, PctHispanic,
+		SELECT		PctWhite, PctBlack, PctAsian, PctNativeAmerican, PctPacificIslander, PctOtherRace, PctLowerIncome, PctHispanic,
 					GenderCode, isGeneralPopulation, youthpopulations_notreported
 		FROM		$wpdb->transtria_population
 		WHERE		StudyID = %d

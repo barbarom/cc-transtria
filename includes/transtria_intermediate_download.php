@@ -55,7 +55,7 @@ switch ( get_home_url() ) {
 		$schema = "";  //Mike's machine
 		break;
 	case 'http://localhost/cc_local':
-		$schema = 'ccmembers_17jun2';  //Mel's compy
+		$schema = 'cclocal_db';  //Mel's compy
 		break;
 	case 'http://dev.communitycommons.org':
 		$schema = 'ccdevelopment'; //TODO
@@ -94,7 +94,6 @@ $objPHPExcel->setActiveSheetIndex(0);
 	//var_dump( $column_names[0]["COLUMN_NAME"] );
 
 //the query...for now
-//TODO, use wp->prepare
 	$question_sql = 
 		"
 		SELECT *
@@ -103,6 +102,52 @@ $objPHPExcel->setActiveSheetIndex(0);
 		;
 		
 	$result = $wpdb->get_results( $question_sql, ARRAY_N );
+	
+	/*$form_rows = $wpdb->get_results( $question_sql, ARRAY_A );
+	
+	//get extra info from beyond the intermediate table
+	foreach ( $form_rows as $index => $one_dyad ){
+		//unserialize the Result Evaluation Pop and Result Subpops
+		$one_dyad['result_eval_unserial'] = unserialize( $one_dyad['result_evaluation_population'] );
+		$one_dyad['result_subpop_unserial'] = unserialize( $one_dyad['result_subpopulation'] );
+		
+		//get the race percentages of the Evaluation Population(s) 
+		$one_dyad['race_percentages'] = get_race_percents_population( $s_id, $one_dyad['info_id'], $one_dyad['result_eval_unserial'] );
+		
+		//Strategies: unserialize the values; for each value, get text in codetbl
+		$indexed_strats = array();
+		$unserial_strats = unserialize( $one_dyad['indicator_strategies'] );
+		
+		if( !empty( $unserial_strats ) ){
+			foreach( $unserial_strats as $i => $strat_val ){
+				//go through and create indexed strategies with value/description pairs
+				$indexed_strats[ $strat_val ] = $strategies_lookup[ $strat_val ];
+			
+			}
+		} else {
+			$indexed_strats = "";
+		}
+	
+		$one_dyad['indicator_strategies_unserial'] = $indexed_strats;
+		
+		$form_rows[ $index ] = $one_dyad;
+	
+	}
+	
+	//adding columns for extra info
+	$column_num = $column_num + 4;
+	
+	//assing column header for extra info
+	
+	$column_names[] = array( "COLUMN_NAME" => "result_evaluation_population");
+	$column_names[] = array( "COLUMN_NAME" => "result_subpopulation");
+	$column_names[] = array( "COLUMN_NAME" => "race_percentages");
+	$column_names[] = array( "COLUMN_NAME" => "indicator_strategies");
+	
+	$result = $form_rows;
+	
+	*/
+	
 	
 	//var_dump( $result );
 	$row_count = $wpdb->num_rows;
